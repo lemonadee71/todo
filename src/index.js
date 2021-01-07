@@ -2,39 +2,55 @@ import Component from './Component.js';
 
 let root = document.getElementById('root');
 
-function Header({ title, className }) {
+const Header = (title, className) => {
   return {
     className,
-    paragraph: `This is my header with title ${title}`,
+    paragraph: title,
   };
-}
+};
 
-function Content({ items }) {
+const Container = (items) => {
+  return {
+    type: 'ul',
+    className: 'container',
+    children: (() => {
+      let arr = [];
+      for (let i = 0; i < items; i++) {
+        arr.push({
+          type: 'li',
+          text: `Item ${i + 1}`,
+        });
+      }
+      return arr;
+    })(),
+  };
+};
+
+const Content = (items) => {
   return {
     type: 'div',
     id: 'content',
-    text: `There are ${items} in the database`,
+    text: `There are ${items} items in the database`,
+    children: [Container(items)],
   };
-}
+};
 
+/*
 class App extends Component {
   render() {
     return {
-      header: {
-        type: Header,
-        props: {
-          className: 'header',
-          title: 'Todo List',
-        },
-      },
-      content: {
-        type: Content,
-        props: {
-          items: 5,
-        },
-      },
+      header: Header('Todo List', 'header'),
+      content: Content(5),
     };
   }
 }
+*/
 
-Component.render(root, new App());
+const App = () => {
+  return {
+    header: Header('Todo List', 'header'),
+    content: Content(5),
+  };
+};
+
+Component.render(root, App());

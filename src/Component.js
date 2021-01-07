@@ -2,10 +2,21 @@ class Component {
   // add a private field or static variable for template
   // this is for rerender
 
-  constructor(cls = '', type = 'div') {
+  constructor(className = '', type = 'div', props = {}) {
     this.element = document.createElement(type);
-    this.element.className = cls;
+    this.element.className = className;
     this.elements = {};
+    this.blueprint = {};
+    this.props = props;
+  }
+
+  create(blueprint, store = true) {
+    this.blueprint = blueprint;
+    for (let element in blueprint) {
+      this.addElement(blueprint[element], element, store);
+    }
+
+    return this.element;
   }
 
   show() {
@@ -16,8 +27,13 @@ class Component {
     this.element.style.display = 'none';
   }
 
-  reset() {
+  clear() {
     [...this.element.children].map((el) => el.remove());
+  }
+
+  reset(newBlueprint = null) {
+    this.clear();
+    this.create(newBlueprint || this.blueprint);
   }
 
   destroy() {
@@ -38,14 +54,6 @@ class Component {
     this.elements[name].addEventListener(type, callback);
   }
 
-  create(template) {
-    for (let el in template) {
-      this.addElement(template[el], el);
-    }
-
-    return this.element;
-  }
-
   insertElement(element, position, target) {
     if (position === 'before') {
       this.elements[target].before(element);
@@ -56,136 +64,151 @@ class Component {
     }
   }
 
-  addElement(template, name) {
-    let createdElement = this.makeElement(template);
-    if (name) {
-      this.elements[name] = createdElement;
+  addElement(template, name = '', store = false) {
+    let element = Component.createElement(
+      template,
+      store ? this.elements : null
+    );
+    if (store && name) {
+      this.elements[name] = element;
     }
 
+    let target = template.before || template.after || template.inside;
     if (template.before) {
-      this.insertElement(createdElement, 'before', template.before);
+      this.insertElement(element, 'before', target);
     } else if (template.after) {
-      this.insertElement(createdElement, 'after', template.after);
+      this.insertElement(element, 'after', target);
     } else if (template.inside) {
-      this.insertElement(createdElement, 'inside', template.inside);
+      this.insertElement(element, 'inside', target);
     } else {
-      this.element.appendChild(createdElement);
+      this.element.appendChild(element);
     }
   }
 
   // make this static
-  makeElement(template) {
-    try {
-      let element, type, text;
+  static createElement(template, reference = null) {
+    let element, type, text;
 
-      if (template.type) {
-        type = template.type;
-        text = template.text || '';
-      } else if (template.paragraph) {
-        type = 'p';
-        text = template.paragraph;
-      } else if (template.span) {
-        type = 'span';
-        text = template.span;
-      } else if (template.link) {
-        type = 'a';
-        text = template.link;
-      }
-
-      element = document.createElement(type);
-
-      // Add class
-      if (template.className) {
-        let classes = template.className.split(' ');
-        element.classList.add(...classes);
-      }
-
-      // Add id
-      if (template.id) {
-        element.id = template.id;
-      }
-
-      // Add text
-      if (text) {
-        let textNode = document.createTextNode(text);
-        element.appendChild(textNode);
-      }
-
-      // Add attributes
-      if (template.attr) {
-        let attributes = template.attr;
-        for (let attr in attributes) {
-          if (attributes[attr]) {
-            element.setAttribute(attr, attributes[attr]);
-          }
+    /*
+      Special properties paragraph, span, link
+      Example: 
+        {
+          paragraph: 'Text',
+        } 
+        or
+        {
+          type: 'p',
+          text: 'Text',
         }
-      }
-
-      // Add style
-      if (template.style) {
-        for (let st in template.style) {
-          let s = !st.includes('-')
-            ? st
-            : st.split('-').reduce((prev, current, i) => {
-                if (i > 0) {
-                  return (
-                    prev +
-                    current.charAt(0).toUpperCase() +
-                    current.slice(1)
-                  );
-                }
-                return current;
-              }, '');
-          element.style[s] = template.style[st];
-        }
-      }
-
-      // Add properties
-      if (template.prop) {
-        for (let pr in template.prop) {
-          element[pr] = template.prop[pr];
-        }
-      }
-
-      // Add listeners
-      if (template.callback) {
-        let callbacks = template.callback;
-        for (let type in callbacks) {
-          element.addEventListener(type, callbacks[type]);
-        }
-      }
-
-      // Add children
-      if (template.children) {
-        template.children.forEach((child) => {
-          element.appendChild(this.makeElement(child));
-        });
-      }
-
-      // Store
-      if (template.name) {
-        this.elements[template.name] = element;
-      }
-
-      return element;
-    } catch (error) {
-      throw error;
+        creates <p>Text</p>
+      */
+    if (template.type) {
+      type = template.type;
+      text = template.text || '';
+    } else if (template.paragraph) {
+      type = 'p';
+      text = template.paragraph;
+    } else if (template.span) {
+      type = 'span';
+      text = template.span;
+    } else if (template.link) {
+      type = 'a';
+      text = template.link;
     }
+
+    // Create element
+    element = document.createElement(type);
+
+    // Add classes
+    if (template.className) {
+      let classes = template.className.split(' ');
+      element.classList.add(...classes);
+    }
+
+    // Add id
+    if (template.id) {
+      element.id = template.id;
+    }
+
+    // Add text
+    if (text) {
+      let textNode = document.createTextNode(text);
+      element.appendChild(textNode);
+    }
+
+    // Add attributes
+    if (template.attr) {
+      let attributes = template.attr;
+      for (let name in attributes) {
+        let value = attributes[name];
+        if (value) {
+          element.setAttribute(name, value);
+        }
+      }
+    }
+
+    // Add style
+    if (template.style) {
+      let { style } = template;
+      for (let property in style) {
+        element.style[property] = style[property];
+      }
+    }
+
+    // Add properties
+    if (template.prop) {
+      for (let property in template.prop) {
+        element[property] = template.prop[property];
+      }
+    }
+
+    // Add event listeners
+    if (template.listeners) {
+      let { listeners } = template;
+      for (let type in listeners) {
+        element.addEventListener(type, listeners[type]);
+      }
+    }
+
+    // Add children
+    if (template.children) {
+      template.children.forEach((child) => {
+        element.appendChild(
+          Component.createElement(child, reference)
+        );
+      });
+    }
+
+    // Store elements in the object passed to our function
+    if (reference && template.name) {
+      reference[template.name] = element;
+    }
+
+    return element;
   }
 
   static render(root, ...children) {
     children.forEach((child) => {
-      let childEl;
-      if (
-        child.type instanceof Component &&
-        child.type.hasOwnProperty('render')
-      ) {
-        childEl = child.props
-          ? child.type.render(child.props)
-          : child.type.render();
+      if (child instanceof Component || typeof child === 'object') {
+        let template =
+          child instanceof Component ? child.render() : child;
+
+        for (let element in template) {
+          let createdElement = Component.createElement(
+            template[element]
+          );
+          root.appendChild(createdElement);
+        }
       }
-      root.appendChild(childEl);
     });
+  }
+
+  static repeat(item, times) {
+    let arr;
+    for (let i = 0; i < times; i++) {
+      arr.push(item);
+    }
+    return arr;
   }
 }
 
