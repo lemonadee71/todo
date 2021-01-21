@@ -8,12 +8,62 @@
     />
     <title>Todo</title>
     <link rel="stylesheet" href="styles.css" />
-    <link
+    <!--<link
       rel="stylesheet"
       href="https://unpkg.com/marx-css/css/marx.min.css"
-    />
+    />-->
   </head>
   <body>
+    <header>
+      <h1>ToDo</h1>
+      <input
+        type="text"
+        name="search"
+        placeholder="Search tasks"
+        id="search-bar"
+      />
+    </header>
+
+    <main>
+      <div class="container">
+        <div id="taskbar">
+          <button>Add Task</button>
+        </div>
+        <div id="tasks-list">
+          <div id="current-tasks">
+            <div class="task">
+              <div class="checkbox">Checkbox</div>
+              <div class="labels">Label</div>
+              <div class="title">Task 1</div>
+              <div class="badges">Badges</div>
+            </div>
+          </div>
+          <div id="completed-tasks"></div>
+        </div>
+      </div>
+      <div id="modal"></div>
+    </main>
+
+    <aside>
+      <div id="projects">
+        <button>Add Project</button>
+        <div id="def-proj">
+          <ul>
+            <li><span>All Tasks</span></li>
+            <li><span>Today</span></li>
+            <li><span>This Week</span></li>
+            <li><span>Upcoming</span></li>
+          </ul>
+        </div>
+        <div id="user-proj">
+          <ul></ul>
+        </div>
+      </div>
+    </aside>
+
+    <footer>
+      <p>Created by Shin Andrei Riego</p>
+    </footer>
     <!--<script src="main.js"></script>-->
   </body>
 </html>
