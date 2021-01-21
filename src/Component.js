@@ -1,93 +1,45 @@
-class Component {
-  // add a private field or static variable for template
-  // this is for rerender
-
-  constructor(className = '', type = 'div', props = {}) {
-    this.element = document.createElement(type);
-    this.element.className = className;
-    this.elements = {};
-    this.blueprint = {};
-    this.props = props;
-  }
-
-  create(blueprint, store = true) {
-    this.blueprint = blueprint;
-    for (let element in blueprint) {
-      this.addElement(blueprint[element], element, store);
-    }
-
-    return this.element;
-  }
-
-  show() {
-    this.element.style.display = 'block';
-  }
-
-  hide() {
-    this.element.style.display = 'none';
-  }
-
-  clear() {
-    [...this.element.children].map((el) => el.remove());
-  }
-
-  reset(newBlueprint = null) {
-    this.clear();
-    this.create(newBlueprint || this.blueprint);
-  }
-
-  destroy() {
-    this.element.remove();
-  }
-
-  on(event, callback) {
-    if (typeof event === 'object') {
-      event.forEach((type) => {
-        this.element.addEventListener(type, callback);
-      });
-    } else {
-      this.element.addEventListener(event, callback);
-    }
-  }
-
-  addListener(name, type, callback) {
-    this.elements[name].addEventListener(type, callback);
-  }
-
-  insertElement(element, position, target) {
-    if (position === 'before') {
-      this.elements[target].before(element);
-    } else if (position === 'after') {
-      this.elements[target].after(element);
-    } else if (position === 'inside') {
-      this.elements[target].appendChild(element);
-    }
-  }
-
-  addElement(template, name = '', store = false) {
-    let element = Component.createElement(
-      template,
-      store ? this.elements : null
-    );
-    if (store && name) {
-      this.elements[name] = element;
-    }
-
-    let target = template.before || template.after || template.inside;
-    if (template.before) {
-      this.insertElement(element, 'before', target);
-    } else if (template.after) {
-      this.insertElement(element, 'after', target);
-    } else if (template.inside) {
-      this.insertElement(element, 'inside', target);
-    } else {
-      this.element.appendChild(element);
-    }
-  }
-
-  // make this static
-  static createElement(template, reference = null) {
+const Component = (() => {
+  const createFromObject = (template, reference = null) => {
     let element, type, text;
+    let id, className;
+
+    const _checkForClass = (type) => {
+      try {
+        let _className = '';
+        let _type = type;
+
+        _className = type.match(/(\.\w+)/g);
+        _className.forEach((cls) => {
+          _type = _type.replace(cls, '');
+        });
+        className = _className
+          .map((cls) => cls.replace('.', ''))
+          .join(' ');
+
+        return _type;
+      } catch (error) {
+        className = template.className;
+
+        return type;
+      }
+    };
+
+    const _checkForId = (type) => {
+      try {
+        let _id = '';
+        let _type = type;
+
+        _id = _type.match(/#(\w+)/)[1];
+        _type = _type.replace(`#${_id}`, '');
+        id = _id;
+
+        return _type;
+      } catch (error) {
+        id = template.id;
+
+        return type;
+      }
+    };
 
     /*
       Special properties paragraph, span, link
@@ -104,6 +56,9 @@ class Component {
       */
     if (template.type) {
       type = template.type;
+      type = _checkForClass(type);
+      type = _checkForId(type);
+
       text = template.text || '';
     } else if (template.paragraph) {
       type = 'p';
@@ -117,17 +72,21 @@ class Component {
     }
 
     // Create element
-    element = document.createElement(type);
+    if (type === 'fragment') {
+      element = document.createDocumentFragment();
+    } else {
+      element = document.createElement(type);
+    }
 
     // Add classes
-    if (template.className) {
-      let classes = template.className.split(' ');
+    if (className) {
+      let classes = className.split(' ');
       element.classList.add(...classes);
     }
 
     // Add id
-    if (template.id) {
-      element.id = template.id;
+    if (id) {
+      element.id = id;
     }
 
     // Add text
@@ -151,14 +110,20 @@ class Component {
     if (template.style) {
       let { style } = template;
       for (let property in style) {
-        element.style[property] = style[property];
+        let value = style[property];
+        if (value) {
+          element.style[property] = value;
+        }
       }
     }
 
     // Add properties
     if (template.prop) {
       for (let property in template.prop) {
-        element[property] = template.prop[property];
+        let value = template.prop[property];
+        if (value) {
+          element[property] = value;
+        }
       }
     }
 
@@ -173,9 +138,7 @@ class Component {
     // Add children
     if (template.children) {
       template.children.forEach((child) => {
-        element.appendChild(
-          Component.createElement(child, reference)
-        );
+        element.appendChild(createFromObject(child, reference));
       });
     }
 
@@ -185,31 +148,128 @@ class Component {
     }
 
     return element;
-  }
+  };
 
-  static render(root, ...children) {
-    children.forEach((child) => {
-      if (child instanceof Component || typeof child === 'object') {
-        let template =
-          child instanceof Component ? child.render() : child;
+  const createFromString = (str, handlers = []) => {
+    let createdElement = document
+      .createRange()
+      .createContextualFragment(str);
 
-        for (let element in template) {
-          let createdElement = Component.createElement(
-            template[element]
-          );
-          root.appendChild(createdElement);
-        }
+    handlers.forEach((handler) => {
+      let el = createdElement.querySelector(handler.query);
+      el.addEventListener(handler.type, handler.callback);
+
+      if (handler.remove) {
+        el.removeAttribute(handler.attr);
       }
     });
-  }
 
-  static repeat(item, times) {
-    let arr;
-    for (let i = 0; i < times; i++) {
-      arr.push(item);
-    }
-    return arr;
-  }
-}
+    return createdElement;
+  };
+
+  const objectToString = (template) => {
+    let {
+      type,
+      className,
+      id,
+      text,
+      attr,
+      style,
+      children,
+      listeners,
+    } = template;
+
+    let idStr = id ? ` id="${id}" ` : '';
+    let classStr = className ? ` class="${className}"` : '';
+
+    let styleStr = ` style="${Object.keys(style)
+      .map((type) => `${type}: ${style[type]};`)
+      .join(' ')}"`;
+
+    let attrStr = Object.keys(attr)
+      .map((type) => `${type}="${attr[type]}"`)
+      .join(' ');
+
+    let childrenStr = Array.isArray(children)
+      ? children.map((child) => objectToString(child)).join('\n')
+      : '';
+
+    return `<${type}${idStr}${classStr}${attrStr}${styleStr}>
+      ${text || ''}${childrenStr}
+      </${type}>`;
+  };
+
+  const parseString = (strings, ...exprs) => {
+    let eventHandlers = [];
+
+    const _randNo = (seed) => Math.floor(Math.random() * seed);
+
+    const _generateID = () =>
+      `${_randNo(10)}${_randNo(10)}${_randNo(50)}`;
+
+    const _parser = (expr) => {
+      if (typeof expr === 'object') {
+        if (Array.isArray(expr)) {
+          return expr.map((item) => _parser(item)).join('');
+        } else if (expr._type && expr._type === 'parsedString') {
+          eventHandlers.push(...expr[1]);
+          return expr[0];
+        } else if (
+          Object.keys(expr).every((prop) => prop.includes('on'))
+        ) {
+          let callbacks = expr;
+          let temporaryPlaceholder = '';
+
+          for (let type in callbacks) {
+            let callbackId = `${type}${_generateID()}`;
+
+            eventHandlers.push({
+              type: type.replace('on', '').toLowerCase(),
+              query: `[data-tempId="${callbackId}"]`,
+              callback: callbacks[type],
+              attr: 'data-tempId',
+              remove: true,
+            });
+
+            temporaryPlaceholder += `data-tempId="${callbackId}"`;
+          }
+
+          return temporaryPlaceholder;
+        }
+
+        return objectToString(expr);
+      }
+
+      return expr;
+    };
+
+    let evaluatedExprs = exprs.map((expr) => _parser(expr));
+
+    let parsedString = evaluatedExprs.reduce(
+      (fullString, expr, i) =>
+        (fullString += `${expr}${strings[i + 1]}`),
+      strings[0]
+    );
+
+    let parsedObj = {
+      0: parsedString,
+      1: eventHandlers,
+      _type: 'parsedString',
+    };
+
+    Object.defineProperty(parsedObj, '_type', {
+      enumerable: false,
+    });
+
+    return parsedObj;
+  };
+
+  return {
+    parseString,
+    objectToString,
+    createFromObject,
+    createFromString,
+  };
+})();
 
 export default Component;
