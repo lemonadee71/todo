@@ -3,6 +3,13 @@ import List from './list.js';
 
 // Work on displaying tasks in a selected project
 // Add a function that process drop events
+// Add functions for handling labels
+/*
+Pass the task's labels to LabelList
+If label in labels, add class "checked"
+For each label element, add click event
+If checked, remove label, otherwise add it
+*/
 const ProjectController = (() => {
   const allProjects = List('all');
   const labels = List('labels', ['low', 'medium', 'high']);
