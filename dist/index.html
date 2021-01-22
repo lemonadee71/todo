@@ -8,6 +8,7 @@
     />
     <title>Todo</title>
     <link rel="stylesheet" href="styles.css" />
+    <link href="hamburgers.css" rel="stylesheet" />
     <!--<link
       rel="stylesheet"
       href="https://unpkg.com/marx-css/css/marx.min.css"
@@ -15,7 +16,20 @@
   </head>
   <body>
     <header>
-      <h1>ToDo</h1>
+      <ul>
+        <li>
+          <button
+            id="side-bar"
+            class="hamburger hamburger--slider"
+            type="button"
+          >
+            <span class="hamburger-box">
+              <span class="hamburger-inner"></span>
+            </span>
+          </button>
+        </li>
+        <li><h1>ToDo</h1></li>
+      </ul>
       <input
         type="text"
         name="search"
@@ -24,28 +38,8 @@
       />
     </header>
 
-    <main>
-      <div class="container">
-        <div id="taskbar">
-          <button>Add Task</button>
-        </div>
-        <div id="tasks-list">
-          <div id="current-tasks">
-            <div class="task">
-              <div class="checkbox">Checkbox</div>
-              <div class="labels">Label</div>
-              <div class="title">Task 1</div>
-              <div class="badges">Badges</div>
-            </div>
-          </div>
-          <div id="completed-tasks"></div>
-        </div>
-      </div>
-      <div id="modal"></div>
-    </main>
-
-    <aside>
-      <div id="projects">
+    <div class="container">
+      <div id="projects" class="sidenav">
         <button>Add Project</button>
         <div id="def-proj">
           <ul>
@@ -59,11 +53,40 @@
           <ul></ul>
         </div>
       </div>
-    </aside>
+      <div id="main" class="container">
+        <div id="taskbar">
+          <button>Add Task</button>
+        </div>
+        <div id="tasks-list">
+          <div id="current-tasks">
+            <div class="task">
+              <div class="checkbox"><div class="check"></div></div>
+              <div class="labels">Label</div>
+              <div class="title"><h3>Task 1</h3></div>
+              <div class="badges">Badges</div>
+            </div>
+          </div>
+          <div id="completed-tasks"></div>
+        </div>
+      </div>
+      <div id="modal"></div>
+    </div>
 
     <footer>
       <p>Created by Shin Andrei Riego</p>
     </footer>
+
+    <script>
+      let hamburger = document.getElementById('side-bar');
+      hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('is-active');
+
+        let projects = document.getElementById('projects');
+        let main = document.getElementById('main');
+        projects.classList.toggle('show');
+        main.classList.toggle('pushed');
+      });
+    </script>
     <!--<script src="main.js"></script>-->
   </body>
 </html>
