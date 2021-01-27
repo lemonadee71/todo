@@ -1,9 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
+/* Globals */
 body {
+  --main-color: #111;
+  --transparent-main-color: rgba(17, 17, 17, 0.699);
+  --secondary-color: #282727;
+  --header-height: 80px;
+  --font-face: 'PT Sans', sans-serif;
   margin: 0;
   padding: 0;
-  font-family: 'PT Sans', sans-serif;
+  font-family: var(--font-face);
+  color: white;
+  background-color: var(--secondary-color);
 }
 
 h1,
@@ -20,15 +28,33 @@ ul {
   list-style: none;
 }
 
+input[type='text'] {
+  font-family: var(--font-face);
+  background-color: transparent;
+  color: white;
+  border: none;
+  border-bottom: 1px solid rgb(133, 123, 123);
+  transition: border-color 0.3s;
+}
+
+input[type='text']:focus {
+  outline: none;
+  border-color: white;
+}
+
+/** Header **/
 header {
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  height: var(--header-height);
   margin-bottom: 10px;
   padding: 15px 30px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   color: white;
-  background-color: #282727;
-  border: 1px solid black;
+  background-color: var(--transparent-main-color);
 }
 
 header ul {
@@ -49,14 +75,6 @@ header ul li:first-child {
   outline: none;
 }
 
-#search-bar {
-  margin-left: 30px;
-  font-size: 18px;
-  padding: 5px;
-  height: 20px;
-  width: 400px;
-}
-
 .show {
   width: 250px !important ;
 }
@@ -66,69 +84,195 @@ header ul li:first-child {
 }
 
 /* The side navigation menu */
-.sidenav {
+aside {
   height: 100%; /* 100% Full-height */
   width: 0; /* 0 width - change this with JavaScript */
   position: fixed; /* Stay in place */
   z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
+  top: var(--header-height); /* Stay at the top */
   left: 0;
-  background-color: #111; /* Black*/
+  background-color: var(--main-color); /* Black*/
   overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 60px; /* Place content 60px from the top */
+  overflow-y: auto;
+  padding-top: 40px; /* Place content 60px from the top */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
 }
 
-/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
-#main {
-  transition: margin-left 0.5s;
-  padding: 20px;
-}
-
-/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
 @media screen and (max-height: 450px) {
-  .sidenav {
+  aside {
     padding-top: 15px;
   }
-  .sidenav a {
+  aside li {
     font-size: 18px;
   }
 }
 
-#projects ul > li {
-  margin: 3px;
-  padding: 3px;
+@media screen and (max-width: 568px) {
+  main.container {
+    margin: 0 10px;
+  }
+  .pushed {
+    margin-left: 50px !important;
+  }
 }
 
+#projects > div {
+  padding-left: 15px;
+}
+
+#projects ul > li {
+  font-size: 18px;
+  margin: 3px;
+  padding: 3px;
+  cursor: pointer;
+  color: white;
+}
+
+#add-proj input {
+  font-size: 18px;
+  height: 30px;
+  width: 180px;
+}
+
+#add-proj button {
+  font-size: 22px;
+  box-sizing: border-box;
+  display: inline-block;
+  color: rgb(133, 123, 123);
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+  transition: color 0.2s;
+}
+
+#add-proj button:focus {
+  outline: none;
+}
+
+#add-proj input[type='text']:focus + button {
+  /* display: inline-block; */
+  color: white;
+}
+
+/* Main Content */
+main {
+  transition: margin-left 0.5s;
+  margin: 0 50px;
+  padding: 20px;
+}
+
+#taskbar {
+  border: 1px solid black;
+}
+
+.labels {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.chip {
+  height: 10px;
+  width: 50px;
+  border-radius: 5px;
+  border: 1px solid #000;
+  margin-bottom: 5px;
+}
+
+.chip:not(:last-child) {
+  margin-right: 10px;
+}
+
+/* Task bar */
+#add-task {
+  height: 40px;
+  width: 40px;
+  color: white;
+  font-size: 25px;
+  background-color: transparent;
+  border: 3px solid white;
+  border-radius: 50%;
+}
+
+#add-task:hover {
+  opacity: 0.8;
+}
+
+#add-task:focus {
+  color: blue;
+  border-color: blue;
+  outline: none;
+}
+
+/* Task */
 .task {
   width: 300px;
   display: grid;
   grid-template-columns: 1fr 3fr;
-  grid-template-rows: 1fr 2.5fr 1fr;
   border: 1px solid black;
   border-radius: 10px;
 }
 
 .checkbox {
-  height: 100%;
-  width: 100%;
-  grid-row: 1 / 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-right: 1px solid black;
 }
 
 .check {
-  margin: auto;
   height: 50px;
   width: 50px;
   border: 1px solid black;
   border-radius: 50%;
 }
 
-.labels,
-.title,
-.badges {
-  padding: 0 5px;
-  grid-column: 2 / 3;
+.task:nth-child(2) {
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+}
+
+/* 
+Modal
+Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
+*/
+#modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(102, 102, 102, 0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+  background-color: var(--main-color);
+  margin: 2% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 30%;
+}
+
+.wide {
+  width: 60%;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 footer {
