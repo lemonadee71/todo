@@ -20,7 +20,7 @@
         <li>
           <button
             id="side-bar"
-            class="hamburger hamburger--slider"
+            class="hamburger hamburger--slider-r"
             type="button"
           >
             <span class="hamburger-box">
@@ -30,47 +30,66 @@
         </li>
         <li><h1>ToDo</h1></li>
       </ul>
-      <input
-        type="text"
-        name="search"
-        placeholder="Search tasks"
-        id="search-bar"
-      />
     </header>
 
-    <div class="container">
-      <div id="projects" class="sidenav">
-        <button>Add Project</button>
-        <div id="def-proj">
-          <ul>
-            <li><span>All Tasks</span></li>
-            <li><span>Today</span></li>
-            <li><span>This Week</span></li>
-            <li><span>Upcoming</span></li>
-          </ul>
-        </div>
-        <div id="user-proj">
-          <ul></ul>
-        </div>
+    <aside id="projects">
+      <div>
+        <ul id="default-proj">
+          <li>All Tasks</li>
+          <li>Today</li>
+          <li>This Week</li>
+          <li>Upcoming</li>
+        </ul>
+        <br />
       </div>
-      <div id="main" class="container">
-        <div id="taskbar">
-          <button>Add Task</button>
-        </div>
-        <div id="tasks-list">
-          <div id="current-tasks">
-            <div class="task">
-              <div class="checkbox"><div class="check"></div></div>
-              <div class="labels">Label</div>
-              <div class="title"><h3>Task 1</h3></div>
+      <div>
+        <form id="add-proj">
+          <input
+            type="text"
+            name="new-project"
+            placeholder="Create New Project"
+          />
+          <button type="submit">+</button>
+        </form>
+        <br />
+        <ul id="user-proj">
+          <li>Test</li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="container">
+      <div id="taskbar">
+        <button id="add-task">+</button>
+      </div>
+      <div id="tasks-list">
+        <div id="current-tasks">
+          <div class="task" draggable="true">
+            <div class="checkbox"><div class="check"></div></div>
+            <div>
+              <div class="labels">
+                <div class="chip"></div>
+                <div class="chip"></div>
+                <div class="chip"></div>
+                <div class="chip"></div>
+                <div class="chip"></div>
+                <div class="chip"></div>
+                <div class="chip"></div>
+                <div class="chip"></div>
+              </div>
+              <h3>Task 1</h3>
               <div class="badges">Badges</div>
             </div>
           </div>
-          <div id="completed-tasks"></div>
+        </div>
+        <div id="completed-tasks"></div>
+      </div>
+      <div id="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
         </div>
       </div>
-      <div id="modal"></div>
-    </div>
+    </main>
 
     <footer>
       <p>Created by Shin Andrei Riego</p>
@@ -82,9 +101,21 @@
         hamburger.classList.toggle('is-active');
 
         let projects = document.getElementById('projects');
-        let main = document.getElementById('main');
+        let main = document.querySelector('main');
         projects.classList.toggle('show');
         main.classList.toggle('pushed');
+      });
+
+      let task = document.querySelectorAll('.task')[0];
+      task.addEventListener('click', () => {
+        let modal = document.getElementById('modal');
+        modal.style.display = 'block';
+      });
+
+      let closeBtn = document.querySelectorAll('.close')[0];
+      closeBtn.addEventListener('click', () => {
+        let modal = document.getElementById('modal');
+        modal.style.display = 'none';
       });
     </script>
     <!--<script src="main.js"></script>-->
