@@ -1,23 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
-/* Globals */
-body {
+:root {
   --main-color: #111;
-  --transparent-main-color: rgba(17, 17, 17, 0.699);
+  --transparent-main-color: rgb(36, 34, 34);
   --secondary-color: #282727;
   --header-height: 80px;
   --font-face: 'PT Sans', sans-serif;
+}
+
+/* Globals */
+body {
   margin: 0;
   padding: 0;
   font-family: var(--font-face);
-  color: white;
-  background-color: var(--secondary-color);
+  color: black;
+  background-color: white;
 }
 
 h1,
 h2,
 h3,
-h4 {
+h4,
+p {
   margin: 0;
   padding: 0;
 }
@@ -28,18 +32,66 @@ ul {
   list-style: none;
 }
 
+textarea {
+  resize: none;
+}
+
+.light {
+  --b-color: rgba(0, 0, 0, 0.644);
+  color: black;
+  border-color: var(--b-color);
+}
+
+.dark {
+  --b-color: rgb(133, 123, 123);
+  color: white;
+  border-color: var(--b-color);
+}
+
 input[type='text'] {
   font-family: var(--font-face);
   background-color: transparent;
-  color: white;
   border: none;
-  border-bottom: 1px solid rgb(133, 123, 123);
   transition: border-color 0.3s;
 }
 
 input[type='text']:focus {
   outline: none;
+}
+
+input[type='text'].light {
+  border-bottom: 1px solid var(--b-color);
+}
+
+input[type='text'].light:focus {
+  border-color: black;
+}
+
+input[type='text'].dark {
+  border-bottom: 1px solid var(--b-color);
+}
+
+input[type='text'].dark:focus {
   border-color: white;
+}
+
+.icon,
+.edit,
+.delete {
+  height: 20px;
+  width: auto;
+}
+
+.delete:hover,
+.delete:focus {
+  filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg)
+    brightness(104%) contrast(97%);
+}
+
+.edit:hover,
+.edit:focus {
+  filter: invert(37%) sepia(87%) saturate(3813%) hue-rotate(215deg)
+    brightness(102%) contrast(92%);
 }
 
 /** Header **/
@@ -57,6 +109,12 @@ header {
   background-color: var(--transparent-main-color);
 }
 
+#search-bar {
+  margin-left: 30px;
+  font-size: 24px;
+  width: 400px;
+}
+
 header ul {
   display: flex;
   align-items: center;
@@ -67,11 +125,12 @@ header ul li:first-child {
   margin-right: 15px;
 }
 
-#side-bar {
+.hamburger {
   padding: 5px 2px 0;
+  visibility: hidden;
 }
 
-#side-bar:focus {
+.hamburger:focus {
   outline: none;
 }
 
@@ -79,14 +138,10 @@ header ul li:first-child {
   width: 250px !important ;
 }
 
-.pushed {
-  margin-left: 250px !important;
-}
-
 /* The side navigation menu */
 aside {
   height: 100%; /* 100% Full-height */
-  width: 0; /* 0 width - change this with JavaScript */
+  width: 250px; /* 0 width - change this with JavaScript */
   position: fixed; /* Stay in place */
   z-index: 1; /* Stay on top */
   top: var(--header-height); /* Stay at the top */
@@ -96,24 +151,6 @@ aside {
   overflow-y: auto;
   padding-top: 40px; /* Place content 60px from the top */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
-}
-
-@media screen and (max-height: 450px) {
-  aside {
-    padding-top: 15px;
-  }
-  aside li {
-    font-size: 18px;
-  }
-}
-
-@media screen and (max-width: 568px) {
-  main.container {
-    margin: 0 10px;
-  }
-  .pushed {
-    margin-left: 50px !important;
-  }
 }
 
 #projects > div {
@@ -128,13 +165,17 @@ aside {
   color: white;
 }
 
-#add-proj input {
+#projects ul > li:hover {
+  text-decoration: underline;
+}
+
+#new-proj {
   font-size: 18px;
   height: 30px;
   width: 180px;
 }
 
-#add-proj button {
+#new-proj + button {
   font-size: 22px;
   box-sizing: border-box;
   display: inline-block;
@@ -145,12 +186,12 @@ aside {
   transition: color 0.2s;
 }
 
-#add-proj button:focus {
+#new-proj + button:focus {
   outline: none;
+  color: white;
 }
 
-#add-proj input[type='text']:focus + button {
-  /* display: inline-block; */
+#new-proj:focus + button {
   color: white;
 }
 
@@ -161,11 +202,98 @@ main {
   padding: 20px;
 }
 
+/* Task bar */
 #taskbar {
   border: 1px solid black;
 }
 
-.labels {
+#add-task {
+  height: 40px;
+  width: 40px;
+  color: black;
+  font-size: 25px;
+  background-color: transparent;
+  border: 3px solid black;
+  border-radius: 50%;
+}
+
+#add-task:hover {
+  opacity: 0.8;
+}
+
+#add-task:focus {
+  color: blue;
+  border-color: blue;
+  outline: none;
+}
+
+/* Task */
+.actions {
+  position: absolute;
+  right: 2%;
+  top: 5%;
+  visibility: hidden;
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.actions button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+.task {
+  width: 80%;
+  min-width: 450px;
+  display: grid;
+  grid-template-columns: 1fr 6fr;
+  border: 1px solid black;
+  border-radius: 10px;
+  position: relative;
+}
+
+.task:hover .actions {
+  visibility: visible;
+}
+
+.task p {
+  margin: 10px 0;
+  font-size: 25px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid black;
+}
+
+.check {
+  height: 45px;
+  width: 45px;
+  border: 1px solid black;
+  border-radius: 50%;
+}
+
+.check.checked {
+  border: none;
+}
+
+.checkmark {
+  height: 45px;
+  width: 45px;
+  visibility: hidden;
+}
+
+.check.checked .checkmark {
+  visibility: visible;
+}
+
+.brief-content {
+  padding: 10px;
+}
+
+.label-chips {
   display: flex;
   flex-wrap: wrap;
 }
@@ -182,61 +310,11 @@ main {
   margin-right: 10px;
 }
 
-/* Task bar */
-#add-task {
-  height: 40px;
-  width: 40px;
-  color: white;
-  font-size: 25px;
-  background-color: transparent;
-  border: 3px solid white;
-  border-radius: 50%;
-}
-
-#add-task:hover {
-  opacity: 0.8;
-}
-
-#add-task:focus {
-  color: blue;
-  border-color: blue;
-  outline: none;
-}
-
-/* Task */
-.task {
-  width: 300px;
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  border: 1px solid black;
-  border-radius: 10px;
-}
-
-.checkbox {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-right: 1px solid black;
-}
-
-.check {
-  height: 50px;
-  width: 50px;
-  border: 1px solid black;
-  border-radius: 50%;
-}
-
-.task:nth-child(2) {
-  padding: 5px;
-  display: flex;
-  flex-direction: row;
-}
-
 /* 
 Modal
 Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
 */
-#modal {
+.modal-backdrop {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
@@ -249,16 +327,14 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   background-color: rgba(102, 102, 102, 0.4); /* Black w/ opacity */
 }
 
-.modal-content {
-  background-color: var(--main-color);
-  margin: 2% auto; /* 15% from the top and centered */
-  padding: 20px;
+#modal {
+  box-sizing: border-box;
+  position: relative;
+  background-color: white;
+  margin: 3% auto; /* 15% from the top and centered */
+  padding: 30px 20px;
   border: 1px solid #888;
-  width: 30%;
-}
-
-.wide {
-  width: 60%;
+  width: 450px;
 }
 
 .close {
@@ -266,6 +342,9 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   float: right;
   font-size: 28px;
   font-weight: bold;
+  position: absolute;
+  right: 5%;
+  top: 1%;
 }
 
 .close:hover,
@@ -275,9 +354,121 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   cursor: pointer;
 }
 
+/* Modal Content */
+.section-header {
+  font-size: 20px;
+  display: flex;
+  align-items: baseline;
+  margin: 10px 0;
+}
+
+.section-header img {
+  height: 15px;
+  margin-right: 5px;
+}
+
+.title {
+  position: relative;
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+}
+
+#create-task input[type='text'],
+.title input {
+  font-size: 28px;
+  width: 80%;
+}
+
+.title input:disabled {
+  border: none;
+}
+
+.title input:disabled::placeholder {
+  color: black;
+}
+
+#create-task select,
+.proj select {
+  font-family: var(--font-face);
+  font-size: 17px;
+  border: none;
+}
+
+.proj select:focus {
+  outline: none;
+}
+
+.desc {
+  position: relative;
+}
+
+.desc button {
+  position: absolute;
+  top: 0%;
+  right: 1%;
+}
+
+#create-task textarea,
+.desc textarea {
+  font-family: var(--font-face);
+  font-size: 18px;
+  width: 98%;
+  height: 300px;
+}
+
+#create-task button[type='submit'] {
+  font-family: var(--font-face);
+  font-size: 18px;
+  padding: 5px 15px;
+  margin-top: 10px;
+  background-color: rgb(43, 116, 211);
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+/* Footer */
 footer {
   width: 100%;
   margin-top: 20px;
   border-top: 1px solid black;
   text-align: center;
+}
+
+/* Media queries */
+@media screen and (max-height: 450px) {
+  aside {
+    padding-top: 15px;
+  }
+  aside li {
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  main {
+    margin: 0 10px;
+  }
+  aside {
+    width: 0;
+  }
+  .hamburger {
+    visibility: visible;
+  }
+  .task {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 550px) {
+  #modal {
+    width: 80%;
+  }
+}
+
+@media screen and (min-width: 700px) {
+  main {
+    margin-left: 250px;
+  }
 }
