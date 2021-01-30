@@ -1,21 +1,45 @@
 import Component from './component';
-import Header from './components/Header';
 import MainContent from './components/MainContent';
 import Sidebar from './components/Sidebar';
-import Footer from './components/Footer';
 import {
   createNewProject,
   selectProject,
   selectAllTasks,
   getProjectsDetails,
 } from './ProjectController';
+import $ from './helpers/getElement';
 
 import { compareAsc, format } from 'date-fns';
 
 const App = () => {
+  const showSidebar = (e) => {
+    e.target.classList.toggle('is-active');
+    $('#projects').classList.toggle('show');
+  };
+
   return Component.createFromString(
     ...Array.from(Component.parseString`
-      ${Header()}
+      <header>
+        <ul>
+          <li>
+            <button ${{
+              onClick: showSidebar,
+            }}class="hamburger hamburger--slider-r" type="button">
+              <span class="hamburger-box">
+                <span class="hamburger-inner"></span>
+              </span>
+            </button>
+          </li>
+          <li><h1>ToDo</h1></li>
+        </ul>
+        <input
+          type="text"
+          name="search"
+          class="dark"
+          id="search-bar"
+          placeholder="Search your tasks"
+        />
+      </header>
       ${Sidebar({
         selectProject,
         createNewProject,
@@ -23,7 +47,34 @@ const App = () => {
         projects: getProjectsDetails(),
       })}
       ${MainContent()}
-      ${Footer()}
+      <footer>
+        <div>
+          Icons made by
+          <a href="https://www.freepik.com" title="Freepik">Freepik</a>,
+          <a href="" title="Gregor Cresnar">Gregor Cresnar</a>,
+          <a
+            href="https://www.flaticon.com/authors/good-ware"
+            title="Good Ware"
+            >Good Ware</a
+          >,
+          <a
+            href="https://www.flaticon.com/authors/google"
+            title="Google"
+            >Google</a
+          >, <a href="" title="Those Icons">Those Icons</a>,
+          <a href="https://www.flaticon.com/authors/bqlqn" title="bqlqn"
+            >bqlqn</a
+          >, and
+          <a href="https://creativemarket.com/Becris" title="Becris"
+            >Becris</a
+          >
+          from
+          <a href="https://www.flaticon.com/" title="Flaticon"
+            >www.flaticon.com</a
+          >
+        </div>
+        <p>Created by Shin Andrei Riego</p>
+      </footer>
     `)
   );
 };
