@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 class Task {
   constructor({ title, desc, dueDate }) {
     this.title = title || 'Unnamed Task';
@@ -6,6 +8,7 @@ class Task {
     this.completed = false;
     this.labels = [];
     this.subtasks = [];
+    this.id = uuidv4();
   }
 
   /**
@@ -49,7 +52,7 @@ class Task {
     return [...this.labels];
   }
 
-  set labels() {
+  set labels(label) {
     throw new Error('Invalid. Use addLabel to add a label.');
   }
 
@@ -57,7 +60,7 @@ class Task {
     return [...this.subtasks];
   }
 
-  set subtasks() {
+  set subtasks(subtask) {
     throw new Error('Invalid. Use addSubtask to add a subtask.');
   }
 

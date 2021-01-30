@@ -1,5 +1,9 @@
 import { compareAsc } from 'date-fns';
 import List from './list.js';
+import $ from './helpers/getElement';
+import { createNewTask, createTaskCard } from './TaskController';
+import ProjectLi from './components/ProjectLi';
+import Component from './component';
 
 // Work on displaying tasks in a selected project
 // Add a function that process drop events
@@ -10,63 +14,138 @@ If label in labels, add class "checked"
 For each label element, add click event
 If checked, remove label, otherwise add it
 */
-const ProjectController = (() => {
-  const allProjects = List('all');
-  const labels = List('labels', ['low', 'medium', 'high']);
+const allProjects = List('all', 'root', [
+  List('uncategorized', 'project'),
+]);
 
-  let currentSelectedProj = allProjects.id;
+let currentSelectedProj = allProjects.getItem(
+  (proj) => proj.listName === 'uncategorized'
+).id;
 
-  const transferTask = (id, target) => {
-    task = allProjects
-      .getItem((proj) => proj.id === currentSelectedProj)
-      .getItem((task) => task.id === id);
+const segregateTasks = (tasks) => {
+  return [
+    tasks.filter((task) => !task.completed),
+    tasks.filter((task) => task.completed),
+  ];
+};
 
-    allProjects.getItem((proj) => proj.id === target).addItem(task);
-  };
+const transferTask = (id, target) => {
+  task = allProjects
+    .getItem((proj) => proj.id === currentSelectedProj)
+    .getItem((task) => task.id === id);
 
-  const selectProject = (id) => {
-    currentSelectedProj = id;
-    return allProjects.getItem((proj) => proj.id === id);
-  };
+  allProjects.getItem((proj) => proj.id === target).addItem(task);
+};
 
-  const addProject = (projName) => {
-    allProjects.addItem(List(projName));
-  };
+const getProjectTasks = (id) => {
+  currentSelectedProj = id;
+  return allProjects.getItem((proj) => proj.id === id).items;
+};
 
-  const addTask = (task) => {
-    allProjects
-      .getItem((proj) => proj.id === currentSelectedProj)
-      .addItem(task);
-  };
+const addProject = (projName) => {
+  let newProject = List(projName, 'project');
+  allProjects.addItem(newProject);
 
-  const getAllTasks = () => {
-    return [...allProjects].flat();
-  };
+  return newProject;
+};
 
-  const getDueToday = () => {
-    return [...allProjects]
-      .flat()
-      .filter((task) => task.dueDate === '');
-  };
+const addTask = (task) => {
+  allProjects
+    .getItem((proj) => proj.id === currentSelectedProj)
+    .addItem(task);
+};
 
-  const getDueThisWeek = () => {
-    return [...allProjects]
-      .flat()
-      .filter((task) => task.dueDate === '');
-  };
+const deleteTask = (task) => {
+  allProjects
+    .getItem((proj) => proj.id === task.location)
+    .removeItems((item) => item.id === task.id);
+};
 
-  const getUpcoming = () => {
-    return [...allProjects]
-      .flat()
-      .filter((task) => task.dueDate === '');
-  };
+const getAllTasks = () => {
+  currentSelectedProj = allProjects.getItem(
+    (proj) => proj.listName === 'uncategorized'
+  ).id;
+  return [...allProjects].map((proj) => proj.items).flat();
+};
 
-  return {
-    selectProject,
-    getDueToday,
-    getDueThisWeek,
-    getUpcoming,
-  };
-})();
+const getDueToday = () => {
+  return [...allProjects]
+    .map((proj) => proj.items)
+    .flat()
+    .filter((task) => task.dueDate === '');
+};
 
-export default ProjectController;
+const getDueThisWeek = () => {
+  return [...allProjects]
+    .map((proj) => proj.items)
+    .flat()
+    .filter((task) => task.dueDate === '');
+};
+
+const getUpcoming = () => {
+  return [...allProjects]
+    .map((proj) => proj.items)
+    .flat()
+    .filter((task) => task.dueDate === '');
+};
+
+const getProjectsDetails = () => {
+  let projects = allProjects.items;
+
+  return projects
+    ? projects.map((proj) => {
+        return {
+          id: proj.id,
+          name: proj.listName,
+        };
+      })
+    : null;
+};
+
+const renderTasks = (tasks) => {
+  let currentTasks = $('#current-tasks');
+  let completedTasks = $('#completed-tasks');
+
+  currentTasks.innerHTML = '';
+  completedTasks.innerHTML = '';
+
+  let [current, completed] = segregateTasks(tasks);
+
+  currentTasks.append(...current.map((task) => createTaskCard(task)));
+  currentTasks.append(
+    ...completed.map((task) => createTaskCard(task))
+  );
+};
+
+const selectProject = (id) => {
+  let tasks = getProjectTasks(id);
+  renderTasks(tasks);
+};
+
+const selectAllTasks = () => {
+  // let tasks = getAllTasks();
+  // renderTasks(tasks);
+  console.log('Fetching all tasks...');
+};
+
+const createNewProject = (e) => {
+  e.preventDefault();
+  let input = $('#new-proj');
+  let newProject = addProject(input.value);
+  let { id, listName: name } = newProject;
+
+  let userProjects = $('#user-proj');
+  userProjects.appendChild(
+    Component.createFromString(
+      ...Array.from(ProjectLi({ id, name }, { selectProject }))
+    )
+  );
+  e.target.reset();
+};
+
+export {
+  createNewProject,
+  selectProject,
+  selectAllTasks,
+  getProjectsDetails,
+};

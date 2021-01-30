@@ -1,4 +1,9 @@
 const Component = (() => {
+  const _randNo = (seed) => Math.floor(Math.random() * seed);
+
+  const _generateID = () =>
+    `${_randNo(10)}${_randNo(10)}${_randNo(50)}`;
+
   const createFromObject = (template, reference = null) => {
     let element, type, text;
     let id, className;
@@ -202,45 +207,59 @@ const Component = (() => {
   const parseString = (strings, ...exprs) => {
     let eventHandlers = [];
 
-    const _randNo = (seed) => Math.floor(Math.random() * seed);
-
-    const _generateID = () =>
-      `${_randNo(10)}${_randNo(10)}${_randNo(50)}`;
-
     const _parser = (expr) => {
       if (typeof expr === 'object') {
+        // If array, convert each item to one of the acceptable types
         if (Array.isArray(expr)) {
           return expr.map((item) => _parser(item)).join('');
+
+          // if parsedString (the Array-like object returned by parseString)
+          // add its eventHandlers to ours
         } else if (expr._type && expr._type === 'parsedString') {
           eventHandlers.push(...expr[1]);
           return expr[0];
+
+          // if Object and that object contains only keys which name is an event
+          // generate a temporary id and replace the object with it
+          // then add the event listeners to our eventHandlers
         } else if (
           Object.keys(expr).every((prop) => prop.includes('on'))
         ) {
           let callbacks = expr;
           let temporaryPlaceholder = '';
+          let temporaryId = `${_generateID()}${_generateID()}`;
 
           for (let type in callbacks) {
-            let callbackId = `${type}${_generateID()}`;
-
             eventHandlers.push({
               type: type.replace('on', '').toLowerCase(),
-              query: `[data-tempId="${callbackId}"]`,
+              query: `[data-tempId="${temporaryId}"]`,
               callback: callbacks[type],
               attr: 'data-tempId',
-              remove: true,
+              remove: false,
             });
 
-            temporaryPlaceholder += `data-tempId="${callbackId}"`;
+            temporaryPlaceholder += `data-tempId="${temporaryId}"`;
           }
+
+          eventHandlers[eventHandlers.length - 1].remove = true;
 
           return temporaryPlaceholder;
         }
 
+        // If the argument isn't one of the three object kinds above
+        // We assume it's an object with a specific structure
+        // so parse it with objectToString
         return objectToString(expr);
-      }
 
-      return expr;
+        // if string, just return it
+      } else if (typeof expr === 'string') {
+        return expr;
+
+        // otherwise we have an error
+        // we only accept objects and string
+      } else {
+        throw new Error('Invalid type');
+      }
     };
 
     let evaluatedExprs = exprs.map((expr) => _parser(expr));
@@ -254,6 +273,7 @@ const Component = (() => {
     let parsedObj = {
       0: parsedString,
       1: eventHandlers,
+      length: 2,
       _type: 'parsedString',
     };
 

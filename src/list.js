@@ -1,10 +1,11 @@
-import uniqid from 'uniqid';
+import { v4 as uuidv4 } from 'uuid';
 
-const List = (name, defaultItems = []) => {
+const List = (name, type, defaultItems = []) => {
   let items = [...defaultItems];
   let length = 0;
+  let listType = type;
   let listName = name;
-  let id = uniqid();
+  let id = uuidv4();
 
   const addItem = (item) => {
     if (Array.isArray(item)) {
@@ -43,6 +44,7 @@ const List = (name, defaultItems = []) => {
   let listObj = {
     id,
     listName,
+    listType,
     addItem,
     getItem,
     removeItems,
@@ -55,6 +57,9 @@ const List = (name, defaultItems = []) => {
     writable: false,
   });
   Object.defineProperty(listObj, 'listName', {
+    writable: false,
+  });
+  Object.defineProperty(listObj, 'listType', {
     writable: false,
   });
 
