@@ -15,22 +15,22 @@ class Task {
    * @param {string} newTitle
    */
   set title(newTitle) {
-    if (typeof newTitle !== 'string') {
-      throw new Error('Invalid type. Title must be string.');
-    }
+    // if (typeof newTitle !== 'string') {
+    //   throw new Error('Invalid type. Title must be string.');
+    // }
 
-    this.title = newTitle;
+    this._title = newTitle;
   }
 
   /**
    * @param {string} newDesc
    */
   set desc(newDesc) {
-    if (typeof newDesc !== 'string') {
-      throw new Error('Invalid type. Desc must be string.');
-    }
+    // if (typeof newDesc !== 'string') {
+    //   throw new Error('Invalid type. Desc must be string.');
+    // }
 
-    this.desc = newDesc;
+    this._desc = newDesc;
   }
 
   get dueDate() {
@@ -41,28 +41,28 @@ class Task {
   }
 
   set dueDate(newDueDate) {
-    if (typeof newDueDate !== 'string') {
-      throw new Error('Invalid type. dueDate must be string.');
-    }
+    // if (typeof newDueDate !== 'string') {
+    //   throw new Error('Invalid type. dueDate must be string.');
+    // }
 
-    this.dueDate = newDueDate;
+    this._dueDate = newDueDate;
   }
 
-  get labels() {
-    return [...this.labels];
-  }
+  // get labels() {
+  //   return [...this.labels];
+  // }
 
-  set labels(label) {
-    throw new Error('Invalid. Use addLabel to add a label.');
-  }
+  // set labels(label) {
+  //   throw new Error('Invalid. Use addLabel to add a label.');
+  // }
 
-  get subtasks() {
-    return [...this.subtasks];
-  }
+  // get subtasks() {
+  //   return [...this.subtasks];
+  // }
 
-  set subtasks(subtask) {
-    throw new Error('Invalid. Use addSubtask to add a subtask.');
-  }
+  // set subtasks(subtask) {
+  //   throw new Error('Invalid. Use addSubtask to add a subtask.');
+  // }
 
   getData() {
     return {

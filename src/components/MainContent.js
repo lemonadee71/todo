@@ -1,11 +1,11 @@
 import Component from '../component';
 import Modal from './Modal';
 
-const MainContent = () => {
+const MainContent = ({ addTask }) => {
   return Component.parseString`
   <main>
     <div id="taskbar">
-      <button id="add-task">+</button>
+      <button id="add-task" ${{ onClick: addTask }}>+</button>
     </div>
     <div id="tasks-list">
       <div id="current-tasks"></div>

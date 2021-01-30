@@ -1,12 +1,12 @@
 import Component from '../component.js';
 
-const CreateTaskForm = () => {
+const CreateTaskForm = ({ onSubmit }) => {
   return Component.parseString`
-  <form id="create-task">
+  <form id="create-task" ${{ onSubmit }}>
     <input
       type="text"
       name="task name"
-      id="new-task-name"
+      data-id="new-task-name"
       placeholder="New Task"
     />
     <br />
@@ -14,11 +14,11 @@ const CreateTaskForm = () => {
     <p class="section-header">Description</p>
     <textarea
       name="task desc"
-      id="new-task-desc"
+      data-id="new-task-desc"
     ></textarea>
 
     <p class="section-header">Due Date</p>
-    <input type="date" />
+    <input type="date" data-id="new-task-date"/>
     <br />
     
     <button type="submit">Submit</button>

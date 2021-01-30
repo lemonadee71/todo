@@ -2,8 +2,7 @@ import Component from '../component';
 import Icons from './Icons';
 
 const TaskModal = () => {
-  return Component.createFromString(
-    ...Array.from(Component.parseString`
+  return Component.render(Component.parseString`
     <div class="title">
       <input
         type="text"
@@ -39,8 +38,7 @@ const TaskModal = () => {
       </div>
       <input type="date" name="dueDate" />
     </div>
-  `)
-  );
+  `);
 };
 
 export default TaskModal;

@@ -1,10 +1,10 @@
 import Component from '../component';
-import $ from '../helpers/getElement';
+import $, { clear, hide } from '../helpers/helpers';
 
 const Modal = () => {
   const closeModal = (e) => {
-    $('#modal').style.display = 'none';
-    $('#modalContent').innerHTML = '';
+    hide($('.modal-backdrop'));
+    clear($('#modal-content'));
     e.stopPropagation();
   };
 

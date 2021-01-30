@@ -4,7 +4,24 @@ const Component = (() => {
   const _generateID = () =>
     `${_randNo(10)}${_randNo(10)}${_randNo(50)}`;
 
-  const createFromObject = (template, reference = null) => {
+  const _createArrayLikeObject = (arr, type) => {
+    let arrayLikeObj = {};
+
+    for (let i in arr) {
+      arrayLikeObj[i] = arr[i];
+    }
+
+    arrayLikeObj.length = arr.length;
+    arrayLikeObj._type = type;
+
+    Object.defineProperty(arrayLikeObj, '_type', {
+      enumerable: false,
+    });
+
+    return arrayLikeObj;
+  };
+
+  const createElementFromObject = (template, reference = null) => {
     let element, type, text;
     let id, className;
 
@@ -143,7 +160,11 @@ const Component = (() => {
     // Add children
     if (template.children) {
       template.children.forEach((child) => {
-        element.appendChild(createFromObject(child, reference));
+        let el =
+          typeof child === 'string'
+            ? createElementFromString(child)
+            : createElementFromObject(child, reference);
+        element.appendChild(el);
       });
     }
 
@@ -155,7 +176,11 @@ const Component = (() => {
     return element;
   };
 
-  const createFromString = (str, handlers = []) => {
+  const createElementFromString = (
+    str,
+    handlers = [],
+    children = []
+  ) => {
     let createdElement = document
       .createRange()
       .createContextualFragment(str);
@@ -167,6 +192,15 @@ const Component = (() => {
       if (handler.remove) {
         el.removeAttribute(handler.attr);
       }
+    });
+
+    children.forEach((child) => {
+      let el = child.element;
+      let placeholder = createdElement.querySelector(child.query);
+      let parent = placeholder.parentElement;
+
+      parent.appendChild(el);
+      placeholder.remove();
     });
 
     return createdElement;
@@ -206,24 +240,37 @@ const Component = (() => {
 
   const parseString = (strings, ...exprs) => {
     let eventHandlers = [];
+    let children = [];
 
     const _parser = (expr) => {
-      if (typeof expr === 'object') {
-        // If array, convert each item to one of the acceptable types
+      if (expr instanceof HTMLElement) {
+        let temporaryId = `${_generateID()}${_generateID()}`;
+
+        children.push({
+          element: expr,
+          query: `div[data-tempId="${temporaryId}"]`,
+        });
+
+        return `<div data-tempId="${temporaryId}"></div>`;
+      } else if (typeof expr === 'object') {
+        // if expr is array, map and parse each item
+        // items must be all strings after parsing
         if (Array.isArray(expr)) {
           return expr.map((item) => _parser(item)).join('');
 
           // if parsedString (the Array-like object returned by parseString)
           // add its eventHandlers to ours
+          // then return the string
         } else if (expr._type && expr._type === 'parsedString') {
           eventHandlers.push(...expr[1]);
+          children.push(...expr[2]);
           return expr[0];
 
           // if Object and that object contains only keys which name is an event
           // generate a temporary id and replace the object with it
           // then add the event listeners to our eventHandlers
         } else if (
-          Object.keys(expr).every((prop) => prop.includes('on'))
+          Object.keys(expr).every((key) => key.includes('on'))
         ) {
           let callbacks = expr;
           let temporaryPlaceholder = '';
@@ -241,6 +288,7 @@ const Component = (() => {
             temporaryPlaceholder += `data-tempId="${temporaryId}"`;
           }
 
+          // This is to allow for multiple event handlers for one element
           eventHandlers[eventHandlers.length - 1].remove = true;
 
           return temporaryPlaceholder;
@@ -270,25 +318,24 @@ const Component = (() => {
       strings[0]
     );
 
-    let parsedObj = {
-      0: parsedString,
-      1: eventHandlers,
-      length: 2,
-      _type: 'parsedString',
-    };
+    return _createArrayLikeObject(
+      [parsedString, eventHandlers, children],
+      'parsedString'
+    );
+  };
 
-    Object.defineProperty(parsedObj, '_type', {
-      enumerable: false,
-    });
-
-    return parsedObj;
+  const render = (arrayLikeObj) => {
+    return Component.createElementFromString(
+      ...Array.from(arrayLikeObj)
+    );
   };
 
   return {
+    render,
     parseString,
     objectToString,
-    createFromObject,
-    createFromString,
+    createElementFromObject,
+    createElementFromString,
   };
 })();
 

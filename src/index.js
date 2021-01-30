@@ -1,30 +1,30 @@
 import Component from './component';
 import MainContent from './components/MainContent';
 import Sidebar from './components/Sidebar';
+import $ from './helpers/helpers';
 import {
   createNewProject,
   selectProject,
   selectAllTasks,
   getProjectsDetails,
+  showForm,
 } from './ProjectController';
-import $ from './helpers/getElement';
 
 import { compareAsc, format } from 'date-fns';
 
 const App = () => {
-  const showSidebar = (e) => {
-    e.target.classList.toggle('is-active');
+  const showSidebar = () => {
+    $('.hamburger').classList.toggle('is-active');
     $('#projects').classList.toggle('show');
   };
 
-  return Component.createFromString(
-    ...Array.from(Component.parseString`
+  return Component.render(Component.parseString`
       <header>
         <ul>
           <li>
             <button ${{
               onClick: showSidebar,
-            }}class="hamburger hamburger--slider-r" type="button">
+            }} class="hamburger hamburger--slider-r" type="button">
               <span class="hamburger-box">
                 <span class="hamburger-inner"></span>
               </span>
@@ -46,7 +46,7 @@ const App = () => {
         getAllTasks: selectAllTasks,
         projects: getProjectsDetails(),
       })}
-      ${MainContent()}
+      ${MainContent({ addTask: showForm })}
       <footer>
         <div>
           Icons made by
@@ -75,8 +75,7 @@ const App = () => {
         </div>
         <p>Created by Shin Andrei Riego</p>
       </footer>
-    `)
-  );
+    `);
 };
 
 document.body.prepend(App());

@@ -1,7 +1,7 @@
 import Component from './component';
 import TaskCard from './components/TaskCard';
 import Task from './Task';
-import $ from './helpers/getElement';
+import $ from './helpers/helpers';
 //         type: 'div',
 //         text: format(task.dueDate, 'E..EEE, MMM dd'),
 //       },
@@ -15,10 +15,8 @@ const createTaskCard = (task, { deleteTask }) => {
   const editTask = () => {};
 
   const onDelete = () => {
-    let taskCard = $(`#${task.id}`);
-
     deleteTask(task);
-    taskCard.remove();
+    $(`#${task.id}`).remove();
   };
 
   const toggleCheckmark = (e) => {
@@ -36,11 +34,13 @@ const createTaskCard = (task, { deleteTask }) => {
     }
   };
 
-  return TaskCard({
-    onDelete,
-    toggleCheckmark,
-    id: task.id,
-  });
+  return Component.render(
+    TaskCard({
+      onDelete,
+      toggleCheckmark,
+      id: task.id,
+    })
+  );
 };
 
 export { createNewTask, createTaskCard };

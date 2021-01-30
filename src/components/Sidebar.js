@@ -1,5 +1,5 @@
 import Component from '../component.js';
-import ProjectLi from './ProjectLi';
+import ProjectListItem from './ProjectListItem.js';
 
 const Sidebar = ({
   projects,
@@ -37,7 +37,7 @@ const Sidebar = ({
         ${
           projects
             ? projects.map((proj) =>
-                ProjectLi(proj, { selectProject })
+                ProjectListItem(proj, selectProject)
               )
             : ''
         }

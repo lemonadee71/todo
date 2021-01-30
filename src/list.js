@@ -45,6 +45,7 @@ const List = (name, type, defaultItems = []) => {
     id,
     listName,
     listType,
+    items,
     addItem,
     getItem,
     removeItems,
@@ -60,6 +61,9 @@ const List = (name, type, defaultItems = []) => {
     writable: false,
   });
   Object.defineProperty(listObj, 'listType', {
+    writable: false,
+  });
+  Object.defineProperty(listObj, 'items', {
     writable: false,
   });
 
