@@ -289,6 +289,10 @@ main {
   visibility: visible;
 }
 
+.checkmark.checked .checkmark {
+  visibility: visible;
+}
+
 .brief-content {
   padding: 10px;
 }
