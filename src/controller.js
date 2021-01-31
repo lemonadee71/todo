@@ -55,7 +55,6 @@ const getAllTasks = () => {
 const addProject = (projName) => {
   let newProject = new List(projName, 'project');
   allProjects.addItem(newProject);
-
   return newProject;
 };
 
@@ -63,14 +62,11 @@ const addTask = (task) => {
   let location = currentSelectedProj || uncategorizedTasks.id;
   let project = allProjects.getItem((proj) => proj.id === location);
   project.addItem(task);
-  console.log('Adding...', task.title, project.items);
 };
 
 const deleteTask = (task) => {
   let project = allProjects.getItem((proj) => proj.id === task.location);
-
   project.removeItems((item) => item.id === task.id);
-  console.log('Deleting...', task.title, project.items);
 };
 
 // const getDueToday = () => {
@@ -127,6 +123,9 @@ const renderTasks = (tasks) => {
 };
 
 const renderNoTasksMessage = () => {
+  clear($('#current-tasks'));
+  clear($('#completed-tasks'));
+
   $('#current-tasks').appendChild(
     Component.createElementFromString(`<h3>You don't have any tasks</h3>`)
   );
@@ -145,9 +144,8 @@ const selectAllTasks = () => {
 const createNewProject = (e) => {
   e.preventDefault();
   let newProject = addProject($('#new-proj').value);
-  let { id, listName: name } = newProject;
 
-  $('#user-proj').appendChild(ProjectListItem({ id, name }, selectProject));
+  $('#user-proj').appendChild(ProjectListItem(newProject, selectProject));
   e.target.reset();
 };
 
