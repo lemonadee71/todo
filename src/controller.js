@@ -22,8 +22,8 @@ For each label element, add click event
 If checked, remove label, otherwise add it
 */
 
-const uncategorizedTasks = List('uncategorized', 'project');
-const allProjects = List('all', 'root', [uncategorizedTasks]);
+const uncategorizedTasks = new List('uncategorized', 'project');
+const allProjects = new List('all', 'root', [uncategorizedTasks]);
 
 let currentSelectedProj = uncategorizedTasks.id;
 
@@ -53,7 +53,7 @@ const getAllTasks = () => {
 };
 
 const addProject = (projName) => {
-  let newProject = List(projName, 'project');
+  let newProject = new List(projName, 'project');
   allProjects.addItem(newProject);
 
   return newProject;
@@ -67,10 +67,7 @@ const addTask = (task) => {
 };
 
 const deleteTask = (task) => {
-  let location = currentSelectedProj || uncategorizedTasks.id;
-  let project = allProjects.getItem(
-    (proj) => proj.id === task.location
-  );
+  let project = allProjects.getItem((proj) => proj.id === task.location);
 
   project.removeItems((item) => item.id === task.id);
   console.log('Deleting...', task.title, project.items);
@@ -131,9 +128,7 @@ const renderTasks = (tasks) => {
 
 const renderNoTasksMessage = () => {
   $('#current-tasks').appendChild(
-    Component.createElementFromString(
-      `<h3>You don't have any tasks</h3>`
-    )
+    Component.createElementFromString(`<h3>You don't have any tasks</h3>`)
   );
 };
 
@@ -152,9 +147,7 @@ const createNewProject = (e) => {
   let newProject = addProject($('#new-proj').value);
   let { id, listName: name } = newProject;
 
-  $('#user-proj').appendChild(
-    ProjectListItem({ id, name }, selectProject)
-  );
+  $('#user-proj').appendChild(ProjectListItem({ id, name }, selectProject));
   e.target.reset();
 };
 
@@ -167,9 +160,7 @@ const createNewTask = (e) => {
 
   let task = new Task({ title, desc, dueDate, location });
   addTask(task);
-  $('#current-tasks').appendChild(
-    createTaskCard({ task, deleteTask })
-  );
+  $('#current-tasks').appendChild(createTaskCard({ task, deleteTask }));
   closeModal(e);
 };
 

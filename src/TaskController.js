@@ -16,7 +16,12 @@ const createTaskCard = ({ task, editTask, deleteTask }) => {
   };
 
   const toggleCheckmark = (e) => {
-    e.target.classList.toggle('checked');
+    if (e.target.matches('div.check')) {
+      e.target.classList.toggle('checked');
+    } else if (e.target.matches('.checkmark')) {
+      e.target.parentElement.classList.toggle('checked');
+    }
+
     e.stopPropagation();
 
     let done = task.toggleComplete();

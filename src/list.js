@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 class List {
-  constructor(name, type, defaultItems) {
+  constructor(name, type, defaultItems = []) {
     this.items = [...defaultItems];
     this.length = this.items.length || 0;
     this.type = type;
