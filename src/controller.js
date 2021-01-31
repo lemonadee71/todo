@@ -4,9 +4,10 @@ import $, {
   clear,
   changeModalContent,
   show,
+  closeModal,
 } from './helpers/helpers';
-import { createTaskCard } from './TaskController';
-import Component from './component';
+import { createTaskCard } from './taskController';
+import Component from './helpers/component';
 import ProjectListItem from './components/ProjectListItem';
 import Task from './Task.js';
 import CreateTaskForm from './components/CreateTaskForm.js';
@@ -46,6 +47,11 @@ const getProjectTasks = (id) => {
   return allProjects.getItem((proj) => proj.id === id).items;
 };
 
+const getAllTasks = () => {
+  currentSelectedProj = '';
+  return [...allProjects.items].map((proj) => proj.items).flat();
+};
+
 const addProject = (projName) => {
   let newProject = List(projName, 'project');
   allProjects.addItem(newProject);
@@ -54,20 +60,20 @@ const addProject = (projName) => {
 };
 
 const addTask = (task) => {
-  allProjects
-    .getItem((proj) => proj.id === currentSelectedProj)
-    .addItem(task);
+  let location = currentSelectedProj || uncategorizedTasks.id;
+  let project = allProjects.getItem((proj) => proj.id === location);
+  project.addItem(task);
+  console.log('Adding...', task.title, project.items);
 };
 
 const deleteTask = (task) => {
-  allProjects
-    .getItem((proj) => proj.id === task.location)
-    .removeItems((item) => item.id === task.id);
-};
+  let location = currentSelectedProj || uncategorizedTasks.id;
+  let project = allProjects.getItem(
+    (proj) => proj.id === task.location
+  );
 
-const getAllTasks = () => {
-  currentSelectedProj = uncategorizedTasks.id;
-  return [...allProjects.items].map((proj) => proj.items).flat();
+  project.removeItems((item) => item.id === task.id);
+  console.log('Deleting...', task.title, project.items);
 };
 
 // const getDueToday = () => {
@@ -116,10 +122,10 @@ const renderTasks = (tasks) => {
   let [current, completed] = segregateTasks(tasks);
 
   currentTasks.append(
-    ...current.map((task) => createTaskCard(task, { deleteTask }))
+    ...current.map((task) => createTaskCard({ task, deleteTask }))
   );
   completedTasks.append(
-    ...completed.map((task) => createTaskCard(task, { deleteTask }))
+    ...completed.map((task) => createTaskCard({ task, deleteTask }))
   );
 };
 
@@ -154,18 +160,20 @@ const createNewProject = (e) => {
 
 const createNewTask = (e) => {
   e.preventDefault();
-  let title = $('--d id=new-task-name').value;
-  let desc = $('--d id=new-task-desc').value;
-  let dueDate = $('--d id=new-task-date').value;
+  let title = $('--data-id=new-task-name').value;
+  let desc = $('--data-id=new-task-desc').value;
+  let dueDate = $('--data-id=new-task-date').value;
+  let location = currentSelectedProj || uncategorizedTasks.id;
 
-  let task = new Task({ title, desc, dueDate });
+  let task = new Task({ title, desc, dueDate, location });
   addTask(task);
   $('#current-tasks').appendChild(
-    createTaskCard(task, { deleteTask })
+    createTaskCard({ task, deleteTask })
   );
+  closeModal(e);
 };
 
-const showForm = () => {
+const showCreateTaskForm = () => {
   changeModalContent(
     Component.render(CreateTaskForm({ onSubmit: createNewTask }))
   );
@@ -173,7 +181,7 @@ const showForm = () => {
 };
 
 export {
-  showForm,
+  showCreateTaskForm,
   createNewProject,
   selectProject,
   selectAllTasks,

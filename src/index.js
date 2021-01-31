@@ -1,4 +1,4 @@
-import Component from './component';
+import Component from './helpers/component';
 import MainContent from './components/MainContent';
 import Sidebar from './components/Sidebar';
 import $ from './helpers/helpers';
@@ -7,8 +7,8 @@ import {
   selectProject,
   selectAllTasks,
   getProjectsDetails,
-  showForm,
-} from './ProjectController';
+  showCreateTaskForm,
+} from './controller';
 
 import { compareAsc, format } from 'date-fns';
 
@@ -46,7 +46,7 @@ const App = () => {
         getAllTasks: selectAllTasks,
         projects: getProjectsDetails(),
       })}
-      ${MainContent({ addTask: showForm })}
+      ${MainContent({ onAddBtnClick: showCreateTaskForm })}
       <footer>
         <div>
           Icons made by

@@ -195,11 +195,10 @@ const Component = (() => {
     });
 
     children.forEach((child) => {
-      let el = child.element;
       let placeholder = createdElement.querySelector(child.query);
       let parent = placeholder.parentElement;
 
-      parent.appendChild(el);
+      parent.appendChild(child.element);
       placeholder.remove();
     });
 

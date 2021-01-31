@@ -1,4 +1,4 @@
-import Component from '../component';
+import Component from '../helpers/component';
 import Icons from './Icons';
 
 const TaskModal = () => {

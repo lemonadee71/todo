@@ -1,4 +1,4 @@
-import Component from '../component';
+import Component from '../helpers/component';
 
 const ProjectListItem = (proj, clickHandler) => {
   return Component.createElementFromObject({

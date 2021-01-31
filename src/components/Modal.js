@@ -1,13 +1,7 @@
-import Component from '../component';
-import $, { clear, hide } from '../helpers/helpers';
+import Component from '../helpers/component';
+import $, { closeModal } from '../helpers/helpers';
 
 const Modal = () => {
-  const closeModal = (e) => {
-    hide($('.modal-backdrop'));
-    clear($('#modal-content'));
-    e.stopPropagation();
-  };
-
   return Component.parseString`
   <div class="modal-backdrop">
     <div id="modal">

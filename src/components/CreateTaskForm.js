@@ -1,4 +1,4 @@
-import Component from '../component.js';
+import Component from '../helpers/component.js';
 
 const CreateTaskForm = ({ onSubmit }) => {
   return Component.parseString`
@@ -8,6 +8,7 @@ const CreateTaskForm = ({ onSubmit }) => {
       name="task name"
       data-id="new-task-name"
       placeholder="New Task"
+      required
     />
     <br />
 

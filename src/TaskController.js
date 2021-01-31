@@ -1,18 +1,14 @@
-import Component from './component';
+import Component from './helpers/component';
 import TaskCard from './components/TaskCard';
 import Task from './Task';
 import $ from './helpers/helpers';
+import { selectAllTasks } from './controller';
 //         type: 'div',
 //         text: format(task.dueDate, 'E..EEE, MMM dd'),
 //       },
 
-const createNewTask = (details, { deleteTask }) => {
-  let newTask = new Task(details);
-  return createTaskCard(newTask, { deleteTask });
-};
-
-const createTaskCard = (task, { deleteTask }) => {
-  const editTask = () => {};
+const createTaskCard = ({ task, editTask, deleteTask }) => {
+  const onEdit = () => {};
 
   const onDelete = () => {
     deleteTask(task);
@@ -37,10 +33,13 @@ const createTaskCard = (task, { deleteTask }) => {
   return Component.render(
     TaskCard({
       onDelete,
-      toggleCheckmark,
+      onToggle: toggleCheckmark,
       id: task.id,
+      title: task.title,
+      desc: task.desc,
+      dueDate: task.dueDate,
     })
   );
 };
 
-export { createNewTask, createTaskCard };
+export { createTaskCard };

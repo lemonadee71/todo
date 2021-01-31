@@ -1,11 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 
 class Task {
-  constructor({ title, desc, dueDate }) {
+  constructor({ title, desc, dueDate, location }) {
     this.title = title || 'Unnamed Task';
     this.desc = desc || '';
     this.dueDate = dueDate || '';
     this.completed = false;
+    this.location = location;
     this.labels = [];
     this.subtasks = [];
     this.id = uuidv4();
@@ -14,10 +15,14 @@ class Task {
   /**
    * @param {string} newTitle
    */
+  get title() {
+    return this._title;
+  }
+
   set title(newTitle) {
-    // if (typeof newTitle !== 'string') {
-    //   throw new Error('Invalid type. Title must be string.');
-    // }
+    if (typeof newTitle !== 'string') {
+      throw new Error('Invalid type. Title must be string.');
+    }
 
     this._title = newTitle;
   }
@@ -25,25 +30,29 @@ class Task {
   /**
    * @param {string} newDesc
    */
+  get desc() {
+    return this._desc;
+  }
+
   set desc(newDesc) {
-    // if (typeof newDesc !== 'string') {
-    //   throw new Error('Invalid type. Desc must be string.');
-    // }
+    if (typeof newDesc !== 'string') {
+      throw new Error('Invalid type. Desc must be string.');
+    }
 
     this._desc = newDesc;
   }
 
   get dueDate() {
-    let [year, month, day] = this.dueDate.split('-');
+    let [year, month, day] = this._dueDate.split('-');
     month = +month - 1;
 
     return new Date(year, month, day);
   }
 
   set dueDate(newDueDate) {
-    // if (typeof newDueDate !== 'string') {
-    //   throw new Error('Invalid type. dueDate must be string.');
-    // }
+    if (typeof newDueDate !== 'string') {
+      throw new Error('Invalid type. dueDate must be string.');
+    }
 
     this._dueDate = newDueDate;
   }

@@ -1,4 +1,4 @@
-import Component from '../component.js';
+import Component from '../helpers/component.js';
 import ProjectListItem from './ProjectListItem.js';
 
 const Sidebar = ({

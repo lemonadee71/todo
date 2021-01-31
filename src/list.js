@@ -1,73 +1,47 @@
 import { v4 as uuidv4 } from 'uuid';
 
-const List = (name, type, defaultItems = []) => {
-  let items = [...defaultItems];
-  let length = 0;
-  let listType = type;
-  let listName = name;
-  let id = uuidv4();
+class List {
+  constructor(name, type, defaultItems) {
+    this.items = [...defaultItems];
+    this.length = this.items.length || 0;
+    this.type = type;
+    this.name = name;
+    this.id = uuidv4();
+  }
 
-  const addItem = (item) => {
+  getItem(condition) {
+    return this.items.find(condition);
+  }
+
+  addItem(item) {
     if (Array.isArray(item)) {
-      items.push(...item);
+      this.items.push(...item);
     } else {
-      items.push(item);
+      this.items.push(item);
     }
-    length = items.length;
-  };
+    this.length = this.items.length;
+  }
 
-  const getItem = (condition) => {
-    return items.find(condition);
-  };
+  removeItems(condition) {
+    this.items = this.items.filter((item) => !condition(item));
+    this.length = this.items.length;
+  }
 
-  const removeItems = (condition) => {
-    items = items.filter((item) => condition(item));
-    length = items.length;
-  };
+  removeAll() {
+    this.items = [];
+    this.length = 0;
+  }
 
-  const removeAll = () => {
-    items = [];
-    length = 0;
-  };
-
-  const sortItems = (condition) => {
-    items.sort((a, b) => {
+  sortItems(condition) {
+    this.items.sort((a, b) => {
       if (condition(a, b)) return 1;
       return -1;
     });
-  };
+  }
 
-  const filterItems = (condition) => {
-    return items.filter((item) => condition(item));
-  };
-
-  let listObj = {
-    id,
-    listName,
-    listType,
-    items,
-    addItem,
-    getItem,
-    removeItems,
-    removeAll,
-    sortItems,
-    filterItems,
-  };
-
-  Object.defineProperty(listObj, 'id', {
-    writable: false,
-  });
-  Object.defineProperty(listObj, 'listName', {
-    writable: false,
-  });
-  Object.defineProperty(listObj, 'listType', {
-    writable: false,
-  });
-  Object.defineProperty(listObj, 'items', {
-    writable: false,
-  });
-
-  return listObj;
-};
+  filterItems(condition) {
+    return this.items.filter(condition);
+  }
+}
 
 export default List;
