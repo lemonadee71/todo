@@ -40,5 +40,10 @@ const changeModalContent = (newContent) => {
   modalContent.appendChild(newContent);
 };
 
-export { clear, hide, show, closeModal, changeModalContent };
+const rerender = (el, newContent) => {
+  clear(el);
+  el.appendChild(newContent);
+};
+
+export { clear, hide, show, closeModal, changeModalContent, rerender };
 export default $;

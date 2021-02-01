@@ -1,13 +1,10 @@
 import Component from './helpers/component';
 import TaskCard from './components/TaskCard';
-import Task from './Task';
 import $, { changeModalContent, hide, show } from './helpers/helpers';
 import { getProjectsDetails, getCurrentSelectedProj } from './controller';
 import TaskModal from './components/TaskModal';
-//         type: 'div',
-//         text: format(task.dueDate, 'E..EEE, MMM dd'),
-//       },
 
+// TODO: change the selectors
 const createTaskCard = ({ task, deleteTask, transferTask }) => {
   // TaskModal Functions
   const updateTitle = (e) => {
@@ -15,8 +12,8 @@ const createTaskCard = ({ task, deleteTask, transferTask }) => {
     $(`--data-name=title-${task.id}`).textContent = task.title;
   };
 
-  const updateDesc = (e) => {
-    task.desc = e.target.value;
+  const updateDesc = () => {
+    task.desc = $('#edit-task-desc').value;
 
     let taskCardDesc = $(`--data-name=desc-${task.id}`);
     if (task.desc === '') {

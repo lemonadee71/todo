@@ -94,6 +94,21 @@ input[type='text'].dark:focus {
     brightness(102%) contrast(92%);
 }
 
+.hidden {
+  display: none;
+}
+
+.submit {
+  font-family: var(--font-face);
+  font-size: 18px;
+  padding: 5px 15px;
+  margin-top: 10px;
+  background-color: rgb(43, 116, 211);
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
 /** Header **/
 header {
   box-sizing: border-box;

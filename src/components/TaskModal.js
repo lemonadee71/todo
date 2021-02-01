@@ -1,7 +1,10 @@
 import Component from '../helpers/component';
-import $, { hide, show } from '../helpers/helpers';
+import $, { clear, hide, rerender, show } from '../helpers/helpers';
 import Icons from './Icons';
 import { format } from 'date-fns';
+import { Converter } from 'showdown';
+
+const textToMarkdownConverter = new Converter();
 
 const TaskModal = ({
   task,
@@ -11,7 +14,9 @@ const TaskModal = ({
   updateDesc,
   updateDueDate,
 }) => {
-  const allowEditing = (e) => {
+  const taskDesc = '--data-name=desc-area';
+
+  const allowEditing = () => {
     $('div.title input[name="title"]').removeAttribute('disabled');
     hide($('div.title button'));
   };
@@ -20,6 +25,34 @@ const TaskModal = ({
     show($('div.title button'));
     $('div.title input[name="title"]').setAttribute('disabled', '');
   };
+
+  const editDesc = () => {
+    $('--data-name=edit-desc-btn').classList.toggle('hidden');
+    rerender($(taskDesc), descTextArea());
+  };
+
+  const saveDesc = () => {
+    $('--data-name=edit-desc-btn').classList.toggle('hidden');
+    updateDesc();
+    rerender($(taskDesc), desc());
+  };
+
+  const descTextArea = () =>
+    Component.render(Component.parseString`
+      <textarea id="edit-task-desc" "name="desc">
+      ${task.desc}  
+      </textarea>
+      <button class="submit" type="submit" ${{ onClick: saveDesc }}>Save
+      </button>  
+  `);
+
+  const desc = () =>
+    Component.createElementFromObject({
+      type: 'div.markdown',
+      prop: {
+        innerHTML: textToMarkdownConverter.makeHtml(task.desc),
+      },
+    });
 
   return Component.render(Component.parseString`
     <div class="title">
@@ -38,6 +71,7 @@ const TaskModal = ({
     <div class="proj">
       <span>in Project</span>
       <select name="project-list" ${{ onChange: updateLocation }}>${
+    // not working
     projects.length
       ? projects.map((proj) =>
           Component.createElementFromObject({
@@ -63,11 +97,10 @@ const TaskModal = ({
         ${Icons('details')}
         <span>Description</span>
       </div>
-      <button>${Icons('edit')}</button>
-      <textarea name="desc" ${{
-        onKeydown: updateDesc,
-        onFocusout: updateDesc,
-      }}>${task.desc}</textarea>
+      <button data-name="edit-desc-btn" ${{ onClick: editDesc }}>${Icons(
+    'edit'
+  )}</button>
+      <div data-name="desc-area">${desc()}</div>
     </div>
     <div class="date">
       <div class="section-header">

@@ -22,7 +22,7 @@ const CreateTaskForm = ({ onSubmit }) => {
     <input type="date" data-id="new-task-date"/>
     <br />
     
-    <button type="submit">Submit</button>
+    <button class="submit" type="submit">Submit</button>
   </form>
   `;
 };
