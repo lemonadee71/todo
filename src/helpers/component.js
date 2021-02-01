@@ -1,8 +1,7 @@
 const Component = (() => {
   const _randNo = (seed) => Math.floor(Math.random() * seed);
 
-  const _generateID = () =>
-    `${_randNo(10)}${_randNo(10)}${_randNo(50)}`;
+  const _generateID = () => `${_randNo(10)}${_randNo(10)}${_randNo(50)}`;
 
   const _createArrayLikeObject = (arr, type) => {
     let arrayLikeObj = {};
@@ -34,9 +33,7 @@ const Component = (() => {
         _className.forEach((cls) => {
           _type = _type.replace(cls, '');
         });
-        className = _className
-          .map((cls) => cls.replace('.', ''))
-          .join(' ');
+        className = _className.map((cls) => cls.replace('.', '')).join(' ');
 
         return _type;
       } catch (error) {
@@ -176,14 +173,8 @@ const Component = (() => {
     return element;
   };
 
-  const createElementFromString = (
-    str,
-    handlers = [],
-    children = []
-  ) => {
-    let createdElement = document
-      .createRange()
-      .createContextualFragment(str);
+  const createElementFromString = (str, handlers = [], children = []) => {
+    let createdElement = document.createRange().createContextualFragment(str);
 
     handlers.forEach((handler) => {
       let el = createdElement.querySelector(handler.query);
@@ -247,10 +238,10 @@ const Component = (() => {
 
         children.push({
           element: expr,
-          query: `div[data-tempId="${temporaryId}"]`,
+          query: `div[data-tempid="${temporaryId}"]`,
         });
 
-        return `<div data-tempId="${temporaryId}"></div>`;
+        return `<div data-tempid="${temporaryId}"></div>`;
       } else if (typeof expr === 'object') {
         // if expr is array, map and parse each item
         // items must be all strings after parsing
@@ -268,9 +259,7 @@ const Component = (() => {
           // if Object and that object contains only keys which name is an event
           // generate a temporary id and replace the object with it
           // then add the event listeners to our eventHandlers
-        } else if (
-          Object.keys(expr).every((key) => key.includes('on'))
-        ) {
+        } else if (Object.keys(expr).every((key) => key.includes('on'))) {
           let callbacks = expr;
           let temporaryPlaceholder = '';
           let temporaryId = `${_generateID()}${_generateID()}`;
@@ -278,15 +267,14 @@ const Component = (() => {
           for (let type in callbacks) {
             eventHandlers.push({
               type: type.replace('on', '').toLowerCase(),
-              query: `[data-tempId="${temporaryId}"]`,
+              query: `[data-tempid="${temporaryId}"]`,
               callback: callbacks[type],
-              attr: 'data-tempId',
+              attr: 'data-tempid',
               remove: false,
             });
-
-            temporaryPlaceholder += `data-tempId="${temporaryId}"`;
           }
 
+          temporaryPlaceholder = `data-tempid="${temporaryId}"`;
           // This is to allow for multiple event handlers for one element
           eventHandlers[eventHandlers.length - 1].remove = true;
 
@@ -312,8 +300,7 @@ const Component = (() => {
     let evaluatedExprs = exprs.map((expr) => _parser(expr));
 
     let parsedString = evaluatedExprs.reduce(
-      (fullString, expr, i) =>
-        (fullString += `${expr}${strings[i + 1]}`),
+      (fullString, expr, i) => (fullString += `${expr}${strings[i + 1]}`),
       strings[0]
     );
 
@@ -324,9 +311,7 @@ const Component = (() => {
   };
 
   const render = (arrayLikeObj) => {
-    return Component.createElementFromString(
-      ...Array.from(arrayLikeObj)
-    );
+    return Component.createElementFromString(...Array.from(arrayLikeObj));
   };
 
   return {

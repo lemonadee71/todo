@@ -1,14 +1,68 @@
 import Component from './helpers/component';
 import TaskCard from './components/TaskCard';
 import Task from './Task';
-import $ from './helpers/helpers';
-import { selectAllTasks } from './controller';
+import $, { changeModalContent, hide, show } from './helpers/helpers';
+import { getProjectsDetails, getCurrentSelectedProj } from './controller';
+import TaskModal from './components/TaskModal';
 //         type: 'div',
 //         text: format(task.dueDate, 'E..EEE, MMM dd'),
 //       },
 
-const createTaskCard = ({ task, editTask, deleteTask }) => {
-  const onEdit = () => {};
+const createTaskCard = ({ task, deleteTask, transferTask }) => {
+  // TaskModal Functions
+  const updateTitle = (e) => {
+    task.title = e.target.value;
+    $(`--data-name=title-${task.id}`).textContent = task.title;
+  };
+
+  const updateDesc = (e) => {
+    task.desc = e.target.value;
+
+    let taskCardDesc = $(`--data-name=desc-${task.id}`);
+    if (task.desc === '') {
+      hide(taskCardDesc);
+    } else {
+      show(taskCardDesc);
+    }
+  };
+
+  const updateDueDate = (e) => {
+    task.dueDate = e.target.value;
+
+    let taskCardDate = $(`--data-name=date-${task.id}`);
+    if (task.dueDate === '') {
+      hide(taskCardDate);
+    } else {
+      // Needs rerender to show
+      show(taskCardDate);
+    }
+  };
+
+  const changeTaskLocation = () => {
+    task.location = $('proj select[name="project-list"]').value;
+    transferTask(task.id, task.location);
+
+    let currentLocation = getCurrentSelectedProj();
+
+    if (currentLocation) {
+      $(`#${task.id}`).remove();
+    }
+  };
+
+  // TaskCard functions
+  const onEdit = () => {
+    changeModalContent(
+      TaskModal({
+        task,
+        updateTitle,
+        updateDesc,
+        updateDueDate,
+        updateLocation: changeTaskLocation,
+        projects: getProjectsDetails(),
+      })
+    );
+    show($('.modal-backdrop'));
+  };
 
   const onDelete = () => {
     deleteTask(task);
@@ -39,6 +93,7 @@ const createTaskCard = ({ task, editTask, deleteTask }) => {
     TaskCard({
       task,
       onDelete,
+      onEdit,
       onToggle: toggleCheckmark,
     })
   );

@@ -8,7 +8,7 @@ const TaskCard = ({ task, onEdit, onDelete, onToggle }) => {
   return Component.parseString`
   <div id="${id}" class="task ${completed ? 'completed' : ''}" draggable="true">
     <div class="actions"> 
-      <button>${Icons('edit')}</button>
+      <button ${{ onClick: onEdit }}>${Icons('edit')}</button>
       <button ${{ onClick: onDelete }}>${Icons('delete')}</button>
     </div>
     <div class="checkbox">
@@ -18,9 +18,16 @@ const TaskCard = ({ task, onEdit, onDelete, onToggle }) => {
     </div>
     <div class="brief-content">
       <div class="label-chips"></div>
-      <p>${title}</p>
+      <p data-name="title-${task.id}">${title}</p>
       <div class="badges">
-        ${desc ? Icons('details') : ''}
+        <span data-name="desc-${task.id}" ${
+    !desc ? 'style="display: none;"' : ''
+  }>
+        ${Icons('details')}
+        </span>
+        <span data-name="date-${task.id}" ${
+    !dueDate ? 'style="display: none;"' : ''
+  }>
         ${
           dueDate
             ? `${Icons('calendar')} <span>Due ${format(
@@ -29,6 +36,7 @@ const TaskCard = ({ task, onEdit, onDelete, onToggle }) => {
               )}</span>`
             : ''
         }
+        </span>        
       </div>
     </div>
   </div>  

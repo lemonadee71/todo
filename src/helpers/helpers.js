@@ -2,8 +2,9 @@ const $ = (query) => {
   let isId = query.includes('#');
   let isAll = query.includes('--g');
   let isDataAttr = query.includes('--data');
+  let isDescendantSelector = query.includes(' ');
 
-  if (isId) {
+  if (isId && !isDescendantSelector) {
     return document.getElementById(query.replace('#', ''));
   } else if (isAll) {
     return document.querySelectorAll(query.replace('--all', ''));
@@ -27,10 +28,10 @@ const show = (element) => {
   element.style.display = 'block';
 };
 
-const closeModal = (e) => {
+const closeModal = () => {
   hide($('.modal-backdrop'));
   clear($('#modal-content'));
-  e.stopPropagation();
+  //e.stopPropagation();
 };
 
 const changeModalContent = (newContent) => {

@@ -34,10 +34,15 @@ const segregateTasks = (tasks) => {
   ];
 };
 
+const getCurrentSelectedProj = () => currentSelectedProj;
+
 const transferTask = (id, target) => {
-  task = allProjects
-    .getItem((proj) => proj.id === currentSelectedProj)
-    .getItem((task) => task.id === id);
+  let currentProject = currentSelectedProj || uncategorizedTasks.id;
+
+  let prevProject = allProjects.getItem((proj) => proj.id === currentProject);
+  let task = prevProject.getItem((task) => task.id === id);
+
+  prevProject.removeItems((task) => task.id === id);
 
   allProjects.getItem((proj) => proj.id === target).addItem(task);
 };
@@ -115,10 +120,12 @@ const renderTasks = (tasks) => {
   let [current, completed] = segregateTasks(tasks);
 
   currentTasks.append(
-    ...current.map((task) => createTaskCard({ task, deleteTask }))
+    ...current.map((task) => createTaskCard({ task, deleteTask, transferTask }))
   );
   completedTasks.append(
-    ...completed.map((task) => createTaskCard({ task, deleteTask }))
+    ...completed.map((task) =>
+      createTaskCard({ task, deleteTask, transferTask })
+    )
   );
 };
 
@@ -149,6 +156,12 @@ const createNewProject = (e) => {
   e.target.reset();
 };
 
+const destroyForm = () => {
+  // Crude implementation for now
+  $('#create-task').removeEventListener('submit', createNewTask);
+  closeModal();
+};
+
 const createNewTask = (e) => {
   e.preventDefault();
   let title = $('--data-id=new-task-name').value;
@@ -158,8 +171,11 @@ const createNewTask = (e) => {
 
   let task = new Task({ title, desc, dueDate, location });
   addTask(task);
-  $('#current-tasks').appendChild(createTaskCard({ task, deleteTask }));
-  closeModal(e);
+  $('#current-tasks').appendChild(
+    createTaskCard({ task, deleteTask, transferTask })
+  );
+
+  destroyForm();
 };
 
 const showCreateTaskForm = () => {
@@ -175,4 +191,5 @@ export {
   selectProject,
   selectAllTasks,
   getProjectsDetails,
+  getCurrentSelectedProj,
 };
