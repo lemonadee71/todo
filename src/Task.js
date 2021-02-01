@@ -43,10 +43,14 @@ class Task {
   }
 
   get dueDate() {
-    let [year, month, day] = this._dueDate.split('-');
-    month = +month - 1;
+    if (this._dueDate) {
+      let [year, month, day] = this._dueDate.split('-');
+      month = +month - 1;
 
-    return new Date(year, month, day);
+      return new Date(year, month, day);
+    }
+
+    return null;
   }
 
   set dueDate(newDueDate) {
@@ -84,9 +88,7 @@ class Task {
   }
 
   removeSubtask(id) {
-    this.subtasks = this.subtasks.filter(
-      (subtask) => subtask.id !== id
-    );
+    this.subtasks = this.subtasks.filter((subtask) => subtask.id !== id);
   }
 
   removeAllSubtasks() {

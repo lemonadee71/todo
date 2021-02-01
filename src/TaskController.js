@@ -24,11 +24,11 @@ const createTaskCard = ({ task, editTask, deleteTask }) => {
 
     e.stopPropagation();
 
-    let done = task.toggleComplete();
+    let isDone = task.toggleComplete();
     let taskCard = $(`#${task.id}`);
     taskCard.classList.toggle('completed');
 
-    if (done) {
+    if (isDone) {
       $('#completed-tasks').appendChild(taskCard);
     } else {
       $('#current-tasks').appendChild(taskCard);
@@ -37,12 +37,9 @@ const createTaskCard = ({ task, editTask, deleteTask }) => {
 
   return Component.render(
     TaskCard({
+      task,
       onDelete,
       onToggle: toggleCheckmark,
-      id: task.id,
-      title: task.title,
-      desc: task.desc,
-      dueDate: task.dueDate,
     })
   );
 };
