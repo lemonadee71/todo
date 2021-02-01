@@ -259,6 +259,20 @@ main {
 .task p {
   margin: 10px 0;
   font-size: 25px;
+  transition: text-decoration 0.5s;
+}
+
+.task.completed {
+  background-color: rgb(212, 202, 202);
+  opacity: 0.7;
+}
+
+.task.completed .actions {
+  background-color: transparent;
+}
+
+.task.completed p {
+  text-decoration: line-through;
 }
 
 .checkbox {
