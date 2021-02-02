@@ -1,3 +1,5 @@
+import { childAddedEvent, childRemovedEvent } from './customEvents';
+
 const $ = (query) => {
   let isId = query.includes('#');
   let isAll = query.includes('--g');
@@ -45,5 +47,37 @@ const rerender = (el, newContent) => {
   el.appendChild(newContent);
 };
 
-export { clear, hide, show, closeModal, changeModalContent, rerender };
+const append = (child) => {
+  return {
+    to: (parent) => {
+      parent.appendChild(child);
+      parent.dispatchEvent(childAddedEvent);
+    },
+  };
+};
+
+const remove = (child, self = false) => {
+  if (self) {
+    child.dispatchEvent(childRemovedEvent);
+    child.remove();
+  } else {
+    return {
+      from: (parent) => {
+        parent.removeChild(child);
+        parent.dispatchEvent(childRemovedEvent);
+      },
+    };
+  }
+};
+
+export {
+  clear,
+  hide,
+  show,
+  closeModal,
+  changeModalContent,
+  rerender,
+  append,
+  remove,
+};
 export default $;

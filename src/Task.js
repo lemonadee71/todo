@@ -9,7 +9,7 @@ class Task {
     this.location = location;
     this.labels = [];
     this.subtasks = [];
-    this.id = uuidv4();
+    this.id = `task-${Math.random()}`.replace(/0./, '');
   }
 
   /**

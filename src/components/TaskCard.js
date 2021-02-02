@@ -12,30 +12,27 @@ const TaskCard = ({ task, onEdit, onDelete, onToggle }) => {
       <button ${{ onClick: onDelete }}>${Icons('delete')}</button>
     </div>
     <div class="checkbox">
-      <div ${{
-        onClick: onToggle,
-      }} class="check ${completed ? 'checked' : ''}">${Icons('checkmark')}</div>
+      <div class="check ${completed ? 'checked' : ''}" 
+      ${{ onClick: onToggle }}>
+      ${Icons('checkmark')}
+      </div>
     </div>
     <div class="brief-content">
       <div class="label-chips"></div>
-      <p data-name="title-${task.id}">${title}</p>
+      <p data-name="task-card-title">${title}</p>
       <div class="badges">
-        <span data-name="desc-${task.id}" ${
-    !desc ? 'style="display: none;"' : ''
-  }>
+        <span data-name="task-card-desc" 
+        ${!desc ? 'style="display: none;"' : ''}>
         ${Icons('details')}
         </span>
-        <span data-name="date-${task.id}" ${
-    !dueDate ? 'style="display: none;"' : ''
-  }>
-        ${
-          dueDate
-            ? `${Icons('calendar')} <span>Due ${format(
-                dueDate,
-                'E, MMM dd'
-              )}</span>`
-            : ''
-        }
+        <span data-name="task-card-date">
+          <span data-name="task-card-date-icon"
+          ${!dueDate ? 'style="display: none;"' : ''}>
+          ${Icons('calendar')}
+          </span>
+          <span data-name="task-card-date-text">
+          ${dueDate ? `Due ${format(dueDate, 'E, MMM dd')}` : ''}
+          </span>
         </span>        
       </div>
     </div>

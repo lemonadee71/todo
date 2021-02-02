@@ -5,12 +5,22 @@ import $, {
   changeModalContent,
   show,
   closeModal,
+  append,
 } from './helpers/helpers';
 import { createTaskCard } from './taskController';
 import Component from './helpers/component';
 import ProjectListItem from './components/ProjectListItem';
 import Task from './Task.js';
 import CreateTaskForm from './components/CreateTaskForm.js';
+import {
+  completedTasks,
+  currentTasks,
+  modal,
+  newTaskFormDesc,
+  newTaskFormDueDate,
+  newTaskFormTitle,
+} from './helpers/selectors.js';
+import NoTasksMessage from './components/NoTasksMessage.js';
 
 // Work on displaying tasks in a selected project
 // Add a function that process drop events
@@ -111,31 +121,34 @@ const getProjectsDetails = () => {
 };
 
 const renderTasks = (tasks) => {
-  let currentTasks = $('#current-tasks');
-  let completedTasks = $('#completed-tasks');
+  let currentTasksList = $(currentTasks);
+  let completedTasksList = $(completedTasks);
 
-  clear(currentTasks);
-  clear(completedTasks);
+  clear(currentTasksList);
+  clear(completedTasksList);
 
   let [current, completed] = segregateTasks(tasks);
 
-  currentTasks.append(
-    ...current.map((task) => createTaskCard({ task, deleteTask, transferTask }))
-  );
-  completedTasks.append(
-    ...completed.map((task) =>
-      createTaskCard({ task, deleteTask, transferTask })
-    )
-  );
+  current.map((task) => {
+    let taskCard = createTaskCard({ task, deleteTask, transferTask });
+    append(taskCard).to(currentTasksList);
+  });
+  completed.map((task) => {
+    let taskCard = createTaskCard({ task, deleteTask, transferTask });
+    append(taskCard).to(completedTasksList);
+  });
+  // currentTasksList.append(
+  //   ...current.map((task) => createTaskCard({ task, deleteTask, transferTask }))
+  // );
+  // completedTasksList.append(
+  //   ...completed.map((task) =>
+  //     createTaskCard({ task, deleteTask, transferTask })
+  //   )
+  // );
 };
 
 const renderNoTasksMessage = () => {
-  clear($('#current-tasks'));
-  clear($('#completed-tasks'));
-
-  $('#current-tasks').appendChild(
-    Component.createElementFromString(`<h3>You don't have any tasks</h3>`)
-  );
+  $(currentTasks).appendChild(NoTasksMessage());
 };
 
 const selectProject = (id) => {
@@ -164,17 +177,17 @@ const destroyForm = () => {
 
 const createNewTask = (e) => {
   e.preventDefault();
-  let title = $('--data-id=new-task-name').value;
-  let desc = $('--data-id=new-task-desc').value;
-  let dueDate = $('--data-id=new-task-date').value;
+  let title = $(newTaskFormTitle).value;
+  let desc = $(newTaskFormDesc).value;
+  let dueDate = $(newTaskFormDueDate).value;
   let location = currentSelectedProj || uncategorizedTasks.id;
 
   let task = new Task({ title, desc, dueDate, location });
-  addTask(task);
-  $('#current-tasks').appendChild(
-    createTaskCard({ task, deleteTask, transferTask })
-  );
 
+  addTask(task);
+  append(createTaskCard({ task, deleteTask, transferTask })).to(
+    $(currentTasks)
+  );
   destroyForm();
 };
 
@@ -182,7 +195,7 @@ const showCreateTaskForm = () => {
   changeModalContent(
     Component.render(CreateTaskForm({ onSubmit: createNewTask }))
   );
-  show($('.modal-backdrop'));
+  show($(modal));
 };
 
 export {

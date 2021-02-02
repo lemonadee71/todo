@@ -4,7 +4,25 @@ import Icons from './Icons';
 import { format } from 'date-fns';
 import { Converter } from 'showdown';
 
-const textToMarkdownConverter = new Converter();
+const options = {
+  omitExtraWLInCodeBlocks: true,
+  noHeaderId: true,
+  ghCompatibleHeaderId: true,
+  headerLevelStart: 2,
+  parseImgDimensions: true,
+  strikethrough: true,
+  tables: true,
+  ghCodeBlocks: true,
+  tasklists: true,
+  smartIndentationFix: true,
+  simpleLineBreaks: true,
+  openLinksInNewWindow: true,
+  backslashEscapesHTMLTags: true,
+  emoji: true,
+};
+
+const textToMarkdownConverter = new Converter(options);
+textToMarkdownConverter.setFlavor('github');
 
 const TaskModal = ({
   task,
@@ -34,7 +52,7 @@ const TaskModal = ({
   const saveDesc = () => {
     $('--data-name=edit-desc-btn').classList.toggle('hidden');
     updateDesc();
-    rerender($(taskDesc), desc());
+    rerender($(taskDesc), descriptionPreview());
   };
 
   const descTextArea = () =>
@@ -44,7 +62,7 @@ const TaskModal = ({
       </button>  
   `);
 
-  const desc = () =>
+  const descriptionPreview = () =>
     Component.createElementFromObject({
       type: 'div',
       className: 'markdown-body',
@@ -52,6 +70,18 @@ const TaskModal = ({
         innerHTML: textToMarkdownConverter.makeHtml(task.desc),
       },
     });
+
+  // projects.length
+  // ? projects.map((proj) =>
+  //     Component.createElementFromObject({
+  //       type: 'option',
+  //       text: proj.name,
+  //       attr: {
+  //         value: proj.id,
+  //       },
+  //     })
+  //   )
+  // : ''
 
   return Component.render(Component.parseString`
     <div class="title">
@@ -69,20 +99,8 @@ const TaskModal = ({
     </div>
     <div class="proj">
       <span>in Project</span>
-      <select name="project-list" ${{ onChange: updateLocation }}>${
-    // not working
-    projects.length
-      ? projects.map((proj) =>
-          Component.createElementFromObject({
-            type: 'option',
-            text: proj.name,
-            attr: {
-              value: proj.id,
-            },
-          })
-        )
-      : ''
-  }</select>
+      <select name="project-list" ${{ onChange: updateLocation }}>
+      </select>
     </div>
     <div class="labels">
       <div class="section-header">
@@ -96,19 +114,22 @@ const TaskModal = ({
         ${Icons('details')}
         <span>Description</span>
       </div>
-      <button data-name="edit-desc-btn" ${{ onClick: editDesc }}>${Icons(
-    'edit'
-  )}</button>
-      <div data-name="desc-area">${desc()}</div>
+      <button data-name="edit-desc-btn" ${{ onClick: editDesc }}>
+        ${Icons('edit')}
+      </button>
+      <div data-name="desc-area">${descriptionPreview()}</div>
     </div>
     <div class="date">
       <div class="section-header">
         ${Icons('calendar')}
         <span>Due Date</span>
       </div>
-      <input type="date" name="dueDate" ${
-        task.dueDate ? `value="${format(task.dueDate, 'yyyy-MM-dd')}"` : ''
-      } ${{ onChange: updateDueDate }}/>
+      <input 
+        type="date" 
+        name="due-date" 
+        ${task.dueDate ? `value="${format(task.dueDate, 'yyyy-MM-dd')}"` : ''} 
+        ${{ onChange: updateDueDate }}
+      />
     </div>
   `);
 };

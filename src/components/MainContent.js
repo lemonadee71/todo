@@ -1,6 +1,8 @@
 import Component from '../helpers/component';
 import Modal from './Modal';
 import $, { hide, show } from '../helpers/helpers';
+import { currentTasks } from '../helpers/selectors';
+import NoTasksMessage from './NoTasksMessage';
 
 const MainContent = ({ onAddBtnClick }) => {
   const showCompleted = (e) => {
@@ -8,6 +10,22 @@ const MainContent = ({ onAddBtnClick }) => {
       show($('#completed-tasks'));
     } else {
       hide($('#completed-tasks'));
+    }
+  };
+
+  const checkNoOfTasks = () => {
+    let hasActiveTasks = $(currentTasks).children.length;
+    let noTasks = $('#no-tasks');
+    // console.log([...$(currentTasks).children]);
+    // console.log(hasActiveTasks);
+    if (hasActiveTasks) {
+      if (noTasks) {
+        $(currentTasks).removeChild($('#no-tasks'));
+      }
+    } else {
+      if (!noTasks) {
+        $(currentTasks).appendChild(NoTasksMessage());
+      }
     }
   };
 
@@ -20,7 +38,10 @@ const MainContent = ({ onAddBtnClick }) => {
         onChange: showCompleted,
       }}/>
     </div>
-    <div id="tasks-list">
+    <div id="tasks-list" ${{
+      onChildRemoved: checkNoOfTasks,
+      onChildAdded: checkNoOfTasks,
+    }}>
       <div id="current-tasks"></div>
       <div id="completed-tasks" style="display: none;"></div>
     </div>

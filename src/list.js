@@ -6,7 +6,7 @@ class List {
     this.length = this.items.length || 0;
     this.type = type;
     this.name = name;
-    this.id = uuidv4();
+    this.id = `list-${Math.random()}`.replace(/0./, '');
   }
 
   getItem(condition) {

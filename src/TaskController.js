@@ -1,21 +1,29 @@
 import Component from './helpers/component';
 import TaskCard from './components/TaskCard';
-import $, { changeModalContent, hide, show } from './helpers/helpers';
+import $, { changeModalContent, hide, remove, show } from './helpers/helpers';
 import { getProjectsDetails, getCurrentSelectedProj } from './controller';
 import TaskModal from './components/TaskModal';
+import {
+  completedTasks,
+  currentTasks,
+  taskCardDescription,
+  taskCardDueDateText,
+  taskCardTitle,
+} from './helpers/selectors';
+import { format } from 'date-fns';
 
 // TODO: change the selectors
 const createTaskCard = ({ task, deleteTask, transferTask }) => {
   // TaskModal Functions
   const updateTitle = (e) => {
     task.title = e.target.value;
-    $(`--data-name=title-${task.id}`).textContent = task.title;
+    $(taskCardTitle(task.id)).textContent = task.title;
   };
 
   const updateDesc = () => {
     task.desc = $('#edit-task-desc').value;
 
-    let taskCardDesc = $(`--data-name=desc-${task.id}`);
+    let taskCardDesc = $(taskCardDescription(task.id));
     if (task.desc === '') {
       hide(taskCardDesc);
     } else {
@@ -26,12 +34,15 @@ const createTaskCard = ({ task, deleteTask, transferTask }) => {
   const updateDueDate = (e) => {
     task.dueDate = e.target.value;
 
-    let taskCardDate = $(`--data-name=date-${task.id}`);
+    let dueDateIcon = $(taskCardDueDateIcon(task.id));
+    let dueDateText = $(taskCardDueDateText(task.id));
+
     if (task.dueDate === '') {
-      hide(taskCardDate);
+      hide(dueDateIcon);
+      dueDateText.textContent = '';
     } else {
-      // Needs rerender to show
-      show(taskCardDate);
+      show(dueDateIcon);
+      dueDateText.textContent = format(task.dueDate, 'E, MMM dd');
     }
   };
 
@@ -63,7 +74,8 @@ const createTaskCard = ({ task, deleteTask, transferTask }) => {
 
   const onDelete = () => {
     deleteTask(task);
-    $(`#${task.id}`).remove();
+    let list = task.completed ? completedTasks : currentTasks;
+    remove($(`#${task.id}`)).from($(list));
   };
 
   const toggleCheckmark = (e) => {
@@ -80,9 +92,9 @@ const createTaskCard = ({ task, deleteTask, transferTask }) => {
     taskCard.classList.toggle('completed');
 
     if (isDone) {
-      $('#completed-tasks').appendChild(taskCard);
+      $(completedTasks).appendChild(taskCard);
     } else {
-      $('#current-tasks').appendChild(taskCard);
+      $(currentTasks).appendChild(taskCard);
     }
   };
 
