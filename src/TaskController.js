@@ -21,7 +21,7 @@ import {
 import { format } from 'date-fns';
 
 // TODO: change the selectors
-const createTaskCard = ({ task, deleteTask, transferTask }) => {
+const createTaskItem = ({ task, deleteTask, transferTask }) => {
   // TaskModal Functions
   const _updateTaskDetails = (prop, value) => {
     task[prop] = value;
@@ -117,4 +117,4 @@ const createTaskCard = ({ task, deleteTask, transferTask }) => {
   );
 };
 
-export { createTaskCard };
+export { createTaskItem };

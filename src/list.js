@@ -20,6 +20,11 @@ class List {
     this.length = this.items.length;
   }
 
+  // This can cause bugs
+  // getItem only gets the first item that matches the condition
+  // but removeItems will remove all that matches the condition
+  // only use this when extracting a single item
+  // use filterItems to extract multiple items
   extractItem(condition) {
     let item = this.getItem(condition);
     this.removeItems(condition);

@@ -9,7 +9,7 @@ import $, {
   remove,
   clearTasks,
 } from './helpers/helpers';
-import { createTaskCard } from './taskController';
+import { createTaskItem } from './taskController';
 import Component from './helpers/component';
 import ProjectListItem from './components/ProjectListItem';
 import Task from './Task.js';
@@ -138,11 +138,11 @@ const _renderTasks = (tasks) => {
   let [current, completed] = _segregateTasks(tasks);
 
   current.map((task) => {
-    let taskCard = createTaskCard({ task, deleteTask, transferTask });
+    let taskCard = createTaskItem({ task, deleteTask, transferTask });
     append(taskCard).to($(currentTasks));
   });
   completed.map((task) => {
-    let taskCard = createTaskCard({ task, deleteTask, transferTask });
+    let taskCard = createTaskItem({ task, deleteTask, transferTask });
     append(taskCard).to($(completedTasks));
   });
 };
@@ -162,13 +162,22 @@ const selectAllTasks = () => {
 
 const selectProject = (e) => {
   let tasks = _getProjectTasks(e.currentTarget.id);
-  console.log(tasks);
   tasks.length ? _renderTasks(tasks) : _renderNoTasksMessage();
 };
 
 const removeProject = (e) => {
   e.stopPropagation();
   let projListItem = e.currentTarget.parentElement;
+
+  // Crude implementation for now
+  let tasks = _getProjectTasks(projListItem.id);
+  tasks.map((task) => {
+    let taskItem = $(`#${task.id}`);
+    if (taskItem) {
+      let list = task.completed ? completedTasks : currentTasks;
+      remove(taskItem).from($(list));
+    }
+  });
 
   _deleteProject(projListItem.id);
   remove(projListItem).from($(userProjects));
@@ -198,7 +207,7 @@ const createNewTask = (e) => {
   let task = new Task({ title, desc, dueDate, location });
 
   _addTask(task);
-  append(createTaskCard({ task, deleteTask, transferTask })).to(
+  append(createTaskItem({ task, deleteTask, transferTask })).to(
     $(currentTasks)
   );
   _destroyForm();
@@ -217,6 +226,7 @@ const _destroyForm = () => {
 };
 
 export {
+  uncategorizedTasks,
   showCreateTaskForm,
   createNewProject,
   selectProject,

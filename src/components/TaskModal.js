@@ -3,6 +3,7 @@ import $, { clear, hide, rerender, show } from '../helpers/helpers';
 import Icons from './Icons';
 import { format } from 'date-fns';
 import { Converter } from 'showdown';
+import { uncategorizedTasks } from '../controller';
 
 const options = {
   omitExtraWLInCodeBlocks: true,
@@ -63,6 +64,28 @@ const TaskModal = ({
       </button>  
   `);
 
+  const projectList = projects.length
+    ? [
+        // Use an imported uncategorizedTasks for now
+        {
+          type: 'option',
+          text: 'Uncategorized',
+          attr: {
+            disabled: 'true',
+            selected: task.location === uncategorizedTasks.id ? 'true' : '',
+          },
+        },
+        ...projects.map((proj) => ({
+          type: 'option',
+          text: proj.name,
+          attr: {
+            value: proj.id,
+            selected: task.location === proj.id ? 'true' : '',
+          },
+        })),
+      ]
+    : '';
+
   const descriptionPreview = () =>
     Component.createElementFromObject({
       type: 'div',
@@ -90,18 +113,7 @@ const TaskModal = ({
       <span>in Project</span>
       <select id="edit-task-location" name="location"
       ${{ onChange: updateLocation }}>
-      ${
-        projects.length
-          ? projects.map((proj) => ({
-              type: 'option',
-              text: proj.name,
-              attr: {
-                value: proj.id,
-                selected: task.location === proj.id ? 'true' : '',
-              },
-            }))
-          : {}
-      }
+      ${projectList}
       </select>
     </div>
     <div class="labels">
