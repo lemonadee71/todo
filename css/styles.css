@@ -169,7 +169,7 @@ aside {
 }
 
 #sidebar > div {
-  padding-left: 15px;
+  padding: 0 15px;
 }
 
 #sidebar ul > li {
@@ -210,6 +210,24 @@ aside {
   color: white;
 }
 
+#user-proj > li {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 10px;
+}
+
+#user-proj > li .delete {
+  visibility: hidden;
+}
+
+#user-proj > li:hover .delete {
+  visibility: visible;
+}
+
+#user-proj > li:focus .delete {
+  visibility: visible;
+}
+
 /* Main Content */
 main {
   transition: margin-left 0.5s;
@@ -219,7 +237,8 @@ main {
 
 /* Task bar */
 #taskbar {
-  border: 1px solid black;
+  display: flex;
+  align-items: baseline;
 }
 
 #add-task {
