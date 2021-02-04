@@ -58,7 +58,8 @@ const TaskModal = ({
   const descTextArea = () =>
     Component.render(Component.parseString`
       <textarea id="edit-task-desc" "name="desc">${task.desc}</textarea>
-      <button class="submit" type="submit" ${{ onClick: saveDesc }}>Save
+      <button class="submit" type="submit" ${{ onClick: saveDesc }}>
+        Save
       </button>  
   `);
 

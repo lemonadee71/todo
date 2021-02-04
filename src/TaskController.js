@@ -1,13 +1,21 @@
 import Component from './helpers/component';
 import TaskCard from './components/TaskCard';
-import $, { changeModalContent, hide, remove, show } from './helpers/helpers';
+import $, {
+  append,
+  changeModalContent,
+  hide,
+  remove,
+  show,
+} from './helpers/helpers';
 import { getProjectsDetails, getCurrentSelectedProj } from './controller';
 import TaskModal from './components/TaskModal';
 import {
   completedTasks,
   currentTasks,
+  modal,
   taskCardDescription,
   taskCardDueDateText,
+  taskCardDueDateIcon,
   taskCardTitle,
 } from './helpers/selectors';
 import { format } from 'date-fns';
@@ -15,13 +23,17 @@ import { format } from 'date-fns';
 // TODO: change the selectors
 const createTaskCard = ({ task, deleteTask, transferTask }) => {
   // TaskModal Functions
+  const updateTaskDetails = (prop, value) => {
+    task[prop] = value;
+  };
+
   const updateTitle = (e) => {
-    task.title = e.target.value;
+    updateTaskDetails('title', e.target.value);
     $(taskCardTitle(task.id)).textContent = task.title;
   };
 
   const updateDesc = () => {
-    task.desc = $('#edit-task-desc').value;
+    updateTaskDetails('desc', $('#edit-task-desc').value);
 
     let taskCardDesc = $(taskCardDescription(task.id));
     if (task.desc === '') {
@@ -32,7 +44,7 @@ const createTaskCard = ({ task, deleteTask, transferTask }) => {
   };
 
   const updateDueDate = (e) => {
-    task.dueDate = e.target.value;
+    updateTaskDetails('dueDate', e.target.value);
 
     let dueDateIcon = $(taskCardDueDateIcon(task.id));
     let dueDateText = $(taskCardDueDateText(task.id));
@@ -53,7 +65,7 @@ const createTaskCard = ({ task, deleteTask, transferTask }) => {
     let currentLocation = getCurrentSelectedProj();
 
     if (currentLocation) {
-      $(`#${task.id}`).remove();
+      remove($(`#${task.id}`), true);
     }
   };
 
@@ -69,7 +81,7 @@ const createTaskCard = ({ task, deleteTask, transferTask }) => {
         projects: getProjectsDetails(),
       })
     );
-    show($('.modal-backdrop'));
+    show($(modal));
   };
 
   const onDelete = () => {
@@ -85,16 +97,14 @@ const createTaskCard = ({ task, deleteTask, transferTask }) => {
       e.target.parentElement.classList.toggle('checked');
     }
 
-    e.stopPropagation();
-
     let isDone = task.toggleComplete();
     let taskCard = $(`#${task.id}`);
     taskCard.classList.toggle('completed');
 
     if (isDone) {
-      $(completedTasks).appendChild(taskCard);
+      append(taskCard).to($(completedTasks));
     } else {
-      $(currentTasks).appendChild(taskCard);
+      append(taskCard).to($(currentTasks));
     }
   };
 

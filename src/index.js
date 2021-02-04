@@ -2,20 +2,20 @@ import Component from './helpers/component';
 import MainContent from './components/MainContent';
 import Sidebar from './components/Sidebar';
 import $ from './helpers/helpers';
+import { hamburger, sidebar as sidenav } from './helpers/selectors';
 import {
   createNewProject,
   selectProject,
+  removeProject,
   selectAllTasks,
   getProjectsDetails,
   showCreateTaskForm,
 } from './controller';
 
-import { compareAsc, format } from 'date-fns';
-
 const App = () => {
-  const showSidebar = () => {
-    $('.hamburger').classList.toggle('is-active');
-    $('#projects').classList.toggle('show');
+  const showSidebar = (e) => {
+    e.currentTarget.classList.toggle('is-active');
+    $(sidenav).classList.toggle('show');
   };
 
   return Component.render(Component.parseString`
@@ -42,6 +42,7 @@ const App = () => {
       </header>
       ${Sidebar({
         selectProject,
+        removeProject,
         createNewProject,
         getAllTasks: selectAllTasks,
         projects: getProjectsDetails(),

@@ -9,9 +9,10 @@ const Sidebar = ({
   getUpcoming,
   createNewProject,
   selectProject,
+  removeProject,
 }) => {
   return Component.parseString`
-  <aside id="projects">
+  <aside id="sidebar">
     <div>
       <ul id="default-proj">
         <li ${{ onClick: getAllTasks }}>All Tasks</li>
@@ -35,9 +36,12 @@ const Sidebar = ({
       <br />
       <ul id="user-proj">
         ${
-          projects
+          projects.length
             ? projects.map((proj) =>
-                ProjectListItem(proj, selectProject)
+                ProjectListItem(proj, {
+                  clickHandler: selectProject,
+                  deleteHandler: removeProject,
+                })
               )
             : ''
         }

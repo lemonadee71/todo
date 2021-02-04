@@ -56,9 +56,19 @@ const append = (child) => {
   };
 };
 
+const prepend = (child) => {
+  return {
+    to: (parent) => {
+      parent.prepend(child);
+      parent.dispatchEvent(childAddedEvent);
+    },
+  };
+};
+
 const remove = (child, self = false) => {
   if (self) {
-    child.dispatchEvent(childRemovedEvent);
+    // not working
+    child.parentElement.dispatchEvent(childRemovedEvent);
     child.remove();
   } else {
     return {
@@ -78,6 +88,7 @@ export {
   changeModalContent,
   rerender,
   append,
+  prepend,
   remove,
 };
 export default $;

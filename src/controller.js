@@ -6,6 +6,7 @@ import $, {
   show,
   closeModal,
   append,
+  remove,
 } from './helpers/helpers';
 import { createTaskCard } from './taskController';
 import Component from './helpers/component';
@@ -16,9 +17,13 @@ import {
   completedTasks,
   currentTasks,
   modal,
+  newProjectInput,
+  newTaskForm,
   newTaskFormDesc,
   newTaskFormDueDate,
   newTaskFormTitle,
+  tasksList,
+  userProjects,
 } from './helpers/selectors.js';
 import NoTasksMessage from './components/NoTasksMessage.js';
 
@@ -37,43 +42,37 @@ const allProjects = new List('all', 'root', [uncategorizedTasks]);
 
 let currentSelectedProj = uncategorizedTasks.id;
 
-const segregateTasks = (tasks) => {
+const getCurrentSelectedProj = () => currentSelectedProj;
+
+const _segregateTasks = (tasks) => {
   return [
     tasks.filter((task) => !task.completed),
     tasks.filter((task) => task.completed),
   ];
 };
 
-const getCurrentSelectedProj = () => currentSelectedProj;
-
-const transferTask = (id, target) => {
-  let currentProject = currentSelectedProj || uncategorizedTasks.id;
-
-  let prevProject = allProjects.getItem((proj) => proj.id === currentProject);
-  let task = prevProject.getItem((task) => task.id === id);
-
-  prevProject.removeItems((task) => task.id === id);
-
-  allProjects.getItem((proj) => proj.id === target).addItem(task);
-};
-
-const getProjectTasks = (id) => {
+const _getProjectTasks = (id) => {
   currentSelectedProj = id;
   return allProjects.getItem((proj) => proj.id === id).items;
 };
 
-const getAllTasks = () => {
+const _getAllTasks = () => {
   currentSelectedProj = '';
   return [...allProjects.items].map((proj) => proj.items).flat();
 };
 
-const addProject = (projName) => {
+const _addProject = (projName) => {
   let newProject = new List(projName, 'project');
   allProjects.addItem(newProject);
   return newProject;
 };
 
-const addTask = (task) => {
+const _deleteProject = (id) => {
+  allProjects.removeItems((proj) => proj.id === id);
+  console.log(allProjects.items);
+};
+
+const _addTask = (task) => {
   let location = currentSelectedProj || uncategorizedTasks.id;
   let project = allProjects.getItem((proj) => proj.id === location);
   project.addItem(task);
@@ -82,6 +81,16 @@ const addTask = (task) => {
 const deleteTask = (task) => {
   let project = allProjects.getItem((proj) => proj.id === task.location);
   project.removeItems((item) => item.id === task.id);
+};
+
+const transferTask = (id, target) => {
+  let currentProject = currentSelectedProj || uncategorizedTasks.id;
+
+  let prevProject = allProjects.getItem((proj) => proj.id === currentProject);
+  let task = prevProject.getItem((task) => task.id === id);
+
+  prevProject.removeItems((task) => task.id === id);
+  allProjects.getItem((proj) => proj.id === target).addItem(task);
 };
 
 // const getDueToday = () => {
@@ -110,71 +119,77 @@ const getProjectsDetails = () => {
     (proj) => proj.id !== uncategorizedTasks.id
   );
 
-  return projects
+  return projects.length
     ? projects.map((proj) => {
         return {
           id: proj.id,
-          name: proj.listName,
+          name: proj.name,
         };
       })
     : [];
 };
 
-const renderTasks = (tasks) => {
-  let currentTasksList = $(currentTasks);
-  let completedTasksList = $(completedTasks);
+// Sidenav
+const _clearTasks = () => {
+  clear($(currentTasks));
+  clear($(completedTasks));
+};
 
-  clear(currentTasksList);
-  clear(completedTasksList);
+const _renderTasks = (tasks) => {
+  _clearTasks();
 
-  let [current, completed] = segregateTasks(tasks);
+  let [current, completed] = _segregateTasks(tasks);
 
   current.map((task) => {
     let taskCard = createTaskCard({ task, deleteTask, transferTask });
-    append(taskCard).to(currentTasksList);
+    append(taskCard).to($(currentTasks));
   });
   completed.map((task) => {
     let taskCard = createTaskCard({ task, deleteTask, transferTask });
-    append(taskCard).to(completedTasksList);
+    append(taskCard).to($(completedTasks));
   });
-  // currentTasksList.append(
-  //   ...current.map((task) => createTaskCard({ task, deleteTask, transferTask }))
-  // );
-  // completedTasksList.append(
-  //   ...completed.map((task) =>
-  //     createTaskCard({ task, deleteTask, transferTask })
-  //   )
-  // );
 };
 
-const renderNoTasksMessage = () => {
-  $(currentTasks).appendChild(NoTasksMessage());
-};
+const _renderNoTasksMessage = () => {
+  _clearTasks();
 
-const selectProject = (id) => {
-  let tasks = getProjectTasks(id);
-  tasks.length ? renderTasks(tasks) : renderNoTasksMessage();
+  if (!$('#no-tasks')) {
+    $(tasksList).prepend(NoTasksMessage());
+  }
 };
 
 const selectAllTasks = () => {
-  let tasks = getAllTasks();
-  tasks.length ? renderTasks(tasks) : renderNoTasksMessage();
+  let tasks = _getAllTasks();
+  tasks.length ? _renderTasks(tasks) : _renderNoTasksMessage();
+};
+
+const selectProject = (e) => {
+  let tasks = _getProjectTasks(e.currentTarget.id);
+  tasks.length ? _renderTasks(tasks) : _renderNoTasksMessage();
+};
+
+const removeProject = (e) => {
+  e.stopPropagation();
+  let projListItem = e.currentTarget.parentElement;
+
+  _deleteProject(projListItem.id);
+  remove(projListItem).from($(userProjects));
 };
 
 const createNewProject = (e) => {
   e.preventDefault();
-  let newProject = addProject($('#new-proj').value);
+  let newProject = _addProject($(newProjectInput).value);
 
-  $('#user-proj').appendChild(ProjectListItem(newProject, selectProject));
+  append(
+    ProjectListItem(newProject, {
+      clickHandler: selectProject,
+      deleteHandler: removeProject,
+    })
+  ).to($(userProjects));
   e.target.reset();
 };
 
-const destroyForm = () => {
-  // Crude implementation for now
-  $('#create-task').removeEventListener('submit', createNewTask);
-  closeModal();
-};
-
+// Add Task button
 const createNewTask = (e) => {
   e.preventDefault();
   let title = $(newTaskFormTitle).value;
@@ -184,11 +199,11 @@ const createNewTask = (e) => {
 
   let task = new Task({ title, desc, dueDate, location });
 
-  addTask(task);
+  _addTask(task);
   append(createTaskCard({ task, deleteTask, transferTask })).to(
     $(currentTasks)
   );
-  destroyForm();
+  _destroyForm();
 };
 
 const showCreateTaskForm = () => {
@@ -198,10 +213,16 @@ const showCreateTaskForm = () => {
   show($(modal));
 };
 
+const _destroyForm = () => {
+  $(newTaskForm).removeEventListener('submit', createNewTask);
+  closeModal();
+};
+
 export {
   showCreateTaskForm,
   createNewProject,
   selectProject,
+  removeProject,
   selectAllTasks,
   getProjectsDetails,
   getCurrentSelectedProj,

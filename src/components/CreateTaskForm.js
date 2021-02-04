@@ -5,8 +5,8 @@ const CreateTaskForm = ({ onSubmit }) => {
   <form id="create-task" ${{ onSubmit }}>
     <input
       type="text"
-      name="task name"
-      data-id="new-task-name"
+      name="task-title"
+      data-id="new-task-title"
       placeholder="New Task"
       required
     />
@@ -14,7 +14,7 @@ const CreateTaskForm = ({ onSubmit }) => {
 
     <p class="section-header">Description</p>
     <textarea
-      name="task desc"
+      name="task-desc"
       data-id="new-task-desc"
     ></textarea>
 

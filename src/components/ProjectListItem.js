@@ -1,13 +1,27 @@
 import Component from '../helpers/component';
+import Icons from './Icons';
 
-const ProjectListItem = (proj, clickHandler) => {
+const ProjectListItem = (proj, { clickHandler, deleteHandler }) => {
   return Component.createElementFromObject({
-    type: `li`,
+    type: 'li',
     id: proj.id,
-    text: proj.name,
     listeners: {
-      click: () => clickHandler(proj.id),
+      click: clickHandler,
     },
+    children: [
+      {
+        span: proj.name,
+      },
+      {
+        type: 'span',
+        prop: {
+          innerHTML: Icons('delete'),
+        },
+        listeners: {
+          click: deleteHandler,
+        },
+      },
+    ],
   });
 };
 

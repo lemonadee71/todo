@@ -1,30 +1,29 @@
 import Component from '../helpers/component';
-import Modal from './Modal';
 import $, { hide, show } from '../helpers/helpers';
-import { currentTasks } from '../helpers/selectors';
+import { completedTasks, currentTasks, tasksList } from '../helpers/selectors';
 import NoTasksMessage from './NoTasksMessage';
+import Modal from './Modal';
 
 const MainContent = ({ onAddBtnClick }) => {
   const showCompleted = (e) => {
     if (e.target.checked) {
-      show($('#completed-tasks'));
+      show($(completedTasks));
     } else {
-      hide($('#completed-tasks'));
+      hide($(completedTasks));
     }
   };
 
   const checkNoOfTasks = () => {
     let hasActiveTasks = $(currentTasks).children.length;
     let noTasks = $('#no-tasks');
-    // console.log([...$(currentTasks).children]);
-    // console.log(hasActiveTasks);
+
     if (hasActiveTasks) {
       if (noTasks) {
-        $(currentTasks).removeChild($('#no-tasks'));
+        $(tasksList).removeChild(noTasks);
       }
     } else {
       if (!noTasks) {
-        $(currentTasks).appendChild(NoTasksMessage());
+        $(tasksList).prepend(NoTasksMessage());
       }
     }
   };
@@ -34,9 +33,9 @@ const MainContent = ({ onAddBtnClick }) => {
     <div id="taskbar">
       <button id="add-task" ${{ onClick: onAddBtnClick }}>+</button>
       <label for="show">Show Completed</label>
-      <input id="show-completed" type="checkbox" name="show" value="show" ${{
-        onChange: showCompleted,
-      }}/>
+      <input id="show-completed" type="checkbox" name="show" value="show" 
+      ${{ onChange: showCompleted }}
+      />
     </div>
     <div id="tasks-list" ${{
       onChildRemoved: checkNoOfTasks,
