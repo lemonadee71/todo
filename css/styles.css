@@ -168,11 +168,11 @@ aside {
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
 }
 
-#projects > div {
+#sidebar > div {
   padding-left: 15px;
 }
 
-#projects ul > li {
+#sidebar ul > li {
   font-size: 18px;
   margin: 3px;
   padding: 3px;
@@ -180,7 +180,7 @@ aside {
   color: white;
 }
 
-#projects ul > li:hover {
+#sidebar ul > li:hover {
   text-decoration: underline;
 }
 
@@ -341,6 +341,22 @@ main {
 
 .chip:not(:last-child) {
   margin-right: 10px;
+}
+
+.badges {
+  display: flex;
+}
+
+.badges > span {
+  padding: 4px;
+}
+
+[data-name='task-card-date'] {
+  display: flex;
+}
+
+[data-name='task-card-date-icon'] {
+  margin-right: 5px;
 }
 
 /* 
