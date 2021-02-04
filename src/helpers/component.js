@@ -1,7 +1,7 @@
 const Component = (() => {
-  const _randNo = (seed) => Math.floor(Math.random() * seed);
+  const _randNo = () => Math.random();
 
-  const _generateID = () => `${_randNo(10)}${_randNo(10)}${_randNo(50)}`;
+  const _generateID = () => `${_randNo()}`.replace(/0./, '');
 
   const _createArrayLikeObject = (arr, type) => {
     let arrayLikeObj = {};
@@ -211,19 +211,23 @@ const Component = (() => {
     let idStr = id ? ` id="${id}" ` : '';
     let classStr = className ? ` class="${className}"` : '';
 
-    let styleStr = ` style="${Object.keys(style)
-      .map((type) => `${type}: ${style[type]};`)
-      .join(' ')}"`;
+    let styleStr = style
+      ? ` style="${Object.keys(style)
+          .map((type) => (style[type] ? `${type}: ${style[type]};` : ''))
+          .join(' ')}"`
+      : '';
 
-    let attrStr = Object.keys(attr)
-      .map((type) => `${type}="${attr[type]}"`)
-      .join(' ');
+    let attrStr = attr
+      ? Object.keys(attr)
+          .map((type) => (attr[type] ? `${type}="${attr[type]}"` : ''))
+          .join(' ')
+      : '';
 
     let childrenStr = Array.isArray(children)
       ? children.map((child) => objectToString(child)).join('\n')
       : '';
 
-    return `<${type}${idStr}${classStr}${attrStr}${styleStr}>
+    return `<${type} ${idStr} ${classStr} ${attrStr} ${styleStr}>
       ${text || ''}${childrenStr}
       </${type}>`;
   };
@@ -234,7 +238,7 @@ const Component = (() => {
 
     const _parser = (expr) => {
       if (expr instanceof HTMLElement) {
-        let temporaryId = `${_generateID()}${_generateID()}`;
+        let temporaryId = _generateID();
 
         children.push({
           element: expr,
@@ -262,7 +266,7 @@ const Component = (() => {
         } else if (Object.keys(expr).every((key) => key.includes('on'))) {
           let callbacks = expr;
           let temporaryPlaceholder = '';
-          let temporaryId = `${_generateID()}${_generateID()}`;
+          let temporaryId = _generateID();
 
           for (let type in callbacks) {
             eventHandlers.push({
@@ -310,7 +314,7 @@ const Component = (() => {
     );
   };
 
-  const render = (arrayLikeObj) => {
+  const render = (arrayLikeObj, callbacks = []) => {
     return Component.createElementFromString(...Array.from(arrayLikeObj));
   };
 

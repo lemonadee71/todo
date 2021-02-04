@@ -2,7 +2,7 @@ import Component from '../helpers/component';
 import Icons from './Icons';
 import { format } from 'date-fns';
 
-const TaskCard = ({ task, onEdit, onDelete, onToggle }) => {
+const TaskItem = ({ task, onEdit, onDelete, onToggle }) => {
   let { id, title, desc, dueDate, completed } = task;
 
   return Component.parseString`
@@ -31,7 +31,7 @@ const TaskCard = ({ task, onEdit, onDelete, onToggle }) => {
           ${Icons('calendar')}
           </span>
           <span data-name="task-card-date-text">
-          ${dueDate ? `Due ${format(dueDate, 'E, MMM dd')}` : ''}
+          ${dueDate ? `${format(dueDate, 'E, MMM dd')}` : ''}
           </span>
         </span>        
       </div>
@@ -40,4 +40,4 @@ const TaskCard = ({ task, onEdit, onDelete, onToggle }) => {
   `;
 };
 
-export default TaskCard;
+export default TaskItem;

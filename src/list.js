@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
 class List {
   constructor(name, type, defaultItems = []) {
     this.items = [...defaultItems];
@@ -20,6 +18,13 @@ class List {
       this.items.push(item);
     }
     this.length = this.items.length;
+  }
+
+  extractItem(condition) {
+    let item = this.getItem(condition);
+    this.removeItems(condition);
+
+    return item;
   }
 
   removeItems(condition) {

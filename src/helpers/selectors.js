@@ -1,7 +1,7 @@
-const taskCardTitle = (id) => `#${id} [data-name="task-card-title"]`;
-const taskCardDescription = (id) => `#${id} [data-name="task-card-desc"]`;
-const taskCardDueDateIcon = (id) => `#${id} [data-name="task-card-date-icon"]`;
-const taskCardDueDateText = (id) => `#${id} [data-name="task-card-date-text"]`;
+const taskItemTitle = (id) => `#${id} [data-name="task-card-title"]`;
+const taskItemDescription = (id) => `#${id} [data-name="task-card-desc"]`;
+const taskItemDueDateIcon = (id) => `#${id} [data-name="task-card-date-icon"]`;
+const taskItemDueDateText = (id) => `#${id} [data-name="task-card-date-text"]`;
 
 const completedTasks = '#completed-tasks';
 const currentTasks = '#current-tasks';
@@ -12,6 +12,7 @@ const newTaskFormDesc = '[data-id="new-task-desc"]';
 const newTaskFormDueDate = '[data-id="new-task-date"]';
 
 const modal = '.modal-backdrop';
+const modalContent = '#modal-content';
 
 const tasksList = '#tasks-list';
 
@@ -22,6 +23,7 @@ const newProjectInput = '#new-proj';
 
 export {
   modal,
+  modalContent,
   currentTasks,
   completedTasks,
   newTaskForm,
@@ -33,8 +35,8 @@ export {
   sidebar,
   newProjectInput,
   userProjects,
-  taskCardTitle,
-  taskCardDescription,
-  taskCardDueDateIcon,
-  taskCardDueDateText,
+  taskItemTitle,
+  taskItemDescription,
+  taskItemDueDateIcon,
+  taskItemDueDateText,
 };

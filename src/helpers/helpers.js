@@ -1,4 +1,5 @@
 import { childAddedEvent, childRemovedEvent } from './customEvents';
+import { currentTasks, completedTasks, modal, modalContent } from './selectors';
 
 const $ = (query) => {
   let isId = query.includes('#');
@@ -31,15 +32,19 @@ const show = (element) => {
 };
 
 const closeModal = () => {
-  hide($('.modal-backdrop'));
-  clear($('#modal-content'));
-  //e.stopPropagation();
+  hide($(modal));
+  clear($(modalContent));
 };
 
 const changeModalContent = (newContent) => {
-  let modalContent = $('#modal-content');
-  clear(modalContent);
-  modalContent.appendChild(newContent);
+  let content = $(modalContent);
+  clear(content);
+  content.appendChild(newContent);
+};
+
+const clearTasks = () => {
+  clear($(currentTasks));
+  clear($(completedTasks));
 };
 
 const rerender = (el, newContent) => {
@@ -86,6 +91,7 @@ export {
   show,
   closeModal,
   changeModalContent,
+  clearTasks,
   rerender,
   append,
   prepend,

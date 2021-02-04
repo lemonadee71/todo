@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
 class Task {
   constructor({ title, desc, dueDate, location }) {
     this.title = title || 'Unnamed Task';
@@ -12,9 +10,6 @@ class Task {
     this.id = `task-${Math.random()}`.replace(/0./, '');
   }
 
-  /**
-   * @param {string} newTitle
-   */
   get title() {
     return this._title;
   }
@@ -27,9 +22,6 @@ class Task {
     this._title = newTitle;
   }
 
-  /**
-   * @param {string} newDesc
-   */
   get desc() {
     return this._desc;
   }
@@ -62,7 +54,7 @@ class Task {
   }
 
   // get labels() {
-  //   return [...this.labels];
+  //   return [...this._labels];
   // }
 
   // set labels(label) {

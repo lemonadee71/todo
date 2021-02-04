@@ -7,6 +7,7 @@ import $, {
   closeModal,
   append,
   remove,
+  clearTasks,
 } from './helpers/helpers';
 import { createTaskCard } from './taskController';
 import Component from './helpers/component';
@@ -26,6 +27,7 @@ import {
   userProjects,
 } from './helpers/selectors.js';
 import NoTasksMessage from './components/NoTasksMessage.js';
+import { defaultProjects } from './helpers/defaults.js';
 
 // Work on displaying tasks in a selected project
 // Add a function that process drop events
@@ -38,7 +40,10 @@ If checked, remove label, otherwise add it
 */
 
 const uncategorizedTasks = new List('uncategorized', 'project');
-const allProjects = new List('all', 'root', [uncategorizedTasks]);
+const allProjects = new List('all', 'root', [
+  uncategorizedTasks,
+  ...defaultProjects,
+]);
 
 let currentSelectedProj = uncategorizedTasks.id;
 
@@ -69,7 +74,6 @@ const _addProject = (projName) => {
 
 const _deleteProject = (id) => {
   allProjects.removeItems((proj) => proj.id === id);
-  console.log(allProjects.items);
 };
 
 const _addTask = (task) => {
@@ -83,14 +87,12 @@ const deleteTask = (task) => {
   project.removeItems((item) => item.id === task.id);
 };
 
-const transferTask = (id, target) => {
-  let currentProject = currentSelectedProj || uncategorizedTasks.id;
+const transferTask = (id, prevList, newList) => {
+  let task = allProjects
+    .getItem((proj) => proj.id === prevList)
+    .extractItem((task) => task.id === id);
 
-  let prevProject = allProjects.getItem((proj) => proj.id === currentProject);
-  let task = prevProject.getItem((task) => task.id === id);
-
-  prevProject.removeItems((task) => task.id === id);
-  allProjects.getItem((proj) => proj.id === target).addItem(task);
+  allProjects.getItem((proj) => proj.id === newList).addItem(task);
 };
 
 // const getDueToday = () => {
@@ -130,13 +132,8 @@ const getProjectsDetails = () => {
 };
 
 // Sidenav
-const _clearTasks = () => {
-  clear($(currentTasks));
-  clear($(completedTasks));
-};
-
 const _renderTasks = (tasks) => {
-  _clearTasks();
+  clearTasks();
 
   let [current, completed] = _segregateTasks(tasks);
 
@@ -151,7 +148,7 @@ const _renderTasks = (tasks) => {
 };
 
 const _renderNoTasksMessage = () => {
-  _clearTasks();
+  clearTasks();
 
   if (!$('#no-tasks')) {
     $(tasksList).prepend(NoTasksMessage());
@@ -165,6 +162,7 @@ const selectAllTasks = () => {
 
 const selectProject = (e) => {
   let tasks = _getProjectTasks(e.currentTarget.id);
+  console.log(tasks);
   tasks.length ? _renderTasks(tasks) : _renderNoTasksMessage();
 };
 

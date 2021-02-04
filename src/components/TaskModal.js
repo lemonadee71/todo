@@ -34,14 +34,14 @@ const TaskModal = ({
 }) => {
   const taskDesc = '--data-name=desc-area';
 
-  const allowEditing = () => {
-    $('div.title input[name="title"]').removeAttribute('disabled');
-    hide($('div.title button'));
+  const editTitle = (e) => {
+    e.currentTarget.previousElementSibling.removeAttribute('disabled');
+    hide(e.currentTarget);
   };
 
-  const disableEditing = () => {
-    show($('div.title button'));
-    $('div.title input[name="title"]').setAttribute('disabled', '');
+  const disableEdit = (e) => {
+    show(e.currentTarget.nextElementSibling);
+    e.currentTarget.setAttribute('disabled', '');
   };
 
   const editDesc = () => {
@@ -72,18 +72,6 @@ const TaskModal = ({
       },
     });
 
-  // projects.length
-  // ? projects.map((proj) =>
-  //     Component.createElementFromObject({
-  //       type: 'option',
-  //       text: proj.name,
-  //       attr: {
-  //         value: proj.id,
-  //       },
-  //     })
-  //   )
-  // : ''
-
   return Component.render(Component.parseString`
     <div class="title">
       <input
@@ -94,13 +82,26 @@ const TaskModal = ({
         value="${task.title}"
         disabled
         required
-        ${{ onChange: updateTitle, onFocusout: disableEditing }}
+        ${{ onChange: updateTitle, onFocusout: disableEdit }}
       />
-      <button ${{ onClick: allowEditing }}>${Icons('edit')}</button>
+      <button ${{ onClick: editTitle }}>${Icons('edit')}</button>
     </div>
     <div class="proj">
       <span>in Project</span>
-      <select name="project-list" ${{ onChange: updateLocation }}>
+      <select id="edit-task-location" name="location"
+      ${{ onChange: updateLocation }}>
+      ${
+        projects.length
+          ? projects.map((proj) => ({
+              type: 'option',
+              text: proj.name,
+              attr: {
+                value: proj.id,
+                selected: task.location === proj.id ? 'true' : '',
+              },
+            }))
+          : {}
+      }
       </select>
     </div>
     <div class="labels">
