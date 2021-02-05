@@ -49,7 +49,7 @@ const App = () => {
       })}
       ${MainContent({ onAddBtnClick: showCreateTaskForm })}
       <footer>
-        <div>
+        <p>
           Icons made by
           <a href="https://www.freepik.com" title="Freepik">Freepik</a>,
           <a href="" title="Gregor Cresnar">Gregor Cresnar</a>,
@@ -73,7 +73,7 @@ const App = () => {
           <a href="https://www.flaticon.com/" title="Flaticon"
             >www.flaticon.com</a
           >
-        </div>
+        </p>
         <p>Created by Shin Andrei Riego</p>
       </footer>
     `);

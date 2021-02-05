@@ -1,13 +1,15 @@
+import List from './list';
+
 class Task {
   constructor({ title, desc, dueDate, location }) {
+    this.id = `task-${Math.random()}`.replace(/0./, '');
     this.title = title || 'Unnamed Task';
     this.desc = desc || '';
     this.dueDate = dueDate || '';
     this.completed = false;
     this.location = location;
-    this.labels = [];
-    this.subtasks = [];
-    this.id = `task-${Math.random()}`.replace(/0./, '');
+    this.labels = new List(`labels-${this.id}`, 'labels');
+    this.subtasks = new List(`subtasks-${this.id}`, 'labels');
   }
 
   get title() {
@@ -54,7 +56,7 @@ class Task {
   }
 
   // get labels() {
-  //   return [...this._labels];
+  //   return [...this._labels.items];
   // }
 
   // set labels(label) {
@@ -75,24 +77,31 @@ class Task {
     };
   }
 
-  addSubtask(task) {
-    this.subtasks.push(task);
-  }
+  // addSubtask(task) {
+  //   this.subtasks.push(task);
+  // }
 
-  removeSubtask(id) {
-    this.subtasks = this.subtasks.filter((subtask) => subtask.id !== id);
-  }
+  // removeSubtask(id) {
+  //   this.subtasks = this.subtasks.filter((subtask) => subtask.id !== id);
+  // }
 
-  removeAllSubtasks() {
-    this.subtasks = [];
+  // removeAllSubtasks() {
+  //   this.subtasks = [];
+  // }
+  getLabels() {
+    return [...this.labels.items];
   }
 
   addLabel(label) {
-    this.label.push(label);
+    this.labels.addItem(label);
+  }
+
+  removeLabel(labelName) {
+    this.labels.removeItems((label) => label.name === labelName);
   }
 
   removeLabels() {
-    this.labels = [];
+    this.labels.removeAll();
   }
 
   toggleComplete() {

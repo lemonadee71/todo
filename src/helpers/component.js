@@ -1,7 +1,5 @@
 const Component = (() => {
-  const _randNo = () => Math.random();
-
-  const _generateID = () => `${_randNo()}`.replace(/0./, '');
+  const _generateID = () => `${Math.random()}`.replace(/0./, '');
 
   const _createArrayLikeObject = (arr, type) => {
     let arrayLikeObj = {};
@@ -91,6 +89,7 @@ const Component = (() => {
     }
 
     // Create element
+    // Use fragment if template doesn't have a parent
     if (type === 'fragment') {
       element = document.createDocumentFragment();
     } else {
@@ -175,7 +174,7 @@ const Component = (() => {
 
   const createElementFromString = (str, handlers = [], children = []) => {
     let createdElement = document.createRange().createContextualFragment(str);
-
+    //console.log(str, handlers);
     handlers.forEach((handler) => {
       let el = createdElement.querySelector(handler.query);
       el.addEventListener(handler.type, handler.callback);

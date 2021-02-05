@@ -17,6 +17,7 @@ import {
   taskItemDueDateText,
   taskItemDueDateIcon,
   taskItemTitle,
+  taskItemLabels,
 } from './helpers/selectors';
 import { format } from 'date-fns';
 
@@ -24,7 +25,11 @@ import { format } from 'date-fns';
 const createTaskItem = ({ task, deleteTask, transferTask }) => {
   // TaskModal Functions
   const _updateTaskDetails = (prop, value) => {
-    task[prop] = value;
+    if (prop === 'label') {
+      task.addLabel(value);
+    } else {
+      task[prop] = value;
+    }
   };
 
   const updateTitle = (e) => {
@@ -58,6 +63,41 @@ const createTaskItem = ({ task, deleteTask, transferTask }) => {
     }
   };
 
+  const updateLabels = (e) => {
+    let target = e.currentTarget;
+    let labelName = target.getAttribute('data-label-name');
+    let labelColor = target.getAttribute('data-color');
+    let labelsArea = $('#labels [data-name="labels-area"]');
+
+    target.classList.toggle('selected');
+
+    if (target.className.includes('selected')) {
+      task.addLabel({ name: labelName, color: labelColor });
+
+      append(
+        Component.createElementFromString(
+          `<div class="chip" data-color="${labelColor}"></div>`
+        )
+      ).to($(taskItemLabels(task.id)));
+
+      append(
+        Component.createElementFromString(
+          `<div class="chip-w-text" data-color="${labelColor}">${labelName}</div>`
+        )
+      ).to(labelsArea);
+    } else {
+      task.removeLabel(labelName);
+
+      remove($(`#${task.id} .chip[data-color="${labelColor}"]`)).from(
+        $(taskItemLabels(task.id))
+      );
+
+      remove($(`#${task.id} .chip-w-text[data-color="${labelColor}"]`)).from(
+        labelsArea
+      );
+    }
+  };
+
   const changeTaskLocation = (e) => {
     let prevLocation = task.location;
     let newLocation = e.currentTarget.value;
@@ -78,6 +118,7 @@ const createTaskItem = ({ task, deleteTask, transferTask }) => {
       TaskModal({
         task,
         updateTitle,
+        updateLabels,
         updateDesc,
         updateDueDate,
         updateLocation: changeTaskLocation,

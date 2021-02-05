@@ -2,6 +2,7 @@ const taskItemTitle = (id) => `#${id} [data-name="task-card-title"]`;
 const taskItemDescription = (id) => `#${id} [data-name="task-card-desc"]`;
 const taskItemDueDateIcon = (id) => `#${id} [data-name="task-card-date-icon"]`;
 const taskItemDueDateText = (id) => `#${id} [data-name="task-card-date-text"]`;
+const taskItemLabels = (id) => `#${id} .label-chips`;
 
 const completedTasks = '#completed-tasks';
 const currentTasks = '#current-tasks';
@@ -21,6 +22,8 @@ const sidebar = '#sidebar';
 const userProjects = '#user-proj';
 const newProjectInput = '#new-proj';
 
+const popover = '#popover';
+
 export {
   modal,
   modalContent,
@@ -36,6 +39,7 @@ export {
   newProjectInput,
   userProjects,
   taskItemTitle,
+  taskItemLabels,
   taskItemDescription,
   taskItemDueDateIcon,
   taskItemDueDateText,

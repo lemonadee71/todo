@@ -1,6 +1,7 @@
 import Component from '../helpers/component';
 import $, { clear, hide, rerender, show } from '../helpers/helpers';
 import Icons from './Icons';
+import LabelPopover from './LabelPopover';
 import { format } from 'date-fns';
 import { Converter } from 'showdown';
 import { uncategorizedTasks } from '../controller';
@@ -30,11 +31,13 @@ const TaskModal = ({
   projects,
   updateTitle,
   updateLocation,
+  updateLabels,
   updateDesc,
   updateDueDate,
 }) => {
   const taskDesc = '--data-name=desc-area';
 
+  // Title
   const editTitle = (e) => {
     e.currentTarget.previousElementSibling.removeAttribute('disabled');
     hide(e.currentTarget);
@@ -45,6 +48,12 @@ const TaskModal = ({
     e.currentTarget.setAttribute('disabled', '');
   };
 
+  // Labels
+  const openLabelPopover = () => {
+    $('#popover').classList.add('visible');
+  };
+
+  // Description
   const editDesc = () => {
     $('--data-name=edit-desc-btn').classList.toggle('hidden');
     rerender($(taskDesc), descTextArea());
@@ -71,6 +80,7 @@ const TaskModal = ({
           type: 'option',
           text: 'Uncategorized',
           attr: {
+            value: uncategorizedTasks.id,
             disabled: 'true',
             selected: task.location === uncategorizedTasks.id ? 'true' : '',
           },
@@ -116,12 +126,19 @@ const TaskModal = ({
       ${projectList}
       </select>
     </div>
-    <div class="labels">
+    <div id="labels">
       <div class="section-header">
         ${Icons('tag')}
         <span>Labels</span>
       </div>
-      <button>+</button>
+      <button data-name="edit-label-btn" ${{ onClick: openLabelPopover }}>
+        +
+      </button>
+      <div data-name="labels-area"></div>
+      ${LabelPopover({
+        taskLabels: task.getLabels(),
+        toggleLabel: updateLabels,
+      })}
     </div>
     <div class="desc">
       <div class="section-header">
