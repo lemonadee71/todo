@@ -98,6 +98,15 @@ input[type='text'].dark:focus {
   display: none;
 }
 
+.visible {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.selected {
+  border: 1px solid white !important;
+}
+
 .submit {
   font-family: var(--font-face);
   font-size: 18px;
@@ -435,6 +444,7 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   margin-right: 5px;
 }
 
+/* Title */
 .title {
   position: relative;
   width: 90%;
@@ -456,6 +466,97 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   color: black;
 }
 
+/* Popover container */
+#labels {
+  position: relative;
+  display: block;
+}
+
+/* Tooltip text */
+#popover {
+  visibility: hidden;
+  box-sizing: border-box;
+  width: 300px;
+  background-color: var(--transparent-main-color);
+  color: white;
+  text-align: center;
+  padding: 15px;
+  border-radius: 6px;
+
+  /* Position the popover */
+  position: absolute;
+  z-index: 2;
+  bottom: -130%;
+  left: 40%;
+  margin-left: -60px;
+}
+
+/* Labels popover */
+.label {
+  box-sizing: border-box;
+  width: 100%;
+  position: relative;
+  border-radius: 8px;
+  padding: 3px 10px;
+  overflow-x: hidden;
+}
+
+.label:not(:last-child) {
+  margin-bottom: 5px;
+}
+
+.label .actions {
+  background-color: transparent;
+}
+
+.label:hover .actions {
+  visibility: visible;
+}
+
+.label input {
+  box-sizing: border-box;
+  color: white;
+  font-size: 18px;
+  width: inherit;
+  border: none;
+  outline: none;
+}
+
+.label input:focus {
+  border-bottom: 1px solid black;
+}
+
+/* Labels Area */
+#labels [data-name='labels-area'] {
+  display: flex;
+}
+
+.chip-w-text:not(:last-child) {
+  margin-right: 10px;
+}
+
+.chip-w-text {
+  color: white;
+  font-size: 18px;
+  height: 30px;
+  box-sizing: border-box;
+  padding: 3px 5px;
+  border-radius: 5px;
+}
+
+/* Popover arrow */
+/* #labels #popover::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+} */
+
+/* Project list */
 #create-task select,
 .proj select {
   font-family: var(--font-face);
@@ -467,6 +568,7 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   outline: none;
 }
 
+/* Notes */
 .desc {
   position: relative;
 }
