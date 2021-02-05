@@ -20,15 +20,20 @@ import {
   taskItemLabels,
 } from './helpers/selectors';
 import { format } from 'date-fns';
+import { Chip, ChipWithText } from './components/miscellaneous';
 
 // TODO: change the selectors
 const createTaskItem = ({ task, deleteTask, transferTask }) => {
   // TaskModal Functions
   const _updateTaskDetails = (prop, value) => {
-    if (prop === 'label') {
-      task.addLabel(value);
-    } else {
-      task[prop] = value;
+    task[prop] = value;
+  };
+
+  const _updateTaskLabels = (method, name, color = '') => {
+    if (method === 'add') {
+      task.addLabel({ name, color });
+    } else if (method === 'remove') {
+      task.removeLabel(name);
     }
   };
 
@@ -72,29 +77,23 @@ const createTaskItem = ({ task, deleteTask, transferTask }) => {
     target.classList.toggle('selected');
 
     if (target.className.includes('selected')) {
-      task.addLabel({ name: labelName, color: labelColor });
+      _updateTaskLabels('add', labelName, labelColor);
 
+      append(Component.createElementFromString(Chip(labelColor))).to(
+        $(taskItemLabels(task.id))
+      );
       append(
-        Component.createElementFromString(
-          `<div class="chip" data-color="${labelColor}"></div>`
-        )
-      ).to($(taskItemLabels(task.id)));
-
-      append(
-        Component.createElementFromString(
-          `<div class="chip-w-text" data-color="${labelColor}">${labelName}</div>`
-        )
+        Component.createElementFromString(ChipWithText(labelName, labelColor))
       ).to(labelsArea);
     } else {
-      task.removeLabel(labelName);
+      _updateTaskLabels('remove', labelName);
 
       remove($(`#${task.id} .chip[data-color="${labelColor}"]`)).from(
         $(taskItemLabels(task.id))
       );
-
-      remove($(`#${task.id} .chip-w-text[data-color="${labelColor}"]`)).from(
-        labelsArea
-      );
+      remove(
+        labelsArea.querySelector(`.chip-w-text[data-color="${labelColor}"]`)
+      ).from(labelsArea);
     }
   };
 

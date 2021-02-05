@@ -1,6 +1,7 @@
 import Component from '../helpers/component';
 import Icons from './Icons';
 import { format } from 'date-fns';
+import { Chip } from './miscellaneous';
 
 const TaskItem = ({ task, onEdit, onDelete, onToggle }) => {
   let { id, title, desc, dueDate, completed } = task;
@@ -18,7 +19,9 @@ const TaskItem = ({ task, onEdit, onDelete, onToggle }) => {
       </div>
     </div>
     <div class="brief-content">
-      <div class="label-chips"></div>
+      <div class="label-chips">
+        ${task.getLabels().map((label) => Chip(label.color))}
+      </div>
       <p data-name="task-card-title">${title}</p>
       <div class="badges">
         <span data-name="task-card-desc" 

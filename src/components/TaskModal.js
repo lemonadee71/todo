@@ -5,6 +5,7 @@ import LabelPopover from './LabelPopover';
 import { format } from 'date-fns';
 import { Converter } from 'showdown';
 import { uncategorizedTasks } from '../controller';
+import { ChipWithText } from './miscellaneous';
 
 const options = {
   omitExtraWLInCodeBlocks: true,
@@ -134,7 +135,11 @@ const TaskModal = ({
       <button data-name="edit-label-btn" ${{ onClick: openLabelPopover }}>
         +
       </button>
-      <div data-name="labels-area"></div>
+      <div data-name="labels-area">
+        ${task
+          .getLabels()
+          .map((label) => ChipWithText(label.name, label.color))}
+      </div>
       ${LabelPopover({
         taskLabels: task.getLabels(),
         toggleLabel: updateLabels,
