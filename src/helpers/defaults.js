@@ -1,4 +1,4 @@
-import List from '../list';
+import List from '../classes/List';
 
 const defaultProjects = [
   new List('foo', 'project'),

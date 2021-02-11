@@ -1,5 +1,5 @@
 import { compareAsc } from 'date-fns';
-import List from './list.js';
+import List from '../classes/List.js';
 import $, {
   clear,
   changeModalContent,
@@ -8,12 +8,12 @@ import $, {
   append,
   remove,
   clearTasks,
-} from './helpers/helpers';
+} from '../helpers/helpers';
 import { createTaskItem } from './taskController';
-import Component from './helpers/component';
-import ProjectListItem from './components/ProjectListItem';
-import Task from './Task.js';
-import CreateTaskForm from './components/CreateTaskForm.js';
+import Component from '../helpers/component';
+import ProjectListItem from '../components/ProjectListItem';
+import Task from '../classes/Task.js';
+import CreateTaskForm from '../components/CreateTaskForm.js';
 import {
   completedTasks,
   currentTasks,
@@ -25,9 +25,9 @@ import {
   newTaskFormTitle,
   tasksList,
   userProjects,
-} from './helpers/selectors.js';
-import NoTasksMessage from './components/NoTasksMessage.js';
-import { defaultProjects } from './helpers/defaults.js';
+} from '../helpers/selectors.js';
+import NoTasksMessage from '../components/NoTasksMessage.js';
+import { defaultProjects } from '../helpers/defaults.js';
 
 // Work on displaying tasks in a selected project
 // Add a function that process drop events

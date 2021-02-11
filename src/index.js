@@ -10,7 +10,7 @@ import {
   selectAllTasks,
   getProjectsDetails,
   showCreateTaskForm,
-} from './controller';
+} from './modules/controller';
 
 const App = () => {
   const showSidebar = (e) => {

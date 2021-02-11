@@ -1,4 +1,4 @@
-import List from './list';
+import List from './List';
 
 class Task {
   constructor({ title, desc, dueDate, location }) {
@@ -9,7 +9,7 @@ class Task {
     this.completed = false;
     this.location = location;
     this.labels = new List(`labels-${this.id}`, 'labels');
-    this.subtasks = new List(`subtasks-${this.id}`, 'labels');
+    // this.subtasks = new List(`subtasks-${this.id}`, 'labels');
   }
 
   get title() {

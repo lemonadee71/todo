@@ -1,23 +1,17 @@
-import List from '../list.js';
-import { getAllProjects } from '../controller';
+import List from '../classes/List.js';
+import Label from '../classes/Label.js';
+import { getAllProjects } from './controller';
 
-// Add an id property for each label
 const labels = new List('labels', 'list', [
-  {
-    color: '#FF9F1A',
-    name: 'urgent',
-  },
-  {
-    color: '#EB5A46',
-    name: 'important',
-  },
+  new Label('urgent', '#FF9F1A'),
+  new Label('important', '#EB5A46'),
 ]);
 
 const addLabel = (name, color) => {
   let alreadyExists = labels.getItem((label) => label.name === name);
 
   if (!alreadyExists) {
-    labels.addItem({ name, color });
+    labels.addItem(new Label(name, color));
   } else {
     throw new Error('Label already exists.');
   }

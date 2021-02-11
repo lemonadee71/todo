@@ -1,7 +1,7 @@
 import Component from '../helpers/component';
 import Icons from './Icons';
 import { format } from 'date-fns';
-import { Chip } from './miscellaneous';
+import { Chip } from './Chip';
 
 const TaskItem = ({ task, onEdit, onDelete, onToggle }) => {
   let { id, title, desc, dueDate, completed } = task;

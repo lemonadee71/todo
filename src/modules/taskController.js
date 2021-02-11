@@ -1,14 +1,14 @@
-import Component from './helpers/component';
-import TaskItem from './components/TaskItem';
+import Component from '../helpers/component';
+import TaskItem from '../components/TaskItem';
 import $, {
   append,
   changeModalContent,
   hide,
   remove,
   show,
-} from './helpers/helpers';
+} from '../helpers/helpers';
 import { getProjectsDetails, getCurrentSelectedProj } from './controller';
-import TaskModal from './components/TaskModal';
+import TaskModal from '../components/TaskModal';
 import {
   completedTasks,
   currentTasks,
@@ -18,9 +18,9 @@ import {
   taskItemDueDateIcon,
   taskItemTitle,
   taskItemLabels,
-} from './helpers/selectors';
+} from '../helpers/selectors';
 import { format } from 'date-fns';
-import { Chip, ChipWithText } from './components/miscellaneous';
+import { Chip, ChipWithText } from '../components/Chip';
 
 // TODO: change the selectors
 const createTaskItem = ({ task, deleteTask, transferTask }) => {

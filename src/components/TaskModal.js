@@ -4,8 +4,8 @@ import Icons from './Icons';
 import LabelPopover from './LabelPopover';
 import { format } from 'date-fns';
 import { Converter } from 'showdown';
-import { uncategorizedTasks } from '../controller';
-import { ChipWithText } from './miscellaneous';
+import { uncategorizedTasks } from '../modules/controller';
+import { ChipWithText } from './Chip';
 
 const options = {
   omitExtraWLInCodeBlocks: true,
