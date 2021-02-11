@@ -1,5 +1,7 @@
 import List from '../list.js';
+import { getAllProjects } from '../controller';
 
+// Add an id property for each label
 const labels = new List('labels', 'list', [
   {
     color: '#FF9F1A',
@@ -22,6 +24,11 @@ const addLabel = (name, color) => {
 };
 
 const deleteLabel = (name) => {
+  getAllProjects()
+    .map((proj) => proj.items)
+    .flat()
+    .forEach((task) => task.removeLabel(name));
+
   labels.removeItems((label) => label.name === name);
 };
 

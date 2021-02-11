@@ -20,7 +20,7 @@ const TaskItem = ({ task, onEdit, onDelete, onToggle }) => {
     </div>
     <div class="brief-content">
       <div class="label-chips">
-        ${task.getLabels().map((label) => Chip(label.color))}
+        ${task.getLabels().map((label) => Chip(label.name, label.color))}
       </div>
       <p data-name="task-card-title">${title}</p>
       <div class="badges">

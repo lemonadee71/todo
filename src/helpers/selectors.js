@@ -24,6 +24,10 @@ const newProjectInput = '#new-proj';
 
 const popover = '#popover';
 
+const chips = (name, color) => `.chip[data-label-id="${name}-${color}"]`;
+const chipsWithText = (name, color) =>
+  `.chip-w-text[data-label-id="${name}-${color}"]`;
+
 export {
   modal,
   modalContent,
@@ -43,4 +47,6 @@ export {
   taskItemDescription,
   taskItemDueDateIcon,
   taskItemDueDateText,
+  chips,
+  chipsWithText,
 };

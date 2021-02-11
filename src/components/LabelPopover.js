@@ -3,6 +3,7 @@ import { addLabel, deleteLabel, editLabel, getLabels } from '../modules/labels';
 import $, { append, remove, hide, show } from '../helpers/helpers';
 import NewLabelForm from './NewLabelForm';
 import Label from './Label';
+import { chips, chipsWithText } from '../helpers/selectors';
 
 const LabelPopover = ({ taskLabels, toggleLabel }) => {
   let labels = getLabels();
@@ -60,13 +61,33 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
 
   // Should dispatch an edit event
   const updateLabel = (e) => {
-    let labelName = e.currentTarget.parentElement.getAttribute(
-      'data-label-name'
-    );
-    editLabel(labelName, 'name', e.currentTarget.value);
+    let labelEl = e.currentTarget.parentElement;
+    let labelName = labelEl.getAttribute('data-label-name');
+    let labelColor = labelEl.getAttribute('data-color');
+    let newLabelName = e.currentTarget.value;
+
+    labelEl.setAttribute('data-label-name', newLabelName);
+
+    editLabel(labelName, 'name', newLabelName);
+
+    let allChips = document.querySelectorAll(`${chips(labelName, labelColor)}`);
+    let allChipsWithText = $(`${chipsWithText(labelName, labelColor)}--g`);
+    console.log(allChips, allChipsWithText);
+    if (allChips) {
+      [...allChips].map((chip) =>
+        chip.setAttribute('data-label-id', `${newLabelName}-${labelColor}`)
+      );
+    }
+
+    if (allChipsWithText) {
+      [...allChipsWithText].map((chip) => {
+        chip.textContent = newLabelName;
+        chip.setAttribute('data-label-id', `${newLabelName}-${labelColor}`);
+      });
+    }
   };
 
-  const removeLabel = (labelName) => {
+  const removeLabel = (labelName, labelColor) => {
     deleteLabel(labelName);
 
     // idk if this is necessary
@@ -77,6 +98,14 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
     $(`${label} .actions`).children[0].removeEventListener('click', allowEdit);
 
     remove($(label)).from($('#label-list'));
+
+    // remove all chips and chip-w-texts with the same label name and color
+    [...$(`.chip[data-label-id="${labelName}-${labelColor}"]--g`)].map((chip) =>
+      chip.remove()
+    );
+    [
+      ...$(`.chip-w-text[data-label-id="${labelName}-${labelColor}"]--g`),
+    ].map((chip) => chip.remove());
   };
 
   const allowEdit = (e) => {
@@ -116,8 +145,7 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
       <div id='label-list'>
         ${labels.length ? labels.map((label) => createLabelElement(label)) : ''}
       </div>
-      <div id="new-label">
-        
+      <div id="new-label">        
       </div>
     </div>
   `;

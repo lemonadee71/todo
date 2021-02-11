@@ -2,7 +2,7 @@ import Component from '../helpers/component';
 import Icons from './Icons';
 
 const ProjectListItem = (proj, { clickHandler, deleteHandler }) => {
-  return Component.createElementFromObject({
+  return {
     type: 'li',
     id: proj.id,
     listeners: {
@@ -10,7 +10,8 @@ const ProjectListItem = (proj, { clickHandler, deleteHandler }) => {
     },
     children: [
       {
-        span: proj.name,
+        type: 'span',
+        text: proj.name,
       },
       {
         type: 'span',
@@ -22,7 +23,7 @@ const ProjectListItem = (proj, { clickHandler, deleteHandler }) => {
         },
       },
     ],
-  });
+  };
 };
 
 export default ProjectListItem;

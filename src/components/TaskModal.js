@@ -27,6 +27,10 @@ const options = {
 const textToMarkdownConverter = new Converter(options);
 textToMarkdownConverter.setFlavor('github');
 
+// Selectors are so messy for this component
+// Since there's only one modal component at a time
+// Maybe change it to ids
+// But make sure to not have conflicts with other components that shows modal-content too
 const TaskModal = ({
   task,
   projects,
@@ -63,7 +67,10 @@ const TaskModal = ({
   const saveDesc = () => {
     $('--data-name=edit-desc-btn').classList.toggle('hidden');
     updateDesc();
-    rerender($(taskDesc), descriptionPreview());
+    rerender(
+      $(taskDesc),
+      Component.render(Component.objectToString(descriptionPreview()))
+    );
   };
 
   const descTextArea = () =>
@@ -97,14 +104,13 @@ const TaskModal = ({
       ]
     : '';
 
-  const descriptionPreview = () =>
-    Component.createElementFromObject({
-      type: 'div',
-      className: 'markdown-body',
-      prop: {
-        innerHTML: textToMarkdownConverter.makeHtml(task.desc),
-      },
-    });
+  const descriptionPreview = () => ({
+    type: 'div',
+    className: 'markdown-body',
+    prop: {
+      innerHTML: textToMarkdownConverter.makeHtml(task.desc),
+    },
+  });
 
   return Component.render(Component.parseString`
     <div class="title">

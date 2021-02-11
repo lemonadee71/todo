@@ -79,7 +79,7 @@ const createTaskItem = ({ task, deleteTask, transferTask }) => {
     if (target.className.includes('selected')) {
       _updateTaskLabels('add', labelName, labelColor);
 
-      append(Component.createElementFromString(Chip(labelColor))).to(
+      append(Component.createElementFromString(Chip(labelName, labelColor))).to(
         $(taskItemLabels(task.id))
       );
       append(
@@ -88,11 +88,13 @@ const createTaskItem = ({ task, deleteTask, transferTask }) => {
     } else {
       _updateTaskLabels('remove', labelName);
 
-      remove($(`#${task.id} .chip[data-color="${labelColor}"]`)).from(
-        $(taskItemLabels(task.id))
-      );
       remove(
-        labelsArea.querySelector(`.chip-w-text[data-color="${labelColor}"]`)
+        $(`#${task.id} .chip[data-label-id="${labelName}-${labelColor}"]`)
+      ).from($(taskItemLabels(task.id)));
+      remove(
+        labelsArea.querySelector(
+          `.chip-w-text[data-label-id="${labelName}-${labelColor}"]`
+        )
       ).from(labelsArea);
     }
   };

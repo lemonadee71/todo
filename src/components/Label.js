@@ -31,7 +31,7 @@ const Label = ({
         <button ${{ onClick: allowEdit }}>${Icons('edit')}</button>
         <button ${{
           onClick: (e) => {
-            removeLabel(label.name);
+            removeLabel(label.name, label.color);
             e.stopPropagation();
           },
         }}>

@@ -49,6 +49,8 @@ let currentSelectedProj = uncategorizedTasks.id;
 
 const getCurrentSelectedProj = () => currentSelectedProj;
 
+const getAllProjects = () => allProjects.items;
+
 const _segregateTasks = (tasks) => {
   return [
     tasks.filter((task) => !task.completed),
@@ -234,4 +236,5 @@ export {
   selectAllTasks,
   getProjectsDetails,
   getCurrentSelectedProj,
+  getAllProjects,
 };
