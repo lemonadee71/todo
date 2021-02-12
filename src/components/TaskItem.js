@@ -1,10 +1,10 @@
 import Component from '../helpers/component';
 import Icons from './Icons';
 import { format } from 'date-fns';
-import { Chip } from './Chip';
+import Chip from './Chip';
 
 const TaskItem = ({ task, onEdit, onDelete, onToggle }) => {
-  let { id, title, desc, dueDate, completed } = task;
+  let { id, title, notes, dueDate, completed } = task;
 
   return Component.parseString`
   <div id="${id}" class="task ${completed ? 'completed' : ''}" draggable="true">
@@ -24,8 +24,8 @@ const TaskItem = ({ task, onEdit, onDelete, onToggle }) => {
       </div>
       <p data-name="task-card-title">${title}</p>
       <div class="badges">
-        <span data-name="task-card-desc" 
-        ${!desc ? 'style="display: none;"' : ''}>
+        <span data-name="task-card-notes" 
+        ${!notes ? 'style="display: none;"' : ''}>
         ${Icons('details')}
         </span>
         <span data-name="task-card-date">

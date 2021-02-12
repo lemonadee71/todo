@@ -1,4 +1,6 @@
 import List from '../classes/List';
+import Label from '../classes/Label';
+import Label from '../classes/Task';
 
 const defaultProjects = [
   new List('foo', 'project'),
@@ -20,14 +22,8 @@ const defaultLabelColors = [
 ];
 
 const defaultLabels = [
-  {
-    color: '#FF9F1A',
-    text: 'urgent',
-  },
-  {
-    color: '#EB5A46',
-    text: 'important',
-  },
+  new Label('urgent', '#FF9F1A'),
+  new Label('important', '#EB5A46'),
 ];
 
-export { defaultProjects, defaultLabelColors };
+export { defaultProjects, defaultLabelColors, defaultLabels };

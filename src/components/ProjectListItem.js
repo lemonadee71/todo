@@ -1,4 +1,3 @@
-import Component from '../helpers/component';
 import Icons from './Icons';
 
 const ProjectListItem = (proj, { clickHandler, deleteHandler }) => {
@@ -9,10 +8,7 @@ const ProjectListItem = (proj, { clickHandler, deleteHandler }) => {
       click: clickHandler,
     },
     children: [
-      {
-        type: 'span',
-        text: proj.name,
-      },
+      `<span>${proj.name}</span>`,
       {
         type: 'span',
         prop: {

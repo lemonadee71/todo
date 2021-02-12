@@ -1,5 +1,5 @@
 import Component from '../helpers/component';
-import $, { closeModal } from '../helpers/helpers';
+import { closeModal } from '../helpers/helpers';
 
 const Modal = () => {
   return Component.parseString`

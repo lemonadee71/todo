@@ -87,12 +87,12 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
     }
   };
 
-  const removeLabel = (labelName, labelColor) => {
-    deleteLabel(labelName);
+  const removeLabel = (labelId) => {
+    deleteLabel(labelId);
 
     // idk if this is necessary
     // trust the garbage collector
-    let label = `[data-label-name="${labelName}"]`;
+    let label = `[data-label-id="${labelId}"]`;
     $(`${label} input`).removeEventListener('change', updateLabel);
     $(`${label} input`).removeEventListener('focusout', disableEdit);
     $(`${label} .actions`).children[0].removeEventListener('click', allowEdit);
@@ -100,12 +100,8 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
     remove($(label)).from($('#label-list'));
 
     // remove all chips and chip-w-texts with the same label name and color
-    [...$(`.chip[data-label-id="${labelName}-${labelColor}"]--g`)].map((chip) =>
-      chip.remove()
-    );
-    [
-      ...$(`.chip-w-text[data-label-id="${labelName}-${labelColor}"]--g`),
-    ].map((chip) => chip.remove());
+    [...$(`.chip${label}--g`)].map((chip) => chip.remove());
+    [...$(`.chip-w-text${label}--g`)].map((chip) => chip.remove());
   };
 
   const allowEdit = (e) => {

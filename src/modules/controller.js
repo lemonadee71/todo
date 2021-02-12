@@ -20,7 +20,7 @@ import {
   modal,
   newProjectInput,
   newTaskForm,
-  newTaskFormDesc,
+  newTaskFormNotes,
   newTaskFormDueDate,
   newTaskFormTitle,
   tasksList,
@@ -28,16 +28,6 @@ import {
 } from '../helpers/selectors.js';
 import NoTasksMessage from '../components/NoTasksMessage.js';
 import { defaultProjects } from '../helpers/defaults.js';
-
-// Work on displaying tasks in a selected project
-// Add a function that process drop events
-// Add functions for handling labels
-/*
-Pass the task's labels to LabelList
-If label in labels, add class "checked"
-For each label element, add click event
-If checked, remove label, otherwise add it
-*/
 
 const uncategorizedTasks = new List('uncategorized', 'project');
 const allProjects = new List('all', 'root', [
@@ -202,11 +192,11 @@ const createNewProject = (e) => {
 const createNewTask = (e) => {
   e.preventDefault();
   let title = $(newTaskFormTitle).value;
-  let desc = $(newTaskFormDesc).value;
+  let notes = $(newTaskFormNotes).value;
   let dueDate = $(newTaskFormDueDate).value;
   let location = currentSelectedProj || uncategorizedTasks.id;
 
-  let task = new Task({ title, desc, dueDate, location });
+  let task = new Task({ title, notes, dueDate, location });
 
   _addTask(task);
   append(createTaskItem({ task, deleteTask, transferTask })).to(

@@ -1,10 +1,10 @@
 import List from './List';
 
 class Task {
-  constructor({ title, desc, dueDate, location }) {
+  constructor({ title, notes, dueDate, location }) {
     this.id = `task-${Math.random()}`.replace(/0./, '');
     this.title = title || 'Unnamed Task';
-    this.desc = desc || '';
+    this.notes = notes || '';
     this.dueDate = dueDate || '';
     this.completed = false;
     this.location = location;
@@ -24,16 +24,16 @@ class Task {
     this._title = newTitle;
   }
 
-  get desc() {
-    return this._desc;
+  get notes() {
+    return this._notes;
   }
 
-  set desc(newDesc) {
-    if (typeof newDesc !== 'string') {
-      throw new Error('Invalid type. Desc must be string.');
+  set notes(str) {
+    if (typeof str !== 'string') {
+      throw new Error('Invalid type. Notes must be string.');
     }
 
-    this._desc = newDesc;
+    this._notes = str;
   }
 
   get dueDate() {
@@ -96,8 +96,8 @@ class Task {
     this.labels.addItem(label);
   }
 
-  removeLabel(labelName) {
-    this.labels.removeItems((label) => label.name === labelName);
+  removeLabel(labelId) {
+    this.labels.removeItems((label) => label.id === labelId);
   }
 
   removeLabels() {

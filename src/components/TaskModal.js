@@ -37,10 +37,10 @@ const TaskModal = ({
   updateTitle,
   updateLocation,
   updateLabels,
-  updateDesc,
+  updateNotes,
   updateDueDate,
 }) => {
-  const taskDesc = '--data-name=desc-area';
+  const tasknotes = '--data-name=notes-area';
 
   // Title
   const editTitle = (e) => {
@@ -58,25 +58,25 @@ const TaskModal = ({
     $('#popover').classList.add('visible');
   };
 
-  // Description
-  const editDesc = () => {
-    $('--data-name=edit-desc-btn').classList.toggle('hidden');
-    rerender($(taskDesc), descTextArea());
+  // Notes
+  const editNotes = () => {
+    $('--data-name=edit-notes-btn').classList.toggle('hidden');
+    rerender($(tasknotes), notesTextArea());
   };
 
-  const saveDesc = () => {
-    $('--data-name=edit-desc-btn').classList.toggle('hidden');
-    updateDesc();
+  const saveNotes = () => {
+    $('--data-name=edit-notes-btn').classList.toggle('hidden');
+    updateNotes();
     rerender(
-      $(taskDesc),
-      Component.render(Component.objectToString(descriptionPreview()))
+      $(tasknotes),
+      Component.render(Component.objectToString(notesPreview()))
     );
   };
 
-  const descTextArea = () =>
+  const notesTextArea = () =>
     Component.render(Component.parseString`
-      <textarea id="edit-task-desc" "name="desc">${task.desc}</textarea>
-      <button class="submit" type="submit" ${{ onClick: saveDesc }}>
+      <textarea id="edit-task-notes" "name="notes">${task.notes}</textarea>
+      <button class="submit" type="submit" ${{ onClick: saveNotes }}>
         Save
       </button>  
   `);
@@ -104,11 +104,11 @@ const TaskModal = ({
       ]
     : '';
 
-  const descriptionPreview = () => ({
+  const notesPreview = () => ({
     type: 'div',
     className: 'markdown-body',
     prop: {
-      innerHTML: textToMarkdownConverter.makeHtml(task.desc),
+      innerHTML: textToMarkdownConverter.makeHtml(task.notes),
     },
   });
 
@@ -151,15 +151,15 @@ const TaskModal = ({
         toggleLabel: updateLabels,
       })}
     </div>
-    <div class="desc">
+    <div class="notes">
       <div class="section-header">
         ${Icons('details')}
-        <span>Description</span>
+        <span>Notes</span>
       </div>
-      <button data-name="edit-desc-btn" ${{ onClick: editDesc }}>
+      <button data-name="edit-notes-btn" ${{ onClick: editNotes }}>
         ${Icons('edit')}
       </button>
-      <div data-name="desc-area">${descriptionPreview()}</div>
+      <div data-name="notes-area">${notesPreview()}</div>
     </div>
     <div class="date">
       <div class="section-header">

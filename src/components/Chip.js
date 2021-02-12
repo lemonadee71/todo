@@ -1,7 +1,6 @@
-const Chip = (name, color) =>
-  `<div class="chip" data-label-id="${name}-${color}" data-color="${color}"></div>`;
+const Chip = (id, color, name = '') =>
+  `<div class="chip${
+    name ? '-w-text' : ''
+  }" data-label-id="${id}" data-color="${color}">${name}</div>`;
 
-const ChipWithText = (name, color) =>
-  `<div class="chip-w-text" data-label-id="${name}-${color}" data-color="${color}">${name}</div>`;
-
-export { Chip, ChipWithText };
+export default Chip;

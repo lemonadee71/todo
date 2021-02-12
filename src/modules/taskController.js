@@ -13,14 +13,15 @@ import {
   completedTasks,
   currentTasks,
   modal,
-  taskItemDescription,
+  taskItemNotes,
   taskItemDueDateText,
   taskItemDueDateIcon,
   taskItemTitle,
   taskItemLabels,
 } from '../helpers/selectors';
 import { format } from 'date-fns';
-import { Chip, ChipWithText } from '../components/Chip';
+import Chip from '../components/Chip';
+import Label from '../classes/Label';
 
 // TODO: change the selectors
 const createTaskItem = ({ task, deleteTask, transferTask }) => {
@@ -31,7 +32,7 @@ const createTaskItem = ({ task, deleteTask, transferTask }) => {
 
   const _updateTaskLabels = (method, name, color = '') => {
     if (method === 'add') {
-      task.addLabel({ name, color });
+      task.addLabel(new Label(name, color));
     } else if (method === 'remove') {
       task.removeLabel(name);
     }
@@ -42,14 +43,14 @@ const createTaskItem = ({ task, deleteTask, transferTask }) => {
     $(taskItemTitle(task.id)).textContent = task.title;
   };
 
-  const updateDesc = () => {
-    _updateTaskDetails('desc', $('#edit-task-desc').value);
+  const updateNotes = () => {
+    _updateTaskDetails('notes', $('#edit-task-notes').value);
 
-    let taskCardDesc = $(taskItemDescription(task.id));
-    if (task.desc === '') {
-      hide(taskCardDesc);
+    let taskCardNotes = $(taskItemNotes(task.id));
+    if (task.notes === '') {
+      hide(taskCardNotes);
     } else {
-      show(taskCardDesc);
+      show(taskCardNotes);
     }
   };
 
@@ -68,9 +69,10 @@ const createTaskItem = ({ task, deleteTask, transferTask }) => {
     }
   };
 
+  // This is a mess
   const updateLabels = (e) => {
     let target = e.currentTarget;
-    let labelName = target.getAttribute('data-label-name');
+    let labelId = target.getAttribute('data-label-id');
     let labelColor = target.getAttribute('data-color');
     let labelsArea = $('#labels [data-name="labels-area"]');
 
@@ -79,21 +81,21 @@ const createTaskItem = ({ task, deleteTask, transferTask }) => {
     if (target.className.includes('selected')) {
       _updateTaskLabels('add', labelName, labelColor);
 
-      append(Component.createElementFromString(Chip(labelName, labelColor))).to(
+      append(Component.createElementFromString(Chip(labelId, labelColor))).to(
         $(taskItemLabels(task.id))
       );
       append(
-        Component.createElementFromString(ChipWithText(labelName, labelColor))
+        Component.createElementFromString(ChipWithText(labelId, labelColor))
       ).to(labelsArea);
     } else {
-      _updateTaskLabels('remove', labelName);
+      _updateTaskLabels('remove', labelId);
 
       remove(
-        $(`#${task.id} .chip[data-label-id="${labelName}-${labelColor}"]`)
+        $(`#${task.id} .chip[data-label-id="${labelId}-${labelColor}"]`)
       ).from($(taskItemLabels(task.id)));
       remove(
         labelsArea.querySelector(
-          `.chip-w-text[data-label-id="${labelName}-${labelColor}"]`
+          `.chip-w-text[data-label-id="${labelId}-${labelColor}"]`
         )
       ).from(labelsArea);
     }
@@ -120,7 +122,7 @@ const createTaskItem = ({ task, deleteTask, transferTask }) => {
         task,
         updateTitle,
         updateLabels,
-        updateDesc,
+        updateNotes,
         updateDueDate,
         updateLocation: changeTaskLocation,
         projects: getProjectsDetails(),

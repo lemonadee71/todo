@@ -1,5 +1,5 @@
 const taskItemTitle = (id) => `#${id} [data-name="task-card-title"]`;
-const taskItemDescription = (id) => `#${id} [data-name="task-card-desc"]`;
+const taskItemNotes = (id) => `#${id} [data-name="task-card-notes"]`;
 const taskItemDueDateIcon = (id) => `#${id} [data-name="task-card-date-icon"]`;
 const taskItemDueDateText = (id) => `#${id} [data-name="task-card-date-text"]`;
 const taskItemLabels = (id) => `#${id} .label-chips`;
@@ -9,7 +9,7 @@ const currentTasks = '#current-tasks';
 
 const newTaskForm = '#create-task';
 const newTaskFormTitle = '[data-id="new-task-title"]';
-const newTaskFormDesc = '[data-id="new-task-desc"]';
+const newTaskFormNotes = '[data-id="new-task-notes"]';
 const newTaskFormDueDate = '[data-id="new-task-date"]';
 
 const modal = '.modal-backdrop';
@@ -24,9 +24,8 @@ const newProjectInput = '#new-proj';
 
 const popover = '#popover';
 
-const chips = (name, color) => `.chip[data-label-id="${name}-${color}"]`;
-const chipsWithText = (name, color) =>
-  `.chip-w-text[data-label-id="${name}-${color}"]`;
+const chips = (id) => `.chip[data-label-id="${id}"]`;
+const chipsWithText = (id) => `.chip-w-text[data-label-id="${id}"]`;
 
 export {
   modal,
@@ -35,7 +34,7 @@ export {
   completedTasks,
   newTaskForm,
   newTaskFormTitle,
-  newTaskFormDesc,
+  newTaskFormNotes,
   newTaskFormDueDate,
   tasksList,
   hamburger,
@@ -44,7 +43,7 @@ export {
   userProjects,
   taskItemTitle,
   taskItemLabels,
-  taskItemDescription,
+  taskItemNotes,
   taskItemDueDateIcon,
   taskItemDueDateText,
   chips,

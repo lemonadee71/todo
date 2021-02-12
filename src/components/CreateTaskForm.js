@@ -12,8 +12,8 @@ const CreateTaskForm = ({ onSubmit }) => {
       />
       <br />
 
-      <p class="section-header">Description</p>
-      <textarea name="task-desc" data-id="new-task-desc"></textarea>
+      <p class="section-header">Notes</p>
+      <textarea name="task-notes" data-id="new-task-notes"></textarea>
 
       <p class="section-header">Due Date</p>
       <input type="date" data-id="new-task-date" />

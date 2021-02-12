@@ -1,11 +1,9 @@
 import List from '../classes/List.js';
 import Label from '../classes/Label.js';
 import { getAllProjects } from './controller';
+import { defaultLabels } from '../helpers/defaults.js';
 
-const labels = new List('labels', 'list', [
-  new Label('urgent', '#FF9F1A'),
-  new Label('important', '#EB5A46'),
-]);
+const labels = new List('labels', 'list', defaultLabels);
 
 const addLabel = (name, color) => {
   let alreadyExists = labels.getItem((label) => label.name === name);
@@ -17,17 +15,17 @@ const addLabel = (name, color) => {
   }
 };
 
-const deleteLabel = (name) => {
+const deleteLabel = (id) => {
   getAllProjects()
     .map((proj) => proj.items)
     .flat()
-    .forEach((task) => task.removeLabel(name));
+    .forEach((task) => task.removeLabel(id));
 
-  labels.removeItems((label) => label.name === name);
+  labels.removeItems((label) => label.id === id);
 };
 
-const editLabel = (name, prop, value) => {
-  labels.getItem((label) => label.name === name)[prop] = value;
+const editLabel = (id, prop, value) => {
+  labels.getItem((label) => label.id === id)[prop] = value;
 };
 
 const getLabels = () => labels.items;
