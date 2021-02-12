@@ -24,7 +24,6 @@ import {
 } from '../helpers/selectors';
 import { format } from 'date-fns';
 import Chip from '../components/Chip';
-import Label from '../classes/Label';
 import { getLabel } from './labels';
 
 // TODO: change the selectors

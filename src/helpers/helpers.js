@@ -24,7 +24,7 @@ const clear = (element) => {
 };
 
 const hide = (element) => {
-  element.style.display = '';
+  element.style.display = 'none';
 };
 
 const show = (element) => {

@@ -15,6 +15,7 @@ const newTaskFormDueDate = '[data-id="new-task-date"]';
 const modal = '.modal-backdrop';
 const modalContent = '#modal-content';
 const labelsArea = '#labels [data-id="labels-area"]';
+const taskNotesArea = '[data-id="notes-area"]';
 
 const tasksList = '#tasks-list';
 
@@ -32,6 +33,7 @@ export {
   modal,
   modalContent,
   labelsArea,
+  taskNotesArea,
   currentTasks,
   completedTasks,
   newTaskForm,

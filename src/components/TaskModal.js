@@ -1,27 +1,124 @@
+import { format } from 'date-fns';
 import Component from '../helpers/component';
-import $, { clear, hide, rerender, show } from '../helpers/helpers';
+import txtToMdConverter from '../helpers/showdown';
+import $, { append, hide, remove, show, rerender } from '../helpers/helpers';
+import {
+  taskItemNotes,
+  taskItemDueDateText,
+  taskItemDueDateIcon,
+  taskItemTitle,
+  taskItemLabels,
+  labelsArea,
+  taskNotesArea,
+  chips,
+  chipsWithText,
+} from '../helpers/selectors';
+import { getLabel } from '../modules/labels';
+import {
+  getProjectsDetails,
+  getCurrentSelectedProj,
+  transferTask,
+  uncategorizedTasks,
+} from '../modules/controller';
+import Chip from './Chip';
 import Icons from './Icons';
 import LabelPopover from './LabelPopover';
-import { format } from 'date-fns';
-import { uncategorizedTasks } from '../modules/controller';
-import Chip from './Chip';
-import txtToMdConverter from '../helpers/showdown';
 
 // Selectors are so messy for this component
 // Since there's only one modal component at a time
 // Maybe change it to ids
 // But make sure to not have conflicts with other components that shows modal-content too
-const TaskModal = ({
-  task,
-  projects,
-  updateTitle,
-  updateLocation,
-  updateLabels,
-  updateNotes,
-  updateDueDate,
-}) => {
-  const taskNotes = '--data-id=notes-area';
+// Add a delete button
+const TaskModal = ({ task }) => {
+  /*
+   * Private methods
+   */
+  const _updateTaskDetails = (prop, value) => {
+    task[prop] = value;
+  };
 
+  const _updateTaskLabels = (method, id) => {
+    if (method === 'add') {
+      task.addLabel(getLabel(id));
+    } else if (method === 'remove') {
+      task.removeLabel(id);
+    }
+  };
+
+  /*
+   * Functions that updates the task
+   */
+  const updateTitle = (e) => {
+    _updateTaskDetails('title', e.target.value);
+    $(taskItemTitle(task.id)).textContent = task.title;
+  };
+
+  const updateNotes = () => {
+    _updateTaskDetails('notes', $('#edit-task-notes').value);
+
+    let taskCardNotes = $(taskItemNotes(task.id));
+    if (task.notes === '') {
+      hide(taskCardNotes);
+    } else {
+      show(taskCardNotes);
+    }
+  };
+
+  const updateDueDate = (e) => {
+    _updateTaskDetails('dueDate', e.target.value);
+
+    let dueDateIcon = $(taskItemDueDateIcon(task.id));
+    let dueDateText = $(taskItemDueDateText(task.id));
+
+    if (task.dueDate === '') {
+      hide(dueDateIcon);
+      dueDateText.textContent = '';
+    } else {
+      show(dueDateIcon);
+      dueDateText.textContent = format(task.dueDate, 'E, MMM dd');
+    }
+  };
+
+  // This is a mess
+  const updateLabels = (label) => {
+    if (label.selected) {
+      _updateTaskLabels('add', label.id);
+
+      append(Component.createElementFromString(Chip(label.id, label.color))).to(
+        $(taskItemLabels(task.id))
+      );
+      append(
+        Component.createElementFromString(
+          Chip(label.id, label.color, label.name)
+        )
+      ).to($(labelsArea));
+    } else {
+      _updateTaskLabels('remove', label.id);
+
+      remove($(`#${task.id} ${chips(label.id)}`)).from(
+        $(taskItemLabels(task.id))
+      );
+      remove($(chipsWithText(label.id))).from($(labelsArea));
+    }
+  };
+
+  const updateLocation = (e) => {
+    let prevLocation = task.location;
+    let newLocation = e.currentTarget.value;
+
+    _updateTaskDetails('location', newLocation);
+    transferTask(task.id, prevLocation, newLocation);
+
+    let currentLocation = getCurrentSelectedProj();
+
+    if (currentLocation) {
+      remove($(`#${task.id}`), true);
+    }
+  };
+
+  /*
+   * DOM functions
+   */
   // Title
   const editTitle = (e) => {
     e.currentTarget.previousElementSibling.removeAttribute('disabled');
@@ -41,18 +138,21 @@ const TaskModal = ({
   // Notes
   const editNotes = () => {
     $('--data-id=edit-notes-btn').classList.toggle('hidden');
-    rerender($(taskNotes), notesTextArea());
+    rerender($(taskNotesArea), notesTextArea());
   };
 
   const saveNotes = () => {
     $('--data-id=edit-notes-btn').classList.toggle('hidden');
     updateNotes();
     rerender(
-      $(taskNotes),
+      $(taskNotesArea),
       Component.render(Component.objectToString(notesPreview()))
     );
   };
 
+  /*
+   * TaskModal elements
+   */
   const notesTextArea = () =>
     Component.render(Component.parseString`
       <textarea id="edit-task-notes" "name="notes">${task.notes}</textarea>
@@ -61,6 +161,15 @@ const TaskModal = ({
       </button>  
   `);
 
+  const notesPreview = () => ({
+    type: 'div',
+    className: 'markdown-body',
+    prop: {
+      innerHTML: txtToMdConverter.makeHtml(task.notes),
+    },
+  });
+
+  const projects = getProjectsDetails();
   const projectList = projects.length
     ? [
         // Use an imported uncategorizedTasks for now
@@ -83,14 +192,6 @@ const TaskModal = ({
         })),
       ]
     : '';
-
-  const notesPreview = () => ({
-    type: 'div',
-    className: 'markdown-body',
-    prop: {
-      innerHTML: txtToMdConverter.makeHtml(task.notes),
-    },
-  });
 
   return Component.render(Component.parseString`
     <div class="title">

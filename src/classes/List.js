@@ -33,10 +33,7 @@ class List {
   }
 
   removeItems(condition) {
-    console.log('LIST', this.items);
-    this.items = this.items.filter((item) => {
-      return !condition(item);
-    });
+    this.items = this.items.filter((item) => !condition(item));
     this.length = this.items.length;
   }
 

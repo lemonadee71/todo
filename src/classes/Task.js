@@ -97,7 +97,6 @@ class Task {
   }
 
   removeLabel(id) {
-    console.log('Removing label from task...');
     this.labels.removeItems((label) => label.id === id);
   }
 

@@ -21,7 +21,6 @@ const deleteLabel = (id) => {
     .flat()
     .forEach((task) => task.removeLabel(id));
 
-  console.log('Removing label from Labels...');
   labels.removeItems((label) => label.id === id);
 };
 

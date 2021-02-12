@@ -28,6 +28,7 @@ import {
 } from '../helpers/selectors.js';
 import NoTasksMessage from '../components/NoTasksMessage.js';
 import { defaultProjects } from '../helpers/defaults.js';
+import TaskItem from '../components/TaskItem';
 
 const uncategorizedTasks = new List('uncategorized', 'project');
 const allProjects = new List('all', 'root', [
@@ -127,15 +128,13 @@ const getProjectsDetails = () => {
 const _renderTasks = (tasks) => {
   clearTasks();
 
-  let [current, completed] = _segregateTasks(tasks);
-
-  current.map((task) => {
-    let taskCard = createTaskItem({ task, deleteTask, transferTask });
-    append(taskCard).to($(currentTasks));
-  });
-  completed.map((task) => {
-    let taskCard = createTaskItem({ task, deleteTask, transferTask });
-    append(taskCard).to($(completedTasks));
+  // let [current, completed] = _segregateTasks(tasks);
+  tasks.forEach((task) => {
+    if (task.completed) {
+      append(TaskItem({ task })).to($(completedTasks));
+    } else {
+      append(TaskItem({ task })).to($(currentTasks));
+    }
   });
 };
 
@@ -199,9 +198,7 @@ const createNewTask = (e) => {
   let task = new Task({ title, notes, dueDate, location });
 
   _addTask(task);
-  append(createTaskItem({ task, deleteTask, transferTask })).to(
-    $(currentTasks)
-  );
+  append(TaskItem({ task })).to($(currentTasks));
   _destroyForm();
 };
 
@@ -227,4 +224,6 @@ export {
   getProjectsDetails,
   getCurrentSelectedProj,
   getAllProjects,
+  transferTask,
+  deleteTask,
 };
