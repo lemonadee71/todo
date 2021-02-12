@@ -1,5 +1,5 @@
 import Component from '../helpers/component';
-import $ from '../helpers/helpers';
+import $, { hide, show } from '../helpers/helpers';
 import { getLabels } from '../modules/labels';
 import NewLabelForm from './NewLabelForm';
 import Label from './Label';
@@ -14,7 +14,6 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
   const updateLabels = (e) => {
     let el = e.target;
 
-    console.log('UPDATE LABEL', el);
     if (el.matches('.label[data-label-id]')) {
       el.classList.toggle('selected');
 
@@ -36,10 +35,6 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
     }
   };
 
-  // <button class="submit" ${{
-  //   onClick: toggleCreating,
-  // }}>Create new label</button>
-
   return Component.parseString`
     <div id="popover">
       <span class="close" ${{ onClick: closePopover }}>&times;</span>       
@@ -51,7 +46,9 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
             : ''
         }
       </div>
-      <div id="new-label">        
+      <div id="new-label">   
+        <span class="section-header">Create New Label</span>
+        ${NewLabelForm()}     
       </div>
     </div>
   `;

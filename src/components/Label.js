@@ -28,7 +28,7 @@ const Label = ({ label, taskLabels }) => {
     e.stopPropagation();
   };
 
-  const removeLabel = () => {
+  const removeLabel = (e) => {
     deleteLabel(label.id);
 
     // idk if this is necessary

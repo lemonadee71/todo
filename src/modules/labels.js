@@ -9,7 +9,10 @@ const addLabel = (name, color) => {
   let alreadyExists = labels.getItem((label) => label.name === name);
 
   if (!alreadyExists) {
-    labels.addItem(new Label(name, color));
+    let newLabel = new Label(name, color);
+    labels.addItem(newLabel);
+
+    return newLabel;
   } else {
     throw new Error('Label already exists.');
   }

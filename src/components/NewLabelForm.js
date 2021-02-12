@@ -1,52 +1,48 @@
 import Component from '../helpers/component';
 import { defaultLabelColors } from '../helpers/defaults';
 import { addLabel } from '../modules/labels';
-import $ from '../helpers/helpers';
+import $, { append } from '../helpers/helpers';
+import Label from './Label';
 
 const NewLabelForm = () => {
   let labelColor = defaultLabelColors[0];
   let labelName = '';
-  let isCreating = false;
-
-  const toggleCreating = () => {
-    isCreating = !isCreating;
-
-    if (isCreating) {
-      hide($('#new-label button'));
-      $('#new-label').appendChild(NewLabelForm({ createNewLabel }));
-    } else {
-      show($('#new-label button'));
-      $('#new-label form').remove();
-      $('#color-picker').remove();
-    }
-  };
 
   const createNewLabel = (name, color) => {
     try {
-      addLabel(name, color);
-      append(Component.render(createLabelElement({ name, color }))).to(
-        $('#label-list')
-      );
-
-      toggleCreating();
+      let newLabel = addLabel(name, color);
+      append(
+        Component.render(
+          Label({
+            label: newLabel,
+            taskLabels: [],
+          })
+        )
+      ).to($('#label-list'));
     } catch (error) {
+      console.log(error);
       alert(error.toString());
       $('#new-label form').reset();
     }
   };
+
   /*
    * DOM functions
    */
   const pickColor = (e) => {
-    $(`--data-color=${labelColor}`).classList.remove('selected');
-    e.currentTarget.classList.add('selected');
-    labelColor = e.currentTarget.getAttribute('data-color');
+    $(`.color.selected`).classList.remove('selected');
+    if (e.target.matches('div.color')) {
+      e.target.classList.add('selected');
+      labelColor = e.target.getAttribute('data-color');
+    }
   };
 
   const onSubmit = (e) => {
     labelName = e.currentTarget.elements[0].value;
-
     createNewLabel(labelName, labelColor);
+
+    e.preventDefault();
+    e.target.reset();
   };
 
   return Component.parseString`
@@ -58,15 +54,14 @@ const NewLabelForm = () => {
         placeholder="Label Name"
         required
       />
-      <button type="submit">Create Label</button>
+      <button class="submit" type="submit">Create</button>
     </form>
-    <div id="color-picker">
+    <div id="color-picker" ${{ onClick: pickColor }}>
       ${defaultLabelColors.map(
         (color) =>
           `<div data-color="${color}" class="color${
             labelColor === color ? ' selected' : ''
-          }"
-          ${{ onClick: pickColor }}>
+          }">
           </div>`
       )}
     </div>  
