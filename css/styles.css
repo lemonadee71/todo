@@ -95,7 +95,7 @@ input[type='text'].dark:focus {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .shown {
@@ -490,7 +490,7 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   /* Position the popover */
   position: absolute;
   z-index: 2;
-  bottom: -130%;
+  top: -100%;
   left: 40%;
   margin-left: -60px;
 }
@@ -503,6 +503,7 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   border-radius: 8px;
   padding: 3px 10px;
   overflow-x: hidden;
+  cursor: pointer;
 }
 
 .label:not(:last-child) {
@@ -510,6 +511,7 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
 }
 
 .label .actions {
+  position: absolute;
   background-color: transparent;
 }
 
@@ -525,6 +527,10 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   width: inherit;
   border: none;
   outline: none;
+}
+
+.label span {
+  text-align: left;
 }
 
 .label input:focus {
@@ -547,6 +553,29 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   box-sizing: border-box;
   padding: 3px 5px;
   border-radius: 5px;
+}
+
+/* Label form */
+#new-label form input {
+  font-size: 18px;
+  color: white;
+  width: 60%;
+  margin-right: 10px;
+}
+
+#color-picker {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 5px 0;
+}
+
+#color-picker > div {
+  box-sizing: border-box;
+  height: 40px;
+  width: 40px;
+  border-radius: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
 }
 
 /* Popover arrow */
