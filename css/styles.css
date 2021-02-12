@@ -517,7 +517,8 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   visibility: visible;
 }
 
-.label input {
+.label input,
+.label span {
   box-sizing: border-box;
   color: white;
   font-size: 18px;
@@ -527,7 +528,7 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
 }
 
 .label input:focus {
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid white;
 }
 
 /* Labels Area */
