@@ -22,18 +22,18 @@ const TaskItem = ({ task, onEdit, onDelete, onToggle }) => {
       <div class="label-chips">
         ${task.getLabels().map((label) => Chip(label.name, label.color))}
       </div>
-      <p data-name="task-card-title">${title}</p>
+      <p data-id="task-card-title">${title}</p>
       <div class="badges">
-        <span data-name="task-card-notes" 
+        <span data-id="task-card-notes" 
         ${!notes ? 'style="display: none;"' : ''}>
         ${Icons('details')}
         </span>
-        <span data-name="task-card-date">
-          <span data-name="task-card-date-icon"
+        <span data-id="task-card-date">
+          <span data-id="task-card-date-icon"
           ${!dueDate ? 'style="display: none;"' : ''}>
           ${Icons('calendar')}
           </span>
-          <span data-name="task-card-date-text">
+          <span data-id="task-card-date-text">
           ${dueDate ? `${format(dueDate, 'E, MMM dd')}` : ''}
           </span>
         </span>        

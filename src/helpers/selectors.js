@@ -1,7 +1,7 @@
-const taskItemTitle = (id) => `#${id} [data-name="task-card-title"]`;
-const taskItemNotes = (id) => `#${id} [data-name="task-card-notes"]`;
-const taskItemDueDateIcon = (id) => `#${id} [data-name="task-card-date-icon"]`;
-const taskItemDueDateText = (id) => `#${id} [data-name="task-card-date-text"]`;
+const taskItemTitle = (id) => `#${id} [data-id="task-card-title"]`;
+const taskItemNotes = (id) => `#${id} [data-id="task-card-notes"]`;
+const taskItemDueDateIcon = (id) => `#${id} [data-id="task-card-date-icon"]`;
+const taskItemDueDateText = (id) => `#${id} [data-id="task-card-date-text"]`;
 const taskItemLabels = (id) => `#${id} .label-chips`;
 
 const completedTasks = '#completed-tasks';
@@ -14,6 +14,7 @@ const newTaskFormDueDate = '[data-id="new-task-date"]';
 
 const modal = '.modal-backdrop';
 const modalContent = '#modal-content';
+const labelsArea = '#labels [data-id="labels-area"]';
 
 const tasksList = '#tasks-list';
 
@@ -30,6 +31,7 @@ const chipsWithText = (id) => `.chip-w-text[data-label-id="${id}"]`;
 export {
   modal,
   modalContent,
+  labelsArea,
   currentTasks,
   completedTasks,
   newTaskForm,

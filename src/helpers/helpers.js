@@ -3,7 +3,7 @@ import { currentTasks, completedTasks, modal, modalContent } from './selectors';
 
 const $ = (query) => {
   let isId = query.includes('#');
-  let isAll = query.includes('--g');
+  let isAll = query.includes('--all');
   let isDataAttr = query.includes('--data');
   let isDescendantSelector = query.includes(' ');
 
@@ -24,7 +24,7 @@ const clear = (element) => {
 };
 
 const hide = (element) => {
-  element.style.display = 'none';
+  element.style.display = '';
 };
 
 const show = (element) => {

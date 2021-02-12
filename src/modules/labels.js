@@ -21,6 +21,7 @@ const deleteLabel = (id) => {
     .flat()
     .forEach((task) => task.removeLabel(id));
 
+  console.log('Removing label from Labels...');
   labels.removeItems((label) => label.id === id);
 };
 
@@ -30,4 +31,6 @@ const editLabel = (id, prop, value) => {
 
 const getLabels = () => labels.items;
 
-export { addLabel, deleteLabel, editLabel, getLabels };
+const getLabel = (id) => labels.getItem((label) => label.id === id);
+
+export { addLabel, deleteLabel, editLabel, getLabel, getLabels };

@@ -176,7 +176,6 @@ const Component = (() => {
       let el = createdElement.querySelector(handler.query);
 
       if (handler.type === 'prop') {
-        console.log(el);
         el[handler.propName] = handler.value;
       } else if (handler.type === 'attribute') {
         el.setAttribute(handler.attrName, handler.value);

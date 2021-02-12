@@ -18,10 +18,14 @@ import {
   taskItemDueDateIcon,
   taskItemTitle,
   taskItemLabels,
+  labelsArea,
+  chips,
+  chipsWithText,
 } from '../helpers/selectors';
 import { format } from 'date-fns';
 import Chip from '../components/Chip';
 import Label from '../classes/Label';
+import { getLabel } from './labels';
 
 // TODO: change the selectors
 const createTaskItem = ({ task, deleteTask, transferTask }) => {
@@ -30,11 +34,11 @@ const createTaskItem = ({ task, deleteTask, transferTask }) => {
     task[prop] = value;
   };
 
-  const _updateTaskLabels = (method, name, color = '') => {
+  const _updateTaskLabels = (method, id) => {
     if (method === 'add') {
-      task.addLabel(new Label(name, color));
+      task.addLabel(getLabel(id));
     } else if (method === 'remove') {
-      task.removeLabel(name);
+      task.removeLabel(id);
     }
   };
 
@@ -74,30 +78,26 @@ const createTaskItem = ({ task, deleteTask, transferTask }) => {
     let target = e.currentTarget;
     let labelId = target.getAttribute('data-label-id');
     let labelColor = target.getAttribute('data-color');
-    let labelsArea = $('#labels [data-name="labels-area"]');
+    let labelName = target.firstElementChild.value;
 
     target.classList.toggle('selected');
 
     if (target.className.includes('selected')) {
-      _updateTaskLabels('add', labelName, labelColor);
+      _updateTaskLabels('add', labelId);
 
       append(Component.createElementFromString(Chip(labelId, labelColor))).to(
         $(taskItemLabels(task.id))
       );
       append(
-        Component.createElementFromString(ChipWithText(labelId, labelColor))
-      ).to(labelsArea);
+        Component.createElementFromString(Chip(labelId, labelColor, labelName))
+      ).to($(labelsArea));
     } else {
       _updateTaskLabels('remove', labelId);
 
-      remove(
-        $(`#${task.id} .chip[data-label-id="${labelId}-${labelColor}"]`)
-      ).from($(taskItemLabels(task.id)));
-      remove(
-        labelsArea.querySelector(
-          `.chip-w-text[data-label-id="${labelId}-${labelColor}"]`
-        )
-      ).from(labelsArea);
+      remove($(`#${task.id} ${chips(labelId)}`)).from(
+        $(taskItemLabels(task.id))
+      );
+      remove($(chipsWithText(labelId))).from($(labelsArea));
     }
   };
 

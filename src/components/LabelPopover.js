@@ -62,27 +62,16 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
   // Should dispatch an edit event
   const updateLabel = (e) => {
     let labelEl = e.currentTarget.parentElement;
-    let labelName = labelEl.getAttribute('data-label-name');
-    let labelColor = labelEl.getAttribute('data-color');
+    let labelId = labelEl.getAttribute('data-label-id');
     let newLabelName = e.currentTarget.value;
 
-    labelEl.setAttribute('data-label-name', newLabelName);
+    editLabel(labelId, 'name', newLabelName);
 
-    editLabel(labelName, 'name', newLabelName);
+    let labelChipsWithText = $(`${chipsWithText(labelId)}--g`);
 
-    let allChips = document.querySelectorAll(`${chips(labelName, labelColor)}`);
-    let allChipsWithText = $(`${chipsWithText(labelName, labelColor)}--g`);
-    console.log(allChips, allChipsWithText);
-    if (allChips) {
-      [...allChips].map((chip) =>
-        chip.setAttribute('data-label-id', `${newLabelName}-${labelColor}`)
-      );
-    }
-
-    if (allChipsWithText) {
-      [...allChipsWithText].map((chip) => {
+    if (labelChipsWithText) {
+      [...labelChipsWithText].map((chip) => {
         chip.textContent = newLabelName;
-        chip.setAttribute('data-label-id', `${newLabelName}-${labelColor}`);
       });
     }
   };
@@ -93,15 +82,17 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
     // idk if this is necessary
     // trust the garbage collector
     let label = `[data-label-id="${labelId}"]`;
-    $(`${label} input`).removeEventListener('change', updateLabel);
-    $(`${label} input`).removeEventListener('focusout', disableEdit);
-    $(`${label} .actions`).children[0].removeEventListener('click', allowEdit);
+    // $(`${label} input`).removeEventListener('change', updateLabel);
+    // $(`${label} input`).removeEventListener('focusout', disableEdit);
+    // $(`${label} .actions`).children[0].removeEventListener('click', allowEdit);
 
-    remove($(label)).from($('#label-list'));
+    remove($(`.label${label}`)).from($('#label-list'));
 
     // remove all chips and chip-w-texts with the same label name and color
-    [...$(`.chip${label}--g`)].map((chip) => chip.remove());
-    [...$(`.chip-w-text${label}--g`)].map((chip) => chip.remove());
+    [
+      ...$(`.chip${label}--all`),
+      ...$(`.chip-w-text${label}--all`),
+    ].map((chip) => chip.remove());
   };
 
   const allowEdit = (e) => {
@@ -111,7 +102,7 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
 
     // disable and hide actionBtns
     e.currentTarget.setAttribute('disabled', '');
-    e.currentTarget.classList.toggle('hidden');
+    hide(e.currentTarget);
 
     e.stopPropagation();
   };
@@ -125,7 +116,7 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
     let editBtn = actionBtns.children[0];
 
     editBtn.removeAttribute('disabled');
-    editBtn.classList.toggle('hidden');
+    show(editBtn);
 
     e.stopPropagation();
   };

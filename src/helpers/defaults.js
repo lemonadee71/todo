@@ -1,6 +1,6 @@
 import List from '../classes/List';
 import Label from '../classes/Label';
-import Label from '../classes/Task';
+import Task from '../classes/Task';
 
 const defaultProjects = [
   new List('foo', 'project'),

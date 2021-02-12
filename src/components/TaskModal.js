@@ -3,29 +3,9 @@ import $, { clear, hide, rerender, show } from '../helpers/helpers';
 import Icons from './Icons';
 import LabelPopover from './LabelPopover';
 import { format } from 'date-fns';
-import { Converter } from 'showdown';
 import { uncategorizedTasks } from '../modules/controller';
-import { ChipWithText } from './Chip';
-
-const options = {
-  omitExtraWLInCodeBlocks: true,
-  noHeaderId: true,
-  ghCompatibleHeaderId: true,
-  headerLevelStart: 2,
-  parseImgDimensions: true,
-  strikethrough: true,
-  tables: true,
-  ghCodeBlocks: true,
-  tasklists: true,
-  smartIndentationFix: true,
-  simpleLineBreaks: true,
-  openLinksInNewWindow: true,
-  backslashEscapesHTMLTags: true,
-  emoji: true,
-};
-
-const textToMarkdownConverter = new Converter(options);
-textToMarkdownConverter.setFlavor('github');
+import Chip from './Chip';
+import txtToMdConverter from '../helpers/showdown';
 
 // Selectors are so messy for this component
 // Since there's only one modal component at a time
@@ -40,7 +20,7 @@ const TaskModal = ({
   updateNotes,
   updateDueDate,
 }) => {
-  const tasknotes = '--data-name=notes-area';
+  const taskNotes = '--data-id=notes-area';
 
   // Title
   const editTitle = (e) => {
@@ -60,15 +40,15 @@ const TaskModal = ({
 
   // Notes
   const editNotes = () => {
-    $('--data-name=edit-notes-btn').classList.toggle('hidden');
-    rerender($(tasknotes), notesTextArea());
+    $('--data-id=edit-notes-btn').classList.toggle('hidden');
+    rerender($(taskNotes), notesTextArea());
   };
 
   const saveNotes = () => {
-    $('--data-name=edit-notes-btn').classList.toggle('hidden');
+    $('--data-id=edit-notes-btn').classList.toggle('hidden');
     updateNotes();
     rerender(
-      $(tasknotes),
+      $(taskNotes),
       Component.render(Component.objectToString(notesPreview()))
     );
   };
@@ -108,7 +88,7 @@ const TaskModal = ({
     type: 'div',
     className: 'markdown-body',
     prop: {
-      innerHTML: textToMarkdownConverter.makeHtml(task.notes),
+      innerHTML: txtToMdConverter.makeHtml(task.notes),
     },
   });
 
@@ -138,13 +118,13 @@ const TaskModal = ({
         ${Icons('tag')}
         <span>Labels</span>
       </div>
-      <button data-name="edit-label-btn" ${{ onClick: openLabelPopover }}>
+      <button data-id="edit-label-btn" ${{ onClick: openLabelPopover }}>
         +
       </button>
-      <div data-name="labels-area">
+      <div data-id="labels-area">
         ${task
           .getLabels()
-          .map((label) => ChipWithText(label.name, label.color))}
+          .map((label) => Chip(label.id, label.color, label.name))}
       </div>
       ${LabelPopover({
         taskLabels: task.getLabels(),
@@ -156,10 +136,10 @@ const TaskModal = ({
         ${Icons('details')}
         <span>Notes</span>
       </div>
-      <button data-name="edit-notes-btn" ${{ onClick: editNotes }}>
+      <button data-id="edit-notes-btn" ${{ onClick: editNotes }}>
         ${Icons('edit')}
       </button>
-      <div data-name="notes-area">${notesPreview()}</div>
+      <div data-id="notes-area">${notesPreview()}</div>
     </div>
     <div class="date">
       <div class="section-header">

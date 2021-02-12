@@ -16,7 +16,7 @@ const Label = ({
 
   return Component.parseString`
     <div class="label${isSelected ? ' selected' : ''}" 
-    data-label-name="${label.name}" 
+    data-label-id="${label.id}" 
     data-color="${label.color}" 
     ${{ onClick }}>
       <input
@@ -31,7 +31,8 @@ const Label = ({
         <button ${{ onClick: allowEdit }}>${Icons('edit')}</button>
         <button ${{
           onClick: (e) => {
-            removeLabel(label.name, label.color);
+            console.log(label.id);
+            removeLabel(label.id);
             e.stopPropagation();
           },
         }}>
