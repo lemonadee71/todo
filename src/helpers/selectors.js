@@ -28,6 +28,7 @@ const popover = '#popover';
 
 const chips = (id) => `.chip[data-label-id="${id}"]`;
 const chipsWithText = (id) => `.chip-w-text[data-label-id="${id}"]`;
+const labelElement = (id) => `.label[data-label-id="${id}"]`;
 
 export {
   modal,
@@ -52,4 +53,5 @@ export {
   taskItemDueDateText,
   chips,
   chipsWithText,
+  labelElement,
 };

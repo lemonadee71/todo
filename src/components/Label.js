@@ -1,6 +1,6 @@
 import Component from '../helpers/component';
 import $, { remove, append, hide, show } from '../helpers/helpers';
-import { chips, chipsWithText } from '../helpers/selectors';
+import { chips, chipsWithText, labelElement } from '../helpers/selectors';
 import { deleteLabel, editLabel } from '../modules/labels';
 import Icons from './Icons';
 
@@ -15,6 +15,7 @@ const Label = ({ label, taskLabels }) => {
     let newLabelName = e.currentTarget.value;
 
     editLabel(labelId, 'name', newLabelName);
+    labelEl.firstElementChild.textContent = newLabelName;
 
     let labelChipsWithText = $(`${chipsWithText(labelId)}--all`);
 
@@ -27,25 +28,30 @@ const Label = ({ label, taskLabels }) => {
     e.stopPropagation();
   };
 
-  const removeLabel = (e) => {
+  const removeLabel = () => {
     deleteLabel(label.id);
 
     // idk if this is necessary
     // trust the garbage collector
-    let labelId = `[data-label-id="${label.id}"]`;
-    $(`.label${labelId} input`).removeEventListener('change', updateLabel);
-    $(`.label${labelId} input`).removeEventListener('focusout', disableEdit);
-    $(`.label${labelId} .actions`).children[0].removeEventListener(
+    $(`${labelElement(label.id)} input`).removeEventListener(
+      'change',
+      updateLabel
+    );
+    $(`${labelElement(label.id)} input`).removeEventListener(
+      'focusout',
+      disableEdit
+    );
+    $(`${labelElement(label.id)} .actions`).children[0].removeEventListener(
       'click',
       allowEdit
     );
 
-    remove($(`.label${labelId}`)).from($('#label-list'));
+    remove($(`${labelElement(label.id)}`)).from($('#label-list'));
 
     // remove all chips and chip-w-texts with the same label-id
     [
-      ...$(`.chip${labelId}--all`),
-      ...$(`.chip-w-text${labelId}--all`),
+      ...$(`${chips(label.id)}--all`),
+      ...$(`${chipsWithText(label.id)}--all`),
     ].map((chip) => chip.remove());
 
     e.stopPropagation();
@@ -54,7 +60,11 @@ const Label = ({ label, taskLabels }) => {
   const allowEdit = (e) => {
     // remove disabled attr on input
     let input = e.currentTarget.parentElement.previousElementSibling;
+    let span = input.previousElementSibling;
+
     input.removeAttribute('disabled');
+    input.classList.toggle('hidden');
+    span.classList.toggle('hidden');
 
     // disable and hide actionBtns
     e.currentTarget.setAttribute('disabled', '');
@@ -64,8 +74,10 @@ const Label = ({ label, taskLabels }) => {
   };
 
   const disableEdit = (e) => {
-    // disable input
+    // disable input then show the span
     e.currentTarget.setAttribute('disabled', '');
+    e.currentTarget.classList.toggle('hidden');
+    e.currentTarget.previousElementSibling.classList.toggle('hidden');
 
     // then show and undisable actionBtns
     let actionBtns = e.currentTarget.parentElement.querySelector('.actions');
@@ -81,7 +93,9 @@ const Label = ({ label, taskLabels }) => {
     <div class="label${isSelected ? ' selected' : ''}" 
     data-label-id="${label.id}" 
     data-color="${label.color}">
+      <span>${label.name}</span>
       <input
+        class="hidden"
         type="text"
         name="label-name"
         value="${label.name}"

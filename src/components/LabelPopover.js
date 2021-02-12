@@ -21,16 +21,16 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
       toggleLabel({
         id: el.getAttribute('data-label-id'),
         color: el.getAttribute('data-color'),
-        name: el.firstElementChild.value,
+        name: el.firstElementChild.textContent,
         selected: el.className.includes('selected'),
       });
-    } else if (el.matches('.label[data-label-id] input')) {
+    } else if (el.matches('.label[data-label-id] span')) {
       el.parentElement.classList.toggle('selected');
 
       toggleLabel({
         id: el.parentElement.getAttribute('data-label-id'),
         color: el.parentElement.getAttribute('data-color'),
-        name: el.value,
+        name: el.textContent,
         selected: el.parentElement.className.includes('selected'),
       });
     }
