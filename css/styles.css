@@ -98,6 +98,10 @@ input[type='text'].dark:focus {
   display: none;
 }
 
+.shown {
+  display: block;
+}
+
 .visible {
   visibility: visible !important;
   opacity: 1 !important;
@@ -379,11 +383,11 @@ main {
   padding: 4px;
 }
 
-[data-name='task-card-date'] {
+[data-id='task-card-date'] {
   display: flex;
 }
 
-[data-name='task-card-date-icon'] {
+[data-id='task-card-date-icon'] {
   margin-right: 5px;
 }
 
@@ -527,7 +531,7 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
 }
 
 /* Labels Area */
-#labels [data-name='labels-area'] {
+#labels [data-id='labels-area'] {
   display: flex;
 }
 
@@ -569,18 +573,18 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
 }
 
 /* Notes */
-.desc {
+.notes {
   position: relative;
 }
 
-.desc button {
+.notes button {
   position: absolute;
   top: 0%;
   right: 1%;
 }
 
 #create-task textarea,
-.desc textarea {
+.notes textarea {
   font-family: var(--font-face);
   font-size: 18px;
   width: 98%;
