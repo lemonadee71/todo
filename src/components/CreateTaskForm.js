@@ -1,7 +1,7 @@
 import Component from '../helpers/component.js';
 
 const CreateTaskForm = ({ onSubmit }) => {
-  return Component.parseString`
+   return Component.parseString`
     <form id="create-task" ${{ onSubmit }}>
       <input
         type="text"

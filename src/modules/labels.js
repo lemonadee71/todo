@@ -1,6 +1,6 @@
 import List from '../classes/List.js';
 import Label from '../classes/Label.js';
-import { getAllProjects } from './controller';
+import { getAllProjects } from './projects';
 import { defaultLabels } from '../helpers/defaults.js';
 
 const labels = new List('labels', 'list', defaultLabels);

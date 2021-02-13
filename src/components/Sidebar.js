@@ -2,16 +2,16 @@ import Component from '../helpers/component.js';
 import ProjectListItem from './ProjectListItem.js';
 
 const Sidebar = ({
-  projects,
-  getAllTasks,
-  getDueToday,
-  getDueThisWeek,
-  getUpcoming,
-  createNewProject,
-  selectProject,
-  removeProject,
+   projects,
+   getAllTasks,
+   getDueToday,
+   getDueThisWeek,
+   getUpcoming,
+   createNewProject,
+   selectProject,
+   removeProject,
 }) => {
-  return Component.parseString`
+   return Component.parseString`
   <aside id="sidebar">
     <div>
       <ul id="default-proj">
@@ -36,14 +36,14 @@ const Sidebar = ({
       <br />
       <ul id="user-proj">
         ${
-          projects.length
-            ? projects.map((proj) =>
-                ProjectListItem(proj, {
-                  clickHandler: selectProject,
-                  deleteHandler: removeProject,
-                })
-              )
-            : ''
+           projects.length
+              ? projects.map((proj) =>
+                   ProjectListItem(proj, {
+                      clickHandler: selectProject,
+                      deleteHandler: removeProject,
+                   })
+                )
+              : ''
         }
       </ul>
     </div>

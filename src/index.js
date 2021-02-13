@@ -2,28 +2,28 @@ import Component from './helpers/component';
 import MainContent from './components/MainContent';
 import Sidebar from './components/Sidebar';
 import $ from './helpers/helpers';
-import { hamburger, sidebar as sidenav } from './helpers/selectors';
+import { sidebar as sidenav } from './helpers/selectors';
 import {
-  createNewProject,
-  selectProject,
-  removeProject,
-  selectAllTasks,
-  getProjectsDetails,
-  showCreateTaskForm,
-} from './modules/controller';
+   createNewProject,
+   selectProject,
+   removeProject,
+   selectAllTasks,
+   getProjectsDetails,
+   showCreateTaskForm,
+} from './modules/projects';
 
 const App = () => {
-  const showSidebar = (e) => {
-    e.currentTarget.classList.toggle('is-active');
-    $(sidenav).classList.toggle('show');
-  };
+   const showSidebar = (e) => {
+      e.currentTarget.classList.toggle('is-active');
+      $(sidenav).classList.toggle('show');
+   };
 
-  return Component.render(Component.parseString`
+   return Component.render(Component.parseString`
       <header>
         <ul>
           <li>
             <button ${{
-              onClick: showSidebar,
+               onClick: showSidebar,
             }} class="hamburger hamburger--slider-r" type="button">
               <span class="hamburger-box">
                 <span class="hamburger-inner"></span>
@@ -41,11 +41,11 @@ const App = () => {
         />
       </header>
       ${Sidebar({
-        selectProject,
-        removeProject,
-        createNewProject,
-        getAllTasks: selectAllTasks,
-        projects: getProjectsDetails(),
+         selectProject,
+         removeProject,
+         createNewProject,
+         getAllTasks: selectAllTasks,
+         projects: getProjectsDetails(),
       })}
       ${MainContent({ onAddBtnClick: showCreateTaskForm })}
       <footer>

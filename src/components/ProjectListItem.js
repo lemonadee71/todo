@@ -1,25 +1,16 @@
+import Component from '../helpers/component';
 import Icons from './Icons';
 
 const ProjectListItem = (proj, { clickHandler, deleteHandler }) => {
-  return {
-    type: 'li',
-    id: proj.id,
-    listeners: {
-      click: clickHandler,
-    },
-    children: [
-      `<span>${proj.name}</span>`,
-      {
+  return Component.parseString`
+    <li id="${proj.id}" ${{ onClick: clickHandler }}>
+      ${{
         type: 'span',
-        prop: {
-          innerHTML: Icons('delete'),
-        },
-        listeners: {
-          click: deleteHandler,
-        },
-      },
-    ],
-  };
+        text: proj.name,
+      }}
+      <span ${{ onClick: deleteHandler }}>${Icons('delete')}</span>
+    </li>
+  `;
 };
 
 export default ProjectListItem;

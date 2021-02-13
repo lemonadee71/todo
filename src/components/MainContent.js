@@ -5,30 +5,30 @@ import NoTasksMessage from './NoTasksMessage';
 import Modal from './Modal';
 
 const MainContent = ({ onAddBtnClick }) => {
-  const showCompleted = (e) => {
-    if (e.target.checked) {
-      show($(completedTasks));
-    } else {
-      hide($(completedTasks));
-    }
-  };
-
-  const checkNoOfTasks = () => {
-    let hasActiveTasks = $(currentTasks).children.length;
-    let noTasks = $('#no-tasks');
-
-    if (hasActiveTasks) {
-      if (noTasks) {
-        $(tasksList).removeChild(noTasks);
+   const showCompleted = (e) => {
+      if (e.target.checked) {
+         show($(completedTasks));
+      } else {
+         hide($(completedTasks));
       }
-    } else {
-      if (!noTasks) {
-        $(tasksList).prepend(NoTasksMessage());
-      }
-    }
-  };
+   };
 
-  return Component.parseString`
+   const checkNoOfTasks = () => {
+      let hasActiveTasks = $(currentTasks).children.length;
+      let noTasks = $('#no-tasks');
+
+      if (hasActiveTasks) {
+         if (noTasks) {
+            $(tasksList).removeChild(noTasks);
+         }
+      } else {
+         if (!noTasks) {
+            $(tasksList).prepend(NoTasksMessage());
+         }
+      }
+   };
+
+   return Component.parseString`
   <main>
     <div id="taskbar">
       <button id="add-task" ${{ onClick: onAddBtnClick }}>+</button>
@@ -38,8 +38,8 @@ const MainContent = ({ onAddBtnClick }) => {
       />
     </div>
     <div id="tasks-list" ${{
-      onChildRemoved: checkNoOfTasks,
-      onChildAdded: checkNoOfTasks,
+       onChildRemoved: checkNoOfTasks,
+       onChildAdded: checkNoOfTasks,
     }}>
       <div id="current-tasks"></div>
       <div id="completed-tasks" style="display: none;"></div>

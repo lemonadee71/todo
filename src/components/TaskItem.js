@@ -2,46 +2,46 @@ import { format } from 'date-fns';
 import Component from '../helpers/component';
 import { completedTasks, currentTasks, modal } from '../helpers/selectors';
 import $, {
-  append,
-  changeModalContent,
-  remove,
-  show,
+   append,
+   changeModalContent,
+   remove,
+   show,
 } from '../helpers/helpers';
-import { deleteTask } from '../modules/controller';
+import { deleteTask } from '../modules/projects';
 import Icons from './Icons';
 import Chip from './Chip';
 import TaskModal from '../components/TaskModal';
 
 const TaskItem = ({ task }) => {
-  let { id, title, notes, dueDate, completed } = task;
+   let { id, title, notes, dueDate, completed } = task;
 
-  const onEdit = () => {
-    changeModalContent(TaskModal({ task }));
-    show($(modal));
-  };
+   const onEdit = () => {
+      changeModalContent(TaskModal({ task }));
+      show($(modal));
+   };
 
-  const onDelete = () => {
-    deleteTask(task);
+   const onDelete = () => {
+      deleteTask(task);
 
-    let list = task.completed ? completedTasks : currentTasks;
-    remove($(`#${id}`)).from($(list));
-  };
+      let list = task.completed ? completedTasks : currentTasks;
+      remove($(`#${id}`)).from($(list));
+   };
 
-  const toggleCheckmark = (e) => {
-    e.currentTarget.classList.toggle('checked');
+   const toggleCheckmark = (e) => {
+      e.currentTarget.classList.toggle('checked');
 
-    let isDone = task.toggleComplete();
-    let taskCard = $(`#${id}`);
-    taskCard.classList.toggle('completed');
+      let isDone = task.toggleComplete();
+      let taskCard = $(`#${id}`);
+      taskCard.classList.toggle('completed');
 
-    if (isDone) {
-      append(taskCard).to($(completedTasks));
-    } else {
-      append(taskCard).to($(currentTasks));
-    }
-  };
+      if (isDone) {
+         append(taskCard).to($(completedTasks));
+      } else {
+         append(taskCard).to($(currentTasks));
+      }
+   };
 
-  return Component.render(Component.parseString`
+   return Component.render(Component.parseString`
   <div id="${id}" class="task ${completed ? 'completed' : ''}" draggable="true">
     <div class="actions"> 
       <button ${{ onClick: onEdit }}>${Icons('edit')}</button>

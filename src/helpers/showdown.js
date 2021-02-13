@@ -20,4 +20,6 @@ const options = {
 const txtToMdConverter = new Converter(options);
 txtToMdConverter.setFlavor('github');
 
-export default txtToMdConverter;
+const convertToMarkdown = (text) => txtToMdConverter.makeHtml(text);
+
+export default convertToMarkdown;
