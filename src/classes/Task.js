@@ -1,14 +1,14 @@
 import List from './List';
 
 class Task {
-  constructor({ title, notes, dueDate, location }) {
+  constructor({ title, notes, dueDate, location, labels = [] }) {
     this.id = `task-${Math.random()}`.replace(/0./, '');
     this.title = title || 'Unnamed Task';
     this.notes = notes || '';
     this.dueDate = dueDate || '';
     this.completed = false;
     this.location = location;
-    this.labels = new List(`labels-${this.id}`);
+    this.labels = new List(`labels-${this.id}`, labels);
     // this.subtasks = new List(`subtasks-${this.id}`);
   }
 

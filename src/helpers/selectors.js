@@ -12,6 +12,7 @@ const newTaskFormTitle = '[data-id="new-task-title"]';
 const newTaskFormNotes = '[data-id="new-task-notes"]';
 const newTaskFormDueDate = '[data-id="new-task-date"]';
 const newTaskFormLocation = '[data-id="new-task-location"]';
+const newTaskFormLabels = '[data-id="new-task-labels"]';
 
 const modal = '.modal-backdrop';
 const modalContent = '#modal-content';
@@ -43,6 +44,7 @@ export {
   newTaskFormNotes,
   newTaskFormDueDate,
   newTaskFormLocation,
+  newTaskFormLabels,
   tasksList,
   hamburger,
   sidebar,

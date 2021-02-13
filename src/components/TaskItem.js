@@ -57,7 +57,7 @@ const TaskItem = ({ task }) => {
       </div>
       <div class="brief-content">
         <div class="label-chips">
-          ${task.getLabels().map((label) => Chip(label.name, label.color))}
+          ${task.getLabels().map((label) => Chip(label.id, label.color))}
         </div>
         <p data-id="task-card-title">${title}</p>
         <div class="badges">

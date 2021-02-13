@@ -104,6 +104,7 @@ const TaskModal = ({ task }) => {
       remove($(`#${task.id} ${chips(label.id)}`)).from(
         $(taskItemLabels(task.id))
       );
+
       remove($(chipsWithText(label.id))).from($(labelsArea));
     }
   };

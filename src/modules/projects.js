@@ -24,11 +24,13 @@ import {
   newTaskFormLocation,
   tasksList,
   userProjects,
+  newTaskFormLabels,
 } from '../helpers/selectors.js';
 import NoTasksMessage from '../components/NoTasksMessage.js';
 import { defaultProjects } from '../helpers/defaults.js';
 import TaskItem from '../components/TaskItem';
 import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
+import { getLabel } from './labels.js';
 
 const uncategorizedTasks = new List('uncategorized');
 const allProjects = new List('all', [uncategorizedTasks, ...defaultProjects]);
@@ -185,8 +187,11 @@ const createNewTask = (e) => {
   let notes = $(newTaskFormNotes).value;
   let dueDate = $(newTaskFormDueDate).value;
   let location = $(newTaskFormLocation).value;
-
-  let task = new Task({ title, notes, dueDate, location });
+  let labels = [...$(newTaskFormLabels).children].map((chip) =>
+    getLabel(chip.getAttribute('data-label-id'))
+  );
+  console.log(labels);
+  let task = new Task({ title, notes, dueDate, location, labels });
 
   _addTask(task);
   if (currentSelectedProj === '' || currentSelectedProj === location) {
