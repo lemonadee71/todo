@@ -578,6 +578,15 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   margin-bottom: 5px;
 }
 
+#form-labels {
+  position: relative;
+  display: block;
+}
+
+#form-labels [data-id='new-task-labels'] {
+  display: flex;
+}
+
 /* Popover arrow */
 /* #labels #popover::after {
   content: '';
