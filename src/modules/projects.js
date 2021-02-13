@@ -1,4 +1,4 @@
-import List from '../classes/List.js';
+import List from '../classes/List';
 import { defaultProjects } from '../helpers/defaults';
 import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
 

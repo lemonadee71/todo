@@ -1,16 +1,14 @@
-import Task from '../classes/Task.js';
-import Component from '../helpers/component.js';
+import Task from '../classes/Task';
+import Component from '../helpers/component';
 import $, { append, remove, closeModal } from '../helpers/helpers';
 import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
 import {
-  completedTasks,
   currentTasks,
   newTaskForm,
   newTaskFormNotes,
   newTaskFormDueDate,
   newTaskFormTitle,
   newTaskFormLocation,
-  tasksList,
   newTaskFormLabels,
   chipsWithText,
 } from '../helpers/selectors';

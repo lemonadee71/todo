@@ -27,7 +27,7 @@ const sidebar = '#sidebar';
 const userProjects = '#user-proj';
 const newProjectInput = '#new-proj';
 
-const popover = '#popover';
+// const popover = '#popover';
 
 const chips = (id) => `.chip[data-label-id="${id}"]`;
 const chipsWithText = (id) => `.chip-w-text[data-label-id="${id}"]`;
