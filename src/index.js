@@ -3,27 +3,19 @@ import MainContent from './components/MainContent';
 import Sidebar from './components/Sidebar';
 import $ from './helpers/helpers';
 import { sidebar as sidenav } from './helpers/selectors';
-import {
-   createNewProject,
-   selectProject,
-   removeProject,
-   selectAllTasks,
-   getProjectsDetails,
-   showCreateTaskForm,
-} from './modules/projects';
 
 const App = () => {
-   const showSidebar = (e) => {
-      e.currentTarget.classList.toggle('is-active');
-      $(sidenav).classList.toggle('show');
-   };
+  const showSidebar = (e) => {
+    e.currentTarget.classList.toggle('is-active');
+    $(sidenav).classList.toggle('show');
+  };
 
-   return Component.render(Component.parseString`
+  return Component.render(Component.parseString`
       <header>
         <ul>
           <li>
             <button ${{
-               onClick: showSidebar,
+              onClick: showSidebar,
             }} class="hamburger hamburger--slider-r" type="button">
               <span class="hamburger-box">
                 <span class="hamburger-inner"></span>
@@ -40,14 +32,8 @@ const App = () => {
           placeholder="Search your tasks"
         />
       </header>
-      ${Sidebar({
-         selectProject,
-         removeProject,
-         createNewProject,
-         getAllTasks: selectAllTasks,
-         projects: getProjectsDetails(),
-      })}
-      ${MainContent({ onAddBtnClick: showCreateTaskForm })}
+      ${Sidebar()}
+      ${MainContent()}
       <footer>
         <p>
           Icons made by

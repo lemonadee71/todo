@@ -476,7 +476,7 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   display: block;
 }
 
-/* Tooltip text */
+/* Popover */
 #popover {
   visibility: hidden;
   box-sizing: border-box;
@@ -587,19 +587,6 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   display: flex;
 }
 
-/* Popover arrow */
-/* #labels #popover::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-} */
-
-/* Project list */
 #create-task select,
 .proj select {
   font-family: var(--font-face);
@@ -640,6 +627,25 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   border: none;
   border-radius: 5px;
 }
+
+#create-task #new-label form input {
+  font-size: 18px;
+  color: white;
+  width: 60%;
+  margin-right: 10px;
+}
+
+/* Popover arrow */
+/* #labels #popover::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+} */
 
 /* Footer */
 footer {

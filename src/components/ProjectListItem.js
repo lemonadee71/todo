@@ -1,9 +1,9 @@
 import Component from '../helpers/component';
 import Icons from './Icons';
 
-const ProjectListItem = (proj, { clickHandler, deleteHandler }) => {
+const ProjectListItem = (proj, { deleteHandler }) => {
   return Component.parseString`
-    <li id="${proj.id}" ${{ onClick: clickHandler }}>
+    <li id="${proj.id}">
       ${{
         type: 'span',
         text: proj.name,

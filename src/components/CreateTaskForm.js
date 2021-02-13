@@ -1,15 +1,30 @@
+import Task from '../classes/Task.js';
 import Component from '../helpers/component.js';
-import ProjectOptions from './ProjectOptions.js';
+import $, { append, remove, closeModal } from '../helpers/helpers';
 import {
+  completedTasks,
+  currentTasks,
+  newTaskForm,
+  newTaskFormNotes,
+  newTaskFormDueDate,
+  newTaskFormTitle,
+  newTaskFormLocation,
+  tasksList,
+  newTaskFormLabels,
+  chipsWithText,
+} from '../helpers/selectors';
+import {
+  addTask,
   getProjectsDetails,
   getCurrentSelectedProj,
 } from '../modules/projects';
-import { chipsWithText, newTaskFormLabels } from '../helpers/selectors';
+import { getLabel } from '../modules/labels.js';
+import ProjectOptions from './ProjectOptions';
+import TaskItem from './TaskItem';
 import LabelPopover from './LabelPopover.js';
 import Chip from './Chip';
-import $, { append, remove } from '../helpers/helpers.js';
 
-const CreateTaskForm = ({ onSubmit }) => {
+const CreateTaskForm = () => {
   const addLabel = (label) => {
     if (label.selected) {
       append(
@@ -24,6 +39,33 @@ const CreateTaskForm = ({ onSubmit }) => {
 
   const openLabelPopover = () => {
     $('#popover').classList.add('visible');
+  };
+
+  const createNewTask = () => {
+    let title = $(newTaskFormTitle).value;
+    let notes = $(newTaskFormNotes).value;
+    let dueDate = $(newTaskFormDueDate).value;
+    let location = $(newTaskFormLocation).value;
+    let labels = [...$(newTaskFormLabels).children].map((chip) =>
+      getLabel(chip.getAttribute('data-label-id'))
+    );
+
+    let task = new Task({ title, notes, dueDate, location, labels });
+
+    // Import this from projects
+    addTask(task);
+    if (
+      getCurrentSelectedProj() === '' ||
+      getCurrentSelectedProj() === location
+    ) {
+      append(TaskItem({ task })).to($(currentTasks));
+    }
+    destroyForm();
+  };
+
+  const destroyForm = () => {
+    $(newTaskForm).removeEventListener('submit', createNewTask);
+    closeModal();
   };
 
   return Component.parseString`
@@ -54,7 +96,7 @@ const CreateTaskForm = ({ onSubmit }) => {
       <label for="task-due" class="section-header">Due Date</label>
       <input name="task-due" type="date" data-id="new-task-date" />
       <br/>
-      <button class="submit" ${{ onClick: onSubmit }}>Submit</button>
+      <button class="submit" ${{ onClick: createNewTask }}>Submit</button>
     </div>
   `;
 };

@@ -2,7 +2,7 @@ import Component from '../helpers/component';
 import { closeModal } from '../helpers/helpers';
 
 const Modal = () => {
-   return Component.parseString`
+  return Component.parseString`
   <div class="modal-backdrop">
     <div id="modal">
       <span class="close" ${{ onClick: closeModal }}>&times;</span>
