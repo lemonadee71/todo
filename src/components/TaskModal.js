@@ -49,6 +49,12 @@ const TaskModal = ({ task }) => {
    * Functions that updates the task
    */
   const updateTitle = (e) => {
+    if (!e.target.value) {
+      alert('Task name must not be empty');
+      e.target.value = task.title;
+      return;
+    }
+
     _updateTaskDetails('title', e.target.value);
     $(taskItemTitle(task.id)).textContent = task.title;
   };
