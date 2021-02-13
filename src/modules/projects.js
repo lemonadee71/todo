@@ -1,4 +1,3 @@
-import { compareAsc } from 'date-fns';
 import List from '../classes/List.js';
 import $, {
    clear,
@@ -28,25 +27,22 @@ import {
 import NoTasksMessage from '../components/NoTasksMessage.js';
 import { defaultProjects } from '../helpers/defaults.js';
 import TaskItem from '../components/TaskItem';
+import {
+   isDueToday,
+   isDueTomorrow,
+   isDueThisWeek,
+   isUpcoming,
+   parse,
+} from '../helpers/date';
 
-const uncategorizedTasks = new List('uncategorized', 'project');
-const allProjects = new List('all', 'root', [
-   uncategorizedTasks,
-   ...defaultProjects,
-]);
+const uncategorizedTasks = new List('uncategorized');
+const allProjects = new List('all', [uncategorizedTasks, ...defaultProjects]);
 
 let currentSelectedProj = uncategorizedTasks.id;
 
 const getCurrentSelectedProj = () => currentSelectedProj;
 
 const getAllProjects = () => allProjects.items;
-
-const _segregateTasks = (tasks) => {
-   return [
-      tasks.filter((task) => !task.completed),
-      tasks.filter((task) => task.completed),
-   ];
-};
 
 const _getProjectTasks = (id) => {
    currentSelectedProj = id;
@@ -59,7 +55,7 @@ const _getAllTasks = () => {
 };
 
 const _addProject = (projName) => {
-   let newProject = new List(projName, 'project');
+   let newProject = new List(projName);
    allProjects.addItem(newProject);
    return newProject;
 };
@@ -87,26 +83,26 @@ const transferTask = (id, prevList, newList) => {
    allProjects.getItem((proj) => proj.id === newList).addItem(task);
 };
 
-// const getDueToday = () => {
-//   return [...allProjects]
-//     .map((proj) => proj.items)
-//     .flat()
-//     .filter((task) => task.dueDate === '');
-// };
+const getDueToday = () => {
+   return [...allProjects]
+      .map((proj) => proj.items)
+      .flat()
+      .filter((task) => isDueToday(parse(task.dueDate)));
+};
 
-// const getDueThisWeek = () => {
-//   return [...allProjects]
-//     .map((proj) => proj.items)
-//     .flat()
-//     .filter((task) => task.dueDate === '');
-// };
+const getDueThisWeek = () => {
+   return [...allProjects]
+      .map((proj) => proj.items)
+      .flat()
+      .filter((task) => isDueThisWeek(parse(task.dueDate)));
+};
 
-// const getUpcoming = () => {
-//   return [...allProjects]
-//     .map((proj) => proj.items)
-//     .flat()
-//     .filter((task) => task.dueDate === '');
-// };
+const getUpcoming = () => {
+   return [...allProjects]
+      .map((proj) => proj.items)
+      .flat()
+      .filter((task) => isUpcoming(parse(task.dueDate)));
+};
 
 const getProjectsDetails = () => {
    let projects = allProjects.filterItems(

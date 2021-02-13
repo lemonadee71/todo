@@ -1,11 +1,11 @@
-import { format } from 'date-fns';
 import Component from '../helpers/component';
+import { formatDate } from '../helpers/date';
 import { completedTasks, currentTasks, modal } from '../helpers/selectors';
 import $, {
-   append,
-   changeModalContent,
-   remove,
-   show,
+  append,
+  changeModalContent,
+  remove,
+  show,
 } from '../helpers/helpers';
 import { deleteTask } from '../modules/projects';
 import Icons from './Icons';
@@ -13,68 +13,70 @@ import Chip from './Chip';
 import TaskModal from '../components/TaskModal';
 
 const TaskItem = ({ task }) => {
-   let { id, title, notes, dueDate, completed } = task;
+  let { id, title, notes, dueDate, completed } = task;
 
-   const onEdit = () => {
-      changeModalContent(TaskModal({ task }));
-      show($(modal));
-   };
+  const onEdit = () => {
+    changeModalContent(TaskModal({ task }));
+    show($(modal));
+  };
 
-   const onDelete = () => {
-      deleteTask(task);
+  const onDelete = () => {
+    deleteTask(task);
 
-      let list = task.completed ? completedTasks : currentTasks;
-      remove($(`#${id}`)).from($(list));
-   };
+    let list = task.completed ? completedTasks : currentTasks;
+    remove($(`#${id}`)).from($(list));
+  };
 
-   const toggleCheckmark = (e) => {
-      e.currentTarget.classList.toggle('checked');
+  const toggleCheckmark = (e) => {
+    e.currentTarget.classList.toggle('checked');
 
-      let isDone = task.toggleComplete();
-      let taskCard = $(`#${id}`);
-      taskCard.classList.toggle('completed');
+    let isDone = task.toggleComplete();
+    let taskCard = $(`#${id}`);
+    taskCard.classList.toggle('completed');
 
-      if (isDone) {
-         append(taskCard).to($(completedTasks));
-      } else {
-         append(taskCard).to($(currentTasks));
-      }
-   };
+    if (isDone) {
+      append(taskCard).to($(completedTasks));
+    } else {
+      append(taskCard).to($(currentTasks));
+    }
+  };
 
-   return Component.render(Component.parseString`
-  <div id="${id}" class="task ${completed ? 'completed' : ''}" draggable="true">
-    <div class="actions"> 
-      <button ${{ onClick: onEdit }}>${Icons('edit')}</button>
-      <button ${{ onClick: onDelete }}>${Icons('delete')}</button>
-    </div>
-    <div class="checkbox">
-      <div class="check ${completed ? 'checked' : ''}" 
-      ${{ onClick: toggleCheckmark }}>
-      ${Icons('checkmark')}
+  return Component.render(Component.parseString`
+    <div id="${id}" class="task ${
+    completed ? 'completed' : ''
+  }" draggable="true">
+      <div class="actions"> 
+        <button ${{ onClick: onEdit }}>${Icons('edit')}</button>
+        <button ${{ onClick: onDelete }}>${Icons('delete')}</button>
       </div>
-    </div>
-    <div class="brief-content">
-      <div class="label-chips">
-        ${task.getLabels().map((label) => Chip(label.name, label.color))}
+      <div class="checkbox">
+        <div class="check ${completed ? 'checked' : ''}" 
+        ${{ onClick: toggleCheckmark }}>
+        ${Icons('checkmark')}
+        </div>
       </div>
-      <p data-id="task-card-title">${title}</p>
-      <div class="badges">
-        <span data-id="task-card-notes" 
-        ${!notes ? 'style="display: none;"' : ''}>
-        ${Icons('details')}
-        </span>
-        <span data-id="task-card-date">
-          <span data-id="task-card-date-icon"
-          ${!dueDate ? 'style="display: none;"' : ''}>
-          ${Icons('calendar')}
+      <div class="brief-content">
+        <div class="label-chips">
+          ${task.getLabels().map((label) => Chip(label.name, label.color))}
+        </div>
+        <p data-id="task-card-title">${title}</p>
+        <div class="badges">
+          <span data-id="task-card-notes" 
+          ${!notes ? 'style="display: none;"' : ''}>
+          ${Icons('details')}
           </span>
-          <span data-id="task-card-date-text">
-          ${dueDate ? `${format(dueDate, 'E, MMM dd')}` : ''}
-          </span>
-        </span>        
+          <span data-id="task-card-date">
+            <span data-id="task-card-date-icon"
+            ${!dueDate ? 'style="display: none;"' : ''}>
+            ${Icons('calendar')}
+            </span>
+            <span data-id="task-card-date-text">
+            ${dueDate ? `${formatDate(dueDate)}` : ''}
+            </span>
+          </span>        
+        </div>
       </div>
-    </div>
-  </div>  
+    </div>  
   `);
 };
 

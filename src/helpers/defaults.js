@@ -2,11 +2,7 @@ import List from '../classes/List';
 import Label from '../classes/Label';
 import Task from '../classes/Task';
 
-const defaultProjects = [
-   new List('foo', 'project'),
-   new List('bar', 'project'),
-   new List('baz', 'project'),
-];
+const defaultProjects = [new List('foo'), new List('bar'), new List('baz')];
 
 const defaultLabelColors = [
    '#61BD4F',

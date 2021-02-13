@@ -8,68 +8,9 @@ class Task {
     this.dueDate = dueDate || '';
     this.completed = false;
     this.location = location;
-    this.labels = new List(`labels-${this.id}`, 'labels');
-    // this.subtasks = new List(`subtasks-${this.id}`, 'labels');
+    this.labels = new List(`labels-${this.id}`);
+    // this.subtasks = new List(`subtasks-${this.id}`);
   }
-
-  get title() {
-    return this._title;
-  }
-
-  set title(newTitle) {
-    if (typeof newTitle !== 'string') {
-      throw new Error('Invalid type. Title must be string.');
-    }
-
-    this._title = newTitle;
-  }
-
-  get notes() {
-    return this._notes;
-  }
-
-  set notes(str) {
-    if (typeof str !== 'string') {
-      throw new Error('Invalid type. Notes must be string.');
-    }
-
-    this._notes = str;
-  }
-
-  get dueDate() {
-    if (this._dueDate) {
-      let [year, month, day] = this._dueDate.split('-');
-      month = +month - 1;
-
-      return new Date(year, month, day);
-    }
-
-    return null;
-  }
-
-  set dueDate(newDueDate) {
-    if (typeof newDueDate !== 'string') {
-      throw new Error('Invalid type. dueDate must be string.');
-    }
-
-    this._dueDate = newDueDate;
-  }
-
-  // get labels() {
-  //   return [...this._labels.items];
-  // }
-
-  // set labels(label) {
-  //   throw new Error('Invalid. Use addLabel to add a label.');
-  // }
-
-  // get subtasks() {
-  //   return [...this.subtasks];
-  // }
-
-  // set subtasks(subtask) {
-  //   throw new Error('Invalid. Use addSubtask to add a subtask.');
-  // }
 
   getData() {
     return {
