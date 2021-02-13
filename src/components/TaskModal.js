@@ -187,7 +187,7 @@ const TaskModal = ({ task }) => {
       <span>in Project</span>
       <select id="edit-task-location" name="location"
       ${{ onChange: updateLocation }}>
-      ${ProjectOptions(getProjectsDetails(), task)}
+      ${ProjectOptions(getProjectsDetails(), task.location)}
       </select>
     </div>
     <div id="labels">

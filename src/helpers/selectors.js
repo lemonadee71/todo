@@ -11,6 +11,7 @@ const newTaskForm = '#create-task';
 const newTaskFormTitle = '[data-id="new-task-title"]';
 const newTaskFormNotes = '[data-id="new-task-notes"]';
 const newTaskFormDueDate = '[data-id="new-task-date"]';
+const newTaskFormLocation = '[data-id="new-task-location"]';
 
 const modal = '.modal-backdrop';
 const modalContent = '#modal-content';
@@ -31,27 +32,28 @@ const chipsWithText = (id) => `.chip-w-text[data-label-id="${id}"]`;
 const labelElement = (id) => `.label[data-label-id="${id}"]`;
 
 export {
-   modal,
-   modalContent,
-   labelsArea,
-   taskNotesArea,
-   currentTasks,
-   completedTasks,
-   newTaskForm,
-   newTaskFormTitle,
-   newTaskFormNotes,
-   newTaskFormDueDate,
-   tasksList,
-   hamburger,
-   sidebar,
-   newProjectInput,
-   userProjects,
-   taskItemTitle,
-   taskItemLabels,
-   taskItemNotes,
-   taskItemDueDateIcon,
-   taskItemDueDateText,
-   chips,
-   chipsWithText,
-   labelElement,
+  modal,
+  modalContent,
+  labelsArea,
+  taskNotesArea,
+  currentTasks,
+  completedTasks,
+  newTaskForm,
+  newTaskFormTitle,
+  newTaskFormNotes,
+  newTaskFormDueDate,
+  newTaskFormLocation,
+  tasksList,
+  hamburger,
+  sidebar,
+  newProjectInput,
+  userProjects,
+  taskItemTitle,
+  taskItemLabels,
+  taskItemNotes,
+  taskItemDueDateIcon,
+  taskItemDueDateText,
+  chips,
+  chipsWithText,
+  labelElement,
 };

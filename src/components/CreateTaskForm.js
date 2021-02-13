@@ -1,7 +1,12 @@
 import Component from '../helpers/component.js';
+import ProjectOptions from './ProjectOptions.js';
+import {
+  getProjectsDetails,
+  getCurrentSelectedProj,
+} from '../modules/projects';
 
 const CreateTaskForm = ({ onSubmit }) => {
-   return Component.parseString`
+  return Component.parseString`
     <form id="create-task" ${{ onSubmit }}>
       <input
         type="text"
@@ -11,12 +16,15 @@ const CreateTaskForm = ({ onSubmit }) => {
         required
       />
       <br />
-
-      <p class="section-header">Notes</p>
+      <label for="task-location" class="section-header">Project</label>
+      <select name="task-location" data-id="new-task-location">
+        ${ProjectOptions(getProjectsDetails(), getCurrentSelectedProj())}
+      </select>
+      <label for="task-notes" class="section-header">Notes</label>
       <textarea name="task-notes" data-id="new-task-notes"></textarea>
 
-      <p class="section-header">Due Date</p>
-      <input type="date" data-id="new-task-date" />
+      <label for="task-due" class="section-header">Due Date</label>
+      <input name="task-due" type="date" data-id="new-task-date" />
       <br />
 
       <button class="submit" type="submit">Submit</button>

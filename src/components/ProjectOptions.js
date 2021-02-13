@@ -1,6 +1,6 @@
 import { uncategorizedTasks } from '../modules/projects';
 
-const ProjectOptions = (projects, task = '') => {
+const ProjectOptions = (projects, location = '') => {
   return projects.length
     ? [
         // Use an imported uncategorizedTasks for now
@@ -11,7 +11,9 @@ const ProjectOptions = (projects, task = '') => {
             value: uncategorizedTasks.id,
             disabled: 'true',
             selected:
-              task && task.location === uncategorizedTasks.id ? 'true' : '',
+              location === uncategorizedTasks.id || location === ''
+                ? 'true'
+                : '',
           },
         },
         ...projects.map((proj) => ({
@@ -19,7 +21,7 @@ const ProjectOptions = (projects, task = '') => {
           text: proj.name,
           attr: {
             value: proj.id,
-            selected: task.location === proj.id ? 'true' : '',
+            selected: location === proj.id ? 'true' : '',
           },
         })),
       ]
