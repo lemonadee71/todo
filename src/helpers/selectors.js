@@ -6,6 +6,7 @@ const taskItemLabels = (id) => `#${id} .label-chips`;
 
 const completedTasks = '#completed-tasks';
 const currentTasks = '#current-tasks';
+const projectTitle = '#current-proj-title';
 
 const newTaskForm = '#create-task';
 const newTaskFormTitle = '[data-id="new-task-title"]';
@@ -37,6 +38,7 @@ export {
   modalContent,
   labelsArea,
   taskNotesArea,
+  projectTitle,
   currentTasks,
   completedTasks,
   newTaskForm,

@@ -10,6 +10,14 @@ const App = () => {
     $(sidenav).classList.toggle('show');
   };
 
+  // <input
+  //   type="text"
+  //   name="search"
+  //   class="dark"
+  //   id="search-bar"
+  //   placeholder="Search your tasks"
+  // />
+
   return Component.render(Component.parseString`
       <header>
         <ul>
@@ -24,13 +32,6 @@ const App = () => {
           </li>
           <li><h1>ToDo</h1></li>
         </ul>
-        <input
-          type="text"
-          name="search"
-          class="dark"
-          id="search-bar"
-          placeholder="Search your tasks"
-        />
       </header>
       ${Sidebar()}
       ${MainContent()}

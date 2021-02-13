@@ -1,6 +1,7 @@
 import Task from '../classes/Task.js';
 import Component from '../helpers/component.js';
 import $, { append, remove, closeModal } from '../helpers/helpers';
+import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
 import {
   completedTasks,
   currentTasks,
@@ -42,6 +43,8 @@ const CreateTaskForm = () => {
   };
 
   const createNewTask = () => {
+    let currentLocation = getCurrentSelectedProj();
+
     let title = $(newTaskFormTitle).value;
     let notes = $(newTaskFormNotes).value;
     let dueDate = $(newTaskFormDueDate).value;
@@ -51,13 +54,17 @@ const CreateTaskForm = () => {
     );
 
     let task = new Task({ title, notes, dueDate, location, labels });
+    let appendConditions = [
+      currentLocation === location,
+      currentLocation === '',
+      currentLocation === 'today' && isDueToday(parse(dueDate)),
+      currentLocation === 'week' && isDueThisWeek(parse(dueDate)),
+      currentLocation === 'upcoming' && isUpcoming(parse(dueDate)),
+    ];
 
     // Import this from projects
     addTask(task);
-    if (
-      getCurrentSelectedProj() === '' ||
-      getCurrentSelectedProj() === location
-    ) {
+    if (appendConditions.some((condition) => condition === true)) {
       append(TaskItem({ task })).to($(currentTasks));
     }
     destroyForm();

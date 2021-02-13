@@ -41,6 +41,8 @@ const MainContent = () => {
 
   return Component.parseString`
   <main>
+    <h2 id="current-proj-title">All Tasks</h1>
+    <hr>
     <div id="taskbar">
       <button id="add-task" ${{ onClick: showCreateTaskForm }}>+</button>
       <label for="show">Show Completed</label>

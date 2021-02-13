@@ -22,6 +22,7 @@ const getAllTasks = () => {
 };
 
 const getDueToday = () => {
+  currentSelectedProj = 'today';
   return [...allProjects.items]
     .map((proj) => proj.items)
     .flat()
@@ -29,6 +30,7 @@ const getDueToday = () => {
 };
 
 const getDueThisWeek = () => {
+  currentSelectedProj = 'week';
   return [...allProjects.items]
     .map((proj) => proj.items)
     .flat()
@@ -36,6 +38,7 @@ const getDueThisWeek = () => {
 };
 
 const getUpcoming = () => {
+  currentSelectedProj = 'upcoming';
   return [...allProjects.items]
     .map((proj) => proj.items)
     .flat()

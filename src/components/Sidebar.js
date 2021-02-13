@@ -4,6 +4,7 @@ import {
   completedTasks,
   currentTasks,
   newProjectInput,
+  projectTitle,
   tasksList,
   userProjects,
 } from '../helpers/selectors';
@@ -55,21 +56,29 @@ const Sidebar = () => {
     let isSpan = e.target.matches('li span');
 
     if (isListItem || isSpan) {
-      let id = isListItem ? e.target.id : e.target.parentElement.id;
+      let target = isListItem ? e.target : e.target.parentElement;
+      let { id } = target;
+      let title = '';
 
       let tasks = null;
       if (id === 'all') {
         tasks = getAllTasks();
+        title = 'All Tasks';
       } else if (id === 'today') {
         tasks = getDueToday();
+        title = 'Today';
       } else if (id === 'week') {
         tasks = getDueThisWeek();
+        title = 'This Week';
       } else if (id === 'upcoming') {
         tasks = getUpcoming();
+        title = 'Upcoming';
       } else {
         tasks = getProjectTasks(id);
+        title = target.firstElementChild.textContent;
       }
 
+      $(projectTitle).textContent = title;
       tasks.length ? _renderTasks(tasks) : _renderNoTasksMessage();
     }
   };
