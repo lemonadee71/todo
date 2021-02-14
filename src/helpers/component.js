@@ -232,7 +232,7 @@ const Component = (() => {
 
         // if Object and that object contains only keys which name is an event
         // generate a temporary id and replace the object with it
-        // then add the event listeners to our eventHandlers
+        // then add the event listeners to our handlers
       } else if (Object.keys(expr).every((key) => key.includes('on'))) {
         let temporaryPlaceholder = '';
         let [eventHandlers, temporaryId] = _generateEventListenerIds(expr);
@@ -332,11 +332,11 @@ const Component = (() => {
       propPlaceholder = `data-propid="${id}"`;
     }
 
-    let fullString = `<${type} ${textPlaceholder} ${propPlaceholder} ${eventPlaceholder} 
+    let htmlString = `<${type} ${textPlaceholder} ${propPlaceholder} ${eventPlaceholder} 
       ${idStr} ${classStr} ${attrStr} ${styleStr}>
       ${childrenStr}</${type}>`;
 
-    return _createArrayLikeObject([fullString, handlers], 'parsedObject');
+    return _createArrayLikeObject([htmlString, handlers], 'parsedObject');
   };
 
   const parseString = (strings, ...exprs) => {
@@ -344,12 +344,12 @@ const Component = (() => {
 
     let evaluatedExprs = exprs.map((expr) => _parser(expr, handlers));
 
-    let parsedString = evaluatedExprs.reduce(
+    let htmlString = evaluatedExprs.reduce(
       (fullString, expr, i) => (fullString += `${expr}${strings[i + 1]}`),
       strings[0]
     );
 
-    return _createArrayLikeObject([parsedString, handlers], 'parsedString');
+    return _createArrayLikeObject([htmlString, handlers], 'parsedString');
   };
 
   const render = (arrayLikeObj) => {
@@ -377,7 +377,7 @@ const Component = (() => {
             // then we revoke our proxy
             // then delete it from our store
           } else {
-            console.log(`Revoking this shit ${targetEl.target}`);
+            console.log(`Revoking ${targetEl.target}`);
             // dataStore[targetEl.target].revoke();
             // delete dataStore[targetEl.target];
           }

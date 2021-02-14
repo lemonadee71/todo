@@ -12,25 +12,27 @@ import {
   newTaskFormLabels,
   chipsWithText,
 } from '../helpers/selectors';
+import { getLabel } from '../modules/labels';
 import {
   addTask,
   getProjectsDetails,
   getCurrentSelectedProj,
 } from '../modules/projects';
-import { getLabel } from '../modules/labels.js';
 import ProjectOptions from './ProjectOptions';
 import TaskItem from './TaskItem';
-import LabelPopover from './LabelPopover.js';
+import LabelPopover from './LabelPopover';
 import Chip from './Chip';
 
 const CreateTaskForm = () => {
+  const _newTask = (task) => new Task(task);
+
+  const _addTask = (task) => addTask(task);
+
   const addLabel = (label) => {
     if (label.selected) {
-      append(
-        Component.createElementFromString(
-          Chip(label.id, label.color, label.name)
-        )
-      ).to($(newTaskFormLabels));
+      append(Component.render(Chip(label.id, label.color, label.name))).to(
+        $(newTaskFormLabels)
+      );
     } else {
       remove($(chipsWithText(label.id))).from($(newTaskFormLabels));
     }
@@ -51,19 +53,26 @@ const CreateTaskForm = () => {
       getLabel(chip.getAttribute('data-label-id'))
     );
 
-    let task = new Task({ title, notes, dueDate, location, labels });
+    if (!title) {
+      alert('Task name must not be empty');
+      return;
+    }
+
+    let task = _newTask({ title, notes, dueDate, location, labels });
+
+    // Only add TaskItem to DOM when task location is same with current location
+    // And if the location is date based, only if dueDate falls in the category
     let appendConditions = [
-      currentLocation === location,
       currentLocation === '',
+      currentLocation === location,
       currentLocation === 'today' && isDueToday(parse(dueDate)),
       currentLocation === 'week' && isDueThisWeek(parse(dueDate)),
       currentLocation === 'upcoming' && isUpcoming(parse(dueDate)),
     ];
 
-    // Import this from projects
-    addTask(task);
+    _addTask(task);
     if (appendConditions.some((condition) => condition === true)) {
-      append(TaskItem({ task })).to($(currentTasks));
+      append(Component.render(TaskItem({ task }))).to($(currentTasks));
     }
     destroyForm();
   };

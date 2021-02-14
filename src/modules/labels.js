@@ -1,7 +1,7 @@
-import List from '../classes/List.js';
-import Label from '../classes/Label.js';
+import List from '../classes/List';
+import Label from '../classes/Label';
 import { getAllProjects } from './projects';
-import { defaultLabels } from '../helpers/defaults.js';
+import { defaultLabels } from './defaults';
 
 const labels = new List('labels', defaultLabels);
 

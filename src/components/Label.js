@@ -1,5 +1,5 @@
 import Component from '../helpers/component';
-import $, { remove, append, hide, show } from '../helpers/helpers';
+import $, { remove, hide, show } from '../helpers/helpers';
 import { chips, chipsWithText, labelElement } from '../helpers/selectors';
 import { deleteLabel, editLabel } from '../modules/labels';
 import Icons from './Icons';
@@ -9,12 +9,16 @@ const Label = ({ label, taskLabels = [] }) => {
     (taskLabel) => taskLabel.name === label.name
   );
 
+  const _deleteLabel = (id) => deleteLabel(id);
+
+  const _editLabel = (id, newName) => editLabel(id, 'name', newName);
+
   const updateLabel = (e) => {
     let labelEl = e.currentTarget.parentElement;
     let labelId = labelEl.getAttribute('data-label-id');
     let newLabelName = e.currentTarget.value;
 
-    editLabel(labelId, 'name', newLabelName);
+    _editLabel(labelId, newLabelName);
     labelEl.firstElementChild.textContent = newLabelName;
 
     let labelChipsWithText = $(`${chipsWithText(labelId)}--all`);
@@ -29,7 +33,7 @@ const Label = ({ label, taskLabels = [] }) => {
   };
 
   const removeLabel = (e) => {
-    deleteLabel(label.id);
+    _deleteLabel(label.id);
 
     // idk if this is necessary
     // trust the garbage collector
@@ -93,7 +97,10 @@ const Label = ({ label, taskLabels = [] }) => {
     <div class="label${isSelected ? ' selected' : ''}" 
     data-label-id="${label.id}" 
     data-color="${label.color}">
-      <span>${label.name}</span>
+      ${{
+        type: 'span',
+        text: label.name,
+      }}
       <input
         class="hidden"
         type="text"

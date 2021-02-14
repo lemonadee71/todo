@@ -1,8 +1,8 @@
 import Component from './helpers/component';
-import MainContent from './components/MainContent';
-import Sidebar from './components/Sidebar';
 import $ from './helpers/helpers';
 import { sidebar as sidenav } from './helpers/selectors';
+import MainContent from './components/MainContent';
+import Sidebar from './components/Sidebar';
 
 const App = () => {
   const showSidebar = (e) => {

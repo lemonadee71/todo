@@ -24,6 +24,23 @@ import TaskItem from './TaskItem';
 
 const Sidebar = () => {
   const projects = getProjectsDetails();
+
+  const _deleteProject = (id) => deleteProject(id);
+
+  const _getProject = (id) => {
+    if (id === 'today') {
+      return getDueToday();
+    } else if (id === 'week') {
+      return getDueThisWeek();
+    } else if (id === 'upcoming') {
+      return getUpcoming();
+    } else if (id === 'all') {
+      return getAllTasks();
+    }
+
+    return getProjectTasks(id);
+  };
+
   /*
    * Render functions
    */
@@ -32,9 +49,9 @@ const Sidebar = () => {
 
     tasks.forEach((task) => {
       if (task.completed) {
-        append(TaskItem({ task })).to($(completedTasks));
+        append(Component.render(TaskItem({ task }))).to($(completedTasks));
       } else {
-        append(TaskItem({ task })).to($(currentTasks));
+        append(Component.render(TaskItem({ task }))).to($(currentTasks));
       }
     });
   };
@@ -59,22 +76,17 @@ const Sidebar = () => {
       let target = isListItem ? e.target : e.target.parentElement;
       let { id } = target;
       let title = '';
+      let tasks = _getProject(id);
 
-      let tasks = null;
       if (id === 'all') {
-        tasks = getAllTasks();
         title = 'All Tasks';
       } else if (id === 'today') {
-        tasks = getDueToday();
         title = 'Today';
       } else if (id === 'week') {
-        tasks = getDueThisWeek();
         title = 'This Week';
       } else if (id === 'upcoming') {
-        tasks = getUpcoming();
         title = 'Upcoming';
       } else {
-        tasks = getProjectTasks(id);
         title = target.firstElementChild.textContent;
       }
 
@@ -112,7 +124,7 @@ const Sidebar = () => {
       }
     });
 
-    deleteProject(projListItem.id);
+    _deleteProject(projListItem.id);
     remove(projListItem).from($(userProjects));
   };
 

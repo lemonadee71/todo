@@ -1,5 +1,5 @@
 import List from '../classes/List';
-import { defaultProjects } from '../helpers/defaults';
+import { defaultProjects } from './defaults';
 import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
 
 const uncategorizedTasks = new List('uncategorized');
@@ -88,6 +88,13 @@ const transferTask = (id, prevList, newList) => {
   allProjects.getItem((proj) => proj.id === newList).addItem(task);
 };
 
+const segregateTasks = (tasks) => {
+  return [
+    tasks.filter((task) => !task.completed),
+    tasks.filter((task) => task.completed),
+  ];
+};
+
 export {
   uncategorizedTasks,
   addProject,
@@ -103,4 +110,5 @@ export {
   addTask,
   transferTask,
   deleteTask,
+  segregateTasks,
 };

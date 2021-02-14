@@ -41,7 +41,7 @@ const TaskItem = ({ task }) => {
     }
   };
 
-  return Component.render(Component.parseString`
+  return Component.parseString`
     <div id="${id}" class="task ${
     completed ? 'completed' : ''
   }" draggable="true">
@@ -77,7 +77,7 @@ const TaskItem = ({ task }) => {
         </div>
       </div>
     </div>  
-  `);
+  `;
 };
 
 export default TaskItem;

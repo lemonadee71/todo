@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/lemonadee71/todo#readme",
   "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.20.0",
     "webpack": "^5.11.1",
     "webpack-cli": "^4.3.1"
   },

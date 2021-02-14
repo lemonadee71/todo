@@ -33,8 +33,15 @@ const TaskModal = ({ task }) => {
   /*
    * Private methods
    */
-  const _updateTaskDetails = (prop, value) => {
-    task[prop] = value;
+  const _updateTaskDetails = (...args) => {
+    if (args[0] === 'location') {
+      let [prop, id, prevLoc, newLoc] = args;
+      task[prop] = newLoc;
+      transferTask(id, prevLoc, newLoc);
+    } else {
+      let [prop, value] = args;
+      task[prop] = value;
+    }
   };
 
   const _updateTaskLabels = (method, id) => {
@@ -90,14 +97,12 @@ const TaskModal = ({ task }) => {
     if (label.selected) {
       _updateTaskLabels('add', label.id);
 
-      append(Component.createElementFromString(Chip(label.id, label.color))).to(
+      append(Component.render(Chip(label.id, label.color))).to(
         $(taskItemLabels(task.id))
       );
-      append(
-        Component.createElementFromString(
-          Chip(label.id, label.color, label.name)
-        )
-      ).to($(labelsArea));
+      append(Component.render(Chip(label.id, label.color, label.name))).to(
+        $(labelsArea)
+      );
     } else {
       _updateTaskLabels('remove', label.id);
 
@@ -113,8 +118,7 @@ const TaskModal = ({ task }) => {
     let prevLocation = task.location;
     let newLocation = e.currentTarget.value;
 
-    _updateTaskDetails('location', newLocation);
-    transferTask(task.id, prevLocation, newLocation);
+    _updateTaskDetails('location', task.id, prevLocation, newLocation);
 
     let currentLocation = getCurrentSelectedProj();
 

@@ -1,5 +1,5 @@
 import Component from '../helpers/component';
-import $, { hide, show } from '../helpers/helpers';
+import $ from '../helpers/helpers';
 import { getLabels } from '../modules/labels';
 import NewLabelForm from './NewLabelForm';
 import Label from './Label';

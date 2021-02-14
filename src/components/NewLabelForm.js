@@ -1,5 +1,5 @@
 import Component from '../helpers/component';
-import { defaultLabelColors } from '../helpers/defaults';
+import { defaultLabelColors } from '../modules/defaults';
 import { addLabel } from '../modules/labels';
 import $, { append } from '../helpers/helpers';
 import Label from './Label';
