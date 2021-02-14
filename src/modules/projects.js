@@ -55,6 +55,8 @@ Storage.store('data', allProjects);
 
 const syncData = () => Storage.sync('data');
 
+const getUncategorizedProj = () => uncategorizedTasks;
+
 const getCurrentSelectedProj = () => currentSelectedProj;
 
 const getAllProjects = () => allProjects.items;
@@ -117,6 +119,7 @@ const addProject = (name) => {
 };
 
 const deleteProject = (id) => {
+  currentSelectedProj = '';
   allProjects.removeItems((proj) => proj.id === id);
   syncData();
 };
@@ -158,6 +161,7 @@ export {
   getProjectTasks,
   getProjectsDetails,
   getCurrentSelectedProj,
+  getUncategorizedProj,
   getAllProjects,
   getDueToday,
   getDueThisWeek,
