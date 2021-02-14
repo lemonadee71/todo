@@ -13,6 +13,7 @@ import {
   chips,
   chipsWithText,
 } from '../helpers/selectors';
+import Storage from '../modules/storage';
 import { getLabel } from '../modules/labels';
 import {
   getCurrentSelectedProj,
@@ -33,6 +34,8 @@ const TaskModal = ({ task }) => {
   /*
    * Private methods
    */
+  const _syncData = () => Storage.sync('data');
+
   const _updateTaskDetails = (...args) => {
     if (args[0] === 'location') {
       let [prop, id, prevLoc, newLoc] = args;
@@ -42,6 +45,8 @@ const TaskModal = ({ task }) => {
       let [prop, value] = args;
       task[prop] = value;
     }
+
+    _syncData();
   };
 
   const _updateTaskLabels = (method, id) => {
@@ -50,6 +55,8 @@ const TaskModal = ({ task }) => {
     } else if (method === 'remove') {
       task.removeLabel(id);
     }
+
+    _syncData();
   };
 
   /*

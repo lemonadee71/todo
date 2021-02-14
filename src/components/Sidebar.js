@@ -25,6 +25,8 @@ import TaskItem from './TaskItem';
 const Sidebar = () => {
   const projects = getProjectsDetails();
 
+  const _addProject = (name) => addProject(name);
+
   const _deleteProject = (id) => deleteProject(id);
 
   const _getProject = (id) => {
@@ -98,7 +100,7 @@ const Sidebar = () => {
   // Form element
   const createNewProject = (e) => {
     e.preventDefault();
-    let newProject = addProject($(newProjectInput).value);
+    let newProject = _addProject($(newProjectInput).value);
 
     append(
       Component.render(
@@ -147,6 +149,7 @@ const Sidebar = () => {
           class="dark"
           id="new-proj"
           placeholder="Create New Project"
+          required
         />
         <button type="submit">+</button>
       </form>

@@ -1,46 +1,37 @@
-// // Example watch(allProjects).forChangesOn(items)
-// // watch(project).forChangesOn(project.items)
-// // watch(task).forChangesOn('all')
+const Storage = (() => {
+  let data = window.localStorage;
+  let storedData = {};
 
-// const watchForChanges = (target, prop) => {
-//   target[prop] = new Proxy(target[prop], {});
-// };
+  const store = (key, dataObj) => {
+    storedData[key] = dataObj;
+    sync(key);
+  };
 
-// const watch = (target) => {
-//   return {
-//     forChangesOn: (prop) => {
-//       target[prop] = new Proxy(target, {});
-//     },
-//   };
-// };
+  const sync = (key) => {
+    data.setItem(key, JSON.stringify(storedData[key]));
+  };
 
-// const Storage = () => {
-//   let data = window.localStorage;
-//   let key = 'data';
+  const recover = (key) => {
+    return JSON.parse(data.getItem(key));
+  };
 
-//   const getData = () => JSON.parse(data.getItem(key));
+  const register = (key, dataObj) => {
+    storedData[key] = dataObj;
 
-//   const setKey = (newKey) => {
-//     key = newKey;
-//   };
+    return new Proxy(dataObj, {
+      set: function (target, prop, value, receiver) {
+        sync(key);
+        return Reflect.set(target, prop, value, receiver);
+      },
+    });
+  };
 
-//   const store = (newData) => {
-//     let storedData = getItems();
+  return {
+    register,
+    store,
+    sync,
+    recover,
+  };
+})();
 
-//     if (storedData && Array.isArray(storedData)) {
-//       storedData.push(newData);
-//     }
-
-//     data.setItem(key, JSON.stringify(storedData || [newData]));
-//   };
-
-//   const update = () => {
-//     data.setItem(key, JSON.stringify(storedData));
-//   };
-
-//   return {
-//     setKey,
-//   };
-// };
-
-// export default Storage;
+export default Storage;

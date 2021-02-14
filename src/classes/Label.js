@@ -1,8 +1,8 @@
 class Label {
-  constructor(name, color) {
+  constructor(name, color, id = null) {
     this.name = name;
     this.color = color;
-    this.id = `label-${Math.random()}`.replace(/0./, '');
+    this.id = id || `label-${Math.random()}`.replace(/0./, '');
   }
 }
 

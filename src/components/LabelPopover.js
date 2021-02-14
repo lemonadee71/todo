@@ -7,6 +7,9 @@ import Label from './Label';
 const LabelPopover = ({ taskLabels, toggleLabel }) => {
   let labels = getLabels();
 
+  /*
+   *  Event listeners
+   */
   const closePopover = () => {
     $('#popover').classList.remove('visible');
   };

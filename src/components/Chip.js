@@ -10,8 +10,5 @@ const Chip = (id, color, name = '') =>
       'data-color': color,
     },
   });
-// `<div class="chip${
-//   name ? '-w-text' : ''
-// }" data-label-id="${id}" data-color="${color}">${name}</div>`;
 
 export default Chip;

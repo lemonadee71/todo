@@ -24,10 +24,18 @@ import LabelPopover from './LabelPopover';
 import Chip from './Chip';
 
 const CreateTaskForm = () => {
+  /*
+   *  Wrapper functions
+   */
+  const _getLabel = (id) => getLabel(id);
+
   const _newTask = (task) => new Task(task);
 
   const _addTask = (task) => addTask(task);
 
+  /*
+   *  Event listeners/DOM functions
+   */
   const addLabel = (label) => {
     if (label.selected) {
       append(Component.render(Chip(label.id, label.color, label.name))).to(
@@ -50,7 +58,7 @@ const CreateTaskForm = () => {
     let dueDate = $(newTaskFormDueDate).value;
     let location = $(newTaskFormLocation).value;
     let labels = [...$(newTaskFormLabels).children].map((chip) =>
-      getLabel(chip.getAttribute('data-label-id'))
+      _getLabel(chip.getAttribute('data-label-id'))
     );
 
     if (!title) {

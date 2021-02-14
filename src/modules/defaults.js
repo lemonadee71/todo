@@ -24,12 +24,40 @@ const defaultLabels = [
   new Label('Coding', '#344563'),
 ];
 
-const myTasks = new List('My Tasks', [
+const myTasks = new List({ name: 'My Tasks' });
+myTasks.addItem([
+  new Task({
+    title: 'Create README',
+    dueDate: '2021-02-14',
+    location: myTasks.id,
+  }),
+  new Task({
+    title: 'Features to add in the future',
+    notes: `## Checklist
+  - [] Drag and drop to rearrange tasks
+  - [] Drop on ProjectListItem to transfer task to a project
+  - [] Subtasks (MD checklist for now)
+  - [] Sort by dueDate
+  - [] Filter by tags
+  - [] Search tasks
+  - [] Firebase backend
+  - [] Pomodoro
+  - [] PWA or Electron app
+  - [] Integration with Habitica`,
+    location: myTasks.id,
+  }),
+  new Task({
+    title: 'Fix overflow bugs',
+    notes: `- [] Title on TaskItem overflows\n- [] Title on TaskModal is clipped. Possible fix is change it to textarea (figure out how to dynamically change the height though)`,
+    labels: [defaultLabels[1]],
+    location: myTasks.id,
+  }),
   new Task({
     title: 'Validate an edited label name',
     notes:
       'It is possible to have same label names when editing but not on creation. Fix this.',
     labels: [defaultLabels[1]],
+    location: myTasks.id,
   }),
   new Task({
     title: 'Fix styles',
@@ -43,15 +71,18 @@ const myTasks = new List('My Tasks', [
   - [] Header shouldn't be transparent.
   - [] Make it prettier.`,
     labels: [defaultLabels[1], defaultLabels[3], defaultLabels[4]],
+    dueDate: '2021-03-13',
+    location: myTasks.id,
   }),
   new Task({
     title: 'Learn Proxy and Reflect',
-    notes: `- [] Improve Component.bind
-  - [] Find a way to dynamically reproxy and revoke an object`,
+    notes: `- [] Improve Component.bind\n- [] Find a way to dynamically reproxy and revoke an object\n> Current limitation is that objects are passed by value`,
     labels: [defaultLabels[5]],
+    dueDate: '2021-03-06',
+    location: myTasks.id,
   }),
   new Task({
-    title: 'Component.js',
+    title: 'Improve Component.js',
     notes: `## Todo
   - [] Shorthand type \`el.class\` and \`el#id\` should also be available for objectToString
   - [] Special keys like \`span\`, \`link\`, and \`paragraph\` should also be available for objectToString`,
@@ -63,11 +94,7 @@ const myTasks = new List('My Tasks', [
   - [X] Chips and actions buttons are in front of header.`,
     labels: [defaultLabels[1], defaultLabels[5]],
     completed: true,
-  }),
-  new Task({
-    title: 'Fix overflow bugs',
-    notes: `- [] Title on TaskItem overflows\n- [] Title on TaskModal is clipped. Possible fix is change it to textarea (figure out how to dynamically change the height though)`,
-    labels: [defaultLabels[1]],
+    location: myTasks.id,
   }),
 ]);
 

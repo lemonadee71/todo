@@ -17,6 +17,9 @@ const MainContent = () => {
     return segregateTasks(getAllTasks());
   };
 
+  /*
+   *  Event listeners
+   */
   const showCompleted = (e) => {
     if (e.target.checked) {
       show($(completedTasks));

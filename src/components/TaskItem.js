@@ -8,6 +8,7 @@ import $, {
   show,
 } from '../helpers/helpers';
 import { deleteTask } from '../modules/projects';
+import Storage from '../modules/storage';
 import Icons from './Icons';
 import Chip from './Chip';
 import TaskModal from '../components/TaskModal';
@@ -15,13 +16,28 @@ import TaskModal from '../components/TaskModal';
 const TaskItem = ({ task }) => {
   let { id, title, notes, dueDate, completed } = task;
 
+  /*
+   *  Wrapper functions
+   */
+  const _deleteTask = (task) => deleteTask(task);
+
+  const _toggleCheck = () => {
+    task.toggleComplete();
+    Storage.sync('data');
+
+    return task.completed;
+  };
+
+  /*
+   *  Event listeners
+   */
   const onEdit = () => {
     changeModalContent(TaskModal({ task }));
     show($(modal));
   };
 
   const onDelete = () => {
-    deleteTask(task);
+    _deleteTask(task);
 
     let list = task.completed ? completedTasks : currentTasks;
     remove($(`#${id}`)).from($(list));
@@ -30,7 +46,7 @@ const TaskItem = ({ task }) => {
   const toggleCheckmark = (e) => {
     e.currentTarget.classList.toggle('checked');
 
-    let isDone = task.toggleComplete();
+    let isDone = _toggleCheck();
     let taskCard = $(`#${id}`);
     taskCard.classList.toggle('completed');
 

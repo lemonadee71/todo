@@ -1,9 +1,9 @@
 class List {
-  constructor(name, defaultItems = []) {
+  constructor({ name, defaultItems = [], id = null }) {
     this.items = [...defaultItems];
     this.length = this.items.length || 0;
     this.name = name;
-    this.id = `list-${Math.random()}`.replace(/0./, '');
+    this.id = id || `list-${Math.random()}`.replace(/0./, '');
   }
 
   getItem(condition) {

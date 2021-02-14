@@ -9,10 +9,16 @@ const Label = ({ label, taskLabels = [] }) => {
     (taskLabel) => taskLabel.name === label.name
   );
 
+  /*
+   *  Wrapper functions
+   */
   const _deleteLabel = (id) => deleteLabel(id);
 
   const _editLabel = (id, newName) => editLabel(id, 'name', newName);
 
+  /*
+   *  Event listeners
+   */
   const updateLabel = (e) => {
     let labelEl = e.currentTarget.parentElement;
     let labelId = labelEl.getAttribute('data-label-id');
