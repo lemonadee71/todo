@@ -134,7 +134,8 @@ header {
   align-items: center;
   justify-content: space-between;
   color: white;
-  background-color: var(--transparent-main-color);
+  background-color: black;
+  z-index: 9;
 }
 
 #search-bar {
@@ -398,7 +399,7 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
 .modal-backdrop {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
+  z-index: 99; /* Sit on top */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
@@ -415,7 +416,7 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   margin: 3% auto; /* 15% from the top and centered */
   padding: 30px 20px;
   border: 1px solid #888;
-  width: 450px;
+  width: 550px;
 }
 
 .close {
@@ -540,6 +541,7 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
 /* Labels Area */
 #labels [data-id='labels-area'] {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .chip-w-text:not(:last-child) {
@@ -585,6 +587,7 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
 
 #form-labels [data-id='new-task-labels'] {
   display: flex;
+  flex-wrap: wrap;
 }
 
 #create-task select,
