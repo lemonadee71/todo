@@ -87,6 +87,7 @@ myTasks.addItem([
   - [] Shorthand type \`el.class\` and \`el#id\` should also be available for objectToString
   - [] Special keys like \`span\`, \`link\`, and \`paragraph\` should also be available for objectToString`,
     labels: [defaultLabels[5]],
+    location: myTasks.id,
   }),
   new Task({
     title: 'Fix more bugs',
