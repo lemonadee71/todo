@@ -1,7 +1,6 @@
 import { getUncategorizedProj } from '../modules/projects';
 
 const ProjectOptions = (projects, location = '') => {
-  console.log(location);
   return [
     // Use an imported uncategorizedTasks for now
     {
