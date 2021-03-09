@@ -50,7 +50,7 @@ const MainContent = () => {
 
   let [current, completed] = _getTasks();
 
-  return Component.parseString`
+  return Component.html`
     <main>
       <h2 id="current-proj-title">All Tasks</h1>
       <hr>

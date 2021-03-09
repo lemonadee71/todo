@@ -57,7 +57,7 @@ const TaskItem = ({ task }) => {
     }
   };
 
-  return Component.parseString`
+  return Component.html`
     <div id="${id}" class="task ${
     completed ? 'completed' : ''
   }" draggable="true">

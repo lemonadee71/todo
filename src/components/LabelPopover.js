@@ -38,7 +38,7 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
     }
   };
 
-  return Component.parseString`
+  return Component.html`
     <div id="popover">
       <span class="close" ${{ onClick: closePopover }}>&times;</span>       
       <span class="section-header">Labels</span>

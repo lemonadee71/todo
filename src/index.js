@@ -18,7 +18,7 @@ const App = () => {
   //   placeholder="Search your tasks"
   // />
 
-  return Component.render(Component.parseString`
+  return Component.render(Component.html`
       <header>
         <ul>
           <li>

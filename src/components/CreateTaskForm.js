@@ -90,7 +90,7 @@ const CreateTaskForm = () => {
     closeModal();
   };
 
-  return Component.parseString`
+  return Component.html`
     <div id="create-task">
       <input
         type="text"
@@ -105,7 +105,7 @@ const CreateTaskForm = () => {
         ${ProjectOptions(getProjectsDetails(), getCurrentSelectedProj())}
       </select>
 
-      <label for="task-labels" class="section-header">Labels</label>
+      <span class="section-header">Labels</span>
       <div id="form-labels">
         <button ${{ onClick: openLabelPopover }}>+</button>
         <div data-id="new-task-labels"></div>

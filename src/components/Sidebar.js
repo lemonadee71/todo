@@ -130,7 +130,7 @@ const Sidebar = () => {
     remove(projListItem).from($(userProjects));
   };
 
-  return Component.parseString`
+  return Component.html`
   <aside id="sidebar">
     <div>
       <ul id="default-proj" ${{ onClick: selectProject }}>

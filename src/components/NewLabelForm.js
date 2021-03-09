@@ -45,7 +45,7 @@ const NewLabelForm = () => {
     e.target.reset();
   };
 
-  return Component.parseString`
+  return Component.html`
     <form ${{ onSubmit }}>
       <input
         type="text"

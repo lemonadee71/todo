@@ -99,7 +99,7 @@ const Label = ({ label, taskLabels = [] }) => {
     e.stopPropagation();
   };
 
-  return Component.parseString`
+  return Component.html`
     <div class="label${isSelected ? ' selected' : ''}" 
     data-label-id="${label.id}" 
     data-color="${label.color}">

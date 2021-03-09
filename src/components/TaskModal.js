@@ -172,7 +172,7 @@ const TaskModal = ({ task }) => {
    * TaskModal elements
    */
   const notesTextArea = () =>
-    Component.render(Component.parseString`
+    Component.render(Component.html`
       <textarea id="edit-task-notes" "name="notes">${task.notes}</textarea>
       <button class="submit" type="submit" ${{ onClick: saveNotes }}>
         Save
@@ -187,7 +187,7 @@ const TaskModal = ({ task }) => {
     },
   });
 
-  return Component.render(Component.parseString`
+  return Component.render(Component.html`
     <div class="title">
       <input
         type="text"
@@ -197,7 +197,7 @@ const TaskModal = ({ task }) => {
         value="${task.title}"
         disabled
         required
-        ${{ onChange: updateTitle, onFocusout: disableEdit }}
+        ${{ onInput: updateTitle, onFocusout: disableEdit }}
       />
       <button ${{ onClick: editTitle }}>${Icons('edit')}</button>
     </div>
