@@ -253,6 +253,9 @@ const Component = (() => {
       const bindedElements = dataStore.get(handler._id);
       const existingHandlers = bindedElements.get(id) || [];
 
+      let finalValue = handler.trap
+        ? handler.trap.call(null, handler.value)
+        : handler.value;
       let targetProp = isStyleAttr(prop)
         ? prop.replace('$style:', '')
         : prop.replace('$', '');
@@ -279,11 +282,11 @@ const Component = (() => {
       ]);
 
       if (type === 'prop') {
-        props[targetProp] = handler.value;
+        props[targetProp] = finalValue;
       } else if (type === 'attr') {
-        attrStr += `${targetProp}="${handler.value}" `;
+        attrStr += `${targetProp}="${finalValue}" `;
       } else if (type === 'style') {
-        styleStr += `${targetProp}: ${handler.value}; `;
+        styleStr += `${targetProp}: ${finalValue}; `;
       }
     }
 

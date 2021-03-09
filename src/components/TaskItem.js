@@ -14,16 +14,19 @@ import Chip from './Chip';
 import TaskModal from '../components/TaskModal';
 
 const TaskItem = ({ task }) => {
-  let { id, title, notes, dueDate, completed } = task;
+  const taskState = Component.createState(task);
+  let { id, notes, dueDate, completed } = taskState.value;
 
   /*
    *  Wrapper functions
    */
+  const _syncData = () => Storage.sync('data');
+
   const _deleteTask = (task) => deleteTask(task);
 
   const _toggleCheck = () => {
     task.toggleComplete();
-    Storage.sync('data');
+    _syncData();
 
     return task.completed;
   };
@@ -32,7 +35,7 @@ const TaskItem = ({ task }) => {
    *  Event listeners
    */
   const onEdit = () => {
-    changeModalContent(TaskModal({ task }));
+    changeModalContent(TaskModal({ task: taskState.value }));
     show($(modal));
   };
 
@@ -58,9 +61,8 @@ const TaskItem = ({ task }) => {
   };
 
   return Component.html`
-    <div id="${id}" class="task ${
-    completed ? 'completed' : ''
-  }" draggable="true">
+    <div id="${id}" class="task ${completed ? 'completed' : ''}"
+      draggable="true">
       <div class="actions"> 
         <button ${{ onClick: onEdit }}>${Icons('edit')}</button>
         <button ${{ onClick: onDelete }}>${Icons('delete')}</button>
@@ -75,19 +77,35 @@ const TaskItem = ({ task }) => {
         <div class="label-chips">
           ${task.getLabels().map((label) => Chip(label.id, label.color))}
         </div>
-        <p data-id="task-card-title">${title}</p>
+        <p data-id="task-card-title" ${{
+          $textContent: taskState.bind('title'),
+        }}></p>
         <div class="badges">
-          <span data-id="task-card-notes" 
-          ${!notes ? 'style="display: none;"' : ''}>
+          <span data-id="task-card-notes" ${{
+            '$style:display': taskState.bind('notes', (notes) =>
+              !notes ? 'none' : ''
+            ),
+          }}
+          >
+          <!-- ${!notes ? 'style="display: none;"' : ''} -->
           ${Icons('details')}
           </span>
           <span data-id="task-card-date">
-            <span data-id="task-card-date-icon"
-            ${!dueDate ? 'style="display: none;"' : ''}>
-            ${Icons('calendar')}
+            <span data-id="task-card-date-icon" ${{
+              '$style:display': taskState.bind('dueDate', (date) =>
+                date ? 'none' : ''
+              ),
+            }}
+            >
+            <!-- ${!dueDate ? 'style="display: none;"' : ''} -->
+              ${Icons('calendar')}
             </span>
-            <span data-id="task-card-date-text">
-            ${dueDate ? `${formatDate(dueDate)}` : ''}
+            <span data-id="task-card-date-text" ${{
+              $textContent: taskState.bind('dueDate', (date) =>
+                date ? `${formatDate(date)}` : ''
+              ),
+            }}>
+            <!-- ${dueDate ? `${formatDate(dueDate)}` : ''} -->
             </span>
           </span>        
         </div>
