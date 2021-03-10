@@ -1,10 +1,11 @@
 import Component from '../helpers/component';
-import $, { remove, hide, show } from '../helpers/helpers';
+import $, { remove } from '../helpers/helpers';
 import { chips, chipsWithText, labelElement } from '../helpers/selectors';
 import { deleteLabel, editLabel } from '../modules/labels';
-import Icons from './Icons';
 
 const Label = ({ label, taskLabels = [] }) => {
+  const isEditing = Component.createState(false);
+
   let isSelected = taskLabels.find(
     (taskLabel) => taskLabel.name === label.name
   );
@@ -41,21 +42,6 @@ const Label = ({ label, taskLabels = [] }) => {
   const removeLabel = (e) => {
     _deleteLabel(label.id);
 
-    // idk if this is necessary
-    // trust the garbage collector
-    $(`${labelElement(label.id)} input`).removeEventListener(
-      'change',
-      updateLabel
-    );
-    $(`${labelElement(label.id)} input`).removeEventListener(
-      'focusout',
-      disableEdit
-    );
-    $(`${labelElement(label.id)} .actions`).children[0].removeEventListener(
-      'click',
-      allowEdit
-    );
-
     remove($(`${labelElement(label.id)}`)).from($('#label-list'));
 
     // remove all chips and chip-w-texts with the same label-id
@@ -67,60 +53,36 @@ const Label = ({ label, taskLabels = [] }) => {
     e.stopPropagation();
   };
 
-  const allowEdit = (e) => {
-    // remove disabled attr on input
-    let input = e.currentTarget.parentElement.previousElementSibling;
-    let span = input.previousElementSibling;
-
-    input.removeAttribute('disabled');
-    input.classList.toggle('hidden');
-    span.classList.toggle('hidden');
-
-    // disable and hide actionBtns
-    e.currentTarget.setAttribute('disabled', '');
-    hide(e.currentTarget);
-
-    e.stopPropagation();
-  };
-
-  const disableEdit = (e) => {
-    // disable input then show the span
-    e.currentTarget.setAttribute('disabled', '');
-    e.currentTarget.classList.toggle('hidden');
-    e.currentTarget.previousElementSibling.classList.toggle('hidden');
-
-    // then show and undisable actionBtns
-    let actionBtns = e.currentTarget.parentElement.querySelector('.actions');
-    let editBtn = actionBtns.children[0];
-
-    editBtn.removeAttribute('disabled');
-    show(editBtn);
-
-    e.stopPropagation();
+  const toggleEdit = () => {
+    isEditing.value = !isEditing.value;
   };
 
   return Component.html`
     <div class="label${isSelected ? ' selected' : ''}" 
-    data-label-id="${label.id}" 
-    data-color="${label.color}">
-      ${{
-        type: 'span',
-        text: label.name,
-      }}
+      data-label-id="${label.id}" 
+      data-color="${label.color}"
+    >
+      <span ${{
+        $class: isEditing.bind('value', (val) => (val ? 'hidden' : '')),
+      }}>${label.name}</span>
       <input
-        class="hidden"
         type="text"
         name="label-name"
         value="${label.name}"
         required
-        disabled
-        ${{ onChange: updateLabel, onFocusout: disableEdit }}
+        ${{
+          $class: isEditing.bind('value', (val) => (!val ? 'hidden' : '')),
+          $disabled: isEditing.bind('value', (val) => (!val ? 'true' : '')),
+        }}
+        ${{ onChange: updateLabel, onFocusout: toggleEdit }}
       />
-      <div class="actions"> 
-        <button ${{ onClick: allowEdit }}>${Icons('edit')}</button>
-        <button ${{ onClick: removeLabel }}>
-          ${Icons('delete')}
-        </button>
+      <div class="actions" ${{
+        '$style:display': isEditing.bind('value', (val) =>
+          val ? 'none' : 'block'
+        ),
+      }}> 
+        <button is="edit-btn" ${{ onClick: toggleEdit }}></button>
+        <button is="delete-btn" ${{ onClick: removeLabel }}></button>
       </div>
     </div>
   `;

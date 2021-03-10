@@ -43,8 +43,7 @@ const MainContent = () => {
   };
 
   const showCreateTaskForm = () => {
-    $(modal).changeContent(CreateTaskForm());
-    $(modal).show();
+    $(modal).changeContent(CreateTaskForm()).show();
   };
 
   let [current, completed] = _getTasks();

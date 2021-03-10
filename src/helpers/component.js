@@ -1,5 +1,17 @@
 const Component = (() => {
   const dataStore = new Map();
+  const defaultProps = ['textContent', 'innerHTML', 'outerHTML'];
+  const booleanAttributes = [
+    'checked',
+    'selected',
+    'disabled',
+    'readonly',
+    'multiple',
+    'ismap',
+    'noresize',
+    'reversed',
+    'autocomplete',
+  ];
 
   const createElementFromString = (str, handlers = []) => {
     let createdElement = document.createRange().createContextualFragment(str);
@@ -37,6 +49,8 @@ const Component = (() => {
     isObject(val) && Object.keys(val).every((key) => key.startsWith('on'));
   const isState = (val) =>
     isObject(val) && Object.keys(val).every((key) => key.startsWith('$'));
+
+  const isBooleanAttribute = (val) => booleanAttributes.includes(val);
 
   const _generateID = () => `${Math.random()}`.replace(/0./, '');
 
@@ -237,8 +251,6 @@ const Component = (() => {
   const _bindState = (state) => {
     const isStyleAttr = (str) => str.startsWith('$style:');
 
-    const defaultProps = ['textContent', 'innerHTML', 'outerHTML'];
-
     const id = _generateID();
     const proxyId = `data-proxyid="${id}"`;
     const props = {};
@@ -310,7 +322,6 @@ const Component = (() => {
     const setHandler = {
       set: (target, prop, value, receiver) => {
         const bindedElements = dataStore.get(_id);
-        console.log({ target, prop, value });
 
         for (let [id, handlers] of bindedElements) {
           const el = document.querySelector(`[data-proxyid="${id}"]`);
@@ -326,7 +337,15 @@ const Component = (() => {
                 if (handler.type === 'prop') {
                   el[handler.targetProp] = finalValue;
                 } else if (handler.type === 'attr') {
-                  el.setAttribute(handler.targetProp, finalValue);
+                  if (isBooleanAttribute(handler.targetProp)) {
+                    if (!finalValue) {
+                      el.removeAttribute(handler.targetProp);
+                    } else {
+                      el.setAttribute(handler.targetProp, '');
+                    }
+                  } else {
+                    el.setAttribute(handler.targetProp, finalValue);
+                  }
                 } else if (handler.type === 'style') {
                   el.style[handler.targetProp] = finalValue;
                 } else if (handler.type === 'content') {

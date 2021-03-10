@@ -199,7 +199,7 @@ const TaskModal = ({ task }) => {
         required
         ${{ onInput: updateTitle, onFocusout: disableEdit }}
       />
-      <button ${{ onClick: editTitle }}>${Icons('edit')}</button>
+      <button is="edit-btn" ${{ onClick: editTitle }}></button>
     </div>
     <div class="proj">
       <span>in Project</span>
@@ -231,8 +231,9 @@ const TaskModal = ({ task }) => {
         ${Icons('details')}
         <span>Notes</span>
       </div>
-      <button data-id="edit-notes-btn" ${{ onClick: editNotes }}>
-        ${Icons('edit')}
+      <button is="edit-btn" data-id="edit-notes-btn" ${{
+        onClick: editNotes,
+      }}>        
       </button>
       <div data-id="notes-area">${notesPreview()}</div>
     </div>
