@@ -1,12 +1,7 @@
 import Component from '../helpers/component';
 import { formatDate } from '../helpers/date';
 import { completedTasks, currentTasks, modal } from '../helpers/selectors';
-import $, {
-  append,
-  changeModalContent,
-  remove,
-  show,
-} from '../helpers/helpers';
+import $, { append, remove } from '../helpers/helpers';
 import { deleteTask } from '../modules/projects';
 import Storage from '../modules/storage';
 import Icons from './Icons';
@@ -15,7 +10,7 @@ import TaskModal from '../components/TaskModal';
 
 const TaskItem = ({ task }) => {
   const taskState = Component.createState(task);
-  let { id, notes, dueDate, completed } = taskState.value;
+  const { id, completed } = taskState.value;
 
   /*
    *  Wrapper functions
@@ -35,8 +30,8 @@ const TaskItem = ({ task }) => {
    *  Event listeners
    */
   const onEdit = () => {
-    changeModalContent(TaskModal({ task: taskState.value }));
-    show($(modal));
+    $(modal).changeContent(TaskModal({ task: taskState.value }));
+    $(modal).show();
   };
 
   const onDelete = () => {
@@ -64,13 +59,13 @@ const TaskItem = ({ task }) => {
     <div id="${id}" class="task ${completed ? 'completed' : ''}"
       draggable="true">
       <div class="actions"> 
-        <button ${{ onClick: onEdit }}>${Icons('edit')}</button>
-        <button ${{ onClick: onDelete }}>${Icons('delete')}</button>
+        <button is="edit-btn" ${{ onClick: onEdit }}></button>
+        <button is="delete-btn" ${{ onClick: onDelete }}></button>
       </div>
       <div class="checkbox">
         <div class="check ${completed ? 'checked' : ''}" 
         ${{ onClick: toggleCheckmark }}>
-        ${Icons('checkmark')}
+          ${Icons('checkmark')}
         </div>
       </div>
       <div class="brief-content">
@@ -82,30 +77,27 @@ const TaskItem = ({ task }) => {
         }}></p>
         <div class="badges">
           <span data-id="task-card-notes" ${{
-            '$style:display': taskState.bind('notes', (notes) =>
-              !notes ? 'none' : ''
+            $style: taskState.bind('notes', (notes) =>
+              !notes ? 'display: none;' : ''
             ),
           }}
           >
-          <!-- ${!notes ? 'style="display: none;"' : ''} -->
           ${Icons('details')}
           </span>
           <span data-id="task-card-date">
             <span data-id="task-card-date-icon" ${{
-              '$style:display': taskState.bind('dueDate', (date) =>
-                date ? 'none' : ''
+              $style: taskState.bind('dueDate', (date) =>
+                !date ? 'display: none;' : ''
               ),
             }}
             >
-            <!-- ${!dueDate ? 'style="display: none;"' : ''} -->
               ${Icons('calendar')}
             </span>
             <span data-id="task-card-date-text" ${{
               $textContent: taskState.bind('dueDate', (date) =>
-                date ? `${formatDate(date)}` : ''
+                date ? formatDate(date) : ''
               ),
             }}>
-            <!-- ${dueDate ? `${formatDate(dueDate)}` : ''} -->
             </span>
           </span>        
         </div>

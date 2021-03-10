@@ -3,6 +3,9 @@ import $ from './helpers/helpers';
 import { sidebar as sidenav } from './helpers/selectors';
 import MainContent from './components/MainContent';
 import Sidebar from './components/Sidebar';
+import defineCustomElements from './modules/customElements';
+
+defineCustomElements();
 
 const App = () => {
   const showSidebar = (e) => {

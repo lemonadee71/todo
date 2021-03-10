@@ -1,6 +1,6 @@
 import Task from '../classes/Task';
 import Component from '../helpers/component';
-import $, { append, remove, closeModal } from '../helpers/helpers';
+import $, { append, remove } from '../helpers/helpers';
 import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
 import {
   currentTasks,
@@ -11,6 +11,7 @@ import {
   newTaskFormLocation,
   newTaskFormLabels,
   chipsWithText,
+  modal,
 } from '../helpers/selectors';
 import { getLabel } from '../modules/labels';
 import {
@@ -87,7 +88,7 @@ const CreateTaskForm = () => {
 
   const destroyForm = () => {
     $(newTaskForm).removeEventListener('submit', createNewTask);
-    closeModal();
+    $(modal).close();
   };
 
   return Component.html`

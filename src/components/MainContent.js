@@ -1,5 +1,5 @@
 import Component from '../helpers/component';
-import $, { hide, show, changeModalContent } from '../helpers/helpers';
+import $, { hide, show } from '../helpers/helpers';
 import {
   completedTasks,
   currentTasks,
@@ -10,7 +10,6 @@ import { segregateTasks, getAllTasks } from '../modules/projects';
 import CreateTaskForm from './CreateTaskForm';
 import NoTasksMessage from './NoTasksMessage';
 import TaskItem from './TaskItem';
-import Modal from './Modal';
 
 const MainContent = () => {
   const _getTasks = () => {
@@ -44,8 +43,8 @@ const MainContent = () => {
   };
 
   const showCreateTaskForm = () => {
-    changeModalContent(Component.render(CreateTaskForm()));
-    show($(modal));
+    $(modal).changeContent(CreateTaskForm());
+    $(modal).show();
   };
 
   let [current, completed] = _getTasks();
@@ -72,7 +71,7 @@ const MainContent = () => {
           ${completed.length ? completed.map((task) => TaskItem({ task })) : ''}
         </div>
       </div>
-      ${Modal()}
+      <modal-el></modal-el>
     </main>
   `;
 };

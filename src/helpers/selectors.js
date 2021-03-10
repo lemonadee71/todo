@@ -15,8 +15,7 @@ const newTaskFormDueDate = '[data-id="new-task-date"]';
 const newTaskFormLocation = '[data-id="new-task-location"]';
 const newTaskFormLabels = '[data-id="new-task-labels"]';
 
-const modal = '.modal-backdrop';
-const modalContent = '#modal-content';
+const modal = 'modal-el';
 const labelsArea = '#labels [data-id="labels-area"]';
 const taskNotesArea = '[data-id="notes-area"]';
 
@@ -35,7 +34,6 @@ const labelElement = (id) => `.label[data-label-id="${id}"]`;
 
 export {
   modal,
-  modalContent,
   labelsArea,
   taskNotesArea,
   projectTitle,
