@@ -131,40 +131,40 @@ const Sidebar = () => {
   };
 
   return Component.html`
-  <aside id="sidebar">
-    <div>
-      <ul id="default-proj" ${{ onClick: selectProject }}>
-        <li id="all">All Tasks</li>
-        <li id="today">Today</li>
-        <li id="week">This Week</li>
-        <li id="upcoming">Upcoming</li>
-      </ul>
-      <br />
-    </div>
-    <div>
-      <form ${{ onSubmit: createNewProject }}>
-        <input
-          type="text"
-          name="new-project"
-          class="dark"
-          id="new-proj"
-          placeholder="Create New Project"
-          required
-        />
-        <button type="submit">+</button>
-      </form>
-      <br />
-      <ul id="user-proj" ${{ onClick: selectProject }}>
-        ${
-          projects.length
-            ? projects.map((proj) =>
-                ProjectListItem(proj, { deleteHandler: removeProject })
-              )
-            : ''
-        }
-      </ul>
-    </div>
-  </aside>
+    <aside id="sidebar">
+      <div>
+        <ul id="default-proj" ${{ onClick: selectProject }}>
+          <li id="all">All Tasks</li>
+          <li id="today">Today</li>
+          <li id="week">This Week</li>
+          <li id="upcoming">Upcoming</li>
+        </ul>
+        <br />
+      </div>
+      <div>
+        <form ${{ onSubmit: createNewProject }}>
+          <input
+            type="text"
+            name="new-project"
+            class="dark"
+            id="new-proj"
+            placeholder="Create New Project"
+            required
+          />
+          <button type="submit">+</button>
+        </form>
+        <br />
+        <ul id="user-proj" ${{ onClick: selectProject }}>
+          ${
+            projects.length
+              ? projects.map((proj) =>
+                  ProjectListItem(proj, { deleteHandler: removeProject })
+                )
+              : ''
+          }
+        </ul>
+      </div>
+    </aside>
   `;
 };
 

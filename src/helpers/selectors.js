@@ -1,7 +1,3 @@
-const taskItemTitle = (id) => `#${id} [data-id="task-card-title"]`;
-const taskItemNotes = (id) => `#${id} [data-id="task-card-notes"]`;
-const taskItemDueDateIcon = (id) => `#${id} [data-id="task-card-date-icon"]`;
-const taskItemDueDateText = (id) => `#${id} [data-id="task-card-date-text"]`;
 const taskItemLabels = (id) => `#${id} .label-chips`;
 
 const completedTasks = '#completed-tasks';
@@ -50,11 +46,7 @@ export {
   sidebar,
   newProjectInput,
   userProjects,
-  taskItemTitle,
   taskItemLabels,
-  taskItemNotes,
-  taskItemDueDateIcon,
-  taskItemDueDateText,
   chips,
   chipsWithText,
   labelElement,
