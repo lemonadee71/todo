@@ -20,7 +20,8 @@ if (storedData) {
 
 Storage.store('labels', labels);
 
-const syncData = () => Storage.sync('labels');
+const syncData = () => Storage.sync('data');
+const syncLabels = () => Storage.sync('labels');
 
 const addLabel = (name, color) => {
   let alreadyExists = labels.getItem((label) => label.name === name);
@@ -29,7 +30,7 @@ const addLabel = (name, color) => {
     let newLabel = new Label(name, color);
     labels.addItem(newLabel);
 
-    syncData();
+    syncLabels();
     return newLabel;
   } else {
     throw new Error('Label already exists.');
@@ -44,12 +45,22 @@ const deleteLabel = (id) => {
 
   labels.removeItems((label) => label.id === id);
 
+  syncLabels();
   syncData();
 };
 
 const editLabel = (id, prop, value) => {
-  labels.getItem((label) => label.id === id)[prop] = value;
+  getLabel(id)[prop] = value;
 
+  // getAllProjects()
+  //   .map((proj) => proj.items)
+  //   .flat()
+  //   .map((task) => task.labels)
+  //   .forEach((label) => {
+  //     label[prop] = value;
+  //   });
+
+  syncLabels();
   syncData();
 };
 

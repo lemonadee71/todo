@@ -1,12 +1,7 @@
 import Component from '../helpers/component';
 import convertToMarkdown from '../helpers/showdown';
-// import { formatDate } from '../helpers/date';
 import $, { append, hide, remove, show, rerender } from '../helpers/helpers';
 import {
-  // taskItemNotes,
-  // taskItemDueDateText,
-  // taskItemDueDateIcon,
-  // taskItemTitle,
   taskItemLabels,
   labelsArea,
   taskNotesArea,
@@ -70,33 +65,14 @@ const TaskModal = ({ task }) => {
     }
 
     _updateTaskDetails('title', e.target.value);
-    // $(taskItemTitle(task.id)).textContent = task.title;
   };
 
   const updateNotes = () => {
     _updateTaskDetails('notes', $('#edit-task-notes').value);
-
-    // let taskCardNotes = $(taskItemNotes(task.id));
-    // if (task.notes === '') {
-    //   hide(taskCardNotes);
-    // } else {
-    //   show(taskCardNotes);
-    // }
   };
 
   const updateDueDate = (e) => {
     _updateTaskDetails('dueDate', e.target.value);
-
-    // let dueDateIcon = $(taskItemDueDateIcon(task.id));
-    // let dueDateText = $(taskItemDueDateText(task.id));
-
-    // if (task.dueDate === '') {
-    //   hide(dueDateIcon);
-    //   dueDateText.textContent = '';
-    // } else {
-    //   show(dueDateIcon);
-    //   dueDateText.textContent = formatDate(task.dueDate);
-    // }
   };
 
   // This is a mess
