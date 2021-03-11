@@ -12,7 +12,22 @@ import {
   addProject,
   deleteProject,
 } from '../modules/projects';
-import ProjectListItem from './ProjectListItem';
+import Icons from './Icons';
+
+const ProjectListItem = ({ proj, deleteHandler }) => {
+  return Component.html`
+    <li id="${proj.id}">
+      ${{
+        type: 'a',
+        text: proj.name,
+        attr: {
+          href: `#/${proj.id.replace('-', '/')}`,
+        },
+      }}
+      <span ${{ onClick: deleteHandler }}>${Icons('delete')}</span>
+    </li>
+  `;
+};
 
 const Sidebar = () => {
   const _addProject = (name) => addProject(name);

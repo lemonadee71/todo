@@ -45,14 +45,11 @@ const TaskItem = ({ task }) => {
     e.currentTarget.classList.toggle('checked');
 
     let isDone = _toggleCheck();
+    let list = isDone ? completedTasks : currentTasks;
     let taskCard = $(`#${id}`);
     taskCard.classList.toggle('completed');
 
-    if (isDone) {
-      append(taskCard).to($(completedTasks));
-    } else {
-      append(taskCard).to($(currentTasks));
-    }
+    append(taskCard).to($(list));
   };
 
   return Component.html`

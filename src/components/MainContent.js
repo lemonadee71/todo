@@ -39,7 +39,8 @@ const MainContent = () => {
     } else if (id === 'all') {
       title = 'All Tasks';
     } else {
-      title = id;
+      const project = getProject((proj) => proj.id === id);
+      title = project.name;
     }
 
     if ($('#current-proj-title')) {
@@ -75,7 +76,7 @@ const MainContent = () => {
         project = getProject((proj) => proj.id === `list-${id}`);
       }
 
-      changeTitle(project.name);
+      changeTitle(`list-${id}`);
 
       return project.items;
     } else {
@@ -142,8 +143,11 @@ const MainContent = () => {
 
   return Component.html`
     <main>
-      <!-- Title doesn't have an initial value -->
-      <h2 id="current-proj-title"></h2>
+      ${{
+        type: 'h2',
+        id: 'current-proj-title',
+        text: changeTitle(currentLocation.value.replace('/', '-')),
+      }}
       <hr>
       <div id="taskbar">
         <button id="add-task" ${{ onClick: showCreateTaskForm }}>+</button>

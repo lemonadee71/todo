@@ -7,6 +7,8 @@ import {
   taskNotesArea,
   chips,
   chipsWithText,
+  completedTasks,
+  currentTasks,
 } from '../helpers/selectors';
 import Storage from '../modules/storage';
 import { getLabel } from '../modules/labels';
@@ -16,6 +18,7 @@ import Icons from './Icons';
 import LabelPopover from './LabelPopover';
 import ProjectOptions from './ProjectOptions';
 import { currentLocation } from '../modules/globalState';
+import TaskItem from './TaskItem';
 
 // Selectors are so messy for this component
 // Since there's only one modal component at a time
@@ -104,6 +107,11 @@ const TaskModal = ({ task }) => {
 
     if (currentPath !== newLocation.replace('-', '/')) {
       remove($(`#${task.id}`), true);
+    } else {
+      if (!$(`#${task.id}`)) {
+        const list = task.completed ? completedTasks : currentTasks;
+        append(Component.render(TaskItem({ task }))).to($(list));
+      }
     }
   };
 

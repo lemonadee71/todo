@@ -1,6 +1,6 @@
 import List from '../classes/List';
 import Task from '../classes/Task';
-import { isDueToday, isDueThisWeek, isUpcoming } from '../helpers/date';
+import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
 import { defaultProjects } from './defaults';
 import { getLabel } from './labels';
 import Storage from './storage';
@@ -10,8 +10,7 @@ const Root = new List({ name: 'root', id: 'root' });
 /*
  *  Initialize
  */
-let storedData = Storage.recover('data');
-let uncategorizedTasks;
+const storedData = Storage.recover('data');
 
 if (storedData) {
   Root.add(
@@ -37,11 +36,8 @@ if (storedData) {
         })
     )
   );
-
-  uncategorizedTasks = Root.get((proj) => proj.name === 'uncategorized');
 } else {
-  uncategorizedTasks = new List({ name: 'uncategorized', id: 'uncategorized' });
-  Root.add(uncategorizedTasks);
+  Root.add(new List({ name: 'uncategorized', id: 'uncategorized' }));
   Root.add(defaultProjects);
 }
 
@@ -79,15 +75,15 @@ const getProjectTasks = (id) => {
 };
 
 const getDueToday = () => {
-  return getAllTasks().filter((task) => isDueToday(task.dueDate));
+  return getAllTasks().filter((task) => isDueToday(parse(task.dueDate)));
 };
 
 const getDueThisWeek = () => {
-  return getAllTasks().filter((task) => isDueThisWeek(task.dueDate));
+  return getAllTasks().filter((task) => isDueThisWeek(parse(task.dueDate)));
 };
 
 const getUpcoming = () => {
-  return getAllTasks().filter((task) => isUpcoming(task.dueDate));
+  return getAllTasks().filter((task) => isUpcoming(parse(task.dueDate)));
 };
 
 const addProject = (name) => {

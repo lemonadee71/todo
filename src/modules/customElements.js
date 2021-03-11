@@ -61,6 +61,10 @@ class Modal extends HTMLElement {
   }
 }
 
+// class Chip extends HTMLElement {
+//   connectedCallback() {}
+// }
+
 class EditButton extends HTMLButtonElement {
   connectedCallback() {
     this.innerHTML = '<img src="icons/edit.svg" class="edit" alt="edit" />';

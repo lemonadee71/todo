@@ -1,7 +1,7 @@
 import Task from '../classes/Task';
 import Component from '../helpers/component';
 import $, { append, remove } from '../helpers/helpers';
-import { isDueToday, isDueThisWeek, isUpcoming } from '../helpers/date';
+import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
 import {
   currentTasks,
   newTaskForm,
@@ -71,9 +71,9 @@ const CreateTaskForm = () => {
     let appendConditions = [
       currentPath === '',
       currentPath === location.replace('-', '/'),
-      currentPath === 'today' && isDueToday(dueDate),
-      currentPath === 'week' && isDueThisWeek(dueDate),
-      currentPath === 'upcoming' && isUpcoming(dueDate),
+      currentPath === 'today' && isDueToday(parse(dueDate)),
+      currentPath === 'week' && isDueThisWeek(parse(dueDate)),
+      currentPath === 'upcoming' && isUpcoming(parse(dueDate)),
     ];
 
     _addTask(task);
