@@ -66,9 +66,5 @@ const hashChangeHandler = () => {
 };
 
 window.addEventListener('hashchange', hashChangeHandler, false);
-// window.onload = function () {
-//   window.location.hash = '';
-//   window.location.hash = '#/all';
-// };
 
 document.body.prepend(App());

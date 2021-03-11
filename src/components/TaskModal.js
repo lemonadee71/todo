@@ -10,7 +10,7 @@ import {
 } from '../helpers/selectors';
 import Storage from '../modules/storage';
 import { getLabel } from '../modules/labels';
-import { getProjectsDetails, transferTask } from '../modules/projects';
+import { transferTask } from '../modules/projects';
 import Chip from './Chip';
 import Icons from './Icons';
 import LabelPopover from './LabelPopover';
@@ -178,7 +178,7 @@ const TaskModal = ({ task }) => {
       <span>in Project</span>
       <select id="edit-task-location" name="location"
       ${{ onChange: updateLocation }}>
-      ${ProjectOptions(getProjectsDetails(), task.location)}
+      ${ProjectOptions(task.location)}
       </select>
     </div>
     <div id="labels">

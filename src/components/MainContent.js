@@ -15,7 +15,6 @@ import {
   getUpcoming,
 } from '../modules/projects';
 import CreateTaskForm from './CreateTaskForm';
-import NoTasksMessage from './NoTasksMessage';
 import TaskItem from './TaskItem';
 
 const MainContent = () => {
@@ -46,6 +45,8 @@ const MainContent = () => {
     if ($('#current-proj-title')) {
       $('#current-proj-title').textContent = title;
     }
+
+    return title;
   };
 
   const getTasks = (path) => {
@@ -104,7 +105,11 @@ const MainContent = () => {
       }
     } else {
       if (!noTasks) {
-        $(tasksList).prepend(NoTasksMessage());
+        $(tasksList).prepend(
+          Component.render(
+            Component.html`<h3 id="no-tasks">You don't have any tasks</h3>`
+          )
+        );
       }
     }
   };
@@ -113,7 +118,7 @@ const MainContent = () => {
     $(modal).changeContent(CreateTaskForm()).show();
   };
 
-  const hashChangeHandler = (path, current = true) => {
+  const renderTasks = (path, current = true) => {
     try {
       const allTasks = getTasks(path);
       const tasks = current
@@ -124,7 +129,7 @@ const MainContent = () => {
         tasks.length
           ? tasks.map((task) => TaskItem({ task }))
           : current
-          ? NoTasksMessage()
+          ? Component.html`<h3 id="no-tasks">You don't have any tasks</h3>`
           : ''
       }`;
     } catch (error) {
@@ -137,6 +142,7 @@ const MainContent = () => {
 
   return Component.html`
     <main>
+      <!-- Title doesn't have an initial value -->
       <h2 id="current-proj-title"></h2>
       <hr>
       <div id="taskbar">
@@ -151,18 +157,16 @@ const MainContent = () => {
         onChildAdded: checkNoOfTasks,
       }}>
         <div id="current-tasks" ${{
-          $content: currentLocation.bind('value', (path) =>
-            hashChangeHandler(path)
-          ),
+          $content: currentLocation.bind('value', (path) => renderTasks(path)),
         }}>
-          ${hashChangeHandler('all')}
+          ${renderTasks(currentLocation.value)}
         </div>
         <div id="completed-tasks" style="display: none;" ${{
           $content: currentLocation.bind('value', (path) =>
-            hashChangeHandler(path, false)
+            renderTasks(path, false)
           ),
         }}>
-          ${hashChangeHandler('all', false)}
+          ${renderTasks(currentLocation.value, false)}
         </div>
       </div>
       <modal-el></modal-el>
