@@ -1,18 +1,16 @@
-import { getUncategorizedProj } from '../modules/projects';
+import { getProjectsDetails } from '../modules/projects';
 
-const ProjectOptions = (projects, location = '') => {
+const ProjectOptions = (location = '') => {
+  const projects = getProjectsDetails();
+
   return [
-    // Use an imported uncategorizedTasks for now
     {
       type: 'option',
       text: 'Uncategorized',
       attr: {
-        value: getUncategorizedProj().id,
+        value: 'uncategorized',
         disabled: 'true',
-        selected:
-          location === getUncategorizedProj().id || location === ''
-            ? 'true'
-            : '',
+        selected: location === '' ? 'true' : '',
       },
     },
     ...projects.map((proj) => ({

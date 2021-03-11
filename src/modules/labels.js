@@ -1,34 +1,38 @@
 import List from '../classes/List';
 import Label from '../classes/Label';
-import { getAllProjects } from './projects';
+import { getAllTasks } from './projects';
 import { defaultLabels } from './defaults';
 import Storage from './storage';
 
-// const labels = Storage.register('labels', new List('labels'));
-const labels = new List('labels');
+const Labels = new List({ name: 'labels' });
 
-let storedData = Storage.recover('labels');
+const storedData = Storage.recover('labels');
 if (storedData) {
-  labels.addItem(
-    storedData.items.map(
-      (label) => new Label(label.name, label.color, label.id)
-    )
+  Labels.add(
+    storedData._items.map((label) => {
+      const { name, color, id } = label;
+      return new Label(name, color, id);
+    })
   );
 } else {
-  labels.addItem(defaultLabels);
+  Labels.add(defaultLabels);
 }
 
-Storage.store('labels', labels);
+Storage.store('labels', Labels);
 
 const syncData = () => Storage.sync('data');
 const syncLabels = () => Storage.sync('labels');
 
-const addLabel = (name, color) => {
-  let alreadyExists = labels.getItem((label) => label.name === name);
+const getLabels = () => Labels.items;
 
-  if (!alreadyExists) {
-    let newLabel = new Label(name, color);
-    labels.addItem(newLabel);
+const getLabel = (id) => Labels.get((label) => label.id === id);
+
+const addLabel = (name, color) => {
+  let labelDoesNotExist = !Labels.has((label) => label.name === name);
+
+  if (labelDoesNotExist) {
+    const newLabel = new Label(name, color);
+    Labels.add(newLabel);
 
     syncLabels();
     return newLabel;
@@ -38,12 +42,8 @@ const addLabel = (name, color) => {
 };
 
 const deleteLabel = (id) => {
-  getAllProjects()
-    .map((proj) => proj.items)
-    .flat()
-    .forEach((task) => task.removeLabel(id));
-
-  labels.removeItems((label) => label.id === id);
+  Labels.delete((label) => label.id === id);
+  getAllTasks().forEach((task) => task.removeLabel(id));
 
   syncLabels();
   syncData();
@@ -52,20 +52,8 @@ const deleteLabel = (id) => {
 const editLabel = (id, prop, value) => {
   getLabel(id)[prop] = value;
 
-  // getAllProjects()
-  //   .map((proj) => proj.items)
-  //   .flat()
-  //   .map((task) => task.labels)
-  //   .forEach((label) => {
-  //     label[prop] = value;
-  //   });
-
   syncLabels();
   syncData();
 };
-
-const getLabels = () => labels.items;
-
-const getLabel = (id) => labels.getItem((label) => label.id === id);
 
 export { addLabel, deleteLabel, editLabel, getLabel, getLabels };

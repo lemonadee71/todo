@@ -6,14 +6,81 @@ import {
   tasksList,
   modal,
 } from '../helpers/selectors';
-import { segregateTasks, getAllTasks } from '../modules/projects';
+import { currentLocation } from '../modules/globalState';
+import {
+  getAllTasks,
+  getProject,
+  getDueToday,
+  getDueThisWeek,
+  getUpcoming,
+} from '../modules/projects';
 import CreateTaskForm from './CreateTaskForm';
 import NoTasksMessage from './NoTasksMessage';
 import TaskItem from './TaskItem';
 
 const MainContent = () => {
-  const _getTasks = () => {
-    return segregateTasks(getAllTasks());
+  const defaultIds = ['all', 'today', 'week', 'upcoming'];
+
+  const isDefault = (id) => defaultIds.includes(id);
+  const isProject = (location) => location === 'list';
+  const isProjectName = (id) => isNaN(id);
+
+  const getCurrentTasks = (tasks) => tasks.filter((task) => !task.completed);
+
+  const getCompletedTasks = (tasks) => tasks.filter((task) => task.completed);
+
+  const changeTitle = (id) => {
+    let title = '';
+    if (id === 'today') {
+      title = 'Today';
+    } else if (id === 'week') {
+      title = 'This Week';
+    } else if (id === 'upcoming') {
+      title = 'Upcoming';
+    } else if (id === 'all') {
+      title = 'All Tasks';
+    } else {
+      title = id;
+    }
+
+    if ($('#current-proj-title')) {
+      $('#current-proj-title').textContent = title;
+    }
+  };
+
+  const getTasks = (path) => {
+    const [location, id] = path.split('/');
+
+    if (isDefault(location)) {
+      changeTitle(location);
+
+      if (location === 'today') {
+        return getDueToday();
+      } else if (location === 'week') {
+        return getDueThisWeek();
+      } else if (location === 'upcoming') {
+        return getUpcoming();
+      } else if (location === 'all') {
+        return getAllTasks();
+      }
+    } else if (isProject(location)) {
+      let project;
+
+      if (isProjectName(id)) {
+        project = getProject(
+          (proj) => proj.name.toLowerCase() === id.replace(/-/g, ' ')
+        );
+      } else {
+        project = getProject((proj) => proj.id === `list-${id}`);
+      }
+
+      changeTitle(project.name);
+
+      return project.items;
+    } else {
+      changeTitle('Invalid path');
+      throw new Error('Invalid path.');
+    }
   };
 
   /*
@@ -46,11 +113,31 @@ const MainContent = () => {
     $(modal).changeContent(CreateTaskForm()).show();
   };
 
-  let [current, completed] = _getTasks();
+  const hashChangeHandler = (path, current = true) => {
+    try {
+      const allTasks = getTasks(path);
+      const tasks = current
+        ? getCurrentTasks(allTasks)
+        : getCompletedTasks(allTasks);
+
+      return Component.html`${
+        tasks.length
+          ? tasks.map((task) => TaskItem({ task }))
+          : current
+          ? NoTasksMessage()
+          : ''
+      }`;
+    } catch (error) {
+      console.log(error);
+      return current
+        ? Component.html`<h3><a href="#/all">See all tasks</a></h3>`
+        : Component.html``;
+    }
+  };
 
   return Component.html`
     <main>
-      <h2 id="current-proj-title">All Tasks</h1>
+      <h2 id="current-proj-title"></h2>
       <hr>
       <div id="taskbar">
         <button id="add-task" ${{ onClick: showCreateTaskForm }}>+</button>
@@ -63,11 +150,19 @@ const MainContent = () => {
         onChildRemoved: checkNoOfTasks,
         onChildAdded: checkNoOfTasks,
       }}>
-        <div id="current-tasks">
-          ${current.length ? current.map((task) => TaskItem({ task })) : ''}
+        <div id="current-tasks" ${{
+          $content: currentLocation.bind('value', (path) =>
+            hashChangeHandler(path)
+          ),
+        }}>
+          ${hashChangeHandler('all')}
         </div>
-        <div id="completed-tasks" style="display: none;">
-          ${completed.length ? completed.map((task) => TaskItem({ task })) : ''}
+        <div id="completed-tasks" style="display: none;" ${{
+          $content: currentLocation.bind('value', (path) =>
+            hashChangeHandler(path, false)
+          ),
+        }}>
+          ${hashChangeHandler('all', false)}
         </div>
       </div>
       <modal-el></modal-el>

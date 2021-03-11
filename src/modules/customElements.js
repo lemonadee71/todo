@@ -1,6 +1,14 @@
 import Component from '../helpers/component';
 
 class Modal extends HTMLElement {
+  constructor() {
+    super();
+    this.show = this.show.bind(this);
+    this.close = this.close.bind(this);
+    this.changeContent = this.changeContent.bind(this);
+    this.clearContent = this.clearContent.bind(this);
+  }
+
   connectedCallback() {
     this.classList.add('modal-backdrop');
 

@@ -10,15 +10,12 @@ import {
 } from '../helpers/selectors';
 import Storage from '../modules/storage';
 import { getLabel } from '../modules/labels';
-import {
-  getCurrentSelectedProj,
-  getProjectsDetails,
-  transferTask,
-} from '../modules/projects';
+import { getProjectsDetails, transferTask } from '../modules/projects';
 import Chip from './Chip';
 import Icons from './Icons';
 import LabelPopover from './LabelPopover';
 import ProjectOptions from './ProjectOptions';
+import { currentLocation } from '../modules/globalState';
 
 // Selectors are so messy for this component
 // Since there's only one modal component at a time
@@ -103,9 +100,9 @@ const TaskModal = ({ task }) => {
 
     _updateTaskDetails('location', task.id, prevLocation, newLocation);
 
-    let currentLocation = getCurrentSelectedProj();
+    let currentPath = currentLocation.value;
 
-    if (currentLocation) {
+    if (currentPath !== newLocation.replace('-', '/')) {
       remove($(`#${task.id}`), true);
     }
   };

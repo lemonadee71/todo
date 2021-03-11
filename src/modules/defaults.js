@@ -25,7 +25,7 @@ const defaultLabels = [
 ];
 
 const myTasks = new List({ name: 'My Tasks' });
-myTasks.addItem([
+myTasks.add([
   new Task({
     title: 'Create README',
     dueDate: '2021-02-14',

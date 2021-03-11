@@ -166,7 +166,7 @@ const Component = (() => {
 
     // if none of our accepted types, assume it is string
     // then just return it
-    return expr.toString();
+    return `${expr}`;
   };
 
   const html = (strings, ...exprs) => {
@@ -293,6 +293,8 @@ const Component = (() => {
         },
       ]);
 
+      // no handler for type === 'content'
+      // so no content is rendered
       if (type === 'prop') {
         props[targetProp] = finalValue;
       } else if (type === 'attr') {

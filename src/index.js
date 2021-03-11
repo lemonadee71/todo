@@ -4,6 +4,7 @@ import { sidebar as sidenav } from './helpers/selectors';
 import MainContent from './components/MainContent';
 import Sidebar from './components/Sidebar';
 import defineCustomElements from './modules/customElements';
+import { currentLocation } from './modules/globalState';
 
 defineCustomElements();
 
@@ -13,21 +14,12 @@ const App = () => {
     $(sidenav).classList.toggle('show');
   };
 
-  // <input
-  //   type="text"
-  //   name="search"
-  //   class="dark"
-  //   id="search-bar"
-  //   placeholder="Search your tasks"
-  // />
-
   return Component.render(Component.html`
       <header>
         <ul>
           <li>
-            <button ${{
-              onClick: showSidebar,
-            }} class="hamburger hamburger--slider-r" type="button">
+            <button class="hamburger hamburger--slider-r" type="button" 
+            ${{ onClick: showSidebar }}>
               <span class="hamburger-box">
                 <span class="hamburger-inner"></span>
               </span>
@@ -41,7 +33,7 @@ const App = () => {
       <footer>
         <p>
           Icons made by
-          <a href="https://www.freepik.com" title="Freepik">Freepik</a>,
+          <a href="#/test" title="Freepik">Freepik</a>,
           <a href="" title="Gregor Cresnar">Gregor Cresnar</a>,
           <a
             href="https://www.flaticon.com/authors/good-ware"
@@ -68,5 +60,15 @@ const App = () => {
       </footer>
     `);
 };
+
+const hashChangeHandler = () => {
+  currentLocation.value = window.location.hash.replace('#/', '');
+};
+
+window.addEventListener('hashchange', hashChangeHandler, false);
+// window.onload = function () {
+//   window.location.hash = '';
+//   window.location.hash = '#/all';
+// };
 
 document.body.prepend(App());

@@ -1,11 +1,11 @@
 import List from '../classes/List';
 import Task from '../classes/Task';
-import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
+import { isDueToday, isDueThisWeek, isUpcoming } from '../helpers/date';
 import { defaultProjects } from './defaults';
 import { getLabel } from './labels';
 import Storage from './storage';
 
-const allProjects = new List({ name: 'all' });
+const Root = new List({ name: 'root', id: 'root' });
 
 /*
  *  Initialize
@@ -14,13 +14,13 @@ let storedData = Storage.recover('data');
 let uncategorizedTasks;
 
 if (storedData) {
-  allProjects.addItem(
-    storedData.items.map(
+  Root.add(
+    storedData._items.map(
       (list) =>
         new List({
           id: list.id,
           name: list.name,
-          defaultItems: list.items.map(
+          defaultItems: list._items.map(
             (task) =>
               new Task({
                 id: task.id,
@@ -29,25 +29,23 @@ if (storedData) {
                 dueDate: task.dueDate,
                 completed: task.completed,
                 location: task.location,
-                labels: task.labels.items.filter((label) => getLabel(label.id)),
+                labels: task.labels._items.filter((label) =>
+                  getLabel(label.id)
+                ),
               })
           ),
         })
     )
   );
 
-  uncategorizedTasks = allProjects.getItem(
-    (proj) => proj.name === 'uncategorized'
-  );
+  uncategorizedTasks = Root.get((proj) => proj.name === 'uncategorized');
 } else {
-  uncategorizedTasks = new List({ name: 'uncategorized' });
-  allProjects.addItem(uncategorizedTasks);
-  allProjects.addItem(defaultProjects);
+  uncategorizedTasks = new List({ name: 'uncategorized', id: 'uncategorized' });
+  Root.add(uncategorizedTasks);
+  Root.add(defaultProjects);
 }
 
-let currentSelectedProj = uncategorizedTasks.id;
-
-Storage.store('data', allProjects);
+Storage.store('data', Root);
 
 /*
  * Functions
@@ -55,50 +53,12 @@ Storage.store('data', allProjects);
 
 const syncData = () => Storage.sync('data');
 
-const getUncategorizedProj = () => uncategorizedTasks;
+const getProject = (condition) => Root.get(condition);
 
-const getCurrentSelectedProj = () => currentSelectedProj;
-
-const getAllProjects = () => allProjects.items;
-
-const getAllTasks = () => {
-  currentSelectedProj = '';
-  return [...allProjects.items].map((proj) => proj.items).flat();
-};
-
-const getProjectTasks = (id) => {
-  currentSelectedProj = id;
-  return allProjects.getItem((proj) => proj.id === id).items;
-};
-
-const getDueToday = () => {
-  currentSelectedProj = 'today';
-  return [...allProjects.items]
-    .map((proj) => proj.items)
-    .flat()
-    .filter((task) => isDueToday(parse(task.dueDate)));
-};
-
-const getDueThisWeek = () => {
-  currentSelectedProj = 'week';
-  return [...allProjects.items]
-    .map((proj) => proj.items)
-    .flat()
-    .filter((task) => isDueThisWeek(parse(task.dueDate)));
-};
-
-const getUpcoming = () => {
-  currentSelectedProj = 'upcoming';
-  return [...allProjects.items]
-    .map((proj) => proj.items)
-    .flat()
-    .filter((task) => isUpcoming(parse(task.dueDate)));
-};
+const getAllProjects = () => Root.items;
 
 const getProjectsDetails = () => {
-  let projects = allProjects.filterItems(
-    (proj) => proj.id !== uncategorizedTasks.id
-  );
+  const projects = Root.filter((proj) => proj.name !== 'uncategorized');
 
   return projects.length
     ? projects.map((proj) => {
@@ -110,58 +70,71 @@ const getProjectsDetails = () => {
     : [];
 };
 
+const getAllTasks = () => {
+  return Root.items.map((proj) => proj.items).flat();
+};
+
+const getProjectTasks = (id) => {
+  return getProject((proj) => proj.id === id).items;
+};
+
+const getDueToday = () => {
+  return getAllTasks().filter((task) => isDueToday(task.dueDate));
+};
+
+const getDueThisWeek = () => {
+  return getAllTasks().filter((task) => isDueThisWeek(task.dueDate));
+};
+
+const getUpcoming = () => {
+  return getAllTasks().filter((task) => isUpcoming(task.dueDate));
+};
+
 const addProject = (name) => {
-  let newProject = new List({ name });
-  allProjects.addItem(newProject);
+  if (Root.has((proj) => proj.name === name)) {
+    throw new Error('Project with the same name already exists');
+  }
+
+  const newProject = new List({ name });
+  Root.add(newProject);
 
   syncData();
   return newProject;
 };
 
 const deleteProject = (id) => {
-  currentSelectedProj = '';
-  allProjects.removeItems((proj) => proj.id === id);
+  Root.delete((proj) => proj.id === id);
   syncData();
 };
 
 const addTask = (task) => {
-  let project = allProjects.getItem((proj) => proj.id === task.location);
-  project.addItem(task);
+  getProject((proj) => proj.id === task.location).add(task);
   syncData();
 };
 
 const deleteTask = (task) => {
-  console.log(task, allProjects);
-  let project = allProjects.getItem((proj) => proj.id === task.location);
-  project.removeItems((item) => item.id === task.id);
+  getProject((proj) => proj.id === task.location).delete(
+    (item) => item.id === task.id
+  );
   syncData();
 };
 
 const transferTask = (id, prevList, newList) => {
-  let task = allProjects
-    .getItem((proj) => proj.id === prevList)
-    .extractItem((task) => task.id === id);
+  const task = getProject((proj) => proj.id === prevList).extract(
+    (task) => task.id === id
+  );
 
-  allProjects.getItem((proj) => proj.id === newList).addItem(task);
+  getProject((proj) => proj.id === newList).add(task);
   syncData();
 };
 
-const segregateTasks = (tasks) => {
-  return [
-    tasks.filter((task) => !task.completed),
-    tasks.filter((task) => task.completed),
-  ];
-};
-
 export {
-  uncategorizedTasks,
   addProject,
   deleteProject,
+  getProject,
   getAllTasks,
   getProjectTasks,
   getProjectsDetails,
-  getCurrentSelectedProj,
-  getUncategorizedProj,
   getAllProjects,
   getDueToday,
   getDueThisWeek,
@@ -169,5 +142,4 @@ export {
   addTask,
   transferTask,
   deleteTask,
-  segregateTasks,
 };

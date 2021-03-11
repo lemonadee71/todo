@@ -1,7 +1,7 @@
 import Task from '../classes/Task';
 import Component from '../helpers/component';
 import $, { append, remove } from '../helpers/helpers';
-import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
+import { isDueToday, isDueThisWeek, isUpcoming } from '../helpers/date';
 import {
   currentTasks,
   newTaskForm,
@@ -14,11 +14,8 @@ import {
   modal,
 } from '../helpers/selectors';
 import { getLabel } from '../modules/labels';
-import {
-  addTask,
-  getProjectsDetails,
-  getCurrentSelectedProj,
-} from '../modules/projects';
+import { addTask } from '../modules/projects';
+import { currentLocation } from '../modules/globalState';
 import ProjectOptions from './ProjectOptions';
 import TaskItem from './TaskItem';
 import LabelPopover from './LabelPopover';
@@ -52,7 +49,7 @@ const CreateTaskForm = () => {
   };
 
   const createNewTask = () => {
-    let currentLocation = getCurrentSelectedProj();
+    let currentPath = currentLocation.value;
 
     let title = $(newTaskFormTitle).value;
     let notes = $(newTaskFormNotes).value;
@@ -72,11 +69,11 @@ const CreateTaskForm = () => {
     // Only add TaskItem to DOM when task location is same with current location
     // And if the location is date based, only if dueDate falls in the category
     let appendConditions = [
-      currentLocation === '',
-      currentLocation === location,
-      currentLocation === 'today' && isDueToday(parse(dueDate)),
-      currentLocation === 'week' && isDueThisWeek(parse(dueDate)),
-      currentLocation === 'upcoming' && isUpcoming(parse(dueDate)),
+      currentPath === '',
+      currentPath === location.replace('-', '/'),
+      currentPath === 'today' && isDueToday(dueDate),
+      currentPath === 'week' && isDueThisWeek(dueDate),
+      currentPath === 'upcoming' && isUpcoming(dueDate),
     ];
 
     _addTask(task);
@@ -103,7 +100,7 @@ const CreateTaskForm = () => {
       
       <label for="task-location" class="section-header">Project</label>
       <select name="task-location" data-id="new-task-location">
-        ${ProjectOptions(getProjectsDetails(), getCurrentSelectedProj())}
+        ${ProjectOptions()}
       </select>
 
       <span class="section-header">Labels</span>

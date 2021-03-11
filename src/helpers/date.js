@@ -11,11 +11,13 @@ import {
   isFuture,
 } from 'date-fns';
 
-const isDueToday = (date) => isToday(date);
-const isDueTomorrow = (date) => isTomorrow(date);
-const isDueThisWeek = (date) => isThisWeek(date);
-const isUpcoming = (date) => !isThisWeek(date) && isFuture(date);
-const isUpcomingInFuture = (date) => !isThisMonth(date) && isFuture(date);
+const isDueToday = (date) => isToday(parseISO(date));
+const isDueTomorrow = (date) => isTomorrow(parseISO(date));
+const isDueThisWeek = (date) => isThisWeek(parseISO(date));
+const isUpcoming = (date) =>
+  !isThisWeek(parseISO(date)) && isFuture(parseISO(date));
+const isUpcomingInFuture = (date) =>
+  !isThisMonth(parseISO(date)) && isFuture(parseISO(date));
 
 const parse = (date) => parseISO(date);
 
