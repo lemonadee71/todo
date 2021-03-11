@@ -29,12 +29,12 @@ const TaskItem = ({ task }) => {
   /*
    *  Event listeners
    */
-  const onEdit = () => {
+  const editTask = () => {
     $(modal).changeContent(TaskModal({ task: taskState.value }));
     $(modal).show();
   };
 
-  const onDelete = () => {
+  const removeTask = () => {
     _deleteTask(task);
 
     let list = task.completed ? completedTasks : currentTasks;
@@ -56,8 +56,8 @@ const TaskItem = ({ task }) => {
     <div id="${id}" class="task ${completed ? 'completed' : ''}"
       draggable="true">
       <div class="actions"> 
-        <button is="edit-btn" ${{ onClick: onEdit }}></button>
-        <button is="delete-btn" ${{ onClick: onDelete }}></button>
+        <button is="edit-btn" ${{ onClick: editTask }}></button>
+        <button is="delete-btn" ${{ onClick: removeTask }}></button>
       </div>
       <div class="checkbox">
         <div class="check ${completed ? 'checked' : ''}" 
@@ -67,7 +67,7 @@ const TaskItem = ({ task }) => {
       </div>
       <div class="brief-content">
         <div class="label-chips">
-          ${task.getLabels().map((label) => Chip(label.id, label.color))}
+          ${task.getLabels().map((label) => Chip({ label, clickable: true }))}
         </div>
         <p data-id="task-card-title" ${{
           $textContent: taskState.bind('title'),

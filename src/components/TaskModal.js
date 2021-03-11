@@ -13,11 +13,11 @@ import {
 import Storage from '../modules/storage';
 import { getLabel } from '../modules/labels';
 import { transferTask } from '../modules/projects';
+import { currentLocation } from '../modules/globalState';
 import Chip from './Chip';
 import Icons from './Icons';
 import LabelPopover from './LabelPopover';
 import ProjectOptions from './ProjectOptions';
-import { currentLocation } from '../modules/globalState';
 import TaskItem from './TaskItem';
 
 // Selectors are so messy for this component
@@ -80,10 +80,10 @@ const TaskModal = ({ task }) => {
     if (label.selected) {
       _updateTaskLabels('add', label.id);
 
-      append(Component.render(Chip(label.id, label.color))).to(
+      append(Component.render(Chip({ label, clickable: true }))).to(
         $(taskItemLabels(task.id))
       );
-      append(Component.render(Chip(label.id, label.color, label.name))).to(
+      append(Component.render(Chip({ label, expanded: true }))).to(
         $(labelsArea)
       );
     } else {
@@ -198,9 +198,7 @@ const TaskModal = ({ task }) => {
         +
       </button>
       <div data-id="labels-area">
-        ${task
-          .getLabels()
-          .map((label) => Chip(label.id, label.color, label.name))}
+        ${task.getLabels().map((label) => Chip({ label, expanded: true }))}
       </div>
       ${LabelPopover({
         taskLabels: task.getLabels(),

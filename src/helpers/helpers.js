@@ -1,5 +1,4 @@
 import { childAddedEvent, childRemovedEvent } from './customEvents';
-import { currentTasks, completedTasks } from './selectors';
 
 const $ = (query) => {
   let isId = query.includes('#');
@@ -29,11 +28,6 @@ const hide = (element) => {
 
 const show = (element) => {
   element.style.display = 'block';
-};
-
-const clearTasks = () => {
-  clear($(currentTasks));
-  clear($(completedTasks));
 };
 
 const rerender = (el, newContent) => {
@@ -74,5 +68,5 @@ const remove = (child, self = false) => {
   }
 };
 
-export { clear, hide, show, clearTasks, rerender, append, prepend, remove };
+export { clear, hide, show, rerender, append, prepend, remove };
 export default $;

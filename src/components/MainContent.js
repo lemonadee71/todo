@@ -38,23 +38,27 @@ const MainContent = () => {
       title = 'Upcoming';
     } else if (id === 'all') {
       title = 'All Tasks';
-    } else {
-      const project = getProject((proj) => proj.id === id);
+    } else if (!isProjectName(id)) {
+      const project = getProject((proj) => proj.id === `list-${id}`);
       title = project.name;
-    }
-
-    if ($('#current-proj-title')) {
-      $('#current-proj-title').textContent = title;
+    } else {
+      title = id;
     }
 
     return title;
+  };
+
+  const renderTitle = (id) => {
+    if ($('#current-proj-title')) {
+      $('#current-proj-title').textContent = changeTitle(id);
+    }
   };
 
   const getTasks = (path) => {
     const [location, id] = path.split('/');
 
     if (isDefault(location)) {
-      changeTitle(location);
+      renderTitle(location);
 
       if (location === 'today') {
         return getDueToday();
@@ -72,15 +76,15 @@ const MainContent = () => {
         project = getProject(
           (proj) => proj.name.toLowerCase() === id.replace(/-/g, ' ')
         );
+        renderTitle(project.id.replace('list-', ''));
       } else {
         project = getProject((proj) => proj.id === `list-${id}`);
+        renderTitle(id);
       }
-
-      changeTitle(`list-${id}`);
 
       return project.items;
     } else {
-      changeTitle('Invalid path');
+      renderTitle('Invalid path');
       throw new Error('Invalid path.');
     }
   };
@@ -88,6 +92,10 @@ const MainContent = () => {
   /*
    *  Event listeners
    */
+  const showCreateTaskForm = () => {
+    $(modal).changeContent(CreateTaskForm()).show();
+  };
+
   const showCompleted = (e) => {
     if (e.target.checked) {
       show($(completedTasks));
@@ -113,10 +121,6 @@ const MainContent = () => {
         );
       }
     }
-  };
-
-  const showCreateTaskForm = () => {
-    $(modal).changeContent(CreateTaskForm()).show();
   };
 
   const renderTasks = (path, current = true) => {
@@ -146,7 +150,7 @@ const MainContent = () => {
       ${{
         type: 'h2',
         id: 'current-proj-title',
-        text: changeTitle(currentLocation.value.replace('/', '-')),
+        text: changeTitle(currentLocation.value.replace('list/', '')),
       }}
       <hr>
       <div id="taskbar">

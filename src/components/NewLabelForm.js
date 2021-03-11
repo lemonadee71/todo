@@ -37,7 +37,7 @@ const NewLabelForm = () => {
     }
   };
 
-  const onSubmit = (e) => {
+  const createLabel = (e) => {
     labelName = e.currentTarget.elements[0].value;
     createNewLabel(labelName, labelColor);
 
@@ -46,7 +46,7 @@ const NewLabelForm = () => {
   };
 
   return Component.html`
-    <form ${{ onSubmit }}>
+    <form ${{ onSubmit: createLabel }}>
       <input
         type="text"
         name="new-label-name"

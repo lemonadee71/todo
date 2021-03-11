@@ -37,7 +37,7 @@ if (storedData) {
     )
   );
 } else {
-  Root.add(new List({ name: 'uncategorized', id: 'uncategorized' }));
+  Root.add(new List({ name: 'Uncategorized', id: 'uncategorized' }));
   Root.add(defaultProjects);
 }
 
@@ -54,7 +54,7 @@ const getProject = (condition) => Root.get(condition);
 const getAllProjects = () => Root.items;
 
 const getProjectsDetails = () => {
-  const projects = Root.filter((proj) => proj.name !== 'uncategorized');
+  const projects = Root.filter((proj) => proj.id !== 'uncategorized');
 
   return projects.length
     ? projects.map((proj) => {

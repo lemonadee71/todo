@@ -36,9 +36,7 @@ const CreateTaskForm = () => {
    */
   const addLabel = (label) => {
     if (label.selected) {
-      append(Component.render(Chip(label.id, label.color, label.name))).to(
-        $(newTaskFormLabels)
-      );
+      append(Component.render(Chip({ label }))).to($(newTaskFormLabels));
     } else {
       remove($(chipsWithText(label.id))).from($(newTaskFormLabels));
     }
@@ -69,7 +67,7 @@ const CreateTaskForm = () => {
     // Only add TaskItem to DOM when task location is same with current location
     // And if the location is date based, only if dueDate falls in the category
     let appendConditions = [
-      currentPath === '',
+      currentPath === 'list/uncategorized',
       currentPath === location.replace('-', '/'),
       currentPath === 'today' && isDueToday(parse(dueDate)),
       currentPath === 'week' && isDueThisWeek(parse(dueDate)),

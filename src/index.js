@@ -61,10 +61,12 @@ const App = () => {
     `);
 };
 
-const hashChangeHandler = () => {
-  currentLocation.value = window.location.hash.replace('#/', '');
-};
-
-window.addEventListener('hashchange', hashChangeHandler, false);
+window.addEventListener(
+  'hashchange',
+  () => {
+    currentLocation.value = window.location.hash.replace('#/', '');
+  },
+  false
+);
 
 document.body.prepend(App());

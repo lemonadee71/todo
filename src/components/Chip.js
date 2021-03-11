@@ -1,31 +1,27 @@
 import Component from '../helpers/component';
-// import { isChipExpanded } from '../modules/globalState';
+import { isChipExpanded } from '../modules/globalState';
 
-const Chip = (id, color, name = '') =>
-  Component.objectToString({
-    type: 'div',
-    className: `chip${name ? '-w-text' : ''}`,
-    text: name,
-    attr: {
-      'data-label-id': id,
-      'data-color': color,
-    },
-  });
+const Chip = ({ label, expanded = false, clickable = false }) => {
+  const toggleChip = () => {
+    isChipExpanded.value = !isChipExpanded.value;
+  };
 
-// const Chip = (id, color, name = '') => {
-//   return Component.html`
-//   <div
-//     data-label-id="${id}"
-//     data-label-name="${name}"
-//     data-color="${color}"
-//     ${{
-//       $class: isChipExpanded.bind('value', (val) =>
-//         val ? 'chip-w-text' : 'chip'
-//       ),
-//       $textContent: isChipExpanded.bind('value', (val) => (val ? name : '')),
-//     }}
-//   >
-//   </div>`;
-// };
+  return Component.html`
+    <chip-el
+      data-label-id="${label.id}"
+      data-color="${label.color}"
+      text="${label.name}"    
+      ${
+        clickable
+          ? { $expanded: isChipExpanded.bind() }
+          : expanded
+          ? 'expanded="true"'
+          : ''
+      }
+      ${clickable ? { onClick: toggleChip } : ''}
+    >
+    </chip-el>
+  `;
+};
 
 export default Chip;
