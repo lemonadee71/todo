@@ -7,20 +7,18 @@ const Chip = ({ label, expanded = false, clickable = false }) => {
   };
 
   return Component.html`
-    <chip-el
+    <label-chip
       data-label-id="${label.id}"
       data-color="${label.color}"
       text="${label.name}"    
       ${
         clickable
           ? { $expanded: isChipExpanded.bind() }
-          : expanded
-          ? 'expanded="true"'
-          : ''
+          : `expanded=${expanded}`
       }
       ${clickable ? { onClick: toggleChip } : ''}
     >
-    </chip-el>
+    </label-chip>
   `;
 };
 

@@ -4,9 +4,9 @@ import { completedTasks, currentTasks, modal } from '../helpers/selectors';
 import $, { append, remove } from '../helpers/helpers';
 import { deleteTask } from '../modules/projects';
 import Storage from '../modules/storage';
-import Icons from './Icons';
+import { CALENDAR_ICON, CHECKMARK, NOTES_ICON } from './Icons';
+import TaskModal from './TaskModal';
 import Chip from './Chip';
-import TaskModal from '../components/TaskModal';
 
 const TaskItem = ({ task }) => {
   const taskState = Component.createState(task);
@@ -20,24 +20,25 @@ const TaskItem = ({ task }) => {
   const _deleteTask = (task) => deleteTask(task);
 
   const _toggleCheck = () => {
-    task.toggleComplete();
+    taskState.value.toggleComplete();
     _syncData();
 
-    return task.completed;
+    return taskState.value.completed;
   };
 
   /*
    *  Event listeners
    */
   const editTask = () => {
-    $(modal).changeContent(TaskModal({ task: taskState.value }));
-    $(modal).show();
+    $(modal)
+      .changeContent(TaskModal({ task: taskState.value }))
+      .show();
   };
 
   const removeTask = () => {
-    _deleteTask(task);
+    _deleteTask(taskState.value);
 
-    let list = task.completed ? completedTasks : currentTasks;
+    let list = taskState.value.completed ? completedTasks : currentTasks;
     remove($(`#${id}`)).from($(list));
   };
 
@@ -62,12 +63,14 @@ const TaskItem = ({ task }) => {
       <div class="checkbox">
         <div class="check ${completed ? 'checked' : ''}" 
         ${{ onClick: toggleCheckmark }}>
-          ${Icons('checkmark')}
+          ${CHECKMARK}
         </div>
       </div>
       <div class="brief-content">
         <div class="label-chips">
-          ${task.getLabels().map((label) => Chip({ label, clickable: true }))}
+          ${taskState.value
+            .getLabels()
+            .map((label) => Chip({ label, clickable: true }))}
         </div>
         <p data-id="task-card-title" ${{
           $textContent: taskState.bind('title'),
@@ -79,7 +82,7 @@ const TaskItem = ({ task }) => {
             ),
           }}
           >
-          ${Icons('details')}
+          ${NOTES_ICON}
           </span>
           <span data-id="task-card-date">
             <span data-id="task-card-date-icon" ${{
@@ -88,7 +91,7 @@ const TaskItem = ({ task }) => {
               ),
             }}
             >
-              ${Icons('calendar')}
+              ${CALENDAR_ICON}
             </span>
             <span data-id="task-card-date-text" ${{
               $textContent: taskState.bind('dueDate', (date) =>

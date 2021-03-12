@@ -1,18 +1,13 @@
 import Component from '../helpers/component';
 import $, { append, remove } from '../helpers/helpers';
-import {
-  completedTasks,
-  currentTasks,
-  newProjectInput,
-  userProjects,
-} from '../helpers/selectors';
+import { newProjectInput, userProjects } from '../helpers/selectors';
+import { currentLocation } from '../modules/globalState';
 import {
   getProjectsDetails,
-  getProjectTasks,
   addProject,
   deleteProject,
 } from '../modules/projects';
-import Icons from './Icons';
+import { DELETE_ICON } from './Icons';
 
 const ProjectListItem = ({ proj, deleteHandler }) => {
   return Component.html`
@@ -24,7 +19,7 @@ const ProjectListItem = ({ proj, deleteHandler }) => {
           href: `#/${proj.id.replace('-', '/')}`,
         },
       }}
-      <span ${{ onClick: deleteHandler }}>${Icons('delete')}</span>
+      <span ${{ onClick: deleteHandler }}>${DELETE_ICON}</span>
     </li>
   `;
 };
@@ -40,12 +35,12 @@ const Sidebar = () => {
 
     try {
       const newProject = _addProject($(newProjectInput).value);
+      const projLi = ProjectListItem({
+        proj: newProject,
+        deleteHandler: removeProject,
+      });
 
-      append(
-        Component.render(
-          ProjectListItem({ proj: newProject, deleteHandler: removeProject })
-        )
-      ).to($(userProjects));
+      append(Component.render(projLi)).to($(userProjects));
     } catch (error) {
       alert(error.toString());
     }
@@ -57,18 +52,13 @@ const Sidebar = () => {
     e.stopPropagation();
     let projListItem = e.currentTarget.parentElement;
 
-    // Crude implementation for now
-    let tasks = getProjectTasks(projListItem.id);
-    tasks.map((task) => {
-      let taskItem = $(`#${task.id}`);
-      if (taskItem) {
-        let list = task.completed ? completedTasks : currentTasks;
-        remove(taskItem).from($(list));
-      }
-    });
-
     _deleteProject(projListItem.id);
     remove(projListItem).from($(userProjects));
+
+    let currentPath = currentLocation.value.replace('/', '-');
+    if (currentPath === projListItem.id) {
+      currentLocation.value = 'all';
+    }
   };
 
   const projects = getProjectsDetails();
@@ -77,10 +67,10 @@ const Sidebar = () => {
     <aside id="sidebar">
       <div>
         <ul id="default-proj">
-          <li id="all"><a href="#/all">All Tasks</a></li>
-          <li id="today"><a href="#/today">Today</a></li>
-          <li id="week"><a href="#/week">This Week</a></li>
-          <li id="upcoming"><a href="#/upcoming">Upcoming</a></li>
+          <li><a href="#/all">All Tasks</a></li>
+          <li><a href="#/today">Today</a></li>
+          <li><a href="#/week">This Week</a></li>
+          <li><a href="#/upcoming">Upcoming</a></li>
         </ul>
         <br />
       </div>

@@ -6,7 +6,7 @@ import { deleteLabel, editLabel } from '../modules/labels';
 const Label = ({ label, taskLabels = [] }) => {
   const isEditing = Component.createState(false);
 
-  let isSelected = taskLabels.find(
+  const isSelected = taskLabels.find(
     (taskLabel) => taskLabel.name === label.name
   );
 
@@ -22,17 +22,18 @@ const Label = ({ label, taskLabels = [] }) => {
    */
   const updateLabel = (e) => {
     let labelEl = e.currentTarget.parentElement;
-    let labelId = labelEl.getAttribute('data-label-id');
+    let id = labelEl.getAttribute('data-label-id');
     let newLabelName = e.currentTarget.value;
 
-    _editLabel(labelId, newLabelName);
+    _editLabel(id, newLabelName);
     labelEl.firstElementChild.textContent = newLabelName;
 
-    let labelChipsWithText = $(`${chipsWithText(labelId)}--all`);
+    const labelChipsWithText = $(`${chipsWithText(id)}--all`);
+    const labelChips = $(`${chips(id)}--all`);
 
-    if (labelChipsWithText) {
-      [...labelChipsWithText].map((chip) => {
-        chip.textContent = newLabelName;
+    if (labelChipsWithText || labelChips) {
+      [...labelChipsWithText, ...labelChips].map((chip) => {
+        chip.setAttribute('text', newLabelName);
       });
     }
 

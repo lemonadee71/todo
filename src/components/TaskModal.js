@@ -1,12 +1,9 @@
 import Component from '../helpers/component';
 import convertToMarkdown from '../helpers/showdown';
-import $, { append, hide, remove, show, rerender } from '../helpers/helpers';
+import $, { append, remove } from '../helpers/helpers';
 import {
   taskItemLabels,
   labelsArea,
-  taskNotesArea,
-  chips,
-  chipsWithText,
   completedTasks,
   currentTasks,
 } from '../helpers/selectors';
@@ -14,11 +11,11 @@ import Storage from '../modules/storage';
 import { getLabel } from '../modules/labels';
 import { transferTask } from '../modules/projects';
 import { currentLocation } from '../modules/globalState';
-import Chip from './Chip';
-import Icons from './Icons';
+import { CALENDAR_ICON, NOTES_ICON, TAG_ICON } from './Icons';
 import LabelPopover from './LabelPopover';
 import ProjectOptions from './ProjectOptions';
 import TaskItem from './TaskItem';
+import Chip from './Chip';
 
 // Selectors are so messy for this component
 // Since there's only one modal component at a time
@@ -89,11 +86,12 @@ const TaskModal = ({ task }) => {
     } else {
       _updateTaskLabels('remove', label.id);
 
-      remove($(`#${task.id} ${chips(label.id)}`)).from(
-        $(taskItemLabels(task.id))
-      );
+      const labelSelector = `label-chip[data-label-id="${label.id}"]`;
+      const labelChip = $(`#${task.id} ${labelSelector}`);
+      const labelChipWithText = $(`${labelsArea} ${labelSelector}`);
 
-      remove($(chipsWithText(label.id))).from($(labelsArea));
+      labelChip.remove();
+      labelChipWithText.remove();
     }
   };
 
@@ -118,47 +116,32 @@ const TaskModal = ({ task }) => {
   /*
    * DOM functions
    */
-  // Title
-  const editTitle = (e) => {
-    e.currentTarget.previousElementSibling.removeAttribute('disabled');
-    hide(e.currentTarget);
+  const isEditingTitle = Component.createState(false);
+  const isEditingNotes = Component.createState(false);
+
+  const toggleTitleEdit = () => {
+    isEditingTitle.value = !isEditingTitle.value;
   };
 
-  const disableEdit = (e) => {
-    show(e.currentTarget.nextElementSibling);
-    e.currentTarget.setAttribute('disabled', '');
+  const toggleNotesEdit = () => {
+    if (isEditingNotes.value) {
+      updateNotes();
+    }
+
+    isEditingNotes.value = !isEditingNotes.value;
   };
 
-  // Labels
   const openLabelPopover = () => {
     $('#popover').classList.add('visible');
   };
 
-  // Notes
-  const editNotes = () => {
-    $('--data-id=edit-notes-btn').classList.toggle('hidden');
-    rerender($(taskNotesArea), notesTextArea());
-  };
-
-  const saveNotes = () => {
-    $('--data-id=edit-notes-btn').classList.toggle('hidden');
-    updateNotes();
-    rerender(
-      $(taskNotesArea),
-      Component.render(Component.objectToString(notesPreview()))
-    );
-  };
-
-  /*
-   * TaskModal elements
-   */
   const notesTextArea = () =>
-    Component.render(Component.html`
-      <textarea id="edit-task-notes" name="notes">${task.notes}</textarea>
-      <button class="submit" type="submit" ${{ onClick: saveNotes }}>
+    Component.html`
+      <textarea id="edit-task-notes">${task.notes}</textarea>
+      <button class="submit" type="submit" ${{ onClick: toggleNotesEdit }}>
         Save
       </button>  
-  `);
+    `;
 
   const notesPreview = () => ({
     type: 'div',
@@ -168,6 +151,7 @@ const TaskModal = ({ task }) => {
     },
   });
 
+  // Clean attributes here
   return Component.render(Component.html`
     <div class="title">
       <input
@@ -176,27 +160,35 @@ const TaskModal = ({ task }) => {
         class="light"
         placeholder="Unnamed Task"
         value="${task.title}"
-        disabled
         required
-        ${{ onInput: updateTitle, onFocusout: disableEdit }}
+        ${{
+          $disabled: isEditingTitle.bind('value', (val) =>
+            !val ? 'true' : ''
+          ),
+        }}
+        ${{ onInput: updateTitle, onFocusout: toggleTitleEdit }}
       />
-      <button is="edit-btn" ${{ onClick: editTitle }}></button>
+      <button is="edit-btn" 
+        ${{
+          '$style:display': isEditingTitle.bind('value', (val) =>
+            val ? 'none' : 'block'
+          ),
+        }}
+        ${{ onClick: toggleTitleEdit }}
+      ></button>
     </div>
     <div class="proj">
       <span>in Project</span>
-      <select id="edit-task-location" name="location"
-      ${{ onChange: updateLocation }}>
-      ${ProjectOptions(task.location)}
+      <select ${{ onChange: updateLocation }}>
+        ${ProjectOptions(task.location)}
       </select>
     </div>
     <div id="labels">
       <div class="section-header">
-        ${Icons('tag')}
+        ${TAG_ICON}
         <span>Labels</span>
       </div>
-      <button data-id="edit-label-btn" ${{ onClick: openLabelPopover }}>
-        +
-      </button>
+      <button ${{ onClick: openLabelPopover }}>+</button>
       <div data-id="labels-area">
         ${task.getLabels().map((label) => Chip({ label, expanded: true }))}
       </div>
@@ -207,23 +199,34 @@ const TaskModal = ({ task }) => {
     </div>
     <div class="notes">
       <div class="section-header">
-        ${Icons('details')}
+        ${NOTES_ICON}
         <span>Notes</span>
       </div>
-      <button is="edit-btn" data-id="edit-notes-btn" ${{
-        onClick: editNotes,
-      }}>        
-      </button>
-      <div data-id="notes-area">${notesPreview()}</div>
+      <button is="edit-btn"
+        ${{
+          '$style:display': isEditingNotes.bind('value', (val) =>
+            val ? 'none' : 'block'
+          ),
+        }}
+        ${{ onClick: toggleNotesEdit }}
+      ></button>
+      <div data-id="notes-area"
+        ${{
+          $content: isEditingNotes.bind('value', (val) => {
+            return val ? notesTextArea() : notesPreview();
+          }),
+        }}
+      >
+        ${notesPreview()}
+      </div>
     </div>
     <div class="date">
       <div class="section-header">
-        ${Icons('calendar')}
+        ${CALENDAR_ICON}
         <span>Due Date</span>
       </div>
       <input 
-        type="date" 
-        name="due-date" 
+        type="date"
         ${task.dueDate ? `value="${task.dueDate}"` : ''} 
         ${{ onChange: updateDueDate }}
       />

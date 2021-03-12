@@ -10,15 +10,8 @@ const NewLabelForm = () => {
 
   const createNewLabel = (name, color) => {
     try {
-      let newLabel = addLabel(name, color);
-      append(
-        Component.render(
-          Label({
-            label: newLabel,
-            taskLabels: [],
-          })
-        )
-      ).to($('#label-list'));
+      const newLabel = addLabel(name, color);
+      append(Component.render(Label({ label: newLabel }))).to($('#label-list'));
     } catch (error) {
       console.log(error);
       alert(error.toString());

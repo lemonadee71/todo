@@ -3,7 +3,7 @@ import $ from './helpers/helpers';
 import { sidebar as sidenav } from './helpers/selectors';
 import MainContent from './components/MainContent';
 import Sidebar from './components/Sidebar';
-import defineCustomElements from './modules/customElements';
+import defineCustomElements from './components/custom/index';
 import { currentLocation } from './modules/globalState';
 
 defineCustomElements();

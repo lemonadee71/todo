@@ -36,7 +36,8 @@ const CreateTaskForm = () => {
    */
   const addLabel = (label) => {
     if (label.selected) {
-      append(Component.render(Chip({ label }))).to($(newTaskFormLabels));
+      const chip = Component.render(Chip({ label, expanded: true }));
+      append(chip).to($(newTaskFormLabels));
     } else {
       remove($(chipsWithText(label.id))).from($(newTaskFormLabels));
     }
@@ -76,7 +77,8 @@ const CreateTaskForm = () => {
 
     _addTask(task);
     if (appendConditions.some((condition) => condition === true)) {
-      append(Component.render(TaskItem({ task }))).to($(currentTasks));
+      const taskItem = Component.render(TaskItem({ task }));
+      append(taskItem).to($(currentTasks));
     }
     destroyForm();
   };

@@ -17,6 +17,9 @@ import {
 import CreateTaskForm from './CreateTaskForm';
 import TaskItem from './TaskItem';
 
+const NoTasksMessage = () =>
+  Component.html`<h3 id="no-tasks">You don't have any tasks</h3>`;
+
 const MainContent = () => {
   const defaultIds = ['all', 'today', 'week', 'upcoming'];
 
@@ -108,18 +111,10 @@ const MainContent = () => {
     let hasActiveTasks = $(currentTasks).children.length;
     let noTasks = $('#no-tasks');
 
-    if (hasActiveTasks) {
-      if (noTasks) {
-        $(tasksList).removeChild(noTasks);
-      }
-    } else {
-      if (!noTasks) {
-        $(tasksList).prepend(
-          Component.render(
-            Component.html`<h3 id="no-tasks">You don't have any tasks</h3>`
-          )
-        );
-      }
+    if (hasActiveTasks && noTasks) {
+      noTasks.remove();
+    } else if (!hasActiveTasks && !noTasks) {
+      $(tasksList).prepend(Component.render(NoTasksMessage()));
     }
   };
 
@@ -134,7 +129,7 @@ const MainContent = () => {
         tasks.length
           ? tasks.map((task) => TaskItem({ task }))
           : current
-          ? Component.html`<h3 id="no-tasks">You don't have any tasks</h3>`
+          ? NoTasksMessage()
           : ''
       }`;
     } catch (error) {

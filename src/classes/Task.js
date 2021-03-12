@@ -42,16 +42,20 @@ class Task {
     return [...this.labels.items];
   }
 
-  addLabel(label) {
-    this.labels.addItem(label);
+  addLabel(newLabel) {
+    if (this.labels.has((label) => label.id === newLabel.id)) {
+      throw new Error(`Label (${newLabel.id}) is already added.`);
+    }
+
+    this.labels.add(newLabel);
   }
 
   removeLabel(id) {
-    this.labels.removeItems((label) => label.id === id);
+    this.labels.delete((label) => label.id === id);
   }
 
   removeLabels() {
-    this.labels.removeAll();
+    this.labels.clear();
   }
 
   toggleComplete() {

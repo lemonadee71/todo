@@ -25,20 +25,27 @@ const syncLabels = () => Storage.sync('labels');
 
 const getLabels = () => Labels.items;
 
-const getLabel = (id) => Labels.get((label) => label.id === id);
+const getLabel = (id) => {
+  const label = Labels.get((label) => label.id === id);
+
+  if (!label) throw new Error(`No label with id: ${id}`);
+
+  return label;
+};
 
 const addLabel = (name, color) => {
-  let labelDoesNotExist = !Labels.has((label) => label.name === name);
+  let labelAlreadyExists = Labels.has((label) => label.name === name);
 
-  if (labelDoesNotExist) {
-    const newLabel = new Label(name, color);
-    Labels.add(newLabel);
-
-    syncLabels();
-    return newLabel;
-  } else {
+  if (labelAlreadyExists) {
     throw new Error('Label already exists.');
   }
+
+  const newLabel = new Label(name, color);
+  Labels.add(newLabel);
+
+  syncLabels();
+
+  return newLabel;
 };
 
 const deleteLabel = (id) => {
@@ -50,6 +57,13 @@ const deleteLabel = (id) => {
 };
 
 const editLabel = (id, prop, value) => {
+  // This is to make sure all labels are edited
+  getAllTasks().forEach((task) => {
+    const taskLabel = task.labels.get((label) => label.id === id);
+    if (taskLabel) {
+      taskLabel[prop] = value;
+    }
+  });
   getLabel(id)[prop] = value;
 
   syncLabels();

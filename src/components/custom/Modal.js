@@ -1,4 +1,4 @@
-import Component from '../helpers/component';
+import Component from '../../helpers/component';
 
 class Modal extends HTMLElement {
   constructor() {
@@ -61,51 +61,4 @@ class Modal extends HTMLElement {
   }
 }
 
-class Chip extends HTMLElement {
-  connectedCallback() {
-    this.render();
-  }
-
-  static get observedAttributes() {
-    return ['expanded', 'text'];
-  }
-
-  attributeChangedCallback() {
-    this.render();
-  }
-
-  render() {
-    const expanded = this.getAttribute('expanded');
-    const isExpanded = expanded && expanded === 'true';
-
-    if (isExpanded) {
-      this.className = 'chip-w-text';
-      this.textContent = this.getAttribute('text');
-    } else {
-      this.className = 'chip';
-      this.textContent = '';
-    }
-  }
-}
-
-class EditButton extends HTMLButtonElement {
-  connectedCallback() {
-    this.innerHTML = '<img src="icons/edit.svg" class="edit" alt="edit" />';
-  }
-}
-
-class DeleteButton extends HTMLButtonElement {
-  connectedCallback() {
-    this.innerHTML =
-      '<img src="icons/delete.svg" class="delete" alt="delete" />';
-  }
-}
-
-const defineCustomElements = () => {
-  customElements.define('modal-el', Modal);
-  customElements.define('chip-el', Chip);
-  customElements.define('edit-btn', EditButton, { extends: 'button' });
-  customElements.define('delete-btn', DeleteButton, { extends: 'button' });
-};
-
-export default defineCustomElements;
+export default Modal;

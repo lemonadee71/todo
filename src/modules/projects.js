@@ -49,7 +49,13 @@ Storage.store('data', Root);
 
 const syncData = () => Storage.sync('data');
 
-const getProject = (condition) => Root.get(condition);
+const getProject = (condition) => {
+  const project = Root.get(condition);
+
+  if (!project) throw new Error('No matches');
+
+  return project;
+};
 
 const getAllProjects = () => Root.items;
 
