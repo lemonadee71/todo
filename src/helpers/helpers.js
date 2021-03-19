@@ -1,17 +1,19 @@
 import { childAddedEvent, childRemovedEvent } from './customEvents';
 
 const $ = (query) => {
-  let isId = query.includes('#');
-  let isAll = query.includes('--all');
-  let isDataAttr = query.includes('--data');
-  let isDescendantSelector = query.includes(' ');
+  const isId = query.includes('#');
+  const isAll = query.includes('--all');
+  const isDataAttr = query.includes('--data');
+  const isDescendantSelector = query.includes(' ');
 
   if (isId && !isDescendantSelector) {
     return document.getElementById(query.replace('#', ''));
-  } else if (isAll) {
+  }
+  if (isAll) {
     return document.querySelectorAll(query.replace('--all', ''));
-  } else if (isDataAttr) {
-    let [type, value] = query.replace('--data-', '').split('=');
+  }
+  if (isDataAttr) {
+    const [type, value] = query.replace('--data-', '').split('=');
     return document.querySelector(`[data-${type}="${value}"]`);
   }
 
@@ -35,38 +37,19 @@ const rerender = (el, newContent) => {
   el.appendChild(newContent);
 };
 
-const append = (child) => {
-  return {
-    to: (parent) => {
-      parent.appendChild(child);
-      parent.dispatchEvent(childAddedEvent);
-    },
-  };
-};
+const append = (child) => ({
+  to: (parent) => {
+    parent.appendChild(child);
+    parent.dispatchEvent(childAddedEvent);
+  },
+});
 
-const prepend = (child) => {
-  return {
-    to: (parent) => {
-      parent.prepend(child);
-      parent.dispatchEvent(childAddedEvent);
-    },
-  };
-};
+const remove = (child) => ({
+  from: (parent) => {
+    parent.removeChild(child);
+    parent.dispatchEvent(childRemovedEvent);
+  },
+});
 
-const remove = (child, self = false) => {
-  if (self) {
-    // not working
-    child.parentElement.dispatchEvent(childRemovedEvent);
-    child.remove();
-  } else {
-    return {
-      from: (parent) => {
-        parent.removeChild(child);
-        parent.dispatchEvent(childRemovedEvent);
-      },
-    };
-  }
-};
-
-export { clear, hide, show, rerender, append, prepend, remove };
+export { clear, hide, show, rerender, append, remove };
 export default $;

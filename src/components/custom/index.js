@@ -1,6 +1,7 @@
 import Modal from './Modal';
 import Chip from './Chip';
-import { EditButton, DeleteButton } from './Buttons';
+import EditButton from './EditButton';
+import DeleteButton from './Buttons';
 
 const defineCustomElements = () => {
   customElements.define('modal-el', Modal);

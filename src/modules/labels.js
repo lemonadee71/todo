@@ -26,15 +26,15 @@ const syncLabels = () => Storage.sync('labels');
 const getLabels = () => Labels.items;
 
 const getLabel = (id) => {
-  const label = Labels.get((label) => label.id === id);
+  const labelItem = Labels.get((label) => label.id === id);
 
-  if (!label) throw new Error(`No label with id: ${id}`);
+  if (!labelItem) throw new Error(`No label with id: ${id}`);
 
-  return label;
+  return labelItem;
 };
 
 const addLabel = (name, color) => {
-  let labelAlreadyExists = Labels.has((label) => label.name === name);
+  const labelAlreadyExists = Labels.has((label) => label.name === name);
 
   if (labelAlreadyExists) {
     throw new Error('Label already exists.');

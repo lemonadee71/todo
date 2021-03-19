@@ -14,10 +14,10 @@ const Component = (() => {
   ];
 
   const createElementFromString = (str, handlers = []) => {
-    let createdElement = document.createRange().createContextualFragment(str);
+    const createdElement = document.createRange().createContextualFragment(str);
 
     handlers.forEach((handler) => {
-      let el = createdElement.querySelector(handler.query);
+      const el = createdElement.querySelector(handler.query);
 
       if (handler.type === 'prop') {
         el[handler.propName] = handler.value;
@@ -37,9 +37,8 @@ const Component = (() => {
     return createdElement;
   };
 
-  const render = (template) => {
-    return Component.createElementFromString(...Array.from(template));
-  };
+  const render = (template) =>
+    Component.createElementFromString(...Array.from(template));
 
   const isObject = (val) => typeof val === 'object';
   const isArray = (val) => Array.isArray(val);
@@ -55,10 +54,10 @@ const Component = (() => {
   const _generateID = () => `${Math.random()}`.replace(/0./, '');
 
   const _generateEventListenerHandlers = (listeners) => {
-    let arr = [];
-    let id = _generateID();
-    let dataAttrName = 'data-tempid';
-    let dataId = `${dataAttrName}="${id}"`;
+    const arr = [];
+    const id = _generateID();
+    const dataAttrName = 'data-tempid';
+    const dataId = `${dataAttrName}="${id}"`;
 
     for (let type in listeners) {
       arr.push({
@@ -77,10 +76,10 @@ const Component = (() => {
   };
 
   const _generatePropHandlers = (props) => {
-    let arr = [];
-    let id = _generateID();
-    let dataAttrName = 'data-propid';
-    let dataId = `${dataAttrName}="${id}"`;
+    const arr = [];
+    const id = _generateID();
+    const dataAttrName = 'data-propid';
+    const dataId = `${dataAttrName}="${id}"`;
 
     for (let key in props) {
       arr.push({
@@ -99,9 +98,9 @@ const Component = (() => {
   };
 
   const _generateTextHandler = (text) => {
-    let id = _generateID();
-    let dataAttrName = 'data-textid';
-    let dataId = `${dataAttrName}="${id}"`;
+    const id = _generateID();
+    const dataAttrName = 'data-textid';
+    const dataId = `${dataAttrName}="${id}"`;
 
     return [
       {
@@ -169,17 +168,15 @@ const Component = (() => {
     return `${expr}`;
   };
 
-  const html = (strings, ...exprs) => {
-    return parseString(strings, ...exprs);
-  };
+  const html = (strings, ...exprs) => parseString(strings, ...exprs);
 
   const parseString = (strings, ...exprs) => {
-    let handlers = [];
+    const handlers = [];
 
-    let evaluatedExprs = exprs.map((expr) => _parser(expr, handlers));
+    const evaluatedExprs = exprs.map((expr) => _parser(expr, handlers));
 
-    let htmlString = evaluatedExprs.reduce(
-      (fullString, expr, i) => (fullString += `${expr}${strings[i + 1]}`),
+    const htmlString = evaluatedExprs.reduce(
+      (fullString, expr, i) => `${fullString}${expr}${strings[i + 1]}`,
       strings[0]
     );
 
@@ -199,37 +196,37 @@ const Component = (() => {
       listeners,
     } = template;
 
-    let handlers = [];
+    const handlers = [];
 
-    let idStr = id ? ` id="${id}" ` : '';
-    let classStr = className ? ` class="${className}"` : '';
+    const idStr = id ? ` id="${id}" ` : '';
+    const classStr = className ? ` class="${className}"` : '';
 
-    let styleStr = style
+    const styleStr = style
       ? ` style="${Object.keys(style)
           .map((type) => (style[type] ? `${type}: ${style[type]};` : ''))
           .join(' ')}"`
       : '';
 
-    let attrStr = attr
+    const attrStr = attr
       ? Object.keys(attr)
           .map((type) => (attr[type] ? `${type}="${attr[type]}"` : ''))
           .join(' ')
       : '';
 
-    let childrenStr = Array.isArray(children)
+    const childrenStr = Array.isArray(children)
       ? _parser(children, handlers)
       : '';
 
     let eventPlaceholder = '';
     if (listeners) {
-      let [eventHandlers, id] = _generateEventListenerHandlers(listeners);
+      const [eventHandlers, id] = _generateEventListenerHandlers(listeners);
       handlers.push(...eventHandlers);
       eventPlaceholder = id;
     }
 
     let textPlaceholder = '';
     if (text) {
-      let [textHandler, id] = _generateTextHandler(text);
+      const [textHandler, id] = _generateTextHandler(text);
       handlers.push(textHandler);
       textPlaceholder = id;
     }
@@ -241,7 +238,7 @@ const Component = (() => {
       propPlaceholder = id;
     }
 
-    let htmlString = `<${type} ${textPlaceholder} ${propPlaceholder} ${eventPlaceholder} 
+    const htmlString = `<${type} ${textPlaceholder} ${propPlaceholder} ${eventPlaceholder} 
       ${idStr} ${classStr} ${attrStr} ${styleStr}>
       ${childrenStr}</${type}>`;
 
@@ -340,10 +337,10 @@ const Component = (() => {
                   el[handler.targetProp] = finalValue;
                 } else if (handler.type === 'attr') {
                   if (isBooleanAttribute(handler.targetProp)) {
-                    if (!finalValue) {
-                      el.removeAttribute(handler.targetProp);
-                    } else {
+                    if (finalValue) {
                       el.setAttribute(handler.targetProp, '');
+                    } else {
+                      el.removeAttribute(handler.targetProp);
                     }
                   } else {
                     el.setAttribute(handler.targetProp, finalValue);

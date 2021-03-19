@@ -4,17 +4,16 @@ import $, { append, remove } from '../helpers/helpers';
 import {
   taskItemLabels,
   labelsArea,
-  completedTasks,
-  currentTasks,
+  // completedTasks,
+  // currentTasks,
 } from '../helpers/selectors';
 import Storage from '../modules/storage';
 import { getLabel } from '../modules/labels';
 import { transferTask } from '../modules/projects';
-import { currentLocation } from '../modules/globalState';
 import { CALENDAR_ICON, NOTES_ICON, TAG_ICON } from './Icons';
 import LabelPopover from './LabelPopover';
 import ProjectOptions from './ProjectOptions';
-import TaskItem from './TaskItem';
+// import TaskItem from './TaskItem';
 import Chip from './Chip';
 
 // Selectors are so messy for this component
@@ -30,11 +29,11 @@ const TaskModal = ({ task }) => {
 
   const _updateTaskDetails = (...args) => {
     if (args[0] === 'location') {
-      let [prop, id, prevLoc, newLoc] = args;
+      const [prop, id, prevLoc, newLoc] = args;
       task[prop] = newLoc;
       transferTask(id, prevLoc, newLoc);
     } else {
-      let [prop, value] = args;
+      const [prop, value] = args;
       task[prop] = value;
     }
 
@@ -96,21 +95,21 @@ const TaskModal = ({ task }) => {
   };
 
   const updateLocation = (e) => {
-    let prevLocation = task.location;
-    let newLocation = e.currentTarget.value;
+    const prevLocation = task.location;
+    const newLocation = e.currentTarget.value;
 
     _updateTaskDetails('location', task.id, prevLocation, newLocation);
 
-    let currentPath = currentLocation.value;
+    const currentPath = window.location.hash.replace('#/', '');
 
     if (currentPath !== newLocation.replace('-', '/')) {
-      remove($(`#${task.id}`), true);
-    } else {
-      if (!$(`#${task.id}`)) {
-        const list = task.completed ? completedTasks : currentTasks;
-        append(Component.render(TaskItem({ task }))).to($(list));
-      }
+      const taskEl = $(`#${task.id}`);
+      remove(taskEl).from(taskEl.parentElement);
     }
+    // else if (!$(`#${task.id}`)) {
+    //   const list = task.completed ? completedTasks : currentTasks;
+    //   append(Component.render(TaskItem({ task }))).to($(list));
+    // }
   };
 
   /*
@@ -212,9 +211,9 @@ const TaskModal = ({ task }) => {
       ></button>
       <div data-id="notes-area"
         ${{
-          $content: isEditingNotes.bind('value', (val) => {
-            return val ? notesTextArea() : notesPreview();
-          }),
+          $content: isEditingNotes.bind('value', (val) =>
+            val ? notesTextArea() : notesPreview()
+          ),
         }}
       >
         ${notesPreview()}

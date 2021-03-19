@@ -1,10 +1,4 @@
-import { DELETE_ICON, EDIT_ICON } from '../Icons';
-
-class EditButton extends HTMLButtonElement {
-  connectedCallback() {
-    this.innerHTML = EDIT_ICON;
-  }
-}
+import { DELETE_ICON } from '../Icons';
 
 class DeleteButton extends HTMLButtonElement {
   connectedCallback() {
@@ -12,4 +6,4 @@ class DeleteButton extends HTMLButtonElement {
   }
 }
 
-export { EditButton, DeleteButton };
+export default DeleteButton;

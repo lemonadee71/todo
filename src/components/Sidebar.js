@@ -9,8 +9,8 @@ import {
 } from '../modules/projects';
 import { DELETE_ICON } from './Icons';
 
-const ProjectListItem = ({ proj, deleteHandler }) => {
-  return Component.html`
+const ProjectListItem = ({ proj, deleteHandler }) =>
+  Component.html`
     <li id="${proj.id}">
       ${{
         type: 'a',
@@ -22,7 +22,6 @@ const ProjectListItem = ({ proj, deleteHandler }) => {
       <span ${{ onClick: deleteHandler }}>${DELETE_ICON}</span>
     </li>
   `;
-};
 
 const Sidebar = () => {
   const _addProject = (name) => addProject(name);
@@ -30,6 +29,20 @@ const Sidebar = () => {
   const _deleteProject = (id) => deleteProject(id);
 
   // Form element
+  const removeProject = (e) => {
+    e.stopPropagation();
+    const projListItem = e.currentTarget.parentElement;
+
+    _deleteProject(projListItem.id);
+    remove(projListItem).from($(userProjects));
+
+    const currentPath = currentLocation.value.replace('/', '-');
+
+    if (currentPath === projListItem.id) {
+      currentLocation.value = 'all';
+    }
+  };
+
   const createNewProject = (e) => {
     e.preventDefault();
 
@@ -46,19 +59,6 @@ const Sidebar = () => {
     }
 
     e.target.reset();
-  };
-
-  const removeProject = (e) => {
-    e.stopPropagation();
-    let projListItem = e.currentTarget.parentElement;
-
-    _deleteProject(projListItem.id);
-    remove(projListItem).from($(userProjects));
-
-    let currentPath = currentLocation.value.replace('/', '-');
-    if (currentPath === projListItem.id) {
-      currentLocation.value = 'all';
-    }
   };
 
   const projects = getProjectsDetails();

@@ -35,7 +35,7 @@ class List {
   // only use this when extracting a single item
   // use filter to get multiple items
   extract(condition) {
-    let item = this.get(condition);
+    const item = this.get(condition);
     this.delete(condition);
 
     return item;

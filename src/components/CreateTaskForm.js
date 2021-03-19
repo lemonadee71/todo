@@ -4,7 +4,6 @@ import $, { append, remove } from '../helpers/helpers';
 import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
 import {
   currentTasks,
-  newTaskForm,
   newTaskFormNotes,
   newTaskFormDueDate,
   newTaskFormTitle,
@@ -48,13 +47,13 @@ const CreateTaskForm = () => {
   };
 
   const createNewTask = () => {
-    let currentPath = currentLocation.value;
+    const currentPath = currentLocation.value;
 
-    let title = $(newTaskFormTitle).value;
-    let notes = $(newTaskFormNotes).value;
-    let dueDate = $(newTaskFormDueDate).value;
-    let location = $(newTaskFormLocation).value;
-    let labels = [...$(newTaskFormLabels).children].map((chip) =>
+    const title = $(newTaskFormTitle).value;
+    const notes = $(newTaskFormNotes).value;
+    const dueDate = $(newTaskFormDueDate).value;
+    const location = $(newTaskFormLocation).value;
+    const labels = [...$(newTaskFormLabels).children].map((chip) =>
       _getLabel(chip.getAttribute('data-label-id'))
     );
 
@@ -63,11 +62,11 @@ const CreateTaskForm = () => {
       return;
     }
 
-    let task = _newTask({ title, notes, dueDate, location, labels });
+    const task = _newTask({ title, notes, dueDate, location, labels });
 
     // Only add TaskItem to DOM when task location is same with current location
     // And if the location is date based, only if dueDate falls in the category
-    let appendConditions = [
+    const appendConditions = [
       currentPath === 'list/uncategorized',
       currentPath === location.replace('-', '/'),
       currentPath === 'today' && isDueToday(parse(dueDate)),
@@ -80,11 +79,7 @@ const CreateTaskForm = () => {
       const taskItem = Component.render(TaskItem({ task }));
       append(taskItem).to($(currentTasks));
     }
-    destroyForm();
-  };
 
-  const destroyForm = () => {
-    $(newTaskForm).removeEventListener('submit', createNewTask);
     $(modal).close();
   };
 

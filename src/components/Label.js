@@ -21,9 +21,9 @@ const Label = ({ label, taskLabels = [] }) => {
    *  Event listeners
    */
   const updateLabel = (e) => {
-    let labelEl = e.currentTarget.parentElement;
-    let id = labelEl.getAttribute('data-label-id');
-    let newLabelName = e.currentTarget.value;
+    const labelEl = e.currentTarget.parentElement;
+    const id = labelEl.getAttribute('data-label-id');
+    const newLabelName = e.currentTarget.value;
 
     _editLabel(id, newLabelName);
     labelEl.firstElementChild.textContent = newLabelName;
@@ -32,7 +32,7 @@ const Label = ({ label, taskLabels = [] }) => {
     const labelChips = $(`${chips(id)}--all`);
 
     if (labelChipsWithText || labelChips) {
-      [...labelChipsWithText, ...labelChips].map((chip) => {
+      [...labelChipsWithText, ...labelChips].forEach((chip) => {
         chip.setAttribute('text', newLabelName);
       });
     }

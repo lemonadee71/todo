@@ -25,71 +25,50 @@ const MainContent = () => {
 
   const isDefault = (id) => defaultIds.includes(id);
   const isProject = (location) => location === 'list';
-  const isProjectName = (id) => isNaN(id);
+  const isProjectName = (id) => id.match(/\D+/g);
 
   const getCurrentTasks = (tasks) => tasks.filter((task) => !task.completed);
 
   const getCompletedTasks = (tasks) => tasks.filter((task) => task.completed);
 
-  const changeTitle = (id) => {
-    let title = '';
-    if (id === 'today') {
-      title = 'Today';
-    } else if (id === 'week') {
-      title = 'This Week';
-    } else if (id === 'upcoming') {
-      title = 'Upcoming';
-    } else if (id === 'all') {
-      title = 'All Tasks';
-    } else if (!isProjectName(id)) {
-      const project = getProject((proj) => proj.id === `list-${id}`);
-      title = project.name;
-    } else {
-      title = id;
-    }
-
-    return title;
-  };
-
-  const renderTitle = (id) => {
-    if ($('#current-proj-title')) {
-      $('#current-proj-title').textContent = changeTitle(id);
-    }
-  };
-
-  const getTasks = (path) => {
+  const getId = (path) => {
     const [location, id] = path.split('/');
 
     if (isDefault(location)) {
-      renderTitle(location);
+      return location;
+    }
 
-      if (location === 'today') {
-        return getDueToday();
-      } else if (location === 'week') {
-        return getDueThisWeek();
-      } else if (location === 'upcoming') {
-        return getUpcoming();
-      } else if (location === 'all') {
-        return getAllTasks();
-      }
-    } else if (isProject(location)) {
-      let project;
-
+    if (isProject(location)) {
       if (isProjectName(id)) {
-        project = getProject(
+        const project = getProject(
           (proj) => proj.name.toLowerCase() === id.replace(/-/g, ' ')
         );
-        renderTitle(project.id.replace('list-', ''));
-      } else {
-        project = getProject((proj) => proj.id === `list-${id}`);
-        renderTitle(id);
+
+        return project.id;
       }
 
-      return project.items;
-    } else {
-      renderTitle('Invalid path');
-      throw new Error('Invalid path.');
+      return `list-${id}`;
     }
+
+    throw new Error('Invalid path.');
+  };
+
+  const getTitle = (id) => {
+    if (id === 'all') return 'All Tasks';
+    if (id === 'today') return 'Today';
+    if (id === 'week') return 'This Week';
+    if (id === 'upcoming') return 'Upcoming';
+
+    return getProject((proj) => proj.id === id).name;
+  };
+
+  const getTasks = (id) => {
+    if (id === 'all') return getAllTasks();
+    if (id === 'today') return getDueToday();
+    if (id === 'week') return getDueThisWeek();
+    if (id === 'upcoming') return getUpcoming();
+
+    return getProject((proj) => proj.id === id);
   };
 
   /*
@@ -108,8 +87,8 @@ const MainContent = () => {
   };
 
   const checkNoOfTasks = () => {
-    let hasActiveTasks = $(currentTasks).children.length;
-    let noTasks = $('#no-tasks');
+    const hasActiveTasks = $(currentTasks).children.length;
+    const noTasks = $('#no-tasks');
 
     if (hasActiveTasks && noTasks) {
       noTasks.remove();
@@ -118,20 +97,25 @@ const MainContent = () => {
     }
   };
 
+  const renderTitle = (path) => {
+    try {
+      return getTitle(getId(path));
+    } catch (error) {
+      return error.toString();
+    }
+  };
+
   const renderTasks = (path, current = true) => {
     try {
-      const allTasks = getTasks(path);
+      const allTasks = getTasks(getId(path));
       const tasks = current
         ? getCurrentTasks(allTasks)
         : getCompletedTasks(allTasks);
 
-      return Component.html`${
-        tasks.length
-          ? tasks.map((task) => TaskItem({ task }))
-          : current
-          ? NoTasksMessage()
-          : ''
-      }`;
+      // hacky way to bypass no nested ternary lol
+      return tasks.length
+        ? Component.html`${tasks.map((task) => TaskItem({ task }))}`
+        : Component.html`${current ? NoTasksMessage() : ''}`;
     } catch (error) {
       console.log(error);
       return current
@@ -142,11 +126,9 @@ const MainContent = () => {
 
   return Component.html`
     <main>
-      ${{
-        type: 'h2',
-        id: 'current-proj-title',
-        text: changeTitle(currentLocation.value.replace('list/', '')),
-      }}
+      <h2 ${{
+        $textContent: currentLocation.bind('value', (val) => renderTitle(val)),
+      }}></h2>
       <hr>
       <div id="taskbar">
         <button id="add-task" ${{ onClick: showCreateTaskForm }}>+</button>

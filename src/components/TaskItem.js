@@ -17,7 +17,7 @@ const TaskItem = ({ task }) => {
    */
   const _syncData = () => Storage.sync('data');
 
-  const _deleteTask = (task) => deleteTask(task);
+  const _deleteTask = () => deleteTask(taskState.value);
 
   const _toggleCheck = () => {
     taskState.value.toggleComplete();
@@ -36,18 +36,18 @@ const TaskItem = ({ task }) => {
   };
 
   const removeTask = () => {
-    _deleteTask(taskState.value);
+    _deleteTask();
 
-    let list = taskState.value.completed ? completedTasks : currentTasks;
+    const list = taskState.value.completed ? completedTasks : currentTasks;
     remove($(`#${id}`)).from($(list));
   };
 
   const toggleCheckmark = (e) => {
     e.currentTarget.classList.toggle('checked');
 
-    let isDone = _toggleCheck();
-    let list = isDone ? completedTasks : currentTasks;
-    let taskCard = $(`#${id}`);
+    const isDone = _toggleCheck();
+    const list = isDone ? completedTasks : currentTasks;
+    const taskCard = $(`#${id}`);
     taskCard.classList.toggle('completed');
 
     append(taskCard).to($(list));

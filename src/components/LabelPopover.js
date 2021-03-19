@@ -12,7 +12,7 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
   };
 
   const updateLabels = (e) => {
-    let el = e.target;
+    const el = e.target;
 
     if (el.matches('.label[data-label-id]')) {
       el.classList.toggle('selected');

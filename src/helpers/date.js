@@ -20,18 +20,22 @@ const isUpcomingInFuture = (date) => !isThisMonth(date) && isFuture(date);
 const parse = (date) => parseISO(date);
 
 const formatDate = (dirtyDate) => {
-  let date = parse(dirtyDate);
-  let opts = { addSuffix: true };
+  const date = parse(dirtyDate);
+  const opts = { addSuffix: true };
 
   if (isDueToday(date)) {
     return 'Due today';
-  } else if (isDueTomorrow(date)) {
+  }
+  if (isDueTomorrow(date)) {
     return 'Due tomorrow';
-  } else if (isYesterday(date)) {
+  }
+  if (isYesterday(date)) {
     return 'Due yesterday';
-  } else if (isPast(date) || isUpcomingInFuture(date)) {
+  }
+  if (isPast(date) || isUpcomingInFuture(date)) {
     return `Due ${formatDistanceToNow(date, opts)}`;
-  } else if (isDueThisWeek(date)) {
+  }
+  if (isDueThisWeek(date)) {
     return `Due ${format(date, 'E, MMM dd')}`;
   }
 

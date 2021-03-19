@@ -2,7 +2,6 @@ import List from '../classes/List';
 import Task from '../classes/Task';
 import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
 import { defaultProjects } from './defaults';
-import { getLabel } from './labels';
 import Storage from './storage';
 
 const Root = new List({ name: 'root', id: 'root' });
@@ -26,11 +25,9 @@ if (storedData) {
                 title: task.title,
                 notes: task.notes,
                 dueDate: task.dueDate,
-                completed: task.completed,
                 location: task.location,
-                labels: task.labels._items.filter((label) =>
-                  getLabel(label.id)
-                ),
+                completed: task.completed,
+                labels: task.labels._items,
               })
           ),
         })
@@ -63,34 +60,25 @@ const getProjectsDetails = () => {
   const projects = Root.filter((proj) => proj.id !== 'uncategorized');
 
   return projects.length
-    ? projects.map((proj) => {
-        return {
-          id: proj.id,
-          name: proj.name,
-        };
-      })
+    ? projects.map((proj) => ({
+        id: proj.id,
+        name: proj.name,
+      }))
     : [];
 };
 
-const getAllTasks = () => {
-  return Root.items.map((proj) => proj.items).flat();
-};
+const getAllTasks = () => Root.items.map((proj) => proj.items).flat();
 
-const getProjectTasks = (id) => {
-  return getProject((proj) => proj.id === id).items;
-};
+const getProjectTasks = (id) => getProject((proj) => proj.id === id).items;
 
-const getDueToday = () => {
-  return getAllTasks().filter((task) => isDueToday(parse(task.dueDate)));
-};
+const getDueToday = () =>
+  getAllTasks().filter((task) => isDueToday(parse(task.dueDate)));
 
-const getDueThisWeek = () => {
-  return getAllTasks().filter((task) => isDueThisWeek(parse(task.dueDate)));
-};
+const getDueThisWeek = () =>
+  getAllTasks().filter((task) => isDueThisWeek(parse(task.dueDate)));
 
-const getUpcoming = () => {
-  return getAllTasks().filter((task) => isUpcoming(parse(task.dueDate)));
-};
+const getUpcoming = () =>
+  getAllTasks().filter((task) => isUpcoming(parse(task.dueDate)));
 
 const addProject = (name) => {
   if (Root.has((proj) => proj.name === name)) {
@@ -123,7 +111,7 @@ const deleteTask = (task) => {
 
 const transferTask = (id, prevList, newList) => {
   const task = getProject((proj) => proj.id === prevList).extract(
-    (task) => task.id === id
+    (item) => item.id === id
   );
 
   getProject((proj) => proj.id === newList).add(task);

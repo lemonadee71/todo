@@ -12,7 +12,7 @@ class Modal extends HTMLElement {
   connectedCallback() {
     this.classList.add('modal-backdrop');
 
-    let element = Component.html`
+    const element = Component.html`
       <div id="modal">
         <span class="close" ${{ onClick: this.close }}>&times;</span>
         <div id="modal-content"></div>
