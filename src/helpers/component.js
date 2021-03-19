@@ -295,7 +295,11 @@ const Component = (() => {
       if (type === 'prop') {
         props[targetProp] = finalValue;
       } else if (type === 'attr') {
-        attrStr += `${targetProp}="${finalValue}" `;
+        if (isBooleanAttribute(targetProp)) {
+          attrStr += finalValue ? targetProp : '';
+        } else {
+          attrStr += `${targetProp}="${finalValue}" `;
+        }
       } else if (type === 'style') {
         styleStr += `${targetProp}: ${finalValue}; `;
       }
@@ -309,7 +313,7 @@ const Component = (() => {
       styleStr = `style="${styleStr}" `;
     }
 
-    return [propHandlers, `${attrStr}${styleStr}${proxyId} ${propId}`];
+    return [propHandlers, `${attrStr} ${styleStr}${proxyId} ${propId}`];
   };
 
   const createState = (initValue = null) => {

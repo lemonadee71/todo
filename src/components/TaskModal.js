@@ -160,11 +160,7 @@ const TaskModal = ({ task }) => {
         placeholder="Unnamed Task"
         value="${task.title}"
         required
-        ${{
-          $disabled: isEditingTitle.bind('value', (val) =>
-            !val ? 'true' : ''
-          ),
-        }}
+        ${{ $disabled: isEditingTitle.bind('value', (val) => !val) }}
         ${{ onInput: updateTitle, onFocusout: toggleTitleEdit }}
       />
       <button is="edit-btn" 
@@ -176,12 +172,14 @@ const TaskModal = ({ task }) => {
         ${{ onClick: toggleTitleEdit }}
       ></button>
     </div>
+
     <div class="proj">
       <span>in Project</span>
       <select ${{ onChange: updateLocation }}>
         ${ProjectOptions(task.location)}
       </select>
     </div>
+
     <div id="labels">
       <div class="section-header">
         ${TAG_ICON}
@@ -196,6 +194,7 @@ const TaskModal = ({ task }) => {
         toggleLabel: updateLabels,
       })}
     </div>
+
     <div class="notes">
       <div class="section-header">
         ${NOTES_ICON}
@@ -219,6 +218,7 @@ const TaskModal = ({ task }) => {
         ${notesPreview()}
       </div>
     </div>
+    
     <div class="date">
       <div class="section-header">
         ${CALENDAR_ICON}

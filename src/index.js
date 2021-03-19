@@ -5,6 +5,10 @@ import MainContent from './components/MainContent';
 import Sidebar from './components/Sidebar';
 import defineCustomElements from './components/custom/index';
 import { currentLocation } from './modules/globalState';
+import 'github-markdown-css';
+import './css/styles.css';
+import './css/hamburgers.css';
+import './css/labelcolors.css';
 
 defineCustomElements();
 

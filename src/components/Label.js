@@ -49,7 +49,7 @@ const Label = ({ label, taskLabels = [] }) => {
     [
       ...$(`${chips(label.id)}--all`),
       ...$(`${chipsWithText(label.id)}--all`),
-    ].map((chip) => chip.remove());
+    ].forEach((chip) => chip.remove());
 
     e.stopPropagation();
   };
@@ -73,7 +73,7 @@ const Label = ({ label, taskLabels = [] }) => {
         required
         ${{
           $class: isEditing.bind('value', (val) => (!val ? 'hidden' : '')),
-          $disabled: isEditing.bind('value', (val) => (!val ? 'true' : '')),
+          $disabled: isEditing.bind('value', (val) => !val),
         }}
         ${{ onChange: updateLabel, onFocusout: toggleEdit }}
       />
