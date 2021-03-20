@@ -40,10 +40,6 @@ if (storedData) {
 
 Storage.store('data', Root);
 
-/*
- * Functions
- */
-
 const syncData = () => Storage.sync('data');
 
 const getProject = (condition) => {
