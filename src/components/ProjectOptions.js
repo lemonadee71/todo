@@ -10,7 +10,8 @@ const ProjectOptions = (location = '') => {
       attr: {
         value: 'uncategorized',
         disabled: 'true',
-        selected: location === '' || location === 'uncategorized' ? 'true' : '',
+        selected:
+          location === 'all' || location === 'uncategorized' ? 'true' : '',
       },
     },
     ...projects.map((proj) => ({

@@ -18,7 +18,7 @@ const TaskItem = ({ taskData }) => {
   };
 
   const removeTask = () => {
-    event.emit('task.delete', task);
+    event.emit('task.delete', task.value);
 
     const list = task.value.completed ? completedTasks : currentTasks;
     remove($(`#${id}`)).from($(list));
@@ -28,7 +28,12 @@ const TaskItem = ({ taskData }) => {
     e.currentTarget.classList.toggle('checked');
 
     task.value.completed = !task.value.completed;
-    event.emit('task.update', { completed: task.value.completed });
+    event.emit('task.update', {
+      info: task.value,
+      data: {
+        completed: task.value.completed,
+      },
+    });
 
     const isDone = task.value.completed;
     const list = isDone ? completedTasks : currentTasks;

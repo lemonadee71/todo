@@ -13,7 +13,7 @@ import {
   getDueToday,
   getDueThisWeek,
   getUpcoming,
-  getTask,
+  // getTask,
 } from '../modules/projects';
 import event from '../modules/event';
 import CreateTaskForm from './CreateTaskForm';
@@ -27,8 +27,8 @@ const NoTasksMessage = () =>
   Component.html`<h3 id="no-tasks">You don't have any tasks</h3>`;
 
 const MainContent = () => {
-  const shouldAppendTask = (task) => {
-    const appendConditions = [
+  const shouldRenderTask = (task) => {
+    const renderConditions = [
       currentLocation.value === 'list/uncategorized',
       currentLocation.value === task.location.replace('-', '/'),
       currentLocation.value === 'today' && isDueToday(parse(task.dueDate)),
@@ -36,30 +36,29 @@ const MainContent = () => {
       currentLocation.value === 'upcoming' && isUpcoming(parse(task.dueDate)),
     ];
 
-    return appendConditions.some((condition) => condition);
+    return renderConditions.some((condition) => condition);
   };
 
   const addTask = (task) => {
-    if (shouldAppendTask(task)) {
+    if (shouldRenderTask(task)) {
       const taskItem = Component.render(TaskItem({ taskData: task }));
       append(taskItem).to($(currentTasks));
     }
-
-    $(modal).close();
   };
 
-  const moveTask = ({ id, location }) => {
+  const moveTask = ({ id, newLocation }) => {
     const taskEl = $(`#${id}`);
-    const task = getTask(location, id);
+    // const task = getTask(newLocation, id);
 
-    if (currentLocation.value !== location.replace('-', '/')) {
+    if (currentLocation.value !== newLocation.replace('-', '/')) {
       remove(taskEl).from(taskEl.parentElement);
-    } else if (!taskEl && shouldAppendTask(task)) {
-      const list = task.completed ? completedTasks : currentTasks;
-      const taskItem = Component.render(TaskItem({ taskData: task.getData() }));
-
-      append(taskItem).to($(list));
     }
+    // else if (!taskEl && shouldRenderTask(task)) {
+    //   const list = task.completed ? completedTasks : currentTasks;
+    //   const taskItem = Component.render(TaskItem({ taskData: task.getData() }));
+
+    //   append(taskItem).to($(list));
+    // }
   };
 
   event.on('task.add.success', addTask);

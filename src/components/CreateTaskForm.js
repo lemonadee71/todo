@@ -7,6 +7,7 @@ import {
   newTaskFormLocation,
   newTaskFormLabels,
   chipsWithText,
+  modal,
 } from '../helpers/selectors';
 import { getLabel } from '../modules/labels';
 import ProjectOptions from './ProjectOptions';
@@ -43,6 +44,7 @@ const CreateTaskForm = () => {
     }
 
     event.emit('task.add', { title, notes, dueDate, location, labels });
+    $(modal).close();
   };
 
   return Component.html`

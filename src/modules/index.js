@@ -45,7 +45,7 @@ const taskUpdateHandler = ({ info, data }) => {
 const taskTransferHandler = ({ id, prevLocation, newLocation }) => {
   projects.transferTask(id, prevLocation, newLocation);
 
-  event.emit('task.transfer.success', { id, location: newLocation });
+  event.emit('task.transfer.success', { id, newLocation });
   event.emit('storage.sync', 'data');
 };
 
