@@ -24,12 +24,12 @@ const clear = (element) => {
   [...element.children].map((child) => child.remove());
 };
 
-const hide = (element) => {
-  element.style.display = 'none';
+const hide = (selector) => {
+  $(selector).style.display = 'none';
 };
 
-const show = (element) => {
-  element.style.display = 'block';
+const show = (selector) => {
+  $(selector).style.display = 'block';
 };
 
 const rerender = (el, newContent) => {

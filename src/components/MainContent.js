@@ -27,6 +27,12 @@ const NoTasksMessage = () =>
   Component.html`<h3 id="no-tasks">You don't have any tasks</h3>`;
 
 const MainContent = () => {
+  const defaultIds = ['all', 'today', 'week', 'upcoming'];
+
+  const isDefault = (id) => defaultIds.includes(id);
+  const isProject = (location) => location === 'list';
+  const isProjectName = (id) => id.match(/\D+/g);
+
   const shouldRenderTask = (task) => {
     const renderConditions = [
       currentLocation.value === 'list/uncategorized',
@@ -48,9 +54,13 @@ const MainContent = () => {
 
   const moveTask = ({ id, newLocation }) => {
     const taskEl = $(`#${id}`);
+    const location = newLocation.replace('-', '/');
     // const task = getTask(newLocation, id);
 
-    if (currentLocation.value !== newLocation.replace('-', '/')) {
+    if (
+      currentLocation.value !== location &&
+      !isDefault(currentLocation.value)
+    ) {
       remove(taskEl).from(taskEl.parentElement);
     }
     // else if (!taskEl && shouldRenderTask(task)) {
@@ -66,12 +76,6 @@ const MainContent = () => {
   event.on('hashchange', (path) => {
     currentLocation.value = path;
   });
-
-  const defaultIds = ['all', 'today', 'week', 'upcoming'];
-
-  const isDefault = (id) => defaultIds.includes(id);
-  const isProject = (location) => location === 'list';
-  const isProjectName = (id) => id.match(/\D+/g);
 
   const getCurrentTasks = (tasks) => tasks.filter((task) => !task.completed);
 
@@ -126,9 +130,9 @@ const MainContent = () => {
 
   const showCompleted = (e) => {
     if (e.target.checked) {
-      show($(completedTasks));
+      show(completedTasks);
     } else {
-      hide($(completedTasks));
+      hide(completedTasks);
     }
   };
 

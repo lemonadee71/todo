@@ -17,9 +17,6 @@ const NewLabelForm = () => {
     }
   };
 
-  /*
-   * DOM functions
-   */
   const pickColor = (e) => {
     $(`.color.selected`).classList.remove('selected');
     if (e.target.matches('div.color')) {

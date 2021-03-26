@@ -19,26 +19,27 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
 
   const updateLabels = (e) => {
     const el = e.target;
+    let data;
 
     if (el.matches('.label[data-label-id]')) {
       el.classList.toggle('selected');
-
-      toggleLabel({
+      data = {
         id: el.getAttribute('data-label-id'),
         color: el.getAttribute('data-color'),
         name: el.firstElementChild.textContent,
         selected: el.className.includes('selected'),
-      });
+      };
     } else if (el.matches('.label[data-label-id] span')) {
       el.parentElement.classList.toggle('selected');
-
-      toggleLabel({
+      data = {
         id: el.parentElement.getAttribute('data-label-id'),
         color: el.parentElement.getAttribute('data-color'),
         name: el.textContent,
         selected: el.parentElement.className.includes('selected'),
-      });
+      };
     }
+
+    toggleLabel(data);
   };
 
   event.on('label.add.success', renderLabel);
