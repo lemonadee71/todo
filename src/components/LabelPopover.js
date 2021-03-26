@@ -12,6 +12,8 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
     append(Component.render(Label({ label }))).to($('#label-list'));
   };
 
+  event.on('label.add.success', renderLabel);
+
   const closePopover = () => {
     $('#popover').classList.remove('visible');
     event.off('label.add.success', renderLabel);
@@ -41,8 +43,6 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
 
     toggleLabel(data);
   };
-
-  event.on('label.add.success', renderLabel);
 
   return Component.html`
     <div id="popover">

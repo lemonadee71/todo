@@ -3,6 +3,10 @@ import $ from './helpers/helpers';
 import { sidebar as sidenav } from './helpers/selectors';
 import MainContent from './components/MainContent';
 import Sidebar from './components/Sidebar';
+import 'github-markdown-css';
+import './css/styles.css';
+import './css/hamburgers.css';
+import './css/labelcolors.css';
 
 const App = () => {
   const showSidebar = (e) => {

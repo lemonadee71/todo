@@ -2,6 +2,8 @@ import { getProjectsDetails } from '../modules/projects';
 
 const ProjectOptions = (location = '') => {
   const projects = getProjectsDetails();
+  const defaultIds = ['all', 'today', 'week', 'upcoming', 'list-uncategorized'];
+  const isDefault = (id) => defaultIds.includes(id);
 
   return [
     {
@@ -10,8 +12,7 @@ const ProjectOptions = (location = '') => {
       attr: {
         value: 'uncategorized',
         disabled: 'true',
-        selected:
-          location === 'all' || location === 'uncategorized' ? 'true' : '',
+        selected: isDefault(location) ? 'true' : '',
       },
     },
     ...projects.map((proj) => ({
