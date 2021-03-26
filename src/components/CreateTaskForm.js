@@ -1,38 +1,24 @@
-import Task from '../classes/Task';
 import Component from '../helpers/component';
 import $, { append, remove } from '../helpers/helpers';
-import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
 import {
-  currentTasks,
   newTaskFormNotes,
   newTaskFormDueDate,
   newTaskFormTitle,
   newTaskFormLocation,
   newTaskFormLabels,
   chipsWithText,
-  modal,
 } from '../helpers/selectors';
 import { getLabel } from '../modules/labels';
-import { addTask } from '../modules/projects';
-import { currentLocation } from '../modules/globalState';
 import ProjectOptions from './ProjectOptions';
-import TaskItem from './TaskItem';
 import LabelPopover from './LabelPopover';
 import Chip from './Chip';
+import event from '../modules/event';
 
 const CreateTaskForm = () => {
-  /*
-   *  Wrapper functions
-   */
-  const _getLabel = (id) => getLabel(id);
+  const openLabelPopover = () => {
+    $('#popover').classList.add('visible');
+  };
 
-  const _newTask = (task) => new Task(task);
-
-  const _addTask = (task) => addTask(task);
-
-  /*
-   *  Event listeners/DOM functions
-   */
   const addLabel = (label) => {
     if (label.selected) {
       const chip = Component.render(Chip({ label, expanded: true }));
@@ -42,19 +28,13 @@ const CreateTaskForm = () => {
     }
   };
 
-  const openLabelPopover = () => {
-    $('#popover').classList.add('visible');
-  };
-
   const createNewTask = () => {
-    const currentPath = currentLocation.value;
-
     const title = $(newTaskFormTitle).value;
     const notes = $(newTaskFormNotes).value;
     const dueDate = $(newTaskFormDueDate).value;
     const location = $(newTaskFormLocation).value;
     const labels = [...$(newTaskFormLabels).children].map((chip) =>
-      _getLabel(chip.getAttribute('data-label-id'))
+      getLabel(chip.getAttribute('data-label-id'))
     );
 
     if (!title) {
@@ -62,25 +42,7 @@ const CreateTaskForm = () => {
       return;
     }
 
-    const task = _newTask({ title, notes, dueDate, location, labels });
-
-    // Only add TaskItem to DOM when task location is same with current location
-    // And if the location is date based, only if dueDate falls in the category
-    const appendConditions = [
-      currentPath === 'list/uncategorized',
-      currentPath === location.replace('-', '/'),
-      currentPath === 'today' && isDueToday(parse(dueDate)),
-      currentPath === 'week' && isDueThisWeek(parse(dueDate)),
-      currentPath === 'upcoming' && isUpcoming(parse(dueDate)),
-    ];
-
-    _addTask(task);
-    if (appendConditions.some((condition) => condition === true)) {
-      const taskItem = Component.render(TaskItem({ task }));
-      append(taskItem).to($(currentTasks));
-    }
-
-    $(modal).close();
+    event.emit('task.add', { title, notes, dueDate, location, labels });
   };
 
   return Component.html`
@@ -95,7 +57,7 @@ const CreateTaskForm = () => {
       
       <label for="task-location" class="section-header">Project</label>
       <select name="task-location" data-id="new-task-location">
-        ${ProjectOptions()}
+        ${ProjectOptions(window.location.hash.replace('#/', ''))}
       </select>
 
       <span class="section-header">Labels</span>

@@ -1,5 +1,6 @@
 import Component from '../helpers/component';
-import { isChipExpanded } from '../modules/globalState';
+
+const isChipExpanded = Component.createState(false);
 
 const Chip = ({ label, expanded = false, clickable = false }) => {
   const toggleChip = () => {

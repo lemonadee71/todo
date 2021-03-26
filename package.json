@@ -8,7 +8,6 @@
     "start": "webpack serve --config webpack.dev.js --open 'google-chrome'",
     "build": "webpack --config webpack.prod.js",
     "watch": "webpack --watch --config webpack.dev.js",
-    "predeploy": "git add dist && git commit -m \"Initial dist subtree commit\"",
     "deploy": "git subtree push --prefix dist origin gh-pages"
   },
   "repository": {

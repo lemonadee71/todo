@@ -1,26 +1,73 @@
 import Component from '../helpers/component';
-import $, { hide, show } from '../helpers/helpers';
+import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
+import $, { append, remove, hide, show } from '../helpers/helpers';
 import {
   completedTasks,
   currentTasks,
   tasksList,
   modal,
 } from '../helpers/selectors';
-import { currentLocation } from '../modules/globalState';
 import {
   getAllTasks,
   getProject,
   getDueToday,
   getDueThisWeek,
   getUpcoming,
+  getTask,
 } from '../modules/projects';
+import event from '../modules/event';
 import CreateTaskForm from './CreateTaskForm';
 import TaskItem from './TaskItem';
+
+const currentLocation = Component.createState(
+  window.location.hash.replace('#/', '') || 'all'
+);
 
 const NoTasksMessage = () =>
   Component.html`<h3 id="no-tasks">You don't have any tasks</h3>`;
 
 const MainContent = () => {
+  const shouldAppendTask = (task) => {
+    const appendConditions = [
+      currentLocation.value === 'list/uncategorized',
+      currentLocation.value === task.location.replace('-', '/'),
+      currentLocation.value === 'today' && isDueToday(parse(task.dueDate)),
+      currentLocation.value === 'week' && isDueThisWeek(parse(task.dueDate)),
+      currentLocation.value === 'upcoming' && isUpcoming(parse(task.dueDate)),
+    ];
+
+    return appendConditions.some((condition) => condition);
+  };
+
+  const addTask = (task) => {
+    if (shouldAppendTask(task)) {
+      const taskItem = Component.render(TaskItem({ taskData: task }));
+      append(taskItem).to($(currentTasks));
+    }
+
+    $(modal).close();
+  };
+
+  const moveTask = ({ id, location }) => {
+    const taskEl = $(`#${id}`);
+    const task = getTask(location, id);
+
+    if (currentLocation.value !== location.replace('-', '/')) {
+      remove(taskEl).from(taskEl.parentElement);
+    } else if (!taskEl && shouldAppendTask(task)) {
+      const list = task.completed ? completedTasks : currentTasks;
+      const taskItem = Component.render(TaskItem({ taskData: task.getData() }));
+
+      append(taskItem).to($(list));
+    }
+  };
+
+  event.on('task.add.success', addTask);
+  event.on('task.transfer.success', moveTask);
+  event.on('hashchange', (path) => {
+    currentLocation.value = path;
+  });
+
   const defaultIds = ['all', 'today', 'week', 'upcoming'];
 
   const isDefault = (id) => defaultIds.includes(id);
@@ -114,7 +161,9 @@ const MainContent = () => {
 
       // hacky way to bypass no nested ternary lol
       return tasks.length
-        ? Component.html`${tasks.map((task) => TaskItem({ task }))}`
+        ? Component.html`${tasks.map((task) =>
+            TaskItem({ taskData: task.getData() })
+          )}`
         : Component.html`${current ? NoTasksMessage() : ''}`;
     } catch (error) {
       console.log(error);

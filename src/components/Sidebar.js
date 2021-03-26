@@ -1,12 +1,8 @@
 import Component from '../helpers/component';
 import $, { append, remove } from '../helpers/helpers';
 import { newProjectInput, userProjects } from '../helpers/selectors';
-import { currentLocation } from '../modules/globalState';
-import {
-  getProjectsDetails,
-  addProject,
-  deleteProject,
-} from '../modules/projects';
+import { getProjectsDetails } from '../modules/projects';
+import event from '../modules/event';
 import { DELETE_ICON } from './Icons';
 
 const ProjectListItem = ({ proj, deleteHandler }) =>
@@ -24,42 +20,40 @@ const ProjectListItem = ({ proj, deleteHandler }) =>
   `;
 
 const Sidebar = () => {
-  const _addProject = (name) => addProject(name);
+  const createNewProject = (e) => {
+    e.preventDefault();
+    event.emit('project.add', { name: $(newProjectInput).value });
+    e.target.reset();
+  };
 
-  const _deleteProject = (id) => deleteProject(id);
-
-  // Form element
   const removeProject = (e) => {
     e.stopPropagation();
     const projListItem = e.currentTarget.parentElement;
 
-    _deleteProject(projListItem.id);
+    event.emit('project.delete', { id: projListItem.id });
     remove(projListItem).from($(userProjects));
 
-    const currentPath = currentLocation.value.replace('/', '-');
+    const currentPath = window.location.hash
+      .replace('#/', '')
+      .replace('/', '-');
 
     if (currentPath === projListItem.id) {
-      currentLocation.value = 'all';
+      event.emit('hashchange', 'all');
     }
   };
 
-  const createNewProject = (e) => {
-    e.preventDefault();
+  const addProject = (project) => {
+    console.log(project);
+    const projectLi = ProjectListItem({
+      proj: project,
+      deleteHandler: removeProject,
+    });
 
-    try {
-      const newProject = _addProject($(newProjectInput).value);
-      const projLi = ProjectListItem({
-        proj: newProject,
-        deleteHandler: removeProject,
-      });
-
-      append(Component.render(projLi)).to($(userProjects));
-    } catch (error) {
-      alert(error.toString());
-    }
-
-    e.target.reset();
+    append(Component.render(projectLi)).to($(userProjects));
   };
+
+  event.on('project.add.error', (error) => alert(error.toString()));
+  event.on('project.add.success', addProject);
 
   const projects = getProjectsDetails();
 

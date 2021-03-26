@@ -40,12 +40,10 @@ if (storedData) {
 
 Storage.store('data', Root);
 
-const syncData = () => Storage.sync('data');
-
 const getProject = (condition) => {
   const project = Root.get(condition);
 
-  if (!project) throw new Error('No matches');
+  if (!project) throw new Error('No project that matches the condition.');
 
   return project;
 };
@@ -84,25 +82,24 @@ const addProject = (name) => {
   const newProject = new List({ name });
   Root.add(newProject);
 
-  syncData();
   return newProject;
 };
 
 const deleteProject = (id) => {
   Root.delete((proj) => proj.id === id);
-  syncData();
 };
+
+const getTask = (location, id) =>
+  getProject((proj) => proj.id === location).get((item) => item.id === id);
 
 const addTask = (task) => {
   getProject((proj) => proj.id === task.location).add(task);
-  syncData();
 };
 
 const deleteTask = (task) => {
   getProject((proj) => proj.id === task.location).delete(
     (item) => item.id === task.id
   );
-  syncData();
 };
 
 const transferTask = (id, prevList, newList) => {
@@ -111,7 +108,6 @@ const transferTask = (id, prevList, newList) => {
   );
 
   getProject((proj) => proj.id === newList).add(task);
-  syncData();
 };
 
 export {
@@ -125,6 +121,7 @@ export {
   getDueToday,
   getDueThisWeek,
   getUpcoming,
+  getTask,
   addTask,
   transferTask,
   deleteTask,

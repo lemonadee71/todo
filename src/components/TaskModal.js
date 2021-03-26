@@ -1,58 +1,31 @@
 import Component from '../helpers/component';
 import convertToMarkdown from '../helpers/showdown';
-import $, { append, remove } from '../helpers/helpers';
-import {
-  taskItemLabels,
-  labelsArea,
-  // completedTasks,
-  // currentTasks,
-} from '../helpers/selectors';
-import Storage from '../modules/storage';
-import { getLabel } from '../modules/labels';
-import { transferTask } from '../modules/projects';
+import $, { append } from '../helpers/helpers';
+import { taskItemLabels, labelsArea } from '../helpers/selectors';
 import { CALENDAR_ICON, NOTES_ICON, TAG_ICON } from './Icons';
 import LabelPopover from './LabelPopover';
 import ProjectOptions from './ProjectOptions';
-// import TaskItem from './TaskItem';
 import Chip from './Chip';
+import event from '../modules/event';
 
 // Selectors are so messy for this component
 // Since there's only one modal component at a time
 // Maybe change it to ids
 // But make sure to not have conflicts with other components that shows modal-content too
-// Add a delete button
+// TODO: Add a delete button
 const TaskModal = ({ task }) => {
-  /*
-   * Private methods
-   */
-  const _syncData = () => Storage.sync('data');
-
-  const _updateTaskDetails = (...args) => {
-    if (args[0] === 'location') {
-      const [prop, id, prevLoc, newLoc] = args;
-      task[prop] = newLoc;
-      transferTask(id, prevLoc, newLoc);
-    } else {
-      const [prop, value] = args;
-      task[prop] = value;
-    }
-
-    _syncData();
+  const updateTaskDetails = (payload) => {
+    event.emit('task.update', { info: task, data: payload });
   };
 
-  const _updateTaskLabels = (method, id) => {
-    if (method === 'add') {
-      task.addLabel(getLabel(id));
-    } else if (method === 'remove') {
-      task.removeLabel(id);
-    }
-
-    _syncData();
+  const updateTaskLabels = (method, id) => {
+    event.emit('task.labels.update', {
+      info: task,
+      action: method,
+      labelId: id,
+    });
   };
 
-  /*
-   * Functions that updates the task
-   */
   const updateTitle = (e) => {
     if (!e.target.value) {
       alert('Task name must not be empty');
@@ -60,21 +33,24 @@ const TaskModal = ({ task }) => {
       return;
     }
 
-    _updateTaskDetails('title', e.target.value);
+    task.title = e.target.value;
+    updateTaskDetails({ title: e.target.value });
   };
 
   const updateNotes = () => {
-    _updateTaskDetails('notes', $('#edit-task-notes').value);
+    task.notes = $('#edit-task-notes').value;
+    updateTaskDetails({ notes: $('#edit-task-notes').value });
   };
 
   const updateDueDate = (e) => {
-    _updateTaskDetails('dueDate', e.target.value);
+    task.dueDate = e.target.value;
+    updateTaskDetails({ dueDate: e.target.value });
   };
 
   // This is a mess
   const updateLabels = (label) => {
     if (label.selected) {
-      _updateTaskLabels('add', label.id);
+      updateTaskLabels('add', label.id);
 
       append(Component.render(Chip({ label, clickable: true }))).to(
         $(taskItemLabels(task.id))
@@ -83,7 +59,7 @@ const TaskModal = ({ task }) => {
         $(labelsArea)
       );
     } else {
-      _updateTaskLabels('remove', label.id);
+      updateTaskLabels('remove', label.id);
 
       const labelSelector = `label-chip[data-label-id="${label.id}"]`;
       const labelChip = $(`#${task.id} ${labelSelector}`);
@@ -97,19 +73,14 @@ const TaskModal = ({ task }) => {
   const updateLocation = (e) => {
     const prevLocation = task.location;
     const newLocation = e.currentTarget.value;
+    task.location = newLocation;
 
-    _updateTaskDetails('location', task.id, prevLocation, newLocation);
-
-    const currentPath = window.location.hash.replace('#/', '');
-
-    if (currentPath !== newLocation.replace('-', '/')) {
-      const taskEl = $(`#${task.id}`);
-      remove(taskEl).from(taskEl.parentElement);
-    }
-    // else if (!$(`#${task.id}`)) {
-    //   const list = task.completed ? completedTasks : currentTasks;
-    //   append(Component.render(TaskItem({ task }))).to($(list));
-    // }
+    event.emit('task.transfer', {
+      prevLocation,
+      newLocation,
+      id: task.id,
+    });
+    updateTaskDetails({ location: newLocation });
   };
 
   /*
@@ -150,7 +121,7 @@ const TaskModal = ({ task }) => {
     },
   });
 
-  // Clean attributes here
+  // TODO: Clean attributes here
   return Component.render(Component.html`
     <div class="title">
       <input
@@ -187,10 +158,10 @@ const TaskModal = ({ task }) => {
       </div>
       <button ${{ onClick: openLabelPopover }}>+</button>
       <div data-id="labels-area">
-        ${task.getLabels().map((label) => Chip({ label, expanded: true }))}
+        ${task.labels.map((label) => Chip({ label, expanded: true }))}
       </div>
       ${LabelPopover({
-        taskLabels: task.getLabels(),
+        taskLabels: task.labels,
         toggleLabel: updateLabels,
       })}
     </div>
@@ -226,7 +197,7 @@ const TaskModal = ({ task }) => {
       </div>
       <input 
         type="date"
-        ${task.dueDate ? `value="${task.dueDate}"` : ''} 
+        ${task.dueDate ? `value="${task.dueDate}"` : ''}
         ${{ onChange: updateDueDate }}
       />
     </div>

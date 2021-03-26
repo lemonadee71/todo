@@ -22,7 +22,13 @@ class Task {
 
   getData() {
     return {
-      ...this,
+      id: this.id,
+      title: this.title,
+      notes: this.notes,
+      dueDate: this.dueDate,
+      completed: this.completed,
+      location: this.location,
+      labels: this.labels.items,
     };
   }
 
