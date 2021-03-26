@@ -59,7 +59,9 @@ const CreateTaskForm = () => {
       
       <label for="task-location" class="section-header">Project</label>
       <select name="task-location" data-id="new-task-location">
-        ${ProjectOptions(window.location.hash.replace('#/', ''))}
+        ${ProjectOptions(
+          window.location.hash.replace('#/', '').replace('/', '-')
+        )}
       </select>
 
       <span class="section-header">Labels</span>

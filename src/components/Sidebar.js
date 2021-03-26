@@ -43,7 +43,6 @@ const Sidebar = () => {
   };
 
   const addProject = (project) => {
-    console.log(project);
     const projectLi = ProjectListItem({
       proj: project,
       deleteHandler: removeProject,

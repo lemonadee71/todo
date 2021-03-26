@@ -4,6 +4,24 @@ import Storage from './storage';
 import event from './event';
 import Task from '../classes/Task';
 
+const labelAddHandler = ({ name, color }) => {
+  const newLabel = labels.addLabel(name, color);
+  event.emit('label.add.success', newLabel);
+  event.emit('storage.sync', 'labels');
+};
+
+const labelDeleteHandler = ({ id }) => {
+  labels.deleteLabel(id);
+  event.emit('storage.sync', 'data');
+  event.emit('storage.sync', 'labels');
+};
+
+const labelEditHandler = ({ id, prop, value }) => {
+  labels.editLabel(id, prop, value);
+  event.emit('storage.sync', 'data');
+  event.emit('storage.sync', 'labels');
+};
+
 const projectAddHandler = ({ name }) => {
   try {
     const newProject = projects.addProject(name);
@@ -60,6 +78,9 @@ const taskLabelsHandler = ({ info, action, labelId }) => {
 };
 
 const initializeEvents = () => {
+  event.on('label.add', labelAddHandler);
+  event.on('label.delete', labelDeleteHandler);
+  event.on('label.edit', labelEditHandler);
   event.on('project.add', projectAddHandler);
   event.on('project.delete', projectDeleteHandler);
   event.on('task.add', taskAddHandler);

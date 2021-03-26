@@ -1,14 +1,20 @@
 import Component from '../helpers/component';
-import $ from '../helpers/helpers';
+import $, { append } from '../helpers/helpers';
 import { getLabels } from '../modules/labels';
 import NewLabelForm from './NewLabelForm';
 import Label from './Label';
+import event from '../modules/event';
 
 const LabelPopover = ({ taskLabels, toggleLabel }) => {
   const labels = getLabels();
 
+  const renderLabel = (label) => {
+    append(Component.render(Label({ label }))).to($('#label-list'));
+  };
+
   const closePopover = () => {
     $('#popover').classList.remove('visible');
+    event.off('label.add.success', renderLabel);
   };
 
   const updateLabels = (e) => {
@@ -34,6 +40,8 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
       });
     }
   };
+
+  event.on('label.add.success', renderLabel);
 
   return Component.html`
     <div id="popover">

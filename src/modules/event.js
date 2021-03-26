@@ -11,8 +11,12 @@ class EventEmitter {
     this.events.get(eventName).push(fn);
   }
 
-  off(eventName) {
-    this.events.delete(eventName);
+  off(eventName, fn) {
+    let handlers = this.events.get(eventName);
+    handlers = handlers.filter((callback) => callback !== fn);
+
+    console.log(`Shutting off ${eventName}...`, handlers.length);
+    this.events.set(eventName, handlers);
   }
 
   clear() {

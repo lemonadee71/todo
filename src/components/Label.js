@@ -1,7 +1,7 @@
 import Component from '../helpers/component';
 import $, { remove } from '../helpers/helpers';
 import { chips, chipsWithText, labelElement } from '../helpers/selectors';
-import { deleteLabel, editLabel } from '../modules/labels';
+import event from '../modules/event';
 
 const Label = ({ label, taskLabels = [] }) => {
   const isEditing = Component.createState(false);
@@ -10,38 +10,34 @@ const Label = ({ label, taskLabels = [] }) => {
     (taskLabel) => taskLabel.name === label.name
   );
 
-  /*
-   *  Wrapper functions
-   */
-  const _deleteLabel = (id) => deleteLabel(id);
-
-  const _editLabel = (id, newName) => editLabel(id, 'name', newName);
-
-  /*
-   *  Event listeners
-   */
   const updateLabel = (e) => {
-    const labelEl = e.currentTarget.parentElement;
-    const id = labelEl.getAttribute('data-label-id');
-    const newLabelName = e.currentTarget.value;
+    try {
+      const labelEl = e.currentTarget.parentElement;
+      const id = labelEl.getAttribute('data-label-id');
+      const newLabelName = e.currentTarget.value;
 
-    _editLabel(id, newLabelName);
-    labelEl.firstElementChild.textContent = newLabelName;
+      event.emit('label.edit', { id, prop: 'name', value: newLabelName });
 
-    const labelChipsWithText = $(`${chipsWithText(id)}--all`);
-    const labelChips = $(`${chips(id)}--all`);
+      labelEl.firstElementChild.textContent = newLabelName;
 
-    if (labelChipsWithText || labelChips) {
-      [...labelChipsWithText, ...labelChips].forEach((chip) => {
-        chip.setAttribute('text', newLabelName);
-      });
+      const labelChipsWithText = $(`${chipsWithText(id)}--all`);
+      const labelChips = $(`${chips(id)}--all`);
+
+      if (labelChipsWithText || labelChips) {
+        [...labelChipsWithText, ...labelChips].forEach((chip) => {
+          chip.setAttribute('text', newLabelName);
+        });
+      }
+
+      e.stopPropagation();
+    } catch (error) {
+      console.log(error);
+      alert(error.toString());
     }
-
-    e.stopPropagation();
   };
 
   const removeLabel = (e) => {
-    _deleteLabel(label.id);
+    event.emit('label.delete', { id: label.id });
 
     remove($(`${labelElement(label.id)}`)).from($('#label-list'));
 

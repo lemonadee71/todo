@@ -1,8 +1,7 @@
 import Component from '../helpers/component';
+import $ from '../helpers/helpers';
 import { defaultLabelColors } from '../modules/defaults';
-import { addLabel } from '../modules/labels';
-import $, { append } from '../helpers/helpers';
-import Label from './Label';
+import event from '../modules/event';
 
 const NewLabelForm = () => {
   let labelColor = defaultLabelColors[0];
@@ -10,8 +9,7 @@ const NewLabelForm = () => {
 
   const createNewLabel = (name, color) => {
     try {
-      const newLabel = addLabel(name, color);
-      append(Component.render(Label({ label: newLabel }))).to($('#label-list'));
+      event.emit('label.add', { name, color });
     } catch (error) {
       console.log(error);
       alert(error.toString());
