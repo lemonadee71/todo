@@ -13,7 +13,9 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
   };
 
   event.on('label.add.success', renderLabel);
-  event.on('modal.close', () => event.off('label.add.success', renderLabel));
+  event.on('modal.close', () => event.off('label.add.success', renderLabel), {
+    once: true,
+  });
 
   const closePopover = () => {
     $('#popover').classList.remove('visible');

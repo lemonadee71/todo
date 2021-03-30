@@ -3,19 +3,19 @@ class EventEmitter {
     this.events = new Map();
   }
 
-  on(eventName, fn) {
+  on(eventName, fn, options) {
     if (!this.events.has(eventName)) {
       this.events.set(eventName, []);
     }
 
-    this.events.get(eventName).push(fn);
+    this.events.get(eventName).push({ fn, options });
   }
 
   off(eventName, fn) {
     let handlers = this.events.get(eventName);
-    handlers = handlers.filter((callback) => callback !== fn);
+    handlers = handlers.filter((handler) => handler.fn !== fn);
 
-    console.log(`Shutting off ${eventName}...`, handlers.length);
+    console.log(`Shutting off ${eventName}...`);
     this.events.set(eventName, handlers);
   }
 
@@ -26,7 +26,14 @@ class EventEmitter {
   emit(eventName, payload = null) {
     console.log(`${eventName} event emitted... `);
     const handlers = this.events.get(eventName) || [];
-    handlers.forEach((fn) => fn.call(null, payload));
+
+    handlers.forEach((handler) => {
+      handler.fn.call(null, payload);
+
+      if (handler.options.once) {
+        this.off(eventName, handler.fn);
+      }
+    });
   }
 }
 
