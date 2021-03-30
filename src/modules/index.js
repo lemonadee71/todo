@@ -55,6 +55,11 @@ const taskUpdateHandler = ({ info, data }) => {
 
   Object.entries(data).forEach(([prop, value]) => {
     task[prop] = value;
+    event.emit('task.update.success', {
+      prop,
+      id: info.id,
+      data: { [prop]: value },
+    });
   });
 
   event.emit('storage.sync', 'data');

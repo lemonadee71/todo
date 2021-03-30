@@ -9,14 +9,14 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
   const labels = getLabels();
 
   const renderLabel = (label) => {
-    append(Component.render(Label({ label }))).to($('#label-list'));
+    append(Label({ label })).to($('#label-list'));
   };
 
   event.on('label.add.success', renderLabel);
+  event.on('modal.close', () => event.off('label.add.success', renderLabel));
 
   const closePopover = () => {
     $('#popover').classList.remove('visible');
-    event.off('label.add.success', renderLabel);
   };
 
   const updateLabels = (e) => {

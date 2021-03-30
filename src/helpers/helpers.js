@@ -1,3 +1,4 @@
+import Component from './component';
 import { childAddedEvent, childRemovedEvent } from './customEvents';
 
 const $ = (query) => {
@@ -39,7 +40,14 @@ const rerender = (el, newContent) => {
 
 const append = (child) => ({
   to: (parent) => {
-    parent.appendChild(child);
+    const isTemplate = (val) => val._type && val._type === 'template';
+
+    if (isTemplate(child)) {
+      parent.appendChild(Component.render(child));
+    } else {
+      parent.appendChild(child);
+    }
+
     parent.dispatchEvent(childAddedEvent);
   },
 });

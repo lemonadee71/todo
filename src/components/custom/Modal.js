@@ -1,4 +1,5 @@
 import Component from '../../helpers/component';
+import event from '../../modules/event';
 
 class Modal extends HTMLElement {
   constructor() {
@@ -29,6 +30,7 @@ class Modal extends HTMLElement {
   }
 
   close() {
+    event.emit('modal.close');
     this.style.display = 'none';
     this.clearContent();
 

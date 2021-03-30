@@ -22,8 +22,7 @@ const CreateTaskForm = () => {
 
   const addLabel = (label) => {
     if (label.selected) {
-      const chip = Component.render(Chip({ label, expanded: true }));
-      append(chip).to($(newTaskFormLabels));
+      append(Chip({ label, expanded: true })).to($(newTaskFormLabels));
     } else {
       remove($(chipsWithText(label.id))).from($(newTaskFormLabels));
     }

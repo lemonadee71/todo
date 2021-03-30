@@ -52,12 +52,8 @@ const TaskModal = ({ task }) => {
     if (label.selected) {
       updateTaskLabels('add', label.id);
 
-      append(Component.render(Chip({ label, clickable: true }))).to(
-        $(taskItemLabels(task.id))
-      );
-      append(Component.render(Chip({ label, expanded: true }))).to(
-        $(labelsArea)
-      );
+      append(Chip({ label, clickable: true })).to($(taskItemLabels(task.id)));
+      append(Chip({ label, expanded: true })).to($(labelsArea));
     } else {
       updateTaskLabels('remove', label.id);
 

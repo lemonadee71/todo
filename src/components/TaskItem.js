@@ -1,7 +1,7 @@
 import Component from '../helpers/component';
 import { formatDate } from '../helpers/date';
 import { completedTasks, currentTasks, modal } from '../helpers/selectors';
-import $, { append, remove } from '../helpers/helpers';
+import $, { remove } from '../helpers/helpers';
 import { CALENDAR_ICON, CHECKMARK, NOTES_ICON } from './Icons';
 import TaskModal from './TaskModal';
 import Chip from './Chip';
@@ -34,12 +34,6 @@ const TaskItem = ({ taskData }) => {
         completed: task.value.completed,
       },
     });
-
-    const isDone = task.value.completed;
-    const list = isDone ? completedTasks : currentTasks;
-    const taskCard = $(`#${id}`);
-
-    append(taskCard).to($(list));
   };
 
   return Component.html`

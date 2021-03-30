@@ -47,22 +47,30 @@ const MainContent = () => {
 
   const addTask = (task) => {
     if (shouldRenderTask(task)) {
-      const taskItem = Component.render(TaskItem({ taskData: task }));
-      append(taskItem).to($(currentTasks));
+      append(TaskItem({ taskData: task })).to($(currentTasks));
     }
   };
 
-  const moveTask = ({ id, newLocation }) => {
-    const taskEl = $(`#${id}`);
-    const location = newLocation.replace('-', '/');
+  const moveTask = ({ id, prop, data }) => {
+    const taskItem = $(`#${id}`);
+
+    if (prop === 'completed') {
+      const list = data.completed ? completedTasks : currentTasks;
+
+      append(taskItem).to($(list));
+    } else if (prop === 'location') {
+      const location = data.location.replace('-', '/');
+
+      if (
+        currentLocation.value !== location &&
+        !isDefault(currentLocation.value)
+      ) {
+        remove(taskItem).from(taskItem.parentElement);
+      }
+    }
+
     // const task = getTask(newLocation, id);
 
-    if (
-      currentLocation.value !== location &&
-      !isDefault(currentLocation.value)
-    ) {
-      remove(taskEl).from(taskEl.parentElement);
-    }
     // else if (!taskEl && shouldRenderTask(task)) {
     //   const list = task.completed ? completedTasks : currentTasks;
     //   const taskItem = Component.render(TaskItem({ taskData: task.getData() }));
@@ -72,7 +80,7 @@ const MainContent = () => {
   };
 
   event.on('task.add.success', addTask);
-  event.on('task.transfer.success', moveTask);
+  event.on('task.update.success', moveTask);
   event.on('hashchange', (path) => {
     currentLocation.value = path;
   });
@@ -178,9 +186,7 @@ const MainContent = () => {
 
   return Component.html`
     <main>
-      <h2 ${{
-        $textContent: currentLocation.bind('value', (val) => renderTitle(val)),
-      }}></h2>
+      <h2 ${{ $textContent: currentLocation.bind('value', renderTitle) }}></h2>
       <hr>
       <div id="taskbar">
         <button id="add-task" ${{ onClick: showCreateTaskForm }}>+</button>
@@ -194,7 +200,7 @@ const MainContent = () => {
         onChildAdded: checkNoOfTasks,
       }}>
         <div id="current-tasks" ${{
-          $content: currentLocation.bind('value', (path) => renderTasks(path)),
+          $content: currentLocation.bind('value', renderTasks),
         }}>
           ${renderTasks(currentLocation.value)}
         </div>

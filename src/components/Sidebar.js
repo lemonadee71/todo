@@ -48,7 +48,7 @@ const Sidebar = () => {
       deleteHandler: removeProject,
     });
 
-    append(Component.render(projectLi)).to($(userProjects));
+    append(projectLi).to($(userProjects));
   };
 
   event.on('project.add.error', (error) => alert(error.toString()));
