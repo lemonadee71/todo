@@ -30,7 +30,7 @@ class EventEmitter {
     handlers.forEach((handler) => {
       handler.fn.call(null, payload);
 
-      if (handler.options.once) {
+      if (handler.options && handler.options.once) {
         this.off(eventName, handler.fn);
       }
     });
