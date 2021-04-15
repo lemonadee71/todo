@@ -38,6 +38,20 @@ const rerender = (el, newContent) => {
   el.appendChild(newContent);
 };
 
+const prepend = (child) => ({
+  to: (parent) => {
+    const isTemplate = (val) => val._type && val._type === 'template';
+
+    if (isTemplate(child)) {
+      parent.prepend(Component.render(child));
+    } else {
+      parent.prepend(child);
+    }
+
+    parent.dispatchEvent(childAddedEvent);
+  },
+});
+
 const append = (child) => ({
   to: (parent) => {
     const isTemplate = (val) => val._type && val._type === 'template';
@@ -59,5 +73,5 @@ const remove = (child) => ({
   },
 });
 
-export { clear, hide, show, rerender, append, remove };
+export { clear, hide, show, rerender, prepend, append, remove };
 export default $;

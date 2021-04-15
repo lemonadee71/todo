@@ -57,6 +57,25 @@ module.exports = merge(common, {
         ],
         exclude: /\.module\.css$/i,
       },
+      {
+        test: /\.s[ac]ss$/i,
+        exclude: /\.module.s[ac]ss$/i,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
+      {
+        test: /\.module.s[ac]ss$/i,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              modules: true,
+            },
+          },
+          'sass-loader',
+        ],
+      },
     ],
   },
 });

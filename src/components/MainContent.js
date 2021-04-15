@@ -1,6 +1,7 @@
+import Sortable from 'sortablejs';
 import Component from '../helpers/component';
 import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
-import $, { append, remove, hide, show } from '../helpers/helpers';
+import $, { prepend, append, remove, hide, show } from '../helpers/helpers';
 import {
   completedTasks,
   currentTasks,
@@ -35,7 +36,9 @@ const MainContent = () => {
 
   const shouldRenderTask = (task) => {
     const renderConditions = [
-      currentLocation.value === 'list/uncategorized',
+      currentLocation.value === 'all',
+      currentLocation.value === 'list/uncategorized' &&
+        task.location === 'uncategorized',
       currentLocation.value === task.location.replace('-', '/'),
       currentLocation.value === 'today' && isDueToday(parse(task.dueDate)),
       currentLocation.value === 'week' && isDueThisWeek(parse(task.dueDate)),
@@ -47,7 +50,7 @@ const MainContent = () => {
 
   const addTask = (task) => {
     if (shouldRenderTask(task)) {
-      append(TaskItem({ taskData: task })).to($(currentTasks));
+      prepend(TaskItem({ taskData: task })).to($(currentTasks));
     }
   };
 
@@ -68,21 +71,28 @@ const MainContent = () => {
         remove(taskItem).from(taskItem.parentElement);
       }
     }
-
-    // const task = getTask(newLocation, id);
-
-    // else if (!taskEl && shouldRenderTask(task)) {
-    //   const list = task.completed ? completedTasks : currentTasks;
-    //   const taskItem = Component.render(TaskItem({ taskData: task.getData() }));
-
-    //   append(taskItem).to($(list));
-    // }
   };
 
   event.on('task.add.success', addTask);
   event.on('task.update.success', moveTask);
   event.on('hashchange', (path) => {
     currentLocation.value = path;
+  });
+
+  // Make items sortable
+  event.on('content.rendered', () => {
+    Sortable.create($(currentTasks), {
+      animation: 150,
+      onChange: (e) => {
+        event.emit('task.moved', {
+          id: e.item.id,
+          newPosition: e.newIndex,
+        });
+      },
+    });
+    Sortable.create($(completedTasks), {
+      animation: 150,
+    });
   });
 
   const getCurrentTasks = (tasks) => tasks.filter((task) => !task.completed);
@@ -166,14 +176,16 @@ const MainContent = () => {
   const renderTasks = (path, current = true) => {
     try {
       const allTasks = getTasks(getId(path));
-      const tasks = current
+      let tasks = current
         ? getCurrentTasks(allTasks)
         : getCompletedTasks(allTasks);
+
+      tasks = tasks.sort((a, b) => a - b);
 
       // hacky way to bypass no nested ternary lol
       return tasks.length
         ? Component.html`${tasks.map((task) =>
-            TaskItem({ taskData: task.getData() })
+            TaskItem({ taskData: task.data })
           )}`
         : Component.html`${current ? NoTasksMessage() : ''}`;
     } catch (error) {

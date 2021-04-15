@@ -27,7 +27,8 @@ if (storedData) {
                 dueDate: task.dueDate,
                 location: task.location,
                 completed: task.completed,
-                labels: task.labels._items,
+                labels: task._labels._items,
+                position: task.position,
               })
           ),
         })
@@ -89,12 +90,13 @@ const deleteProject = (id) => {
   Root.delete((proj) => proj.id === id);
 };
 
+const getTaskGlobal = (id) => getAllTasks().filter((item) => item.id === id)[0];
+
 const getTask = (location, id) =>
   getProject((proj) => proj.id === location).get((item) => item.id === id);
 
-const addTask = (task) => {
+const addTask = (task) =>
   getProject((proj) => proj.id === task.location).add(task);
-};
 
 const deleteTask = (task) => {
   getProject((proj) => proj.id === task.location).delete(
@@ -121,6 +123,7 @@ export {
   getDueToday,
   getDueThisWeek,
   getUpcoming,
+  getTaskGlobal,
   getTask,
   addTask,
   transferTask,

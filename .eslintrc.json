@@ -4,6 +4,7 @@
   "rules": {
     "prettier/prettier": "warn",
     "no-unused-vars": "warn",
+    "arrow-body-style": "warn",
     "no-console": "off",
     "func-names": "off",
     "object-shorthand": "off",

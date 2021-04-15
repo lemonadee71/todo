@@ -16,11 +16,16 @@ class Task {
     this.dueDate = dueDate || '';
     this.completed = completed || false;
     this.location = location;
-    this.labels = new List({ name: `labels-${this.id}`, defaultItems: labels });
+    this._labels = new List({
+      name: `labels-${this.id}`,
+      defaultItems: labels,
+    });
+    this.position = 0;
+    this.group = null;
     // this.subtasks = new List(`subtasks-${this.id}`);
   }
 
-  getData() {
+  get data() {
     return {
       id: this.id,
       title: this.title,
@@ -28,7 +33,7 @@ class Task {
       dueDate: this.dueDate,
       completed: this.completed,
       location: this.location,
-      labels: this.labels.items,
+      labels: this.labels,
     };
   }
 
@@ -44,24 +49,24 @@ class Task {
   //   this.subtasks = [];
   // }
 
-  getLabels() {
-    return [...this.labels.items];
+  get labels() {
+    return [...this._labels.items];
   }
 
   addLabel(newLabel) {
-    if (this.labels.has((label) => label.id === newLabel.id)) {
+    if (this._labels.has((label) => label.id === newLabel.id)) {
       throw new Error(`Label (${newLabel.id}) is already added.`);
     }
 
-    this.labels.add(newLabel);
+    this._labels.add(newLabel);
   }
 
   removeLabel(id) {
-    this.labels.delete((label) => label.id === id);
+    this._labels.delete((label) => label.id === id);
   }
 
   removeLabels() {
-    this.labels.clear();
+    this._labels.clear();
   }
 
   toggleComplete() {

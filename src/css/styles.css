@@ -366,7 +366,7 @@ main {
   flex-wrap: wrap;
 }
 
-.chip {
+/* .chip {
   height: 10px;
   width: 50px;
   border-radius: 5px;
@@ -376,7 +376,7 @@ main {
 
 .chip:not(:last-child) {
   margin-right: 10px;
-}
+} */
 
 .badges {
   display: flex;
@@ -546,7 +546,7 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   flex-wrap: wrap;
 }
 
-.chip-w-text:not(:last-child) {
+/* .chip-w-text:not(:last-child) {
   margin-right: 10px;
 }
 
@@ -557,7 +557,7 @@ Taken from: https://www.w3schools.com/howto/howto_css_modals.asp
   box-sizing: border-box;
   padding: 3px 5px;
   border-radius: 5px;
-}
+} */
 
 /* Label form */
 #new-label form input {

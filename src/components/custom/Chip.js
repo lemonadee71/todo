@@ -16,10 +16,10 @@ class Chip extends HTMLElement {
     const isExpanded = expanded && expanded === 'true';
 
     if (isExpanded) {
-      this.className = 'chip-w-text';
+      // this.className = 'chip-w-text';
       this.textContent = this.getAttribute('text');
     } else {
-      this.className = 'chip';
+      // this.className = 'chip';
       this.textContent = '';
     }
   }

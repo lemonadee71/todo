@@ -31,6 +31,35 @@ module.exports = merge(common, {
         use: ['style-loader', 'css-loader'],
         exclude: /\.module\.css$/i,
       },
+      {
+        test: /\.s[ac]ss$/i,
+        exclude: /\.module.s[ac]ss$/i,
+        use: [
+          // Creates `style` nodes from JS strings
+          'style-loader',
+          // Translates CSS into CommonJS
+          'css-loader',
+          // Compiles Sass to CSS
+          'sass-loader',
+        ],
+      },
+      {
+        test: /\.module.s[ac]ss$/i,
+        use: [
+          // Creates `style` nodes from JS strings
+          'style-loader',
+          // Translates CSS into CommonJS
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              modules: true,
+            },
+          },
+          // Compiles Sass to CSS
+          'sass-loader',
+        ],
+      },
     ],
   },
 });

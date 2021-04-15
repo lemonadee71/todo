@@ -15,3 +15,4 @@ window.addEventListener(
 );
 
 document.body.prepend(App());
+event.emit('content.rendered');
