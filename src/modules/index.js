@@ -72,12 +72,6 @@ const taskTransferHandler = ({ id, prevLocation, newLocation }) => {
   event.emit('storage.sync', 'data');
 };
 
-const taskMovedHandler = ({ id, newPosition }) => {
-  projects.getTaskGlobal(id).position = newPosition;
-
-  event.emit('storage.sync', 'data');
-};
-
 const taskLabelsHandler = ({ info, action, labelId }) => {
   const task = projects.getTask(info.location, info.id);
   if (action === 'add') {
@@ -98,7 +92,6 @@ const initializeEvents = () => {
   event.on('task.delete', taskDeleteHandler);
   event.on('task.update', taskUpdateHandler);
   event.on('task.transfer', taskTransferHandler);
-  event.on('task.moved', taskMovedHandler);
   event.on('task.labels.update', taskLabelsHandler);
   event.on('storage.sync', (key) => Storage.sync(key));
 };

@@ -12,7 +12,7 @@ const Chip = ({ label, expanded = false, clickable = false }) => {
     <label-chip
       class=${style.chip}
       data-label-id="${label.id}"
-      data-color="${label.color}"
+      color="${label.color}"
       text="${label.name}"    
       ${
         clickable

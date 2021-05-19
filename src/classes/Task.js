@@ -8,6 +8,7 @@ class Task {
     location,
     completed,
     labels = [],
+    subtasks = [],
     id = null,
   }) {
     this.id = id || `task-${Math.random()}`.replace(/0./, '');
@@ -22,7 +23,10 @@ class Task {
     });
     this.position = 0;
     this.group = null;
-    // this.subtasks = new List(`subtasks-${this.id}`);
+    this._subtasks = new List({
+      name: `subtasks-${this.id}`,
+      defaultItems: subtasks,
+    });
   }
 
   get data() {
@@ -34,20 +38,25 @@ class Task {
       completed: this.completed,
       location: this.location,
       labels: this.labels,
+      subtask: this.subtasks,
     };
   }
 
-  // addSubtask(task) {
-  //   this.subtasks.push(task);
-  // }
+  get subtasks() {
+    return [...this._subtasks.items];
+  }
 
-  // removeSubtask(id) {
-  //   this.subtasks = this.subtasks.filter((subtask) => subtask.id !== id);
-  // }
+  addSubtask(task) {
+    this._subtasks.add(task);
+  }
 
-  // removeAllSubtasks() {
-  //   this.subtasks = [];
-  // }
+  removeSubtask(id) {
+    this._subtasks.delete((subtask) => subtask.id === id);
+  }
+
+  removeAllSubtasks() {
+    this._subtasks.clear();
+  }
 
   get labels() {
     return [...this._labels.items];

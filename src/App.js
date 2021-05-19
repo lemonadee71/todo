@@ -6,7 +6,7 @@ import Sidebar from './components/Sidebar';
 import 'github-markdown-css';
 import './css/styles.css';
 import './css/hamburgers.css';
-import './css/labelcolors.css';
+import './scss/colors.scss';
 
 const App = () => {
   const showSidebar = (e) => {

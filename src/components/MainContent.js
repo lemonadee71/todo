@@ -82,13 +82,8 @@ const MainContent = () => {
   // Make items sortable
   event.on('content.rendered', () => {
     Sortable.create($(currentTasks), {
+      group: 'tasks',
       animation: 150,
-      onChange: (e) => {
-        event.emit('task.moved', {
-          id: e.item.id,
-          newPosition: e.newIndex,
-        });
-      },
     });
     Sortable.create($(completedTasks), {
       animation: 150,

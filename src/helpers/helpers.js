@@ -1,5 +1,6 @@
 import Component from './component';
 import { childAddedEvent, childRemovedEvent } from './customEvents';
+import event from '../modules/event';
 
 const $ = (query) => {
   const isId = query.includes('#');
@@ -62,6 +63,7 @@ const append = (child) => ({
       parent.appendChild(child);
     }
 
+    event.emit('childadded', { item: child });
     parent.dispatchEvent(childAddedEvent);
   },
 });
@@ -69,6 +71,8 @@ const append = (child) => ({
 const remove = (child) => ({
   from: (parent) => {
     parent.removeChild(child);
+
+    event.emit('childremoved', { item: child });
     parent.dispatchEvent(childRemovedEvent);
   },
 });
