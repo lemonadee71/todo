@@ -1,4 +1,4 @@
-import Component from '../helpers/component';
+import { html } from '../helpers/component';
 import $, { append, remove } from '../helpers/helpers';
 import { newProjectInput, userProjects } from '../helpers/selectors';
 import { getProjectsDetails } from '../modules/projects';
@@ -6,15 +6,9 @@ import event from '../modules/event';
 import { DELETE_ICON } from './Icons';
 
 const ProjectListItem = ({ proj, deleteHandler }) =>
-  Component.html`
+  html`
     <li id="${proj.id}">
-      ${{
-        type: 'a',
-        text: proj.name,
-        attr: {
-          href: `#/${proj.id.replace('-', '/')}`,
-        },
-      }}
+      <a href="${`#/${proj.id.replace('-', '/')}`}">{% ${proj.name} %}</a>
       <span ${{ onClick: deleteHandler }}>${DELETE_ICON}</span>
     </li>
   `;
@@ -56,7 +50,7 @@ const Sidebar = () => {
 
   const projects = getProjectsDetails();
 
-  return Component.html`
+  return html`
     <aside id="sidebar">
       <div>
         <ul id="default-proj">
@@ -81,13 +75,11 @@ const Sidebar = () => {
         </form>
         <br />
         <ul id="user-proj">
-          ${
-            projects.length
-              ? projects.map((proj) =>
-                  ProjectListItem({ proj, deleteHandler: removeProject })
-                )
-              : ''
-          }
+          ${projects.length
+            ? projects.map((proj) =>
+                ProjectListItem({ proj, deleteHandler: removeProject })
+              )
+            : ''}
         </ul>
       </div>
     </aside>

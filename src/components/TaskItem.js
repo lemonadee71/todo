@@ -1,4 +1,4 @@
-import Component from '../helpers/component';
+import { html, createState } from '../helpers/component';
 import { formatDate } from '../helpers/date';
 import { completedTasks, currentTasks, modal } from '../helpers/selectors';
 import $, { remove } from '../helpers/helpers';
@@ -8,7 +8,7 @@ import Chip from './Chip';
 import event from '../modules/event';
 
 const TaskItem = ({ taskData }) => {
-  const task = Component.createState(taskData);
+  const task = createState(taskData);
   const { id, completed } = task.value;
 
   const editTask = () => {
@@ -36,55 +36,72 @@ const TaskItem = ({ taskData }) => {
     });
   };
 
-  return Component.html`
-  <div id="${id}" ${{
-    $class: task.bind('completed', (val) => (val ? 'task completed' : 'task')),
-  }}>
-    <div class="actions"> 
-      <button is="edit-btn" ${{ onClick: editTask }}></button>
-      <button is="delete-btn" ${{ onClick: removeTask }}></button>
-    </div>
-    <div class="checkbox">
-      <div class="check ${completed ? 'checked' : ''}" 
-      ${{ onClick: toggleCheckmark }}>
-        ${CHECKMARK}
+  return html`
+    <div
+      id="${id}"
+      ${{
+        $class: task.bind('completed', (val) =>
+          val ? 'task completed' : 'task'
+        ),
+      }}
+    >
+      <div class="actions">
+        <button is="edit-btn" ${{ onClick: editTask }}></button>
+        <button is="delete-btn" ${{ onClick: removeTask }}></button>
       </div>
-    </div>
-    <div class="brief-content">
-      <div class="label-chips">
-        ${task.value.labels.map((label) => Chip({ label, clickable: true }))}
-      </div>
-      <p data-id="task-card-title" ${{
-        $textContent: task.bind('title'),
-      }}></p>
-      <div class="badges">
-        <span data-id="task-card-notes" ${{
-          $style: task.bind('notes', (notes) =>
-            !notes ? 'display: none;' : ''
-          ),
-        }}
+      <div class="checkbox">
+        <div
+          class="check ${completed ? 'checked' : ''}"
+          ${{ onClick: toggleCheckmark }}
         >
-        ${NOTES_ICON}
-        </span>
-        <span data-id="task-card-date">
-          <span data-id="task-card-date-icon" ${{
-            $style: task.bind('dueDate', (date) =>
-              !date ? 'display: none;' : ''
-            ),
+          ${CHECKMARK}
+        </div>
+      </div>
+      <div class="brief-content">
+        <div class="label-chips">
+          ${task.value.labels.map((label) => Chip({ label, clickable: true }))}
+        </div>
+        <p
+          data-id="task-card-title"
+          ${{
+            $textContent: task.bind('title'),
           }}
+        ></p>
+        <div class="badges">
+          <span
+            data-id="task-card-notes"
+            ${{
+              $style: task.bind('notes', (notes) =>
+                !notes ? 'display: none;' : ''
+              ),
+            }}
           >
-            ${CALENDAR_ICON}
+            ${NOTES_ICON}
           </span>
-          <span data-id="task-card-date-text" ${{
-            $textContent: task.bind('dueDate', (date) =>
-              date ? formatDate(date) : ''
-            ),
-          }}>
+          <span data-id="task-card-date">
+            <span
+              data-id="task-card-date-icon"
+              ${{
+                $style: task.bind('dueDate', (date) =>
+                  !date ? 'display: none;' : ''
+                ),
+              }}
+            >
+              ${CALENDAR_ICON}
+            </span>
+            <span
+              data-id="task-card-date-text"
+              ${{
+                $textContent: task.bind('dueDate', (date) =>
+                  date ? formatDate(date) : ''
+                ),
+              }}
+            >
+            </span>
           </span>
-        </span>        
+        </div>
       </div>
     </div>
-  </div>  
   `;
 };
 

@@ -1,4 +1,4 @@
-import Component from '../helpers/component';
+import { html } from '../helpers/component';
 import $, { append } from '../helpers/helpers';
 import { getLabels } from '../modules/labels';
 import NewLabelForm from './NewLabelForm';
@@ -46,20 +46,18 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
     toggleLabel(data);
   };
 
-  return Component.html`
+  return html`
     <div id="popover">
-      <span class="close" ${{ onClick: closePopover }}>&times;</span>       
+      <span class="close" ${{ onClick: closePopover }}>&times;</span>
       <span class="section-header">Labels</span>
       <div id="label-list" ${{ onClick: updateLabels }}>
-        ${
-          labels.length
-            ? labels.map((label) => Label({ label, taskLabels }))
-            : ''
-        }
+        ${labels.length
+          ? labels.map((label) => Label({ label, taskLabels }))
+          : ''}
       </div>
-      <div id="new-label">   
+      <div id="new-label">
         <span class="section-header">Create New Label</span>
-        ${NewLabelForm()}     
+        ${NewLabelForm()}
       </div>
     </div>
   `;

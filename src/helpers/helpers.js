@@ -1,4 +1,4 @@
-import Component from './component';
+import { render } from './component';
 import { childAddedEvent, childRemovedEvent } from './customEvents';
 import event from '../modules/event';
 
@@ -44,7 +44,7 @@ const prepend = (child) => ({
     const isTemplate = (val) => val._type && val._type === 'template';
 
     if (isTemplate(child)) {
-      parent.prepend(Component.render(child));
+      parent.prepend(render(child));
     } else {
       parent.prepend(child);
     }
@@ -58,7 +58,7 @@ const append = (child) => ({
     const isTemplate = (val) => val._type && val._type === 'template';
 
     if (isTemplate(child)) {
-      parent.appendChild(Component.render(child));
+      parent.appendChild(render(child));
     } else {
       parent.appendChild(child);
     }

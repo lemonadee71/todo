@@ -1,4 +1,4 @@
-import Component from '../../helpers/component';
+import { html, render } from '../../helpers/component';
 import event from '../../modules/event';
 
 class Modal extends HTMLElement {
@@ -13,14 +13,14 @@ class Modal extends HTMLElement {
   connectedCallback() {
     this.classList.add('modal-backdrop');
 
-    const element = Component.html`
+    const element = html`
       <div id="modal">
         <span class="close" ${{ onClick: this.close }}>&times;</span>
         <div id="modal-content"></div>
       </div>
     `;
 
-    this.appendChild(Component.render(element));
+    this.appendChild(render(element));
   }
 
   show() {
@@ -44,7 +44,7 @@ class Modal extends HTMLElement {
     this.clearContent();
 
     if (isTemplate(content)) {
-      modalContent.appendChild(Component.render(content));
+      modalContent.appendChild(render(content));
     } else {
       modalContent.appendChild(content);
     }

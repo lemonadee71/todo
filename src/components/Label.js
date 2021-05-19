@@ -1,10 +1,10 @@
-import Component from '../helpers/component';
+import { html, createState } from '../helpers/component';
 import $, { remove } from '../helpers/helpers';
 import { chips, chipsWithText, labelElement } from '../helpers/selectors';
 import event from '../modules/event';
 
 const Label = ({ label, taskLabels = [] }) => {
-  const isEditing = Component.createState(false);
+  const isEditing = createState(false);
 
   const isSelected = taskLabels.find(
     (taskLabel) => taskLabel.name === label.name
@@ -54,14 +54,18 @@ const Label = ({ label, taskLabels = [] }) => {
     isEditing.value = !isEditing.value;
   };
 
-  return Component.html`
-    <div class="label${isSelected ? ' selected' : ''}" 
-      data-label-id="${label.id}" 
+  return html`
+    <div
+      class="label${isSelected ? ' selected' : ''}"
+      data-label-id="${label.id}"
       data-color="${label.color}"
     >
-      <span ${{
-        $class: isEditing.bind('value', (val) => (val ? 'hidden' : '')),
-      }}>${label.name}</span>
+      <span
+        ${{
+          $class: isEditing.bind('value', (val) => (val ? 'hidden' : '')),
+        }}
+        >${label.name}</span
+      >
       <input
         type="text"
         name="label-name"
@@ -73,11 +77,14 @@ const Label = ({ label, taskLabels = [] }) => {
         }}
         ${{ onChange: updateLabel, onFocusout: toggleEdit }}
       />
-      <div class="actions" ${{
-        '$style:display': isEditing.bind('value', (val) =>
-          val ? 'none' : 'block'
-        ),
-      }}> 
+      <div
+        class="actions"
+        ${{
+          '$style:display': isEditing.bind('value', (val) =>
+            val ? 'none' : 'block'
+          ),
+        }}
+      >
         <button is="edit-btn" ${{ onClick: toggleEdit }}></button>
         <button is="delete-btn" ${{ onClick: removeLabel }}></button>
       </div>

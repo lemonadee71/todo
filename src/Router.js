@@ -1,7 +1,7 @@
 import Component from './helpers/component';
 import event from './modules/event';
 
-const currentLocation = Component.createState(
+const currentLocation = createState(
   window.location.hash.replace('#', '') || 'all'
 );
 
@@ -14,13 +14,13 @@ const Router = (routes) => {
     const route = routes.find((item) => item.path === path);
 
     if (!route || !route.component) {
-      return Component.html`<h1>No component associated with this route</h1>`;
+      return html`<h1>No component associated with this route</h1>`;
     }
 
     return route.component.call(null);
   };
 
-  return Component.html`
+  return html`
     <div ${{ $content: currentLocation.bind('value', changeContent) }}>
       ${changeContent(currentLocation.value)}
     </div>

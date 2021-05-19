@@ -1,4 +1,4 @@
-import Component from '../helpers/component';
+import { html, render, createState } from '../helpers/component';
 import convertToMarkdown from '../helpers/showdown';
 import $, { append } from '../helpers/helpers';
 import { taskItemLabels, labelsArea } from '../helpers/selectors';
@@ -82,8 +82,8 @@ const TaskModal = ({ task }) => {
   /*
    * DOM functions
    */
-  const isEditingTitle = Component.createState(false);
-  const isEditingNotes = Component.createState(false);
+  const isEditingTitle = createState(false);
+  const isEditingNotes = createState(false);
 
   const toggleTitleEdit = () => {
     isEditingTitle.value = !isEditingTitle.value;
@@ -102,23 +102,21 @@ const TaskModal = ({ task }) => {
   };
 
   const notesTextArea = () =>
-    Component.html`
+    html`
       <textarea id="edit-task-notes">${task.notes}</textarea>
       <button class="submit" type="submit" ${{ onClick: toggleNotesEdit }}>
         Save
-      </button>  
+      </button>
     `;
 
-  const notesPreview = () => ({
-    type: 'div',
-    className: 'markdown-body',
-    prop: {
-      innerHTML: convertToMarkdown(task.notes),
-    },
-  });
+  const notesPreview = () =>
+    html`<div
+      class="markdown-body"
+      ${{ innerHTML: convertToMarkdown(task.notes) }}
+    ></div>`;
 
   // TODO: Clean attributes here
-  return Component.render(Component.html`
+  return render(html`
     <div class="title">
       <input
         type="text"
@@ -130,7 +128,8 @@ const TaskModal = ({ task }) => {
         ${{ $disabled: isEditingTitle.bind('value', (val) => !val) }}
         ${{ onInput: updateTitle, onFocusout: toggleTitleEdit }}
       />
-      <button is="edit-btn" 
+      <button
+        is="edit-btn"
         ${{
           '$style:display': isEditingTitle.bind('value', (val) =>
             val ? 'none' : 'block'
@@ -167,7 +166,8 @@ const TaskModal = ({ task }) => {
         ${NOTES_ICON}
         <span>Notes</span>
       </div>
-      <button is="edit-btn"
+      <button
+        is="edit-btn"
         ${{
           '$style:display': isEditingNotes.bind('value', (val) =>
             val ? 'none' : 'block'
@@ -175,7 +175,8 @@ const TaskModal = ({ task }) => {
         }}
         ${{ onClick: toggleNotesEdit }}
       ></button>
-      <div data-id="notes-area"
+      <div
+        data-id="notes-area"
         ${{
           $content: isEditingNotes.bind('value', (val) =>
             val ? notesTextArea() : notesPreview()
@@ -185,13 +186,13 @@ const TaskModal = ({ task }) => {
         ${notesPreview()}
       </div>
     </div>
-    
+
     <div class="date">
       <div class="section-header">
         ${CALENDAR_ICON}
         <span>Due Date</span>
       </div>
-      <input 
+      <input
         type="date"
         ${task.dueDate ? `value="${task.dueDate}"` : ''}
         ${{ onChange: updateDueDate }}

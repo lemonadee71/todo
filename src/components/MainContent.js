@@ -1,5 +1,5 @@
 import Sortable from 'sortablejs';
-import Component from '../helpers/component';
+import { html, render, createState } from '../helpers/component';
 import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
 import $, { prepend, append, remove, hide, show } from '../helpers/helpers';
 import {
@@ -20,12 +20,12 @@ import event from '../modules/event';
 import CreateTaskForm from './CreateTaskForm';
 import TaskItem from './TaskItem';
 
-const currentLocation = Component.createState(
+const currentLocation = createState(
   window.location.hash.replace('#/', '') || 'all'
 );
 
 const NoTasksMessage = () =>
-  Component.html`<h3 id="no-tasks">You don't have any tasks</h3>`;
+  html`<h3 id="no-tasks">You don't have any tasks</h3>`;
 
 const MainContent = () => {
   const defaultIds = ['all', 'today', 'week', 'upcoming'];
@@ -156,7 +156,7 @@ const MainContent = () => {
     if (hasActiveTasks && noTasks) {
       noTasks.remove();
     } else if (!hasActiveTasks && !noTasks) {
-      $(tasksList).prepend(Component.render(NoTasksMessage()));
+      $(tasksList).prepend(render(NoTasksMessage()));
     }
   };
 
@@ -179,43 +179,55 @@ const MainContent = () => {
 
       // hacky way to bypass no nested ternary lol
       return tasks.length
-        ? Component.html`${tasks.map((task) =>
-            TaskItem({ taskData: task.data })
-          )}`
-        : Component.html`${current ? NoTasksMessage() : ''}`;
+        ? html`${tasks.map((task) => TaskItem({ taskData: task.data }))}`
+        : html`${current ? NoTasksMessage() : ''}`;
     } catch (error) {
       console.log(error);
       return current
-        ? Component.html`<h3><a href="#/all">See all tasks</a></h3>`
-        : Component.html``;
+        ? html`<h3><a href="#/all">See all tasks</a></h3>`
+        : html``;
     }
   };
 
-  return Component.html`
+  return html`
     <main>
       <h2 ${{ $textContent: currentLocation.bind('value', renderTitle) }}></h2>
-      <hr>
+      <hr />
       <div id="taskbar">
         <button id="add-task" ${{ onClick: showCreateTaskForm }}>+</button>
         <label for="show">Show Completed</label>
-        <input id="show-completed" type="checkbox" name="show" value="show" 
-        ${{ onChange: showCompleted }}
+        <input
+          id="show-completed"
+          type="checkbox"
+          name="show"
+          value="show"
+          ${{ onChange: showCompleted }}
         />
       </div>
-      <div id="tasks-list" ${{
-        onChildRemoved: checkNoOfTasks,
-        onChildAdded: checkNoOfTasks,
-      }}>
-        <div id="current-tasks" ${{
-          $content: currentLocation.bind('value', renderTasks),
-        }}>
+      <div
+        id="tasks-list"
+        ${{
+          onChildRemoved: checkNoOfTasks,
+          onChildAdded: checkNoOfTasks,
+        }}
+      >
+        <div
+          id="current-tasks"
+          ${{
+            $content: currentLocation.bind('value', renderTasks),
+          }}
+        >
           ${renderTasks(currentLocation.value)}
         </div>
-        <div id="completed-tasks" style="display: none;" ${{
-          $content: currentLocation.bind('value', (path) =>
-            renderTasks(path, false)
-          ),
-        }}>
+        <div
+          id="completed-tasks"
+          style="display: none;"
+          ${{
+            $content: currentLocation.bind('value', (path) =>
+              renderTasks(path, false)
+            ),
+          }}
+        >
           ${renderTasks(currentLocation.value, false)}
         </div>
       </div>

@@ -13,6 +13,7 @@
     "no-underscore-dangle": "off",
     "no-param-reassign": "off",
     "no-alert": "off",
+    "no-use-before-define": "warn",
     "import/no-extraneous-dependencies": [
       "error",
       {
