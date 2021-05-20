@@ -1,4 +1,4 @@
-const uuid = (length = 8) => Math.random().toString(36).substr(2, length);
+import uuid from './id';
 
 const stateStore = new Map();
 const defaultProps = ['textContent', 'innerHTML', 'outerHTML', 'innerText'];
@@ -16,7 +16,6 @@ const booleanAttributes = [
 
 const isObject = (val) => typeof val === 'object';
 const isArray = (val) => Array.isArray(val);
-// const isTemplateObject = (val) => isObject(val) && val.type;
 const isTemplate = (val) => val._type && val._type === 'template';
 const isEventListeners = (val) =>
   isObject(val) && Object.keys(val).every((key) => key.startsWith('on'));
@@ -257,12 +256,6 @@ const html = (strings, ...exprs) => parseString(strings, ...exprs);
 const _modifyElement = ({ element, type, data, context = document }) => {
   const el = context.querySelector(element);
 
-  if (!el) {
-    console.log(type, data);
-    console.log(element);
-    return;
-  }
-
   switch (type) {
     case 'prop':
       el[data.name] = data.value;
@@ -305,9 +298,11 @@ const _modifyElement = ({ element, type, data, context = document }) => {
 
 const createElementFromString = (str, handlers = []) => {
   const createdElement = document.createRange().createContextualFragment(str);
-  console.log(str);
+
   handlers.forEach((handler) => {
     const el = createdElement.querySelector(handler.query);
+
+    if (!el) return;
 
     _modifyElement({
       element: handler.query,
@@ -316,7 +311,7 @@ const createElementFromString = (str, handlers = []) => {
       context: createdElement,
     });
 
-    if (handler.remove && el) {
+    if (handler.remove) {
       el.removeAttribute(handler.attr);
     }
   });

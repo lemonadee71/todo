@@ -153,7 +153,7 @@ const TaskModal = ({ task }) => {
       </div>
       <button ${{ onClick: openLabelPopover }}>+</button>
       <div data-id="labels-area">
-        ${task.labels.map((label) => Chip({ label, expanded: true }))}
+        ${task.labels.map((label) => Chip({ label, showText: true }))}
       </div>
       ${LabelPopover({
         taskLabels: task.labels,

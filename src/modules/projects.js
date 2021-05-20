@@ -27,7 +27,7 @@ if (storedData) {
                 dueDate: task.dueDate,
                 location: task.location,
                 completed: task.completed,
-                labels: task._labels._items,
+                labels: task.labels._items,
                 position: task.position,
               })
           ),

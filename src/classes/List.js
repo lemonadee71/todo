@@ -1,9 +1,11 @@
+import uuid from '../helpers/id';
+
 class List {
   constructor({ name, defaultItems = [], id = null }) {
     this._items = [...defaultItems];
     this.length = this._items.length || 0;
     this.name = name;
-    this.id = id || `list-${Math.random()}`.replace(/0./, '');
+    this.id = id || `list-${uuid(8)}`;
   }
 
   get items() {

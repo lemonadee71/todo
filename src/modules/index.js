@@ -18,6 +18,7 @@ const labelDeleteHandler = ({ id }) => {
 
 const labelEditHandler = ({ id, prop, value }) => {
   labels.editLabel(id, prop, value);
+  event.emit('label.edit.success', { id, newName: value });
   event.emit('storage.sync', 'data');
   event.emit('storage.sync', 'labels');
 };

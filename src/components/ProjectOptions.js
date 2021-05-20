@@ -15,13 +15,11 @@ const ProjectOptions = (location = '') => {
     </option>
     ${projects.map(
       (proj) =>
-        `<option
+        html`<option
           value="${proj.id}"
           ${location === proj.id ? 'selected' : ''}
-        >
-          <!-- ${proj.name} -->
-          ${proj.name}
-        </option>`
+          ${{ textContent: proj.name }}
+        ></option>`
     )} `;
 };
 

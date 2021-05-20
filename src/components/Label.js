@@ -38,6 +38,7 @@ const Label = ({ label, taskLabels = [] }) => {
 
   const removeLabel = (e) => {
     event.emit('label.delete', { id: label.id });
+    console.log($(`${chips(label.id)}`));
 
     remove($(`${labelElement(label.id)}`)).from($('#label-list'));
 
@@ -62,7 +63,7 @@ const Label = ({ label, taskLabels = [] }) => {
     >
       <span
         ${{
-          $class: isEditing.bind('value', (val) => (val ? 'hidden' : '')),
+          $class: isEditing.bindValue((val) => (val ? 'hidden' : '')),
         }}
         >${label.name}</span
       >
@@ -72,15 +73,15 @@ const Label = ({ label, taskLabels = [] }) => {
         value="${label.name}"
         required
         ${{
-          $class: isEditing.bind('value', (val) => (!val ? 'hidden' : '')),
-          $disabled: isEditing.bind('value', (val) => !val),
+          $class: isEditing.bindValue((val) => (!val ? 'hidden' : '')),
+          $disabled: isEditing.bindValue((val) => !val),
         }}
         ${{ onChange: updateLabel, onFocusout: toggleEdit }}
       />
       <div
         class="actions"
         ${{
-          '$style:display': isEditing.bind('value', (val) =>
+          '$style:display': isEditing.bindValue((val) =>
             val ? 'none' : 'block'
           ),
         }}

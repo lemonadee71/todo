@@ -59,7 +59,7 @@ const TaskItem = ({ taskData }) => {
       </div>
       <div class="brief-content">
         <div class="label-chips">
-          ${task.value.labels.map((label) => Chip({ label, clickable: true }))}
+          ${task.value.labels.map((label) => Chip({ label, expandable: true }))}
         </div>
         <p
           data-id="task-card-title"
