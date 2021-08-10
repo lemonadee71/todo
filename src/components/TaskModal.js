@@ -1,67 +1,31 @@
 import Component from '../helpers/component';
 import convertToMarkdown from '../helpers/showdown';
-import { formatDate } from '../helpers/date';
-import $, { append, hide, remove, show, rerender } from '../helpers/helpers';
-import {
-  taskItemNotes,
-  taskItemDueDateText,
-  taskItemDueDateIcon,
-  taskItemTitle,
-  taskItemLabels,
-  labelsArea,
-  taskNotesArea,
-  chips,
-  chipsWithText,
-} from '../helpers/selectors';
-import Storage from '../modules/storage';
-import { getLabel } from '../modules/labels';
-import {
-  getCurrentSelectedProj,
-  getProjectsDetails,
-  transferTask,
-} from '../modules/projects';
-import Chip from './Chip';
-import Icons from './Icons';
+import $, { append } from '../helpers/helpers';
+import { taskItemLabels, labelsArea } from '../helpers/selectors';
+import { CALENDAR_ICON, NOTES_ICON, TAG_ICON } from './Icons';
 import LabelPopover from './LabelPopover';
 import ProjectOptions from './ProjectOptions';
+import Chip from './Chip';
+import event from '../modules/event';
 
 // Selectors are so messy for this component
 // Since there's only one modal component at a time
 // Maybe change it to ids
 // But make sure to not have conflicts with other components that shows modal-content too
-// Add a delete button
+// TODO: Add a delete button
 const TaskModal = ({ task }) => {
-  /*
-   * Private methods
-   */
-  const _syncData = () => Storage.sync('data');
-
-  const _updateTaskDetails = (...args) => {
-    if (args[0] === 'location') {
-      let [prop, id, prevLoc, newLoc] = args;
-      task[prop] = newLoc;
-      transferTask(id, prevLoc, newLoc);
-    } else {
-      let [prop, value] = args;
-      task[prop] = value;
-    }
-
-    _syncData();
+  const updateTaskDetails = (payload) => {
+    event.emit('task.update', { info: task, data: payload });
   };
 
-  const _updateTaskLabels = (method, id) => {
-    if (method === 'add') {
-      task.addLabel(getLabel(id));
-    } else if (method === 'remove') {
-      task.removeLabel(id);
-    }
-
-    _syncData();
+  const updateTaskLabels = (method, id) => {
+    event.emit('task.labels.update', {
+      info: task,
+      action: method,
+      labelId: id,
+    });
   };
 
-  /*
-   * Functions that updates the task
-   */
   const updateTitle = (e) => {
     if (!e.target.value) {
       alert('Task name must not be empty');
@@ -69,115 +33,81 @@ const TaskModal = ({ task }) => {
       return;
     }
 
-    _updateTaskDetails('title', e.target.value);
-    $(taskItemTitle(task.id)).textContent = task.title;
+    task.title = e.target.value;
+    updateTaskDetails({ title: e.target.value });
   };
 
   const updateNotes = () => {
-    _updateTaskDetails('notes', $('#edit-task-notes').value);
-
-    let taskCardNotes = $(taskItemNotes(task.id));
-    if (task.notes === '') {
-      hide(taskCardNotes);
-    } else {
-      show(taskCardNotes);
-    }
+    task.notes = $('#edit-task-notes').value;
+    updateTaskDetails({ notes: $('#edit-task-notes').value });
   };
 
   const updateDueDate = (e) => {
-    _updateTaskDetails('dueDate', e.target.value);
-
-    let dueDateIcon = $(taskItemDueDateIcon(task.id));
-    let dueDateText = $(taskItemDueDateText(task.id));
-
-    if (task.dueDate === '') {
-      hide(dueDateIcon);
-      dueDateText.textContent = '';
-    } else {
-      show(dueDateIcon);
-      dueDateText.textContent = formatDate(task.dueDate);
-    }
+    task.dueDate = e.target.value;
+    updateTaskDetails({ dueDate: e.target.value });
   };
 
   // This is a mess
   const updateLabels = (label) => {
     if (label.selected) {
-      _updateTaskLabels('add', label.id);
+      updateTaskLabels('add', label.id);
 
-      append(Component.render(Chip(label.id, label.color))).to(
-        $(taskItemLabels(task.id))
-      );
-      append(Component.render(Chip(label.id, label.color, label.name))).to(
-        $(labelsArea)
-      );
+      append(Chip({ label, clickable: true })).to($(taskItemLabels(task.id)));
+      append(Chip({ label, expanded: true })).to($(labelsArea));
     } else {
-      _updateTaskLabels('remove', label.id);
+      updateTaskLabels('remove', label.id);
 
-      remove($(`#${task.id} ${chips(label.id)}`)).from(
-        $(taskItemLabels(task.id))
-      );
+      const labelSelector = `label-chip[data-label-id="${label.id}"]`;
+      const labelChip = $(`#${task.id} ${labelSelector}`);
+      const labelChipWithText = $(`${labelsArea} ${labelSelector}`);
 
-      remove($(chipsWithText(label.id))).from($(labelsArea));
+      labelChip.remove();
+      labelChipWithText.remove();
     }
   };
 
   const updateLocation = (e) => {
-    let prevLocation = task.location;
-    let newLocation = e.currentTarget.value;
+    const prevLocation = task.location;
+    const newLocation = e.currentTarget.value;
+    task.location = newLocation;
 
-    _updateTaskDetails('location', task.id, prevLocation, newLocation);
-
-    let currentLocation = getCurrentSelectedProj();
-
-    if (currentLocation) {
-      remove($(`#${task.id}`), true);
-    }
+    event.emit('task.transfer', {
+      prevLocation,
+      newLocation,
+      id: task.id,
+    });
+    updateTaskDetails({ location: newLocation });
   };
 
   /*
    * DOM functions
    */
-  // Title
-  const editTitle = (e) => {
-    e.currentTarget.previousElementSibling.removeAttribute('disabled');
-    hide(e.currentTarget);
+  const isEditingTitle = Component.createState(false);
+  const isEditingNotes = Component.createState(false);
+
+  const toggleTitleEdit = () => {
+    isEditingTitle.value = !isEditingTitle.value;
   };
 
-  const disableEdit = (e) => {
-    show(e.currentTarget.nextElementSibling);
-    e.currentTarget.setAttribute('disabled', '');
+  const toggleNotesEdit = () => {
+    if (isEditingNotes.value) {
+      updateNotes();
+    }
+
+    isEditingNotes.value = !isEditingNotes.value;
   };
 
-  // Labels
   const openLabelPopover = () => {
     $('#popover').classList.add('visible');
   };
 
-  // Notes
-  const editNotes = () => {
-    $('--data-id=edit-notes-btn').classList.toggle('hidden');
-    rerender($(taskNotesArea), notesTextArea());
-  };
-
-  const saveNotes = () => {
-    $('--data-id=edit-notes-btn').classList.toggle('hidden');
-    updateNotes();
-    rerender(
-      $(taskNotesArea),
-      Component.render(Component.objectToString(notesPreview()))
-    );
-  };
-
-  /*
-   * TaskModal elements
-   */
   const notesTextArea = () =>
-    Component.render(Component.parseString`
-      <textarea id="edit-task-notes" "name="notes">${task.notes}</textarea>
-      <button class="submit" type="submit" ${{ onClick: saveNotes }}>
+    Component.html`
+      <textarea id="edit-task-notes">${task.notes}</textarea>
+      <button class="submit" type="submit" ${{ onClick: toggleNotesEdit }}>
         Save
       </button>  
-  `);
+    `;
 
   const notesPreview = () => ({
     type: 'div',
@@ -187,7 +117,8 @@ const TaskModal = ({ task }) => {
     },
   });
 
-  return Component.render(Component.parseString`
+  // TODO: Clean attributes here
+  return Component.render(Component.html`
     <div class="title">
       <input
         type="text"
@@ -195,56 +126,74 @@ const TaskModal = ({ task }) => {
         class="light"
         placeholder="Unnamed Task"
         value="${task.title}"
-        disabled
         required
-        ${{ onChange: updateTitle, onFocusout: disableEdit }}
+        ${{ $disabled: isEditingTitle.bind('value', (val) => !val) }}
+        ${{ onInput: updateTitle, onFocusout: toggleTitleEdit }}
       />
-      <button ${{ onClick: editTitle }}>${Icons('edit')}</button>
+      <button is="edit-btn" 
+        ${{
+          '$style:display': isEditingTitle.bind('value', (val) =>
+            val ? 'none' : 'block'
+          ),
+        }}
+        ${{ onClick: toggleTitleEdit }}
+      ></button>
     </div>
+
     <div class="proj">
       <span>in Project</span>
-      <select id="edit-task-location" name="location"
-      ${{ onChange: updateLocation }}>
-      ${ProjectOptions(getProjectsDetails(), task.location)}
+      <select ${{ onChange: updateLocation }}>
+        ${ProjectOptions(task.location)}
       </select>
     </div>
+
     <div id="labels">
       <div class="section-header">
-        ${Icons('tag')}
+        ${TAG_ICON}
         <span>Labels</span>
       </div>
-      <button data-id="edit-label-btn" ${{ onClick: openLabelPopover }}>
-        +
-      </button>
+      <button ${{ onClick: openLabelPopover }}>+</button>
       <div data-id="labels-area">
-        ${task
-          .getLabels()
-          .map((label) => Chip(label.id, label.color, label.name))}
+        ${task.labels.map((label) => Chip({ label, expanded: true }))}
       </div>
       ${LabelPopover({
-        taskLabels: task.getLabels(),
+        taskLabels: task.labels,
         toggleLabel: updateLabels,
       })}
     </div>
+
     <div class="notes">
       <div class="section-header">
-        ${Icons('details')}
+        ${NOTES_ICON}
         <span>Notes</span>
       </div>
-      <button data-id="edit-notes-btn" ${{ onClick: editNotes }}>
-        ${Icons('edit')}
-      </button>
-      <div data-id="notes-area">${notesPreview()}</div>
+      <button is="edit-btn"
+        ${{
+          '$style:display': isEditingNotes.bind('value', (val) =>
+            val ? 'none' : 'block'
+          ),
+        }}
+        ${{ onClick: toggleNotesEdit }}
+      ></button>
+      <div data-id="notes-area"
+        ${{
+          $content: isEditingNotes.bind('value', (val) =>
+            val ? notesTextArea() : notesPreview()
+          ),
+        }}
+      >
+        ${notesPreview()}
+      </div>
     </div>
+    
     <div class="date">
       <div class="section-header">
-        ${Icons('calendar')}
+        ${CALENDAR_ICON}
         <span>Due Date</span>
       </div>
       <input 
-        type="date" 
-        name="due-date" 
-        ${task.dueDate ? `value="${task.dueDate}"` : ''} 
+        type="date"
+        ${task.dueDate ? `value="${task.dueDate}"` : ''}
         ${{ onChange: updateDueDate }}
       />
     </div>

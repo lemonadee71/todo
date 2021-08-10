@@ -1,8 +1,7 @@
 import Component from '../helpers/component';
+import $ from '../helpers/helpers';
 import { defaultLabelColors } from '../modules/defaults';
-import { addLabel } from '../modules/labels';
-import $, { append } from '../helpers/helpers';
-import Label from './Label';
+import event from '../modules/event';
 
 const NewLabelForm = () => {
   let labelColor = defaultLabelColors[0];
@@ -10,15 +9,7 @@ const NewLabelForm = () => {
 
   const createNewLabel = (name, color) => {
     try {
-      let newLabel = addLabel(name, color);
-      append(
-        Component.render(
-          Label({
-            label: newLabel,
-            taskLabels: [],
-          })
-        )
-      ).to($('#label-list'));
+      event.emit('label.add', { name, color });
     } catch (error) {
       console.log(error);
       alert(error.toString());
@@ -26,9 +17,6 @@ const NewLabelForm = () => {
     }
   };
 
-  /*
-   * DOM functions
-   */
   const pickColor = (e) => {
     $(`.color.selected`).classList.remove('selected');
     if (e.target.matches('div.color')) {
@@ -37,7 +25,7 @@ const NewLabelForm = () => {
     }
   };
 
-  const onSubmit = (e) => {
+  const createLabel = (e) => {
     labelName = e.currentTarget.elements[0].value;
     createNewLabel(labelName, labelColor);
 
@@ -45,8 +33,8 @@ const NewLabelForm = () => {
     e.target.reset();
   };
 
-  return Component.parseString`
-    <form ${{ onSubmit }}>
+  return Component.html`
+    <form ${{ onSubmit: createLabel }}>
       <input
         type="text"
         name="new-label-name"

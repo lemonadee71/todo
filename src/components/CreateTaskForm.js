@@ -1,64 +1,40 @@
-import Task from '../classes/Task';
 import Component from '../helpers/component';
-import $, { append, remove, closeModal } from '../helpers/helpers';
-import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
+import $, { append, remove } from '../helpers/helpers';
 import {
-  currentTasks,
-  newTaskForm,
   newTaskFormNotes,
   newTaskFormDueDate,
   newTaskFormTitle,
   newTaskFormLocation,
   newTaskFormLabels,
   chipsWithText,
+  modal,
 } from '../helpers/selectors';
 import { getLabel } from '../modules/labels';
-import {
-  addTask,
-  getProjectsDetails,
-  getCurrentSelectedProj,
-} from '../modules/projects';
 import ProjectOptions from './ProjectOptions';
-import TaskItem from './TaskItem';
 import LabelPopover from './LabelPopover';
 import Chip from './Chip';
+import event from '../modules/event';
 
 const CreateTaskForm = () => {
-  /*
-   *  Wrapper functions
-   */
-  const _getLabel = (id) => getLabel(id);
+  const openLabelPopover = () => {
+    $('#popover').classList.add('visible');
+  };
 
-  const _newTask = (task) => new Task(task);
-
-  const _addTask = (task) => addTask(task);
-
-  /*
-   *  Event listeners/DOM functions
-   */
   const addLabel = (label) => {
     if (label.selected) {
-      append(Component.render(Chip(label.id, label.color, label.name))).to(
-        $(newTaskFormLabels)
-      );
+      append(Chip({ label, expanded: true })).to($(newTaskFormLabels));
     } else {
       remove($(chipsWithText(label.id))).from($(newTaskFormLabels));
     }
   };
 
-  const openLabelPopover = () => {
-    $('#popover').classList.add('visible');
-  };
-
   const createNewTask = () => {
-    let currentLocation = getCurrentSelectedProj();
-
-    let title = $(newTaskFormTitle).value;
-    let notes = $(newTaskFormNotes).value;
-    let dueDate = $(newTaskFormDueDate).value;
-    let location = $(newTaskFormLocation).value;
-    let labels = [...$(newTaskFormLabels).children].map((chip) =>
-      _getLabel(chip.getAttribute('data-label-id'))
+    const title = $(newTaskFormTitle).value;
+    const notes = $(newTaskFormNotes).value;
+    const dueDate = $(newTaskFormDueDate).value;
+    const location = $(newTaskFormLocation).value;
+    const labels = [...$(newTaskFormLabels).children].map((chip) =>
+      getLabel(chip.getAttribute('data-label-id'))
     );
 
     if (!title) {
@@ -66,31 +42,11 @@ const CreateTaskForm = () => {
       return;
     }
 
-    let task = _newTask({ title, notes, dueDate, location, labels });
-
-    // Only add TaskItem to DOM when task location is same with current location
-    // And if the location is date based, only if dueDate falls in the category
-    let appendConditions = [
-      currentLocation === '',
-      currentLocation === location,
-      currentLocation === 'today' && isDueToday(parse(dueDate)),
-      currentLocation === 'week' && isDueThisWeek(parse(dueDate)),
-      currentLocation === 'upcoming' && isUpcoming(parse(dueDate)),
-    ];
-
-    _addTask(task);
-    if (appendConditions.some((condition) => condition === true)) {
-      append(Component.render(TaskItem({ task }))).to($(currentTasks));
-    }
-    destroyForm();
+    event.emit('task.add', { title, notes, dueDate, location, labels });
+    $(modal).close();
   };
 
-  const destroyForm = () => {
-    $(newTaskForm).removeEventListener('submit', createNewTask);
-    closeModal();
-  };
-
-  return Component.parseString`
+  return Component.html`
     <div id="create-task">
       <input
         type="text"
@@ -102,10 +58,12 @@ const CreateTaskForm = () => {
       
       <label for="task-location" class="section-header">Project</label>
       <select name="task-location" data-id="new-task-location">
-        ${ProjectOptions(getProjectsDetails(), getCurrentSelectedProj())}
+        ${ProjectOptions(
+          window.location.hash.replace('#/', '').replace('/', '-')
+        )}
       </select>
 
-      <label for="task-labels" class="section-header">Labels</label>
+      <span class="section-header">Labels</span>
       <div id="form-labels">
         <button ${{ onClick: openLabelPopover }}>+</button>
         <div data-id="new-task-labels"></div>

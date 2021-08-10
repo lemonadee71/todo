@@ -1,98 +1,90 @@
 import Component from '../helpers/component';
 import { formatDate } from '../helpers/date';
 import { completedTasks, currentTasks, modal } from '../helpers/selectors';
-import $, {
-  append,
-  changeModalContent,
-  remove,
-  show,
-} from '../helpers/helpers';
-import { deleteTask } from '../modules/projects';
-import Storage from '../modules/storage';
-import Icons from './Icons';
+import $, { remove } from '../helpers/helpers';
+import { CALENDAR_ICON, CHECKMARK, NOTES_ICON } from './Icons';
+import TaskModal from './TaskModal';
 import Chip from './Chip';
-import TaskModal from '../components/TaskModal';
+import event from '../modules/event';
 
-const TaskItem = ({ task }) => {
-  let { id, title, notes, dueDate, completed } = task;
+const TaskItem = ({ taskData }) => {
+  const task = Component.createState(taskData);
+  const { id, completed } = task.value;
 
-  /*
-   *  Wrapper functions
-   */
-  const _deleteTask = (task) => deleteTask(task);
-
-  const _toggleCheck = () => {
-    task.toggleComplete();
-    Storage.sync('data');
-
-    return task.completed;
+  const editTask = () => {
+    $(modal)
+      .changeContent(TaskModal({ task: task.value }))
+      .show();
   };
 
-  /*
-   *  Event listeners
-   */
-  const onEdit = () => {
-    changeModalContent(TaskModal({ task }));
-    show($(modal));
-  };
+  const removeTask = () => {
+    event.emit('task.delete', task.value);
 
-  const onDelete = () => {
-    _deleteTask(task);
-
-    let list = task.completed ? completedTasks : currentTasks;
+    const list = task.value.completed ? completedTasks : currentTasks;
     remove($(`#${id}`)).from($(list));
   };
 
   const toggleCheckmark = (e) => {
     e.currentTarget.classList.toggle('checked');
 
-    let isDone = _toggleCheck();
-    let taskCard = $(`#${id}`);
-    taskCard.classList.toggle('completed');
-
-    if (isDone) {
-      append(taskCard).to($(completedTasks));
-    } else {
-      append(taskCard).to($(currentTasks));
-    }
+    task.value.completed = !task.value.completed;
+    event.emit('task.update', {
+      info: task.value,
+      data: {
+        completed: task.value.completed,
+      },
+    });
   };
 
-  return Component.parseString`
-    <div id="${id}" class="task ${
-    completed ? 'completed' : ''
-  }" draggable="true">
-      <div class="actions"> 
-        <button ${{ onClick: onEdit }}>${Icons('edit')}</button>
-        <button ${{ onClick: onDelete }}>${Icons('delete')}</button>
+  return Component.html`
+  <div id="${id}" ${{
+    $class: task.bind('completed', (val) => (val ? 'task completed' : 'task')),
+  }}>
+    <div class="actions"> 
+      <button is="edit-btn" ${{ onClick: editTask }}></button>
+      <button is="delete-btn" ${{ onClick: removeTask }}></button>
+    </div>
+    <div class="checkbox">
+      <div class="check ${completed ? 'checked' : ''}" 
+      ${{ onClick: toggleCheckmark }}>
+        ${CHECKMARK}
       </div>
-      <div class="checkbox">
-        <div class="check ${completed ? 'checked' : ''}" 
-        ${{ onClick: toggleCheckmark }}>
-        ${Icons('checkmark')}
-        </div>
+    </div>
+    <div class="brief-content">
+      <div class="label-chips">
+        ${task.value.labels.map((label) => Chip({ label, clickable: true }))}
       </div>
-      <div class="brief-content">
-        <div class="label-chips">
-          ${task.getLabels().map((label) => Chip(label.id, label.color))}
-        </div>
-        <p data-id="task-card-title">${title}</p>
-        <div class="badges">
-          <span data-id="task-card-notes" 
-          ${!notes ? 'style="display: none;"' : ''}>
-          ${Icons('details')}
+      <p data-id="task-card-title" ${{
+        $textContent: task.bind('title'),
+      }}></p>
+      <div class="badges">
+        <span data-id="task-card-notes" ${{
+          $style: task.bind('notes', (notes) =>
+            !notes ? 'display: none;' : ''
+          ),
+        }}
+        >
+        ${NOTES_ICON}
+        </span>
+        <span data-id="task-card-date">
+          <span data-id="task-card-date-icon" ${{
+            $style: task.bind('dueDate', (date) =>
+              !date ? 'display: none;' : ''
+            ),
+          }}
+          >
+            ${CALENDAR_ICON}
           </span>
-          <span data-id="task-card-date">
-            <span data-id="task-card-date-icon"
-            ${!dueDate ? 'style="display: none;"' : ''}>
-            ${Icons('calendar')}
-            </span>
-            <span data-id="task-card-date-text">
-            ${dueDate ? `${formatDate(dueDate)}` : ''}
-            </span>
-          </span>        
-        </div>
+          <span data-id="task-card-date-text" ${{
+            $textContent: task.bind('dueDate', (date) =>
+              date ? formatDate(date) : ''
+            ),
+          }}>
+          </span>
+        </span>        
       </div>
-    </div>  
+    </div>
+  </div>  
   `;
 };
 

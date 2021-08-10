@@ -1,55 +1,71 @@
 class List {
   constructor({ name, defaultItems = [], id = null }) {
-    this.items = [...defaultItems];
-    this.length = this.items.length || 0;
+    this._items = [...defaultItems];
+    this.length = this._items.length || 0;
     this.name = name;
     this.id = id || `list-${Math.random()}`.replace(/0./, '');
   }
 
-  getItem(condition) {
-    return this.items.find(condition);
+  get items() {
+    return [...this._items];
   }
 
-  addItem(item) {
+  get(condition) {
+    return this._items.find(condition);
+  }
+
+  has(condition) {
+    return !!this.get(condition);
+  }
+
+  add(item) {
     if (Array.isArray(item)) {
-      this.items.push(...item);
+      this._items.push(...item);
     } else {
-      this.items.push(item);
+      this._items.push(item);
     }
-    this.length = this.items.length;
+    this.length = this._items.length;
+
+    return this;
   }
 
   // This can cause bugs
-  // getItem only gets the first item that matches the condition
-  // but removeItems will remove all that matches the condition
+  // get only gets the first item that matches the condition
+  // but delete will remove all that matches the condition
   // only use this when extracting a single item
-  // use filterItems to get multiple items
-  extractItem(condition) {
-    let item = this.getItem(condition);
-    this.removeItems(condition);
+  // use filter to get multiple items
+  extract(condition) {
+    const item = this.get(condition);
+    this.delete(condition);
 
     return item;
   }
 
-  removeItems(condition) {
-    this.items = this.items.filter((item) => !condition(item));
-    this.length = this.items.length;
+  delete(condition) {
+    this._items = this._items.filter((item) => !condition(item));
+    this.length = this._items.length;
+
+    return this;
   }
 
-  removeAll() {
-    this.items = [];
+  clear() {
+    this._items = [];
     this.length = 0;
+
+    return this;
   }
 
-  sortItems(condition) {
-    this.items.sort((a, b) => {
+  sort(condition) {
+    this._items.sort((a, b) => {
       if (condition(a, b)) return 1;
       return -1;
     });
+
+    return this.items;
   }
 
-  filterItems(condition) {
-    return this.items.filter(condition);
+  filter(condition) {
+    return this._items.filter(condition);
   }
 }
 

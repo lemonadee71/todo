@@ -1,60 +1,43 @@
 import Component from '../helpers/component';
-import $, { remove, hide, show } from '../helpers/helpers';
+import $, { remove } from '../helpers/helpers';
 import { chips, chipsWithText, labelElement } from '../helpers/selectors';
-import { deleteLabel, editLabel } from '../modules/labels';
-import Icons from './Icons';
+import event from '../modules/event';
 
 const Label = ({ label, taskLabels = [] }) => {
-  let isSelected = taskLabels.find(
+  const isEditing = Component.createState(false);
+
+  const isSelected = taskLabels.find(
     (taskLabel) => taskLabel.name === label.name
   );
 
-  /*
-   *  Wrapper functions
-   */
-  const _deleteLabel = (id) => deleteLabel(id);
-
-  const _editLabel = (id, newName) => editLabel(id, 'name', newName);
-
-  /*
-   *  Event listeners
-   */
   const updateLabel = (e) => {
-    let labelEl = e.currentTarget.parentElement;
-    let labelId = labelEl.getAttribute('data-label-id');
-    let newLabelName = e.currentTarget.value;
+    try {
+      const labelEl = e.currentTarget.parentElement;
+      const id = labelEl.getAttribute('data-label-id');
+      const newLabelName = e.currentTarget.value;
 
-    _editLabel(labelId, newLabelName);
-    labelEl.firstElementChild.textContent = newLabelName;
+      event.emit('label.edit', { id, prop: 'name', value: newLabelName });
 
-    let labelChipsWithText = $(`${chipsWithText(labelId)}--all`);
+      labelEl.firstElementChild.textContent = newLabelName;
 
-    if (labelChipsWithText) {
-      [...labelChipsWithText].map((chip) => {
-        chip.textContent = newLabelName;
-      });
+      const labelChipsWithText = $(`${chipsWithText(id)}--all`);
+      const labelChips = $(`${chips(id)}--all`);
+
+      if (labelChipsWithText || labelChips) {
+        [...labelChipsWithText, ...labelChips].forEach((chip) => {
+          chip.setAttribute('text', newLabelName);
+        });
+      }
+
+      e.stopPropagation();
+    } catch (error) {
+      console.log(error);
+      alert(error.toString());
     }
-
-    e.stopPropagation();
   };
 
   const removeLabel = (e) => {
-    _deleteLabel(label.id);
-
-    // idk if this is necessary
-    // trust the garbage collector
-    $(`${labelElement(label.id)} input`).removeEventListener(
-      'change',
-      updateLabel
-    );
-    $(`${labelElement(label.id)} input`).removeEventListener(
-      'focusout',
-      disableEdit
-    );
-    $(`${labelElement(label.id)} .actions`).children[0].removeEventListener(
-      'click',
-      allowEdit
-    );
+    event.emit('label.delete', { id: label.id });
 
     remove($(`${labelElement(label.id)}`)).from($('#label-list'));
 
@@ -62,65 +45,41 @@ const Label = ({ label, taskLabels = [] }) => {
     [
       ...$(`${chips(label.id)}--all`),
       ...$(`${chipsWithText(label.id)}--all`),
-    ].map((chip) => chip.remove());
+    ].forEach((chip) => chip.remove());
 
     e.stopPropagation();
   };
 
-  const allowEdit = (e) => {
-    // remove disabled attr on input
-    let input = e.currentTarget.parentElement.previousElementSibling;
-    let span = input.previousElementSibling;
-
-    input.removeAttribute('disabled');
-    input.classList.toggle('hidden');
-    span.classList.toggle('hidden');
-
-    // disable and hide actionBtns
-    e.currentTarget.setAttribute('disabled', '');
-    hide(e.currentTarget);
-
-    e.stopPropagation();
+  const toggleEdit = () => {
+    isEditing.value = !isEditing.value;
   };
 
-  const disableEdit = (e) => {
-    // disable input then show the span
-    e.currentTarget.setAttribute('disabled', '');
-    e.currentTarget.classList.toggle('hidden');
-    e.currentTarget.previousElementSibling.classList.toggle('hidden');
-
-    // then show and undisable actionBtns
-    let actionBtns = e.currentTarget.parentElement.querySelector('.actions');
-    let editBtn = actionBtns.children[0];
-
-    editBtn.removeAttribute('disabled');
-    show(editBtn);
-
-    e.stopPropagation();
-  };
-
-  return Component.parseString`
+  return Component.html`
     <div class="label${isSelected ? ' selected' : ''}" 
-    data-label-id="${label.id}" 
-    data-color="${label.color}">
-      ${{
-        type: 'span',
-        text: label.name,
-      }}
+      data-label-id="${label.id}" 
+      data-color="${label.color}"
+    >
+      <span ${{
+        $class: isEditing.bind('value', (val) => (val ? 'hidden' : '')),
+      }}>${label.name}</span>
       <input
-        class="hidden"
         type="text"
         name="label-name"
         value="${label.name}"
         required
-        disabled
-        ${{ onChange: updateLabel, onFocusout: disableEdit }}
+        ${{
+          $class: isEditing.bind('value', (val) => (!val ? 'hidden' : '')),
+          $disabled: isEditing.bind('value', (val) => !val),
+        }}
+        ${{ onChange: updateLabel, onFocusout: toggleEdit }}
       />
-      <div class="actions"> 
-        <button ${{ onClick: allowEdit }}>${Icons('edit')}</button>
-        <button ${{ onClick: removeLabel }}>
-          ${Icons('delete')}
-        </button>
+      <div class="actions" ${{
+        '$style:display': isEditing.bind('value', (val) =>
+          val ? 'none' : 'block'
+        ),
+      }}> 
+        <button is="edit-btn" ${{ onClick: toggleEdit }}></button>
+        <button is="delete-btn" ${{ onClick: removeLabel }}></button>
       </div>
     </div>
   `;

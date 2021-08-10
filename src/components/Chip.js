@@ -1,14 +1,26 @@
 import Component from '../helpers/component';
 
-const Chip = (id, color, name = '') =>
-  Component.objectToString({
-    type: 'div',
-    className: `chip${name ? '-w-text' : ''}`,
-    text: name,
-    attr: {
-      'data-label-id': id,
-      'data-color': color,
-    },
-  });
+const isChipExpanded = Component.createState(false);
+
+const Chip = ({ label, expanded = false, clickable = false }) => {
+  const toggleChip = () => {
+    isChipExpanded.value = !isChipExpanded.value;
+  };
+
+  return Component.html`
+    <label-chip
+      data-label-id="${label.id}"
+      data-color="${label.color}"
+      text="${label.name}"    
+      ${
+        clickable
+          ? { $expanded: isChipExpanded.bind() }
+          : `expanded=${expanded}`
+      }
+      ${clickable ? { onClick: toggleChip } : ''}
+    >
+    </label-chip>
+  `;
+};
 
 export default Chip;

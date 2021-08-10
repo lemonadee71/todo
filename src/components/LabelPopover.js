@@ -1,44 +1,52 @@
 import Component from '../helpers/component';
-import $ from '../helpers/helpers';
+import $, { append } from '../helpers/helpers';
 import { getLabels } from '../modules/labels';
 import NewLabelForm from './NewLabelForm';
 import Label from './Label';
+import event from '../modules/event';
 
 const LabelPopover = ({ taskLabels, toggleLabel }) => {
-  let labels = getLabels();
+  const labels = getLabels();
 
-  /*
-   *  Event listeners
-   */
+  const renderLabel = (label) => {
+    append(Label({ label })).to($('#label-list'));
+  };
+
+  event.on('label.add.success', renderLabel);
+  event.on('modal.close', () => event.off('label.add.success', renderLabel), {
+    once: true,
+  });
+
   const closePopover = () => {
     $('#popover').classList.remove('visible');
   };
 
   const updateLabels = (e) => {
-    let el = e.target;
+    const el = e.target;
+    let data;
 
     if (el.matches('.label[data-label-id]')) {
       el.classList.toggle('selected');
-
-      toggleLabel({
+      data = {
         id: el.getAttribute('data-label-id'),
         color: el.getAttribute('data-color'),
         name: el.firstElementChild.textContent,
         selected: el.className.includes('selected'),
-      });
+      };
     } else if (el.matches('.label[data-label-id] span')) {
       el.parentElement.classList.toggle('selected');
-
-      toggleLabel({
+      data = {
         id: el.parentElement.getAttribute('data-label-id'),
         color: el.parentElement.getAttribute('data-color'),
         name: el.textContent,
         selected: el.parentElement.className.includes('selected'),
-      });
+      };
     }
+
+    toggleLabel(data);
   };
 
-  return Component.parseString`
+  return Component.html`
     <div id="popover">
       <span class="close" ${{ onClick: closePopover }}>&times;</span>       
       <span class="section-header">Labels</span>
