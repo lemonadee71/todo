@@ -102,15 +102,15 @@ const MainContent = () => {
     }
 
     if (isProject(location)) {
-      if (isProjectName(id)) {
-        const project = getProject(
-          (proj) => proj.name.toLowerCase() === id.replace(/-/g, ' ')
-        );
+      const project = getProject(
+        (proj) => proj.id.toLowerCase() === path.replace(/\//g, '-')
+      );
 
-        return project.id;
-      }
+      return project.id;
+      // if (isProjectName(id)) {
+      // }
 
-      return `list-${id}`;
+      // return `list-${id}`;
     }
 
     throw new Error('Invalid path.');
@@ -163,8 +163,8 @@ const MainContent = () => {
   const renderTitle = (path) => {
     try {
       return getTitle(getId(path));
-    } catch (error) {
-      return error.toString();
+    } catch (e) {
+      return e.toString();
     }
   };
 
@@ -181,8 +181,8 @@ const MainContent = () => {
       return tasks.length
         ? html`${tasks.map((task) => TaskItem({ taskData: task.data }))}`
         : html`${current ? NoTasksMessage() : ''}`;
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.error(e, path);
       return current
         ? html`<h3><a href="#/all">See all tasks</a></h3>`
         : html``;
