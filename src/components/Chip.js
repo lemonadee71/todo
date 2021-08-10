@@ -1,28 +1,16 @@
-import Component from '../helpers/component';
+import { html } from '../helpers/component';
 import style from './Chip.module.css';
 
-const isChipExpanded = Component.createState(false);
-
-const Chip = ({ label, expanded = false, clickable = false }) => {
-  const toggleChip = () => {
-    isChipExpanded.value = !isChipExpanded.value;
-  };
-
-  return Component.html`
+const Chip = ({ label, showText = false, expandable = false }) =>
+  html`
     <label-chip
       class=${style.chip}
       data-label-id="${label.id}"
-      data-color="${label.color}"
-      text="${label.name}"    
-      ${
-        clickable
-          ? { $expanded: isChipExpanded.bind() }
-          : `expanded=${expanded}`
-      }
-      ${clickable ? { onClick: toggleChip } : ''}
+      color="${label.color}"
+      text="${label.name}"
+      show-text="${showText}"
+      expandable="${expandable}"
     >
     </label-chip>
   `;
-};
-
 export default Chip;

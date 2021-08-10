@@ -1,5 +1,6 @@
-import Component from './component';
+import { render } from './component';
 import { childAddedEvent, childRemovedEvent } from './customEvents';
+import event from '../modules/event';
 
 const $ = (query) => {
   const isId = query.includes('#');
@@ -43,7 +44,7 @@ const prepend = (child) => ({
     const isTemplate = (val) => val._type && val._type === 'template';
 
     if (isTemplate(child)) {
-      parent.prepend(Component.render(child));
+      parent.prepend(render(child));
     } else {
       parent.prepend(child);
     }
@@ -57,11 +58,12 @@ const append = (child) => ({
     const isTemplate = (val) => val._type && val._type === 'template';
 
     if (isTemplate(child)) {
-      parent.appendChild(Component.render(child));
+      parent.appendChild(render(child));
     } else {
       parent.appendChild(child);
     }
 
+    event.emit('childadded', { item: child });
     parent.dispatchEvent(childAddedEvent);
   },
 });
@@ -69,6 +71,8 @@ const append = (child) => ({
 const remove = (child) => ({
   from: (parent) => {
     parent.removeChild(child);
+
+    event.emit('childremoved', { item: child });
     parent.dispatchEvent(childRemovedEvent);
   },
 });

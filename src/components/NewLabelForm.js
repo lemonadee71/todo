@@ -1,4 +1,4 @@
-import Component from '../helpers/component';
+import { html } from '../helpers/component';
 import $ from '../helpers/helpers';
 import { defaultLabelColors } from '../modules/defaults';
 import event from '../modules/event';
@@ -33,7 +33,7 @@ const NewLabelForm = () => {
     e.target.reset();
   };
 
-  return Component.html`
+  return html`
     <form ${{ onSubmit: createLabel }}>
       <input
         type="text"
@@ -51,7 +51,7 @@ const NewLabelForm = () => {
             labelColor === color ? ' selected' : ''
           }"></div>`
       )}
-    </div>  
+    </div>
   `;
 };
 

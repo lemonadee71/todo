@@ -1,4 +1,4 @@
-import Component from '../helpers/component';
+import { html } from '../helpers/component';
 import $, { append, remove } from '../helpers/helpers';
 import {
   newTaskFormNotes,
@@ -46,7 +46,7 @@ const CreateTaskForm = () => {
     $(modal).close();
   };
 
-  return Component.html`
+  return html`
     <div id="create-task">
       <input
         type="text"
@@ -55,7 +55,7 @@ const CreateTaskForm = () => {
         placeholder="New Task"
         required
       />
-      
+
       <label for="task-location" class="section-header">Project</label>
       <select name="task-location" data-id="new-task-location">
         ${ProjectOptions(
@@ -75,7 +75,7 @@ const CreateTaskForm = () => {
 
       <label for="task-due" class="section-header">Due Date</label>
       <input name="task-due" type="date" data-id="new-task-date" />
-      <br/>
+      <br />
       <button class="submit" ${{ onClick: createNewTask }}>Submit</button>
     </div>
   `;

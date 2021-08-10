@@ -1,3 +1,4 @@
+import { html } from '../helpers/component';
 import { getProjectsDetails } from '../modules/projects';
 
 const ProjectOptions = (location = '') => {
@@ -5,25 +6,21 @@ const ProjectOptions = (location = '') => {
   const defaultIds = ['all', 'today', 'week', 'upcoming', 'list-uncategorized'];
   const isDefault = (id) => defaultIds.includes(id);
 
-  return [
-    {
-      type: 'option',
-      text: 'Uncategorized',
-      attr: {
-        value: 'uncategorized',
-        disabled: 'true',
-        selected: isDefault(location) ? 'true' : '',
-      },
-    },
-    ...projects.map((proj) => ({
-      type: 'option',
-      text: proj.name,
-      attr: {
-        value: proj.id,
-        selected: location === proj.id ? 'true' : '',
-      },
-    })),
-  ];
+  return html`<option
+      value="uncategorized"
+      disabled
+      ${isDefault ? 'selected' : ''}
+    >
+      Uncategorized
+    </option>
+    ${projects.map(
+      (proj) =>
+        html`<option
+          value="${proj.id}"
+          ${location === proj.id ? 'selected' : ''}
+          ${{ textContent: proj.name }}
+        ></option>`
+    )} `;
 };
 
 export default ProjectOptions;
