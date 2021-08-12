@@ -3,7 +3,7 @@ import $, { append } from '../helpers/helpers';
 import { getLabels } from '../modules/labels';
 import NewLabelForm from './NewLabelForm';
 import Label from './Label';
-import event from '../modules/event';
+import { AppEvent } from '../emitters';
 
 const LabelPopover = ({ taskLabels, toggleLabel }) => {
   const labels = getLabels();
@@ -12,10 +12,14 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
     append(Label({ label })).to($('#label-list'));
   };
 
-  event.on('label.add.success', renderLabel);
-  event.on('modal.close', () => event.off('label.add.success', renderLabel), {
-    once: true,
-  });
+  AppEvent.on('label.add.success', renderLabel);
+  AppEvent.on(
+    'modal.close',
+    () => AppEvent.off('label.add.success', renderLabel),
+    {
+      once: true,
+    }
+  );
 
   const closePopover = () => {
     $('#popover').classList.remove('visible');

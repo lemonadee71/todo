@@ -14,6 +14,7 @@
     "no-param-reassign": "off",
     "no-alert": "off",
     "no-use-before-define": "warn",
+    "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": [
       "error",
       {

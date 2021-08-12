@@ -1,7 +1,7 @@
 import { html } from '../helpers/component';
 import $ from '../helpers/helpers';
 import { defaultLabelColors } from '../modules/defaults';
-import event from '../modules/event';
+import { AppEvent } from '../emitters';
 
 const NewLabelForm = () => {
   let labelColor = defaultLabelColors[0];
@@ -9,7 +9,7 @@ const NewLabelForm = () => {
 
   const createNewLabel = (name, color) => {
     try {
-      event.emit('label.add', { name, color });
+      AppEvent.emit('label.add', { name, color });
     } catch (error) {
       console.log(error);
       alert(error.toString());

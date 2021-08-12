@@ -2,7 +2,7 @@ import { html } from '../helpers/component';
 import $, { append, remove } from '../helpers/helpers';
 import { newProjectInput, userProjects } from '../helpers/selectors';
 import { getProjectsDetails } from '../modules/projects';
-import event from '../modules/event';
+import { AppEvent } from '../emitters';
 import { DELETE_ICON } from './Icons';
 
 const ProjectListItem = ({ proj, deleteHandler }) =>
@@ -16,7 +16,7 @@ const ProjectListItem = ({ proj, deleteHandler }) =>
 const Sidebar = () => {
   const createNewProject = (e) => {
     e.preventDefault();
-    event.emit('project.add', { name: $(newProjectInput).value });
+    AppEvent.emit('project.add', { name: $(newProjectInput).value });
     e.target.reset();
   };
 
@@ -24,7 +24,7 @@ const Sidebar = () => {
     e.stopPropagation();
     const projListItem = e.currentTarget.parentElement;
 
-    event.emit('project.delete', { id: projListItem.id });
+    AppEvent.emit('project.delete', { id: projListItem.id });
     remove(projListItem).from($(userProjects));
 
     const currentPath = window.location.hash
@@ -32,7 +32,7 @@ const Sidebar = () => {
       .replace('/', '-');
 
     if (currentPath === projListItem.id) {
-      event.emit('hashchange', 'all');
+      AppEvent.emit('hashchange', 'all');
     }
   };
 
@@ -45,8 +45,8 @@ const Sidebar = () => {
     append(projectLi).to($(userProjects));
   };
 
-  event.on('project.add.error', (error) => alert(error.toString()));
-  event.on('project.add.success', addProject);
+  AppEvent.on('project.add.error', (error) => alert(error.toString()));
+  AppEvent.on('project.add.success', addProject);
 
   const projects = getProjectsDetails();
 

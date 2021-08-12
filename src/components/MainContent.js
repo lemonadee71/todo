@@ -16,7 +16,7 @@ import {
   getUpcoming,
   // getTask,
 } from '../modules/projects';
-import event from '../modules/event';
+import { AppEvent } from '../emitters';
 import CreateTaskForm from './CreateTaskForm';
 import TaskItem from './TaskItem';
 
@@ -73,14 +73,14 @@ const MainContent = () => {
     }
   };
 
-  event.on('task.add.success', addTask);
-  event.on('task.update.success', moveTask);
-  event.on('hashchange', (path) => {
+  AppEvent.on('task.add.success', addTask);
+  AppEvent.on('task.update.success', moveTask);
+  AppEvent.on('hashchange', (path) => {
     currentLocation.value = path;
   });
 
   // Make items sortable
-  event.on('content.rendered', () => {
+  AppEvent.on('content.rendered', () => {
     Sortable.create($(currentTasks), {
       group: 'tasks',
       animation: 150,

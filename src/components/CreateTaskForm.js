@@ -13,7 +13,7 @@ import { getLabel } from '../modules/labels';
 import ProjectOptions from './ProjectOptions';
 import LabelPopover from './LabelPopover';
 import Chip from './Chip';
-import event from '../modules/event';
+import { AppEvent } from '../emitters';
 
 const CreateTaskForm = () => {
   const openLabelPopover = () => {
@@ -42,7 +42,7 @@ const CreateTaskForm = () => {
       return;
     }
 
-    event.emit('task.add', { title, notes, dueDate, location, labels });
+    AppEvent.emit('task.add', { title, notes, dueDate, location, labels });
     $(modal).close();
   };
 

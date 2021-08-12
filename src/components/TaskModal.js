@@ -6,7 +6,7 @@ import { CALENDAR_ICON, NOTES_ICON, TAG_ICON } from './Icons';
 import LabelPopover from './LabelPopover';
 import ProjectOptions from './ProjectOptions';
 import Chip from './Chip';
-import event from '../modules/event';
+import { AppEvent } from '../emitters';
 
 // Selectors are so messy for this component
 // Since there's only one modal component at a time
@@ -15,11 +15,11 @@ import event from '../modules/event';
 // TODO: Add a delete button
 const TaskModal = ({ task }) => {
   const updateTaskDetails = (payload) => {
-    event.emit('task.update', { info: task, data: payload });
+    AppEvent.emit('task.update', { info: task, data: payload });
   };
 
   const updateTaskLabels = (method, id) => {
-    event.emit('task.labels.update', {
+    AppEvent.emit('task.labels.update', {
       info: task,
       action: method,
       labelId: id,
@@ -71,7 +71,7 @@ const TaskModal = ({ task }) => {
     const newLocation = e.currentTarget.value;
     task.location = newLocation;
 
-    event.emit('task.transfer', {
+    AppEvent.emit('task.transfer', {
       prevLocation,
       newLocation,
       id: task.id,

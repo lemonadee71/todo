@@ -1,7 +1,7 @@
 import { html, createState } from '../helpers/component';
 import $, { remove } from '../helpers/helpers';
 import { chips, chipsWithText, labelElement } from '../helpers/selectors';
-import event from '../modules/event';
+import { AppEvent } from '../emitters';
 
 const Label = ({ label, taskLabels = [] }) => {
   const isEditing = createState(false);
@@ -16,7 +16,7 @@ const Label = ({ label, taskLabels = [] }) => {
       const id = labelEl.getAttribute('data-label-id');
       const newLabelName = e.currentTarget.value;
 
-      event.emit('label.edit', { id, prop: 'name', value: newLabelName });
+      AppEvent.emit('label.edit', { id, prop: 'name', value: newLabelName });
 
       labelEl.firstElementChild.textContent = newLabelName;
 
@@ -37,7 +37,7 @@ const Label = ({ label, taskLabels = [] }) => {
   };
 
   const removeLabel = (e) => {
-    event.emit('label.delete', { id: label.id });
+    AppEvent.emit('label.delete', { id: label.id });
     console.log($(`${chips(label.id)}`));
 
     remove($(`${labelElement(label.id)}`)).from($('#label-list'));

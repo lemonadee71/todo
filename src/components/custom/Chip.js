@@ -1,4 +1,4 @@
-import event from '../../modules/event';
+import { AppEvent } from '../../emitters';
 
 class Chip extends HTMLElement {
   constructor() {
@@ -7,11 +7,11 @@ class Chip extends HTMLElement {
   }
 
   connectedCallback() {
-    event.on('label-chip.expand', this.expandLabel);
+    AppEvent.on('label-chip.expand', this.expandLabel);
 
     this.addEventListener('click', () => {
       if (this.getAttribute('expandable')) {
-        event.emit('label-chip.expand');
+        AppEvent.emit('label-chip.expand');
       }
     });
 
@@ -19,7 +19,7 @@ class Chip extends HTMLElement {
   }
 
   disconnectedCallback() {
-    event.off('label-chip.expand', this.expandLabel);
+    AppEvent.off('label-chip.expand', this.expandLabel);
   }
 
   static get observedAttributes() {

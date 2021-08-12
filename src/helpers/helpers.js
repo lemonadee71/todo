@@ -1,6 +1,6 @@
 import { render } from './component';
 import { childAddedEvent, childRemovedEvent } from './customEvents';
-import event from '../modules/event';
+import { AppEvent } from '../emitters';
 
 const $ = (query) => {
   const isId = query.includes('#');
@@ -63,7 +63,7 @@ const append = (child) => ({
       parent.appendChild(child);
     }
 
-    event.emit('childadded', { item: child });
+    AppEvent.emit('childadded', { item: child });
     parent.dispatchEvent(childAddedEvent);
   },
 });
@@ -72,7 +72,7 @@ const remove = (child) => ({
   from: (parent) => {
     parent.removeChild(child);
 
-    event.emit('childremoved', { item: child });
+    AppEvent.emit('childremoved', { item: child });
     parent.dispatchEvent(childRemovedEvent);
   },
 });

@@ -5,7 +5,7 @@ import $, { remove } from '../helpers/helpers';
 import { CALENDAR_ICON, CHECKMARK, NOTES_ICON } from './Icons';
 import TaskModal from './TaskModal';
 import Chip from './Chip';
-import event from '../modules/event';
+import { AppEvent } from '../emitters';
 
 const TaskItem = ({ taskData }) => {
   const task = createState(taskData);
@@ -18,7 +18,7 @@ const TaskItem = ({ taskData }) => {
   };
 
   const removeTask = () => {
-    event.emit('task.delete', task.value);
+    AppEvent.emit('task.delete', task.value);
 
     const list = task.value.completed ? completedTasks : currentTasks;
     remove($(`#${id}`)).from($(list));
@@ -28,7 +28,7 @@ const TaskItem = ({ taskData }) => {
     e.currentTarget.classList.toggle('checked');
 
     task.value.completed = !task.value.completed;
-    event.emit('task.update', {
+    AppEvent.emit('task.update', {
       info: task.value,
       data: {
         completed: task.value.completed,
