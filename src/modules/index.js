@@ -4,52 +4,27 @@ import Storage from './storage';
 import Task from '../classes/Task';
 import { AppEvent } from '../emitters';
 
-const labelAddHandler = ({ name, color }) => {
-  const newLabel = labels.addLabel(name, color);
-  AppEvent.emit('label.add.success', newLabel);
-  AppEvent.emit('storage.sync', 'labels');
-};
+const labelAddHandler = ({ name, color }) => labels.addLabel(name, color);
 
-const labelDeleteHandler = ({ id }) => {
-  labels.deleteLabel(id);
-  AppEvent.emit('storage.sync', 'data');
-  AppEvent.emit('storage.sync', 'labels');
-};
+const labelDeleteHandler = ({ id }) => labels.deleteLabel(id);
 
 const labelEditHandler = ({ id, prop, value }) => {
   labels.editLabel(id, prop, value);
-  AppEvent.emit('label.edit.success', { id, newName: value });
-  AppEvent.emit('storage.sync', 'data');
-  AppEvent.emit('storage.sync', 'labels');
+  return { id, newName: value };
 };
 
-const projectAddHandler = ({ name }) => {
-  try {
-    const newProject = projects.addProject(name);
-    AppEvent.emit('project.add.success', newProject);
-    AppEvent.emit('storage.sync', 'data');
-  } catch (error) {
-    AppEvent.emit('project.add.error', error);
-  }
-};
+const projectAddHandler = ({ name }) => projects.addProject(name);
 
-const projectDeleteHandler = ({ id }) => {
-  projects.deleteProject(id);
-  AppEvent.emit('storage.sync', 'data');
-};
+const projectDeleteHandler = ({ id }) => projects.deleteProject(id);
 
 const taskAddHandler = (info) => {
   const task = new Task(info);
   projects.addTask(task);
 
-  AppEvent.emit('task.add.success', task.data);
-  AppEvent.emit('storage.sync', 'data');
+  return task.data;
 };
 
-const taskDeleteHandler = (task) => {
-  projects.deleteTask(task);
-  AppEvent.emit('storage.sync', 'data');
-};
+const taskDeleteHandler = (task) => projects.deleteTask(task);
 
 const taskUpdateHandler = ({ info, data }) => {
   const task = projects.getTask(info.location, info.id);
@@ -62,15 +37,12 @@ const taskUpdateHandler = ({ info, data }) => {
       data: { [prop]: value },
     });
   });
-
-  AppEvent.emit('storage.sync', 'data');
 };
 
 const taskTransferHandler = ({ id, prevLocation, newLocation }) => {
   projects.transferTask(id, prevLocation, newLocation);
 
-  AppEvent.emit('task.transfer.success', { id, newLocation });
-  AppEvent.emit('storage.sync', 'data');
+  return { id, newLocation };
 };
 
 const taskLabelsHandler = ({ info, action, labelId }) => {
@@ -80,7 +52,6 @@ const taskLabelsHandler = ({ info, action, labelId }) => {
   } else if (action === 'remove') {
     task.removeLabel(labelId);
   }
-  AppEvent.emit('storage.sync', 'data');
 };
 
 const initializeEvents = () => {
@@ -94,7 +65,11 @@ const initializeEvents = () => {
   AppEvent.on('task.update', taskUpdateHandler);
   AppEvent.on('task.transfer', taskTransferHandler);
   AppEvent.on('task.labels.update', taskLabelsHandler);
-  AppEvent.on('storage.sync', (key) => Storage.sync(key));
+  AppEvent.on(/^(task|project)(.labels)?.\w+$/, () => Storage.sync('data'));
+  AppEvent.on(/^label.\w+$/, () => {
+    Storage.sync('data');
+    Storage.sync('labels');
+  });
 };
 
 export default initializeEvents;

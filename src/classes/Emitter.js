@@ -50,7 +50,9 @@ export default class Emitter {
       .forEach((handler) => {
         try {
           const result = handler.fn.apply(handler.options.context, payload);
-          this.emit(`${name}.success`, result);
+          if (result || !name.match(/.success$/)) {
+            this.emit(`${name}.success`, result);
+          }
 
           if (handler.options.once) this.off(name, handler.fn);
         } catch (e) {
