@@ -302,7 +302,11 @@ const createElementFromString = (str, handlers = []) => {
   handlers.forEach((handler) => {
     const el = createdElement.querySelector(handler.query);
 
-    if (!el) return;
+    if (!el) {
+      console.log(str);
+      console.log(createdElement);
+      return;
+    }
 
     _modifyElement({
       element: handler.query,

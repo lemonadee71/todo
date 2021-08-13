@@ -216,9 +216,7 @@ const MainContent = () => {
           ${{
             $content: currentLocation.bind('value', renderTasks),
           }}
-        >
-          ${renderTasks(currentLocation.value)}
-        </div>
+        ></div>
         <div
           id="completed-tasks"
           style="display: none;"
@@ -227,9 +225,7 @@ const MainContent = () => {
               renderTasks(path, false)
             ),
           }}
-        >
-          ${renderTasks(currentLocation.value, false)}
-        </div>
+        ></div>
       </div>
       <modal-el></modal-el>
     </main>
