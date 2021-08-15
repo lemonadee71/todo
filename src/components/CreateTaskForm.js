@@ -1,4 +1,4 @@
-import { html } from '../helpers/component';
+import { html } from 'poor-man-jsx';
 import $, { append, remove } from '../helpers/helpers';
 import {
   newTaskFormNotes,

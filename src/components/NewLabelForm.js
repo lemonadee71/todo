@@ -1,4 +1,4 @@
-import { html } from '../helpers/component';
+import { html } from 'poor-man-jsx';
 import $ from '../helpers/helpers';
 import { defaultLabelColors } from '../modules/defaults';
 import { AppEvent } from '../emitters';

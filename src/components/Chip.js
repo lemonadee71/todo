@@ -1,4 +1,4 @@
-import { html } from '../helpers/component';
+import { html } from 'poor-man-jsx';
 import style from './Chip.module.css';
 
 const Chip = ({ label, showText = false, expandable = false }) =>

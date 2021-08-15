@@ -1,4 +1,4 @@
-import { html, createState } from '../helpers/component';
+import { html, createState } from 'poor-man-jsx';
 import { formatDate } from '../helpers/date';
 import { completedTasks, currentTasks, modal } from '../helpers/selectors';
 import $, { remove } from '../helpers/helpers';
@@ -8,30 +8,28 @@ import Chip from './Chip';
 import { AppEvent } from '../emitters';
 
 const TaskItem = ({ taskData }) => {
-  const task = createState(taskData);
-  const { id, completed } = task.value;
+  const [task] = createState(taskData);
+  const { id, completed } = task;
 
   const editTask = () => {
-    $(modal)
-      .changeContent(TaskModal({ task: task.value }))
-      .show();
+    $(modal).changeContent(TaskModal({ task })).show();
   };
 
   const removeTask = () => {
-    AppEvent.emit('task.delete', task.value);
+    AppEvent.emit('task.delete', task);
 
-    const list = task.value.completed ? completedTasks : currentTasks;
+    const list = task.completed ? completedTasks : currentTasks;
     remove($(`#${id}`)).from($(list));
   };
 
   const toggleCheckmark = (e) => {
     e.currentTarget.classList.toggle('checked');
 
-    task.value.completed = !task.value.completed;
+    task.completed = !task.completed;
     AppEvent.emit('task.update', {
-      info: task.value,
+      info: task,
       data: {
-        completed: task.value.completed,
+        completed: task.completed,
       },
     });
   };
@@ -40,9 +38,7 @@ const TaskItem = ({ taskData }) => {
     <div
       id="${id}"
       ${{
-        $class: task.bind('completed', (val) =>
-          val ? 'task completed' : 'task'
-        ),
+        $class: task.$completed((val) => (val ? 'task completed' : 'task')),
       }}
     >
       <div class="actions">
@@ -59,21 +55,14 @@ const TaskItem = ({ taskData }) => {
       </div>
       <div class="brief-content">
         <div class="label-chips">
-          ${task.value.labels.map((label) => Chip({ label, expandable: true }))}
+          ${task.labels.map((label) => Chip({ label, expandable: true }))}
         </div>
-        <p
-          data-id="task-card-title"
-          ${{
-            $textContent: task.bind('title'),
-          }}
-        ></p>
+        <p data-id="task-card-title" ${{ $textContent: task.$title }}></p>
         <div class="badges">
           <span
             data-id="task-card-notes"
             ${{
-              $style: task.bind('notes', (notes) =>
-                !notes ? 'display: none;' : ''
-              ),
+              $style: task.$notes((notes) => (!notes ? 'display: none;' : '')),
             }}
           >
             ${NOTES_ICON}
@@ -82,7 +71,7 @@ const TaskItem = ({ taskData }) => {
             <span
               data-id="task-card-date-icon"
               ${{
-                $style: task.bind('dueDate', (date) =>
+                $style: task.$dueDate((date) =>
                   !date ? 'display: none;' : ''
                 ),
               }}
@@ -92,7 +81,7 @@ const TaskItem = ({ taskData }) => {
             <span
               data-id="task-card-date-text"
               ${{
-                $textContent: task.bind('dueDate', (date) =>
+                $textContent: task.$dueDate((date) =>
                   date ? formatDate(date) : ''
                 ),
               }}

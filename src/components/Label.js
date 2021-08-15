@@ -1,10 +1,10 @@
-import { html, createState } from '../helpers/component';
+import { html, createState } from 'poor-man-jsx';
 import $, { remove } from '../helpers/helpers';
 import { chips, chipsWithText, labelElement } from '../helpers/selectors';
 import { AppEvent } from '../emitters';
 
 const Label = ({ label, taskLabels = [] }) => {
-  const isEditing = createState(false);
+  const [isEditing] = createState(false);
 
   const isSelected = taskLabels.find(
     (taskLabel) => taskLabel.name === label.name
@@ -63,7 +63,7 @@ const Label = ({ label, taskLabels = [] }) => {
     >
       <span
         ${{
-          $class: isEditing.bindValue((val) => (val ? 'hidden' : '')),
+          $class: isEditing.$value((val) => (val ? 'hidden' : '')),
         }}
         >${label.name}</span
       >
@@ -73,17 +73,15 @@ const Label = ({ label, taskLabels = [] }) => {
         value="${label.name}"
         required
         ${{
-          $class: isEditing.bindValue((val) => (!val ? 'hidden' : '')),
-          $disabled: isEditing.bindValue((val) => !val),
+          $class: isEditing.$value((val) => (!val ? 'hidden' : '')),
+          $disabled: isEditing.$value((val) => !val),
         }}
         ${{ onChange: updateLabel, onFocusout: toggleEdit }}
       />
       <div
         class="actions"
         ${{
-          '$style:display': isEditing.bindValue((val) =>
-            val ? 'none' : 'block'
-          ),
+          $display: isEditing.$value((val) => (val ? 'none' : 'block')),
         }}
       >
         <button is="edit-btn" ${{ onClick: toggleEdit }}></button>

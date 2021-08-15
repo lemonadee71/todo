@@ -1,4 +1,4 @@
-import { render, html } from './helpers/component';
+import { html } from 'poor-man-jsx';
 import $ from './helpers/helpers';
 import { sidebar as sidenav } from './helpers/selectors';
 import MainContent from './components/MainContent';
@@ -14,7 +14,7 @@ const App = () => {
     $(sidenav).classList.toggle('show');
   };
 
-  return render(html`
+  return html`
     <header>
       <ul>
         <li>
@@ -53,7 +53,7 @@ const App = () => {
       </p>
       <p>Created by Shin Andrei Riego</p>
     </footer>
-  `);
+  `;
 };
 
 export default App;

@@ -1,3 +1,4 @@
+import { render } from 'poor-man-jsx';
 import defineCustomElements from './components/custom';
 import initializeEvents from './modules';
 import { AppEvent } from './emitters';
@@ -14,5 +15,5 @@ window.addEventListener(
   false
 );
 
-document.body.prepend(App());
+render(App(), 'body');
 AppEvent.emit('content.rendered');

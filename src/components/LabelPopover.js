@@ -1,4 +1,4 @@
-import { html } from '../helpers/component';
+import { html } from 'poor-man-jsx';
 import $, { append } from '../helpers/helpers';
 import { getLabels } from '../modules/labels';
 import NewLabelForm from './NewLabelForm';

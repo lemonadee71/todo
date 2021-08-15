@@ -1,4 +1,4 @@
-import { html, render } from '../../helpers/component';
+import { html, render } from 'poor-man-jsx';
 import { AppEvent } from '../../emitters';
 
 class Modal extends HTMLElement {
@@ -38,16 +38,7 @@ class Modal extends HTMLElement {
   }
 
   changeContent(content) {
-    const isTemplate = (val) => val._type && val._type === 'template';
-    const modalContent = this.querySelector('#modal-content');
-
-    this.clearContent();
-
-    if (isTemplate(content)) {
-      modalContent.appendChild(render(content));
-    } else {
-      modalContent.appendChild(content);
-    }
+    render(content, this.querySelector('#modal-content'));
 
     return this;
   }

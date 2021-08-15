@@ -1,5 +1,5 @@
 import Sortable from 'sortablejs';
-import { html, render, createState } from '../helpers/component';
+import { html, render, createState } from 'poor-man-jsx';
 import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
 import $, { prepend, append, remove, hide, show } from '../helpers/helpers';
 import {
@@ -20,7 +20,7 @@ import { AppEvent } from '../emitters';
 import CreateTaskForm from './CreateTaskForm';
 import TaskItem from './TaskItem';
 
-const currentLocation = createState(
+const [currentLocation] = createState(
   window.location.hash.replace('#/', '') || 'all'
 );
 
@@ -191,7 +191,7 @@ const MainContent = () => {
 
   return html`
     <main>
-      <h2 ${{ $textContent: currentLocation.bind('value', renderTitle) }}></h2>
+      <h2 ${{ $textContent: currentLocation.$value(renderTitle) }}></h2>
       <hr />
       <div id="taskbar">
         <button id="add-task" ${{ onClick: showCreateTaskForm }}>+</button>
@@ -214,14 +214,14 @@ const MainContent = () => {
         <div
           id="current-tasks"
           ${{
-            $content: currentLocation.bind('value', renderTasks),
+            $children: currentLocation.$value(renderTasks),
           }}
         ></div>
         <div
           id="completed-tasks"
           style="display: none;"
           ${{
-            $content: currentLocation.bind('value', (path) =>
+            $children: currentLocation.$value((path) =>
               renderTasks(path, false)
             ),
           }}

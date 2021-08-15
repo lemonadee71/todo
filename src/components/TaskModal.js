@@ -1,4 +1,4 @@
-import { html, render, createState } from '../helpers/component';
+import { html, createState } from 'poor-man-jsx';
 import convertToMarkdown from '../helpers/showdown';
 import $, { append } from '../helpers/helpers';
 import { taskItemLabels, labelsArea } from '../helpers/selectors';
@@ -82,8 +82,8 @@ const TaskModal = ({ task }) => {
   /*
    * DOM functions
    */
-  const isEditingTitle = createState(false);
-  const isEditingNotes = createState(false);
+  const [isEditingTitle] = createState(false);
+  const [isEditingNotes] = createState(false);
 
   const toggleTitleEdit = () => {
     isEditingTitle.value = !isEditingTitle.value;
@@ -116,7 +116,7 @@ const TaskModal = ({ task }) => {
     ></div>`;
 
   // TODO: Clean attributes here
-  return render(html`
+  return html`
     <div class="title">
       <input
         type="text"
@@ -125,15 +125,13 @@ const TaskModal = ({ task }) => {
         placeholder="Unnamed Task"
         value="${task.title}"
         required
-        ${{ $disabled: isEditingTitle.bind('value', (val) => !val) }}
+        ${{ $disabled: isEditingTitle.$value((val) => !val) }}
         ${{ onInput: updateTitle, onFocusout: toggleTitleEdit }}
       />
       <button
         is="edit-btn"
         ${{
-          '$style:display': isEditingTitle.bind('value', (val) =>
-            val ? 'none' : 'block'
-          ),
+          $display: isEditingTitle.$value((val) => (val ? 'none' : 'block')),
         }}
         ${{ onClick: toggleTitleEdit }}
       ></button>
@@ -169,22 +167,18 @@ const TaskModal = ({ task }) => {
       <button
         is="edit-btn"
         ${{
-          '$style:display': isEditingNotes.bind('value', (val) =>
-            val ? 'none' : 'block'
-          ),
+          $display: isEditingNotes.$value((val) => (val ? 'none' : 'block')),
         }}
         ${{ onClick: toggleNotesEdit }}
       ></button>
       <div
         data-id="notes-area"
         ${{
-          $content: isEditingNotes.bind('value', (val) =>
+          $children: isEditingNotes.$value((val) =>
             val ? notesTextArea() : notesPreview()
           ),
         }}
-      >
-        ${notesPreview()}
-      </div>
+      ></div>
     </div>
 
     <div class="date">
@@ -198,7 +192,7 @@ const TaskModal = ({ task }) => {
         ${{ onChange: updateDueDate }}
       />
     </div>
-  `);
+  `;
 };
 
 export default TaskModal;
