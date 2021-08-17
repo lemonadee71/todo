@@ -79,17 +79,6 @@ const MainContent = () => {
     currentLocation.value = path;
   });
 
-  // Make items sortable
-  AppEvent.on('content.rendered', () => {
-    Sortable.create($(currentTasks), {
-      group: 'tasks',
-      animation: 150,
-    });
-    Sortable.create($(completedTasks), {
-      animation: 150,
-    });
-  });
-
   const getCurrentTasks = (tasks) => tasks.filter((task) => !task.completed);
 
   const getCompletedTasks = (tasks) => tasks.filter((task) => task.completed);
@@ -190,7 +179,19 @@ const MainContent = () => {
   };
 
   return html`
-    <main>
+    <main
+      ${{
+        '@mount': function () {
+          Sortable.create($(currentTasks), {
+            group: 'tasks',
+            animation: 150,
+          });
+          Sortable.create($(completedTasks), {
+            animation: 150,
+          });
+        },
+      }}
+    >
       <h2 ${{ $textContent: currentLocation.$value(renderTitle) }}></h2>
       <hr />
       <div id="taskbar">
