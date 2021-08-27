@@ -1,9 +1,9 @@
 const VALUES = {
-  first: -1,
-  last: 1,
+  first: -999,
+  last: 999,
 };
 
-export default class Emitter {
+class EventEmitter {
   constructor() {
     this.events = [];
   }
@@ -42,22 +42,25 @@ export default class Emitter {
           : event.name === name
       )
       .sort((a, b) => {
-        const aValue = VALUES[a.options.order] || 0;
-        const bValue = VALUES[b.options.order] || 0;
+        const x = a.options.order;
+        const y = b.options.order;
+        const aValue = Number.isInteger(x) ? x : VALUES[x] || 0;
+        const bValue = Number.isInteger(y) ? y : VALUES[y] || 0;
 
         return aValue - bValue;
       })
       .forEach((handler) => {
         try {
           const result = handler.fn.apply(handler.options.context, payload);
-          if (result || !name.match(/.success$/)) {
-            this.emit(`${name}.success`, result);
-          }
 
+          if (result) this.emit(`${name}.success`, result);
           if (handler.options.once) this.off(name, handler.fn);
         } catch (e) {
+          console.error(e);
           this.emit(`${name}.error`, e);
         }
       });
   }
 }
+
+export default EventEmitter;
