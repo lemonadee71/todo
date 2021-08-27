@@ -46,8 +46,8 @@ class Modal extends HTMLElement {
   clearContent() {
     const modalContent = this.querySelector('#modal-content');
 
-    while (modalContent.firstElementChild) {
-      modalContent.removeChild(modalContent.lastElementChild);
+    while (modalContent.firstChild) {
+      modalContent.removeChild(modalContent.lastChild);
     }
 
     return this;
