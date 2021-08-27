@@ -21,6 +21,9 @@
     "url": "https://github.com/lemonadee71/todo/issues"
   },
   "homepage": "https://github.com/lemonadee71/todo#readme",
+  "prettier": {
+    "singleQuote": true
+  },
   "devDependencies": {
     "@types/webpack-merge": "^5.0.0",
     "babel-eslint": "^10.1.0",
