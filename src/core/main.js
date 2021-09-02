@@ -79,7 +79,9 @@ export const syncLocalStorage = () => Storage.sync(NAME, Root);
 // const getDueToday = () =>
 //   getAllTasks().filter((task) => isDueToday(parse(task.dueDate)));
 
-/** Projects */
+// =====================================================================================
+// Projects
+// =====================================================================================
 export const getAllProjects = () => [...Root.items];
 
 export const getProjectDetails = () => {
@@ -112,7 +114,9 @@ export const addProject = (name) => {
 
 export const deleteProject = (id) => Root.delete(id);
 
-/** Lists */
+// =====================================================================================
+// Lists
+// =====================================================================================
 export const getLists = (projectFilter) => [
   ...Root.get(projectFilter).lists.items,
 ];
@@ -139,7 +143,9 @@ export const addList = (projectFilter, name) => {
 export const deleteList = (projectFilter, listFilter) =>
   getProject(projectFilter).lists.delete(listFilter);
 
-/** Tasks */
+// =====================================================================================
+// Tasks
+// =====================================================================================
 export const getAllTasks = () =>
   Root.items
     .flatMap((project) => project.lists.items)
@@ -183,7 +189,9 @@ export const transferTaskToList = (taskID, projectID, prevList, newList) => {
   getList(projectID, newList).add(task);
 };
 
-/** Labels */
+// =====================================================================================
+// Labels
+// =====================================================================================
 export const getLabels = (projectFilter) => [
   ...getProject(projectFilter).labels.items,
 ];
