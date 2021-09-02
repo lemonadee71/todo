@@ -28,7 +28,7 @@ const recoverData = function (getItem) {
           let { labels: taskLabels, subtasks } = task;
 
           taskLabels = taskLabels.items.map((labelData) =>
-            labels.filter((label) => label.id === labelData.id)
+            labels.find((label) => label.id === labelData.id)
           );
           subtasks = subtasks.items.map((subtask) => new Task(subtask));
 
@@ -52,10 +52,12 @@ const recoverData = function (getItem) {
 const storeData = function (setItem, root) {
   // remove deleted projects
   for (let i = 0; i < this.length; i++) {
-    if (this.key(i).startsWith(`${NAME}__`)) {
-      const id = this.key(i).split('__')[1];
+    const key = this.key(i);
 
-      if (!root.has(id)) Storage.deleteItem(this.key(i));
+    if (key.startsWith(`${NAME}__`)) {
+      const id = key.split('__')[1];
+
+      if (!root.has(id)) Storage.deleteItem(key);
     }
   }
   // sync new and existing ones
