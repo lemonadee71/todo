@@ -13,8 +13,10 @@ class Task {
     labels = [],
     subtasks = [],
     id = `task-${uuid(8)}`,
+    numId,
   }) {
     // main
+    this.num = numId;
     this.id = id;
     this.title = title || 'Unnamed Task';
     this.notes = notes || '';

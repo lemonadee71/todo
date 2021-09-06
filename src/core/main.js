@@ -165,8 +165,9 @@ export const getTask = (projectID, listID, taskID) =>
   getList(projectID, listID).get(taskID);
 
 export const addTask = (data) => {
-  const task = new Task(data);
-  getList(task.project, task.list).add(task);
+  const project = getProject(data.project);
+  const task = new Task({ ...data, numId: ++project.totalTasks });
+  project.lists.get(data.list).add(task);
 
   return task;
 };
