@@ -6,8 +6,6 @@ const History = (() => {
   const cache = new Map();
   const { history } = window;
 
-  const _isHash = (path) => path.startsWith('#');
-
   const getPath = () => window.location.pathname;
 
   const getHash = () => window.location.hash.replace('#', '');
@@ -18,6 +16,21 @@ const History = (() => {
 
   const syncHash = () => {
     $.emit('hashchange', getHash(), history.state);
+  };
+
+  const _callbackWrapper = (fn, pattern, params) => (path, state) => {
+    if (!pattern.exec(path)) return;
+
+    const payload = {
+      path,
+      state,
+    };
+
+    if (params.length) {
+      payload.params = getParamValues(path, pattern, params);
+    }
+
+    fn.call(null, payload);
   };
 
   const onPopState = (fn, options) => {
@@ -31,24 +44,10 @@ const History = (() => {
   const onChangeToPath = (path, fn, options) => {
     const order = path.split('/').length - 1;
     const [pattern, paramNames] = getParams(path);
-
-    const cb = (_path, state) => {
-      if (!pattern.exec(_path)) return;
-
-      const payload = {
-        path: _path,
-        state,
-      };
-
-      if (paramNames.length) {
-        payload.params = getParamValues(_path, pattern, paramNames);
-      }
-
-      fn.call(null, payload);
-    };
+    const cb = _callbackWrapper(fn, pattern, paramNames);
 
     cache.set(fn, cb);
-    $.on(_isHash(path) ? 'hashchange' : 'popstate', cb, { ...options, order });
+    $.on(options.hash ? 'hashchange' : 'popstate', cb, { ...options, order });
   };
 
   const off = (fn) => {
@@ -104,6 +103,8 @@ const History = (() => {
     onHashChange,
     onPopState,
     syncPath,
+    getHash,
+    getPath,
   };
 })();
 
