@@ -200,7 +200,7 @@ export const getLabels = (projectFilter) => [
 export const getLabel = (projectFilter, labelFilter) =>
   getProject(projectFilter).labels.get(labelFilter);
 
-export const addLabel = (name, color, projectFilter) => {
+export const addLabel = (projectFilter, name, color) => {
   const { labels } = getProject(projectFilter);
 
   if (labels.has((label) => label.name === name)) {
@@ -213,14 +213,14 @@ export const addLabel = (name, color, projectFilter) => {
   return label;
 };
 
-export const deleteLabel = (labelID, projectFilter) => {
+export const deleteLabel = (projectFilter, labelID) => {
   getProject(projectFilter).labels.delete(labelID);
   getTasksFromProject(projectFilter).forEach((task) =>
     task.removeLabel(labelID)
   );
 };
 
-export const editLabel = (labelID, prop, value, projectFilter) => {
+export const editLabel = (projectFilter, labelID, prop, value) => {
   const { labels } = getProject(projectFilter);
   const label = labels.get(labelID);
   const labelAlreadyExists = labels.has((item) => item.name === value);
@@ -237,4 +237,5 @@ export const editLabel = (labelID, prop, value, projectFilter) => {
 
   //   if (taskLabel) taskLabel[prop] = value;
   // });
+  return label;
 };

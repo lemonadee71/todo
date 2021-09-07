@@ -48,6 +48,10 @@ class Task {
     };
   }
 
+  getSubtask(id) {
+    return this.subtasks.get(id);
+  }
+
   addSubtask(task) {
     this.subtasks.add(task).sort((a, b) => a.position > b.position);
   }
@@ -56,7 +60,7 @@ class Task {
     this.subtasks.delete(id).sort((a, b) => a.position > b.position);
   }
 
-  clearSubtask() {
+  clearSubtasks() {
     this.subtasks.clear();
   }
 
@@ -72,7 +76,7 @@ class Task {
     this.labels.delete(id);
   }
 
-  clearLabel() {
+  clearLabels() {
     this.labels.clear();
   }
 

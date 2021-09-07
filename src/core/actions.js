@@ -18,5 +18,6 @@ TASK.SUBTASKS = createActions('task.subtasks');
 const PROJECT = createActions('project');
 PROJECT.LABELS = createActions('project.labels');
 PROJECT.LISTS = createActions('project.lists');
+PROJECT.SELECT = 'app.project.select';
 
 export { TASK, PROJECT, SYNC };
