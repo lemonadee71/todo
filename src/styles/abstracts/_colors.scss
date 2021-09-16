@@ -1,4 +1,4 @@
-$defaultcolors: (
+$default-colors: (
   '#61BD4F',
   '#F2D600',
   '#FF9F1A',
@@ -11,7 +11,7 @@ $defaultcolors: (
   '#344563'
 );
 
-@each $color in $defaultcolors {
+@each $color in $default-colors {
   [data-color='#{$color}' i] {
     color: white;
     background-color: #{$color};

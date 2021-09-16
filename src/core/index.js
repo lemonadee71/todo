@@ -7,7 +7,11 @@ import { TASK, PROJECT } from './actions';
 import { debounce } from '../utils/delay';
 
 const App = (() => {
-  const state = createHook({ currentProject: null });
+  const state = createHook({
+    theme: 'dark',
+    currentProject: null,
+    expandLabels: false,
+  });
   const event = new EventEmitter();
   const history = History;
   const getters = Object.entries(core).reduce((obj, [key, fn]) => {
@@ -20,6 +24,7 @@ const App = (() => {
 
   // wrappers for core functions
   // just so multiple components can listen to an event
+  // and to remove direct dependencies
   event.on(PROJECT.SELECT, (id) => {
     // track the current project
     state.currentProject = id;
