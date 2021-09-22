@@ -1,12 +1,12 @@
 const Storage = (() => {
-  const { localStorage: state } = window;
+  const { localStorage: storage } = window;
   const cache = new Map();
 
-  const getItem = (key) => JSON.parse(state.getItem(key));
+  const getItem = (key) => JSON.parse(storage.getItem(key));
 
-  const setItem = (key, data) => state.setItem(key, JSON.stringify(data));
+  const setItem = (key, data) => storage.setItem(key, JSON.stringify(data));
 
-  const deleteItem = (key) => state.removeItem(key);
+  const deleteItem = (key) => storage.removeItem(key);
 
   const sync = (key, newData = null) => {
     Promise.resolve().then(() => {
@@ -14,7 +14,7 @@ const Storage = (() => {
       const finalData = newData || data;
 
       if (strategy && typeof strategy === 'function') {
-        strategy.call(state, setItem, finalData);
+        strategy.call(storage, finalData);
       } else {
         setItem(key, finalData);
       }
@@ -31,7 +31,7 @@ const Storage = (() => {
 
   const recover = (key, strategy) => {
     if (strategy) {
-      return strategy.call(state, getItem);
+      return strategy.call(storage);
     }
 
     return getItem(key);
@@ -44,7 +44,7 @@ const Storage = (() => {
     recover,
     store,
     sync,
-    state,
+    state: storage,
   };
 })();
 

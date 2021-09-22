@@ -7,65 +7,108 @@ import Storage from './storage';
 // import { defaultProjects } from './defaults';
 
 const NAME = 'root';
+const DEFAULT = {
+  id: 'default',
+  name: 'default',
+};
 
-const recoverData = function (getItem) {
+const recoverData = function () {
   const data = [];
+  const cache = {};
 
+  // recover and sort all data from localStorage
   for (let i = 0; i < this.length; i++) {
     const key = this.key(i);
 
     if (key.startsWith(`${NAME}__`)) {
-      const projectData = getItem(key);
-      let { lists, labels } = projectData;
+      const [_, projectID, type] = key.split('__'); // eslint-disable-line no-unused-vars
+      const item = Storage.getItem(key);
 
-      labels = labels.items.map((label) => {
-        const { name, color, id } = label;
-        return new Label(name, color, id);
-      });
+      if (!cache[projectID]) {
+        cache[projectID] = { lists: [] };
+      }
 
-      lists = lists.items.map((list) => {
-        const tasks = list.items.map((task) => {
-          let { labels: taskLabels, subtasks } = task;
-
-          taskLabels = taskLabels.items.map((labelData) =>
-            labels.find((label) => label.id === labelData.id)
-          );
-          subtasks = subtasks.items.map((subtask) => new Task(subtask));
-
-          return new Task({
-            ...task,
-            subtasks,
-            labels: taskLabels,
-          });
-        });
-
-        return new List({ ...list, defaultItems: tasks });
-      });
-
-      data.push(new Project({ ...projectData, labels, lists }));
+      if (type === 'lists') {
+        cache[projectID].lists.push(item);
+      } else {
+        cache[projectID][type] = item;
+      }
     }
   }
+
+  // reinitialize data
+  Object.values(cache).forEach((project) => {
+    const projectLabels = project.labels.map((label) => {
+      const { name, color, id } = label;
+      return new Label(name, color, id);
+    });
+
+    const projectLists = project.lists.map((list) => {
+      const tasks = list.items.map((task) => {
+        let { labels, subtasks } = task;
+
+        labels = labels.items.map((taskLabel) =>
+          projectLabels.find((label) => label.id === taskLabel.id)
+        );
+        subtasks = subtasks.items.map((subtask) => new Task(subtask));
+
+        return new Task({
+          ...task,
+          labels,
+          subtasks,
+        });
+      });
+
+      return new List({ ...list, defaultItems: tasks });
+    });
+
+    data.push(
+      new Project({
+        ...project.metadata,
+        labels: projectLabels,
+        lists: projectLists,
+      })
+    );
+  });
 
   return data;
 };
 
-const storeData = function (setItem, root) {
+const storeData = function (root) {
   // remove deleted projects
   for (let i = 0; i < this.length; i++) {
     const key = this.key(i);
+    const [_, projectID, type, listID] = key.split('__'); // eslint-disable-line no-unused-vars
 
     if (key.startsWith(`${NAME}__`)) {
-      const id = key.split('__')[1];
-
-      if (!root.has(id)) Storage.deleteItem(key);
+      const project = root.get(projectID);
+      // delete from localStorage if project is deleted
+      // or list is deleted
+      if (!root.has(projectID) || (type === 'lists' && !project.has(listID))) {
+        Storage.deleteItem(key);
+      }
     }
   }
+
   // sync new and existing ones
-  root.items.forEach((project) => setItem(`${NAME}__${project.id}`, project));
+  root.items.forEach((project) => {
+    Storage.setItem(`${NAME}__${project.id}__metadata`, {
+      id: project.id,
+      name: project.name,
+      totalTasks: project.totalTasks,
+    });
+    Storage.setItem(`${NAME}__${project.id}__labels`, project.labels.items);
+
+    project.lists.items.map((list) =>
+      Storage.setItem(`${NAME}__${project.id}__lists__${list.id}`, list)
+    );
+  });
 };
 
 const recoveredData = Storage.recover(NAME, recoverData);
-const Root = new List({ name: NAME, id: NAME, defaultItems: recoveredData });
+const initData = recoveredData.length ? recoveredData : new List(DEFAULT);
+
+const Root = new List({ name: NAME, id: NAME, defaultItems: initData });
 Storage.store(NAME, Root, storeData);
 
 export const syncLocalStorage = () => Storage.sync(NAME, Root);
