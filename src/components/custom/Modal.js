@@ -1,57 +1,60 @@
-import { html, render } from 'poor-man-jsx';
-import { AppEvent } from '../../emitters';
+import { html, render, createHook } from 'poor-man-jsx';
 
 class Modal extends HTMLElement {
   constructor() {
     super();
-    this.show = this.show.bind(this);
-    this.close = this.close.bind(this);
-    this.changeContent = this.changeContent.bind(this);
-    this.clearContent = this.clearContent.bind(this);
+    this.state = createHook({ content: null });
+
+    this.defaultStyle = {
+      display: 'none',
+      position: 'fixed',
+      zIndex: '99',
+      left: '0',
+      top: '0',
+      width: '100%',
+      height: '100%',
+      overflow: 'auto',
+      backgroundColor: 'rgba(102, 102, 102, 0.4)',
+    };
   }
 
   connectedCallback() {
-    this.classList.add('modal-backdrop');
+    Object.assign(this.style, this.defaultStyle);
 
     const element = html`
-      <div id="modal">
-        <span class="close" ${{ onClick: this.close }}>&times;</span>
-        <div id="modal-content"></div>
+      <div role="modal">
+        <span role="modal__close-btn" ${{ onClick: this.close }}>&times;</span>
+        <div role="modal__content" ${{ $children: this.state.$content }}></div>
       </div>
     `;
 
-    this.appendChild(render(element));
+    render(element, this);
   }
 
-  show() {
+  show = () => {
     this.style.display = 'block';
 
     return this;
-  }
+  };
 
-  close() {
-    AppEvent.emit('modal.close');
+  close = () => {
     this.style.display = 'none';
     this.clearContent();
 
     return this;
-  }
+  };
 
-  changeContent(content) {
-    render(content, this.querySelector('#modal-content'));
-
-    return this;
-  }
-
-  clearContent() {
-    const modalContent = this.querySelector('#modal-content');
-
-    while (modalContent.firstChild) {
-      modalContent.removeChild(modalContent.lastChild);
-    }
+  changeContent = (content) => {
+    this.state.content = content;
 
     return this;
-  }
+  };
+
+  clearContent = () => {
+    this.state.content = null;
+
+    return this;
+  };
 }
 
 export default Modal;
