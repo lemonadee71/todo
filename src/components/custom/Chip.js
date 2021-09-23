@@ -1,13 +1,14 @@
-import { AppEvent } from '../../emitters';
+import App from '../../core';
 
 class Chip extends HTMLElement {
   constructor() {
     super();
-    this.expandLabel = this.expandLabel.bind(this);
+    this.expand = this.expand.bind(this);
   }
 
   connectedCallback() {
-    AppEvent.on('label-chip.expand', this.expandLabel);
+
+
 
     this.addEventListener('click', () => {
       if (this.getAttribute('expandable')) {
@@ -19,7 +20,7 @@ class Chip extends HTMLElement {
   }
 
   disconnectedCallback() {
-    AppEvent.off('label-chip.expand', this.expandLabel);
+    // AppEvent.off('label-chip.expand', this.expand);
   }
 
   static get observedAttributes() {
@@ -40,7 +41,7 @@ class Chip extends HTMLElement {
     }
   }
 
-  expandLabel() {
+  expand() {
     console.log('show-text', !!this.getAttribute('show-text'));
     if (this.getAttribute('show-text')) {
       this.removeAttribute('show-text');
