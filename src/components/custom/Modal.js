@@ -3,7 +3,7 @@ import { html, render, createHook } from 'poor-man-jsx';
 class Modal extends HTMLDivElement {
   constructor() {
     super();
-    this.state = createHook({ content: null });
+    [this.state, this._revoke] = createHook({ content: null });
 
     this.defaultStyle = {
       display: 'none',
@@ -29,6 +29,10 @@ class Modal extends HTMLDivElement {
     `;
 
     render(element, this);
+  }
+
+  disconnectedCallback() {
+    this._revoke();
   }
 
   show = () => {

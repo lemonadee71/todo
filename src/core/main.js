@@ -98,7 +98,7 @@ const storeData = function (root) {
   });
 
   // store the date last synced
-  return new Date();
+  return Date.now();
 };
 
 const recoveredData = Storage.recover(NAME, recoverData);

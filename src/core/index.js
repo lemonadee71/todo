@@ -7,7 +7,7 @@ import { TASK, PROJECT } from './actions';
 import { debounce } from '../utils/delay';
 
 const App = (() => {
-  const state = createHook({
+  const [state] = createHook({
     darkTheme: false,
     currentProject: null,
     expandLabels: false,

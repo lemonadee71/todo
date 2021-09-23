@@ -10,15 +10,7 @@ const Storage = (() => {
 
   const clear = () => storage.clear();
 
-  const keys = () => {
-    const storageKeys = [];
-
-    for (let i = 0; i < storage.length; i++) {
-      storageKeys[i] = storage.key(i);
-    }
-
-    return storageKeys;
-  };
+  const keys = () => Object.keys(storage);
 
   const filter = (condition) =>
     keys().reduce((data, key) => {
