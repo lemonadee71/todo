@@ -1,6 +1,6 @@
 import { html, render, createHook } from 'poor-man-jsx';
 
-class Modal extends HTMLElement {
+class Modal extends HTMLDivElement {
   constructor() {
     super();
     this.state = createHook({ content: null });
