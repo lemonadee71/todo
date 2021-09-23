@@ -61,7 +61,9 @@ const createRouter =
           window.history.state
         ),
       '@create': () =>
-        App.history[isHash ? 'onHashChange' : 'onPopState'](changeContent),
+        isHash
+          ? App.history.onHashChange(changeContent)
+          : App.history.onPopState(changeContent),
       '@destroy': () => {
         revoke();
         App.history.off(changeContent);
