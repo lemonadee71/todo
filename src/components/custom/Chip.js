@@ -1,26 +1,11 @@
 import App from '../../core';
 
 class Chip extends HTMLElement {
-  constructor() {
-    super();
-    this.expand = this.expand.bind(this);
-  }
-
   connectedCallback() {
+    this.style.width = '30px'; // default width
 
-
-
-    this.addEventListener('click', () => {
-      if (this.getAttribute('expandable')) {
-        AppEvent.emit('label-chip.expand');
-      }
-    });
-
+    this.addEventListener('click', this._triggerExpand);
     this.render();
-  }
-
-  disconnectedCallback() {
-    // AppEvent.off('label-chip.expand', this.expand);
   }
 
   static get observedAttributes() {
@@ -31,7 +16,13 @@ class Chip extends HTMLElement {
     this.render();
   }
 
-  render() {
+  _triggerExpand = () => {
+    if (this.getAttribute('expandable') === 'true') {
+      App.state.expandLabels = !App.state.expandLabels;
+    }
+  };
+
+  render = () => {
     const showText = this.getAttribute('show-text');
 
     if (showText) {
@@ -39,18 +30,14 @@ class Chip extends HTMLElement {
     } else {
       this.textContent = '';
     }
-  }
 
-  expand() {
-    console.log('show-text', !!this.getAttribute('show-text'));
-    if (this.getAttribute('show-text')) {
-      this.removeAttribute('show-text');
-    } else {
-      this.setAttribute('show-text', '');
-    }
+    this.style.color = this.getAttribute('color');
+    this._triggerExpand();
+  };
 
-    // this.setAttribute('show-text', !!this.getAttribute('show-text'));
-  }
+  expand = () => {
+    this.setAttribute('show-text', 'true');
+  };
 }
 
 export default Chip;
