@@ -1,50 +1,69 @@
 const Storage = (() => {
-  const { localStorage: storage } = window;
+  const storage = window.localStorage;
   const cache = new Map();
 
-  const getItem = (key) => JSON.parse(storage.getItem(key));
+  const get = (key) => JSON.parse(storage.getItem(key));
 
-  const setItem = (key, data) => storage.setItem(key, JSON.stringify(data));
+  const set = (key, data) => storage.setItem(key, JSON.stringify(data));
 
-  const deleteItem = (key) => storage.removeItem(key);
+  const remove = (key) => storage.removeItem(key);
+
+  const clear = () => storage.clear();
+
+  const keys = () => {
+    const storageKeys = [];
+
+    for (let i = 0; i < storage.length; i++) {
+      storageKeys[i] = storage.key(i);
+    }
+
+    return storageKeys;
+  };
+
+  const filter = (condition) =>
+    keys().reduce((data, key) => {
+      if (condition(key)) {
+        data[key] = get(key);
+      }
+
+      return data;
+    }, {});
 
   const sync = (key, newData = null) => {
     Promise.resolve().then(() => {
-      const { data, strategy } = cache.get(key);
-      const finalData = newData || data;
+      const { resolver, data: cached } = cache.get(key);
+      const data = newData || cached;
 
-      if (strategy && typeof strategy === 'function') {
-        strategy.call(storage, finalData);
+      if (resolver && typeof resolver === 'function') {
+        set(key, resolver.call(storage, data));
       } else {
-        setItem(key, finalData);
+        set(key, data);
       }
-
-      cache.set(key, { data: finalData, strategy });
     });
   };
 
-  const store = (key, data, strategy = null) => {
-    cache.set(key, { data, strategy });
+  const store = (key, data, resolver = null) => {
+    cache.set(key, { data, resolver });
 
-    sync(key);
+    sync(key, data);
   };
 
-  const recover = (key, strategy) => {
-    if (strategy) {
-      return strategy.call(storage);
-    }
+  const recover = (key, resolver) => {
+    if (resolver) return resolver.call(storage);
 
-    return getItem(key);
+    return get(key);
   };
 
   return {
-    deleteItem,
-    getItem,
-    setItem,
+    clear,
+    filter,
+    get,
+    keys,
     recover,
+    remove,
+    set,
     store,
     sync,
-    state: storage,
   };
 })();
 

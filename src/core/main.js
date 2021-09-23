@@ -14,27 +14,22 @@ const DEFAULT = {
 
 const recoverData = function () {
   const data = [];
-  const cache = {};
+  const stored = Storage.filter((key) => key.startsWith(`${NAME}__`));
+  const cache = Object.entries(stored).reduce((acc, [key, value]) => {
+    const [, projectID, type] = key.split('__');
 
-  // recover and sort all data from localStorage
-  for (let i = 0; i < this.length; i++) {
-    const key = this.key(i);
-
-    if (key.startsWith(`${NAME}__`)) {
-      const [_, projectID, type] = key.split('__'); // eslint-disable-line no-unused-vars
-      const item = Storage.getItem(key);
-
-      if (!cache[projectID]) {
-        cache[projectID] = { lists: [] };
-      }
-
-      if (type === 'lists') {
-        cache[projectID].lists.push(item);
-      } else {
-        cache[projectID][type] = item;
-      }
+    if (!acc[projectID]) {
+      acc[projectID] = { lists: [] };
     }
-  }
+
+    if (type === 'lists') {
+      acc[projectID].lists.push(value);
+    } else {
+      acc[projectID][type] = value;
+    }
+
+    return acc;
+  }, {});
 
   // reinitialize data
   Object.values(cache).forEach((project) => {
@@ -76,33 +71,34 @@ const recoverData = function () {
 
 const storeData = function (root) {
   // remove deleted projects
-  for (let i = 0; i < this.length; i++) {
-    const key = this.key(i);
-    const [_, projectID, type, listID] = key.split('__'); // eslint-disable-line no-unused-vars
+  const stored = Storage.filter((key) => key.startsWith(`${NAME}__`));
+  Object.keys(stored).forEach((key) => {
+    const [, projectID, type, listID] = key.split('__');
 
-    if (key.startsWith(`${NAME}__`)) {
-      const project = root.get(projectID);
-      // delete from localStorage if project is deleted
-      // or list is deleted
-      if (!root.has(projectID) || (type === 'lists' && !project.has(listID))) {
-        Storage.deleteItem(key);
-      }
+    const project = root.get(projectID);
+    // delete from localStorage if project is deleted
+    // or list is deleted
+    if (!root.has(projectID) || (type === 'lists' && !project.has(listID))) {
+      Storage.remove(key);
     }
-  }
+  });
 
   // sync new and existing ones
   root.items.forEach((project) => {
-    Storage.setItem(`${NAME}__${project.id}__metadata`, {
+    Storage.set(`${NAME}__${project.id}__metadata`, {
       id: project.id,
       name: project.name,
       totalTasks: project.totalTasks,
     });
-    Storage.setItem(`${NAME}__${project.id}__labels`, project.labels.items);
+    Storage.set(`${NAME}__${project.id}__labels`, project.labels.items);
 
     project.lists.items.map((list) =>
-      Storage.setItem(`${NAME}__${project.id}__lists__${list.id}`, list)
+      Storage.set(`${NAME}__${project.id}__lists__${list.id}`, list)
     );
   });
+
+  // store the date last synced
+  return new Date();
 };
 
 const recoveredData = Storage.recover(NAME, recoverData);
