@@ -8,7 +8,7 @@ import { debounce } from '../utils/delay';
 
 const App = (() => {
   const state = createHook({
-    theme: 'dark',
+    darkTheme: false,
     currentProject: null,
     expandLabels: false,
   });
@@ -150,7 +150,7 @@ const App = (() => {
   event.on(/(task|project)/i, debounce(core.syncLocalStorage, 500));
 
   return {
-    ...getters,
+    core: getters,
     event,
     history,
     state,
