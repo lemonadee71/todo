@@ -21,6 +21,8 @@ const Storage = (() => {
       return data;
     }, {});
 
+  const items = () => filter(() => true);
+
   const sync = (key, newData = null) => {
     Promise.resolve().then(() => {
       const { resolver, data: cached } = cache.get(key);
@@ -40,22 +42,19 @@ const Storage = (() => {
     sync(key, data);
   };
 
-  const recover = (key, resolver) => {
-    if (resolver) return resolver.call(storage);
-
-    return get(key);
-  };
+  const onChange = (callback) => window.addEventListener('storage', callback);
 
   return {
     clear,
     filter,
     get,
+    items,
     keys,
-    recover,
     remove,
     set,
     store,
     sync,
+    onChange,
   };
 })();
 
