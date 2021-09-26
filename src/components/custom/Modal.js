@@ -21,14 +21,14 @@ class Modal extends HTMLDivElement {
   connectedCallback() {
     Object.assign(this.style, this.defaultStyle);
 
-    const element = html`
+    const content = html`
       <div role="modal">
         <span role="modal__close-btn" ${{ onClick: this.close }}>&times;</span>
         <div role="modal__content" ${{ $children: this.state.$content }}></div>
       </div>
     `;
 
-    render(element, this);
+    render(content, this);
   }
 
   disconnectedCallback() {
