@@ -1,9 +1,11 @@
 import { createHook } from 'poor-man-jsx';
+import Navigo from 'navigo';
 import EventEmitter from './classes/Emitter';
 import Task from './classes/Task';
-import History from './history';
+// import History from './history';
 import * as core from './main';
 import { TASK, PROJECT } from './actions';
+import { GH_PATH } from './constants';
 import { debounce } from '../utils/delay';
 
 const App = (() => {
@@ -13,7 +15,7 @@ const App = (() => {
     expandLabels: false,
   });
   const event = new EventEmitter();
-  const history = History;
+  const router = new Navigo(GH_PATH);
   const getters = Object.entries(core).reduce((obj, [key, fn]) => {
     if (key.startsWith('get')) {
       obj[key] = fn;
@@ -64,8 +66,8 @@ const App = (() => {
 
   event.on(TASK.ADD, (data) => core.addTask(data));
   event.on(TASK.REMOVE, (data) => core.deleteTask(data));
-  event.on(TASK.UPDATE, ({ location, data }) => {
-    const task = core.getTask(location.project, location.list, data.id);
+  event.on(TASK.UPDATE, (data) => {
+    const task = core.getTask(data.project, data.list, data.id);
 
     Object.entries(data).forEach(([prop, value]) => {
       task[prop] = value;
@@ -131,6 +133,8 @@ const App = (() => {
       default:
         throw new Error('Invalid action');
     }
+
+    return task;
   };
 
   event.on(TASK.LABELS.ADD, (payload) => taskLabelsReducer('add', payload));
@@ -152,7 +156,7 @@ const App = (() => {
   return {
     core: getters,
     event,
-    history,
+    router,
     state,
   };
 })();
