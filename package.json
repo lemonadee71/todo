@@ -51,6 +51,7 @@
   "dependencies": {
     "date-fns": "^2.16.1",
     "github-markdown-css": "^4.0.0",
+    "navigo": "^8.11.1",
     "poor-man-jsx": "^2.1.0",
     "showdown": "^1.9.1",
     "sortablejs": "^1.13.0"
