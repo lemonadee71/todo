@@ -3,7 +3,7 @@ import Navigo from 'navigo';
 
 const Router = (() => {
   const routes = new Map();
-  const self = new Navigo('/');
+  const self = new Navigo('/', { strategy: 'ALL' });
 
   const on = (path, handler, hooks = {}) => {
     if (!routes.get(path)) {
@@ -14,14 +14,15 @@ const Router = (() => {
 
     // add handler
     const handlers = routes.get(path) || [];
-    routes.set(path, [...handlers, handler]);
+    routes.set(path, handler ? [...handlers, handler] : handlers);
 
     // add hooks
     Object.entries(hooks).forEach(([key, hook]) => {
       const type = key[0].toUpperCase() + key.slice(1).toLowerCase();
       const action = `add${type}Hook`;
+      const pathString = path instanceof RegExp ? path.toString() : path;
 
-      self[action](path, hook);
+      if (hook) self[action](pathString, hook);
     });
   };
 

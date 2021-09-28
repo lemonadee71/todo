@@ -28,7 +28,7 @@ const Storage = (() => {
     else storage.clear();
   };
 
-  const filter = (condition, useRoot) =>
+  const filter = (condition, useRoot = true) =>
     keys(useRoot).reduce((data, key) => {
       if (condition(key)) {
         data[key] = get(key);
@@ -37,7 +37,7 @@ const Storage = (() => {
       return data;
     }, {});
 
-  const items = (useRoot) => filter(() => true, useRoot);
+  const items = (useRoot = true) => filter(() => true, useRoot);
 
   const sync = (key, newData = null, useRoot = true) => {
     Promise.resolve().then(() => {

@@ -1,12 +1,12 @@
 import { createHook } from 'poor-man-jsx';
-import Navigo from 'navigo';
 import EventEmitter from './classes/Emitter';
 import Task from './classes/Task';
 // import History from './history';
 import * as main from './main';
 import Router from './router';
+import Storage from './storage';
 import { TASK, PROJECT } from './actions';
-import { LOCAL } from './constants';
+import { LOCAL_USER } from './constants';
 import { debounce } from '../utils/delay';
 
 const Core = (() => {
@@ -30,8 +30,9 @@ const Core = (() => {
   // * This should be evoked when user navigated to /app
   // * Run before any renders
   const init = (user) => {
-    Storage.init((state.currentUser = user || LOCAL));
-    router.navigate((state.currentPage = Storage.get('lastOpenedPage')));
+    Storage.init((state.currentUser = user || LOCAL_USER));
+    main.init();
+    // router.navigate((state.currentPage = Storage.get('lastOpenedPage')));
   };
 
   // wrappers for core functions
