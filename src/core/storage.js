@@ -45,7 +45,7 @@ const Storage = (() => {
       const data = newData || cached;
 
       if (resolver && typeof resolver === 'function') {
-        set(key, resolver.call(storage, data), useRoot);
+        set(key, resolver.call(null, data), useRoot);
       } else {
         set(key, data, useRoot);
       }
