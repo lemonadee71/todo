@@ -3,7 +3,7 @@ import Task from './classes/Task';
 import Label from './classes/Label';
 import Project from './classes/Project';
 import Storage from './storage';
-import { ROOT_NAME } from './constants';
+import { LOCAL } from './constants';
 // import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../utils/date';
 // import { defaultProjects } from './defaults';
 
@@ -14,19 +14,14 @@ const DEFAULT = {
 
 const recoverData = () => {
   const data = [];
-  const stored = Storage.filter((key) => key.startsWith(`${ROOT_NAME}__`));
-  const cache = Object.entries(stored).reduce((acc, [key, value]) => {
-    const [, projectID, type] = key.split('__');
+  const cache = Object.entries(Storage.items()).reduce((acc, [key, value]) => {
+    const [projectID, type] = key.split('__');
 
     if (!acc[projectID]) {
-      acc[projectID] = { lists: [] };
+      acc[projectID] = {};
     }
 
-    if (type === 'lists') {
-      acc[projectID].lists.push(value);
-    } else {
-      acc[projectID][type] = value;
-    }
+    acc[projectID][type] = value;
 
     return acc;
   }, {});
@@ -69,32 +64,25 @@ const recoverData = () => {
   return data;
 };
 
-const storeData = function (root) {
+const storeData = function (data) {
   // remove deleted projects
-  const stored = Storage.filter((key) => key.startsWith(`${ROOT_NAME}__`));
-  Object.keys(stored).forEach((key) => {
-    const [, projectID, type, listID] = key.split('__');
+  Storage.keys().forEach((key) => {
+    const [projectID] = key.split('__');
 
-    const project = root.get(projectID);
-    // delete from localStorage if project is deleted
-    // or list is deleted
-    if (!root.has(projectID) || (type === 'lists' && !project.has(listID))) {
+    if (!data.has(projectID)) {
       Storage.remove(key);
     }
   });
 
   // sync new and existing ones
-  root.items.forEach((project) => {
-    Storage.set(`${ROOT_NAME}__${project.id}__metadata`, {
+  data.items.forEach((project) => {
+    Storage.set(`${project.id}__metadata`, {
       id: project.id,
       name: project.name,
       totalTasks: project.totalTasks,
     });
-    Storage.set(`${ROOT_NAME}__${project.id}__labels`, project.labels.items);
-
-    project.lists.items.map((list) =>
-      Storage.set(`${ROOT_NAME}__${project.id}__lists__${list.id}`, list)
-    );
+    Storage.set(`${project.id}__labels`, project.labels.items);
+    Storage.set(`${project.id}__lists`, project.lists.items);
   });
 
   // store the date last synced
@@ -102,16 +90,16 @@ const storeData = function (root) {
 };
 
 const recoveredData = recoverData();
-const initData = recoveredData.length ? recoveredData : new List(DEFAULT);
+const initData = recoveredData.length ? recoveredData : [new List(DEFAULT)];
 
 const Root = new List({
-  name: ROOT_NAME,
-  id: ROOT_NAME,
+  name: LOCAL,
+  id: LOCAL,
   defaultItems: initData,
 });
-Storage.store(ROOT_NAME, Root, storeData);
+Storage.store(LOCAL, Root, storeData);
 
-export const syncLocalStorage = () => Storage.sync(ROOT_NAME, Root);
+export const syncLocalStorage = () => Storage.sync(LOCAL, Root);
 
 // const getDueThisWeek = () =>
 //   getAllTasks().filter((task) => isDueThisWeek(parse(task.dueDate)));

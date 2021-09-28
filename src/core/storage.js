@@ -1,19 +1,35 @@
 const Storage = (() => {
   const storage = window.localStorage;
   const cache = new Map();
+  let root = '';
 
-  const get = (key) => JSON.parse(storage.getItem(key));
+  const _resolveKey = (key, useRoot) => (useRoot ? root + key : key);
 
-  const set = (key, data) => storage.setItem(key, JSON.stringify(data));
+  const init = (str, separator = '__') => {
+    root = str + separator;
+  };
 
-  const remove = (key) => storage.removeItem(key);
+  const keys = (useRoot = true) =>
+    Object.keys(storage)
+      .filter((key) => (useRoot ? key.startsWith(root) : true))
+      .map((key) => (useRoot ? key.replace(root, '') : key));
 
-  const clear = () => storage.clear();
+  const get = (key, useRoot = true) =>
+    JSON.parse(storage.getItem(_resolveKey(key, useRoot)));
 
-  const keys = () => Object.keys(storage);
+  const set = (key, data, useRoot = true) =>
+    storage.setItem(_resolveKey(key, useRoot), JSON.stringify(data));
 
-  const filter = (condition) =>
-    keys().reduce((data, key) => {
+  const remove = (key, useRoot = true) =>
+    storage.removeItem(_resolveKey(key, useRoot));
+
+  const clear = (useRoot = true) => {
+    if (useRoot) keys().forEach((key) => remove(key));
+    else storage.clear();
+  };
+
+  const filter = (condition, useRoot) =>
+    keys(useRoot).reduce((data, key) => {
       if (condition(key)) {
         data[key] = get(key);
       }
@@ -21,30 +37,31 @@ const Storage = (() => {
       return data;
     }, {});
 
-  const items = () => filter(() => true);
+  const items = (useRoot) => filter(() => true, useRoot);
 
-  const sync = (key, newData = null) => {
+  const sync = (key, newData = null, useRoot = true) => {
     Promise.resolve().then(() => {
       const { resolver, data: cached } = cache.get(key);
       const data = newData || cached;
 
       if (resolver && typeof resolver === 'function') {
-        set(key, resolver.call(storage, data));
+        set(key, resolver.call(storage, data), useRoot);
       } else {
-        set(key, data);
+        set(key, data, useRoot);
       }
     });
   };
 
-  const store = (key, data, resolver = null) => {
+  const store = (key, data, resolver = null, useRoot = true) => {
     cache.set(key, { data, resolver });
 
-    sync(key, data);
+    sync(key, data, useRoot);
   };
 
   const onChange = (callback) => window.addEventListener('storage', callback);
 
   return {
+    init,
     clear,
     filter,
     get,
