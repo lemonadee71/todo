@@ -3,20 +3,22 @@ import Navigo from 'navigo';
 import EventEmitter from './classes/Emitter';
 import Task from './classes/Task';
 // import History from './history';
-import * as core from './main';
+import * as main from './main';
 import { TASK, PROJECT } from './actions';
-import { GH_PATH } from './constants';
+import { GH_PATH, LOCAL } from './constants';
 import { debounce } from '../utils/delay';
 
-const App = (() => {
+const Core = (() => {
   const [state] = createHook({
     darkTheme: false,
-    currentProject: null,
+    currentUser: null,
+    currentPage: '/app',
+    currentOpenedTask: null,
     expandLabels: false,
   });
   const event = new EventEmitter();
   const router = new Navigo(GH_PATH);
-  const getters = Object.entries(core).reduce((obj, [key, fn]) => {
+  const getters = Object.entries(main).reduce((obj, [key, fn]) => {
     if (key.startsWith('get')) {
       obj[key] = fn;
     }
@@ -24,50 +26,54 @@ const App = (() => {
     return obj;
   }, {});
 
+  const init = (user) => {
+    Storage.init((state.currentUser = user || LOCAL));
+    router.navigate((state.currentPage = Storage.get('lastOpenedPage')));
+  };
+
   // wrappers for core functions
   // just so multiple components can listen to an event
-  // and to remove direct dependencies
   event.on(PROJECT.SELECT, (id) => {
     // track the current project
     state.currentProject = id;
   });
 
-  event.on(PROJECT.ADD, (name) => core.addProject(name));
-  event.on(PROJECT.REMOVE, (id) => core.deleteProject(id));
+  event.on(PROJECT.ADD, (name) => main.addProject(name));
+  event.on(PROJECT.REMOVE, (id) => main.deleteProject(id));
   event.on(PROJECT.UPDATE, ({ id, newName }) => {
-    const project = core.getProject(id);
+    const project = main.getProject(id);
     project.name = newName; // since only name is editable
 
     return project;
   });
 
   event.on(PROJECT.LISTS.ADD, ({ project, name }) =>
-    core.addList(project, name)
+    main.addList(project, name)
   );
   event.on(PROJECT.LISTS.REMOVE, ({ project, id }) =>
-    core.deleteList(project, id)
+    main.deleteList(project, id)
   );
   event.on(PROJECT.LISTS.UPDATE, ({ project, id, newName }) => {
-    const list = core.getList(project, id);
+    const list = main.getList(project, id);
     list.name = newName; // since only name is editable
 
     return list;
   });
 
   event.on(PROJECT.LABELS.ADD, ({ project, data }) =>
-    core.addLabel(project, data.name, data.color)
+    main.addLabel(project, data.name, data.color)
   );
   event.on(PROJECT.LABELS.REMOVE, ({ project, id }) =>
-    core.deleteLabel(project, id)
+    main.deleteLabel(project, id)
   );
   event.on(PROJECT.LABELS.UPDATE, ({ project, id, data }) =>
-    core.editLabel(project, id, data.prop, data.value)
+    main.editLabel(project, id, data.prop, data.value)
   );
 
-  event.on(TASK.ADD, (data) => core.addTask(data));
-  event.on(TASK.REMOVE, (data) => core.deleteTask(data));
+  event.on(TASK.ADD, (data) => main.addTask(data));
+  event.on(TASK.REMOVE, (data) => main.deleteTask(data));
   event.on(TASK.UPDATE, (data) => {
-    const task = core.getTask(data.project, data.list, data.id);
+    const task = main.getTask(data.project, data.list, data.id);
 
     Object.entries(data).forEach(([prop, value]) => {
       task[prop] = value;
@@ -78,10 +84,10 @@ const App = (() => {
   event.on(TASK.TRANSFER, ({ type, to, from, data }) => {
     switch (type) {
       case 'project':
-        core.transferTaskToProject(data.id, data.list, from, to);
+        main.transferTaskToProject(data.id, data.list, from, to);
         break;
       case 'list':
-        core.transferTaskToList(data.id, data.project, from, to);
+        main.transferTaskToList(data.id, data.project, from, to);
         break;
       default:
         throw new Error('Invalid transfer type');
@@ -89,11 +95,11 @@ const App = (() => {
   });
 
   const taskLabelsReducer = (action, { labelID, taskData }) => {
-    const task = core.getTask(taskData.project, taskData.list, taskData.id);
+    const task = main.getTask(taskData.project, taskData.list, taskData.id);
 
     switch (action) {
       case 'add':
-        task.addLabel(core.getLabel(taskData.project, labelID));
+        task.addLabel(main.getLabel(taskData.project, labelID));
         break;
       case 'remove':
         task.removeLabel(labelID);
@@ -109,7 +115,7 @@ const App = (() => {
   };
 
   const taskSubtasksReducer = (action, { subtaskData, taskData }) => {
-    const task = core.getTask(taskData.project, taskData.list, taskData.id);
+    const task = main.getTask(taskData.project, taskData.list, taskData.id);
 
     switch (action) {
       case 'add':
@@ -151,14 +157,15 @@ const App = (() => {
   );
 
   // only update local storage half a second after all updates
-  event.on(/(task|project)/i, debounce(core.syncLocalStorage, 500));
+  event.on(/(task|project)/i, debounce(main.syncLocalStorage, 500));
 
   return {
-    core: getters,
+    main: getters,
     event,
     router,
     state,
+    init,
   };
 })();
 
-export default App;
+export default Core;
