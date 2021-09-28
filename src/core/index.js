@@ -4,8 +4,9 @@ import EventEmitter from './classes/Emitter';
 import Task from './classes/Task';
 // import History from './history';
 import * as main from './main';
+import Router from './router';
 import { TASK, PROJECT } from './actions';
-import { GH_PATH, LOCAL } from './constants';
+import { LOCAL } from './constants';
 import { debounce } from '../utils/delay';
 
 const Core = (() => {
@@ -17,7 +18,7 @@ const Core = (() => {
     expandLabels: false,
   });
   const event = new EventEmitter();
-  const router = new Navigo(GH_PATH);
+  const router = Router;
   const getters = Object.entries(main).reduce((obj, [key, fn]) => {
     if (key.startsWith('get')) {
       obj[key] = fn;
@@ -26,6 +27,8 @@ const Core = (() => {
     return obj;
   }, {});
 
+  // * This should be evoked when user navigated to /app
+  // * Run before any renders
   const init = (user) => {
     Storage.init((state.currentUser = user || LOCAL));
     router.navigate((state.currentPage = Storage.get('lastOpenedPage')));
