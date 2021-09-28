@@ -2,7 +2,13 @@ import uuid from '../../utils/id';
 import List from './List';
 
 export default class Project {
-  constructor({ name, id, totalTasks, labels = [], lists = [] }) {
+  constructor({
+    name,
+    id,
+    totalTasks,
+    labels = [],
+    lists = [new List({ name: 'default', id: 'default' })],
+  }) {
     this.name = name;
     this.id = id || `project-${uuid(8)}`;
     this.labels = new List({ name, id: this.id, defaultItems: labels });
