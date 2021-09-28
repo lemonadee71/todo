@@ -1,6 +1,5 @@
 import { html } from 'poor-man-jsx';
 import 'github-markdown-css';
-import Link from '../components/Link';
 import { PATHS } from '../core/constants';
 import Core from '../core';
 
@@ -39,11 +38,7 @@ const App = () => {
         <li><h1>ToDo</h1></li>
       </ul>
     </header>
-    <ul>
-      <li>${Link('/app', 'This is my first link')}</li>
-      <li>${Link('/app/calendar', 'This is my second link')}</li>
-      <li>${Link('/app/p/123', 'This is my third link')}</li>
-    </ul>
+    <h2>This is my app page</h2>
   `;
 };
 

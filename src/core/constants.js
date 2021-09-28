@@ -3,6 +3,7 @@ export const LOCAL_USER = '@@local';
 export const ROOT_NAME = 'root';
 export const LAST_UPDATE = 'lastUpdate';
 export const PATHS = {
+  home: '/',
   login: 'login',
   app: 'app',
   allApp: /app(.*)?/,
