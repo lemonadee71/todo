@@ -1,87 +1,51 @@
-import { html } from 'poor-man-jsx';
-import $, { append, remove } from '../helpers/helpers';
-import { newProjectInput, userProjects } from '../helpers/selectors';
-import { getProjectsDetails } from '../modules/projects';
-import { AppEvent } from '../emitters';
-import { DELETE_ICON } from './Icons';
-
-const ProjectListItem = ({ proj, deleteHandler }) =>
-  html`
-    <li id="${proj.id}">
-      <a href="${`#/${proj.id.replace('-', '/')}`}">{% ${proj.name} %}</a>
-      <span ${{ onClick: deleteHandler }}>${DELETE_ICON}</span>
-    </li>
-  `;
+import { createHook, html } from 'poor-man-jsx';
+import Core from '../core';
+import { PROJECT } from '../core/actions';
 
 const Sidebar = () => {
-  const createNewProject = (e) => {
-    e.preventDefault();
-    AppEvent.emit('project.add', { name: $(newProjectInput).value });
-    e.target.reset();
-  };
+  console.log(Core.main.getProjectDetails());
+  const [data, revoke] = createHook({
+    projects: Core.main.getProjectDetails(),
+  });
 
-  const removeProject = (e) => {
-    e.stopPropagation();
-    const projListItem = e.currentTarget.parentElement;
+  const unsubscribe = Core.event.on(PROJECT.ALL, () => {
+    data.projects = Core.main.getProjectDetails();
+  });
 
-    AppEvent.emit('project.delete', { id: projListItem.id });
-    remove(projListItem).from($(userProjects));
-
-    const currentPath = window.location.hash
-      .replace('#/', '')
-      .replace('/', '-');
-
-    if (currentPath === projListItem.id) {
-      AppEvent.emit('hashchange', 'all');
-    }
-  };
-
-  const addProject = (project) => {
-    const projectLi = ProjectListItem({
-      proj: project,
-      deleteHandler: removeProject,
-    });
-
-    append(projectLi).to($(userProjects));
-  };
-
-  AppEvent.on('project.add.error', (error) => alert(error.toString()));
-  AppEvent.on('project.add.success', addProject);
-
-  const projects = getProjectsDetails();
+  // const createDeleteHandler = (id) => () => {
+  //   Core.event.emit(PROJECT.REMOVE, id);
+  // };
 
   return html`
     <aside id="sidebar">
-      <div>
-        <ul id="default-proj">
-          <li><a href="#/all">All Tasks</a></li>
-          <li><a href="#/today">Today</a></li>
-          <li><a href="#/week">This Week</a></li>
-          <li><a href="#/upcoming">Upcoming</a></li>
-        </ul>
-        <br />
-      </div>
-      <div>
-        <form ${{ onSubmit: createNewProject }}>
-          <input
-            type="text"
-            name="new-project"
-            class="dark"
-            id="new-proj"
-            placeholder="Create New Project"
-            required
-          />
-          <button type="submit">+</button>
-        </form>
-        <br />
-        <ul id="user-proj">
-          ${projects.length
-            ? projects.map((proj) =>
-                ProjectListItem({ proj, deleteHandler: removeProject })
-              )
-            : ''}
-        </ul>
-      </div>
+      <ul data-name="">
+        <li>User</li>
+        <li>Quick Find</li>
+        <li>Overview</li>
+        <li>Notifications</li>
+      </ul>
+      <ul
+        is-list
+        keystring="id"
+        ${{
+          '@unmount': () => {
+            unsubscribe();
+            revoke();
+          },
+          $children: data.$projects((projects) =>
+            projects.map(
+              (p) =>
+                html`
+                  <li id="${p.id}">
+                    <a is="navigo-link" href="${`/app/${p.link}`}">
+                      {% ${p.name} %}
+                    </a>
+                  </li>
+                `
+            )
+          ),
+        }}
+      ></ul>
     </aside>
   `;
 };

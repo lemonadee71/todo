@@ -8,7 +8,6 @@ import { LAST_UPDATE, ROOT_NAME } from './constants';
 // import { defaultProjects } from './defaults';
 
 const DEFAULT = {
-  id: 'getting_started',
   name: 'Getting Started',
 };
 
@@ -90,10 +89,7 @@ const storeData = function (data) {
   return Date.now();
 };
 
-const Root = new List({
-  name: ROOT_NAME,
-  id: ROOT_NAME,
-});
+let Root;
 
 export const init = () => {
   const recoveredData = recoverData();
@@ -101,7 +97,11 @@ export const init = () => {
     ? recoveredData
     : [new Project(DEFAULT)];
 
-  Root.add(initData);
+  Root = new List({
+    name: ROOT_NAME,
+    id: ROOT_NAME,
+    defaultItems: initData,
+  });
   Storage.store(LAST_UPDATE, Root, storeData);
 };
 
@@ -121,15 +121,12 @@ export const syncLocalStorage = () => Storage.sync(LAST_UPDATE, Root);
 // =====================================================================================
 export const getAllProjects = () => [...Root.items];
 
-export const getProjectDetails = () => {
-  const projects = Root.filter((project) => project.id !== 'uncategorized');
-
-  return projects.map((project) => ({
+export const getProjectDetails = () =>
+  Root.items.map((project) => ({
     id: project.id,
     name: project.name,
     link: project.link,
   }));
-};
 
 export const getProject = (projectFilter) => {
   const project = Root.get(projectFilter);
