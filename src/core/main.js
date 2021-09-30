@@ -127,6 +127,7 @@ export const getProjectDetails = () => {
   return projects.map((project) => ({
     id: project.id,
     name: project.name,
+    link: project.link,
   }));
 };
 

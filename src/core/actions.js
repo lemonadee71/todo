@@ -2,11 +2,13 @@ const ADD = 'add';
 const REMOVE = 'remove';
 const UPDATE = 'update';
 const TRANSFER = 'transfer';
+const ALL = `(${ADD}|${REMOVE}|${UPDATE}|${TRANSFER})`;
 const SYNC = 'sync';
 
 const createActions = (prefix) =>
-  [ADD, REMOVE, UPDATE, TRANSFER].reduce((obj, action) => {
-    obj[action.toUpperCase()] = `${prefix}.${action}`;
+  [ADD, REMOVE, UPDATE, TRANSFER, 'all'].reduce((obj, action) => {
+    obj[action.toUpperCase()] =
+      action === 'all' ? new RegExp(`${prefix}.${ALL}`) : `${prefix}.${action}`;
 
     return obj;
   }, {});
