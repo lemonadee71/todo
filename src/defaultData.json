@@ -1,0 +1,23 @@
+{
+  "projects": [
+    {
+      "name": "Getting Started",
+      "lists": [
+        {
+          "name": "Features"
+        },
+        {
+          "name": "Tutorials"
+        }
+      ]
+    },
+    {
+      "name": "To Do",
+      "lists": [
+        {
+          "name": "Chores"
+        }
+      ]
+    }
+  ]
+}

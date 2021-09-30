@@ -4,11 +4,25 @@ import Label from './classes/Label';
 import Project from './classes/Project';
 import Storage from './storage';
 import { LAST_UPDATE, ROOT_NAME } from './constants';
+import defaultData from '../defaultData.json';
 // import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../utils/date';
 // import { defaultProjects } from './defaults';
 
-const DEFAULT = {
-  name: 'Getting Started',
+const loadDefaultData = () => {
+  const data = [];
+
+  defaultData.projects.forEach((project) => {
+    const lists = project.lists.map((list) => new List({ name: list.name }));
+
+    data.push(
+      new Project({
+        lists,
+        name: project.name,
+      })
+    );
+  });
+
+  return data;
 };
 
 const recoverData = () => {
@@ -93,9 +107,7 @@ let Root;
 
 export const init = () => {
   const recoveredData = recoverData();
-  const initData = recoveredData.length
-    ? recoveredData
-    : [new Project(DEFAULT)];
+  const initData = recoveredData.length ? recoveredData : loadDefaultData();
 
   Root = new List({
     name: ROOT_NAME,
