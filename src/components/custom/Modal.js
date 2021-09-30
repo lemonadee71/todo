@@ -4,8 +4,10 @@ class Modal extends HTMLDivElement {
   constructor() {
     super();
     [this.state, this._revoke] = createHook({ content: null });
+  }
 
-    this.defaultStyle = {
+  connectedCallback() {
+    const defaultBackdropStyle = {
       display: 'none',
       position: 'fixed',
       zIndex: '99',
@@ -16,10 +18,8 @@ class Modal extends HTMLDivElement {
       overflow: 'auto',
       backgroundColor: 'rgba(102, 102, 102, 0.4)',
     };
-  }
 
-  connectedCallback() {
-    Object.assign(this.style, this.defaultStyle);
+    if (!this.classList.length) Object.assign(this.style, defaultBackdropStyle);
 
     const content = html`
       <div role="modal">
