@@ -3,15 +3,15 @@ import Navigo from 'navigo';
 
 const Router = (() => {
   const routes = new Map([['notFound', []]]);
-  const self = new Navigo('/', { strategy: 'ALL' });
+  const navigo = new Navigo('/', { strategy: 'ALL' });
 
-  self.notFound((match) => {
+  navigo.notFound((match) => {
     routes.get('notFound').forEach((handler) => handler(match));
   });
 
   const on = (path, handler, hooks = {}) => {
     if (!routes.get(path)) {
-      self.on(path, (match) => {
+      navigo.on(path, (match) => {
         routes.get(path).forEach((cb) => cb(match));
       });
     }
@@ -25,7 +25,7 @@ const Router = (() => {
       const type = key[0].toUpperCase() + key.slice(1).toLowerCase();
       const action = `add${type}Hook`;
 
-      if (hook) self[action](path.toString(), hook);
+      if (hook) navigo[action](path.toString(), hook);
     });
   };
 
@@ -35,7 +35,7 @@ const Router = (() => {
 
   const off = (path) => {
     routes.delete(path);
-    self.off(path);
+    navigo.off(path);
   };
 
   const notFound = (handler) => {
@@ -44,7 +44,7 @@ const Router = (() => {
   };
 
   return {
-    ...self,
+    ...navigo,
     on,
     off,
     notFound,
