@@ -48,6 +48,10 @@ class Task {
     };
   }
 
+  get link() {
+    return `/t/${this.id.split('-')[1]}`;
+  }
+
   getSubtask(id) {
     return this.subtasks.get(id);
   }

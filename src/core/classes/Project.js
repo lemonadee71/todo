@@ -16,6 +16,10 @@ export default class Project {
     this.totalTasks = totalTasks || 0;
   }
 
+  get link() {
+    return `/p/${this.id.split('-')[1]}`;
+  }
+
   getLabel(labelFilter) {
     return this.labels.get(labelFilter);
   }
