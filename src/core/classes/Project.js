@@ -17,7 +17,7 @@ export default class Project {
   }
 
   get link() {
-    return `/p/${this.id.split('-')[1]}`;
+    return `p/${this.id.split('-')[1]}`;
   }
 
   getLabel(labelFilter) {

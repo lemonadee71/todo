@@ -49,7 +49,7 @@ class Task {
   }
 
   get link() {
-    return `/t/${this.id.split('-')[1]}`;
+    return `t/${this.id.split('-')[1]}`;
   }
 
   getSubtask(id) {
