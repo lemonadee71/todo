@@ -2,8 +2,12 @@ import Navigo from 'navigo';
 // import { GH_PATH } from './constants';
 
 const Router = (() => {
-  const routes = new Map();
+  const routes = new Map([['notFound', []]]);
   const self = new Navigo('/', { strategy: 'ALL' });
+
+  self.notFound((match) => {
+    routes.get('notFound').forEach((handler) => handler(match));
+  });
 
   const on = (path, handler, hooks = {}) => {
     if (!routes.get(path)) {
@@ -20,9 +24,8 @@ const Router = (() => {
     Object.entries(hooks).forEach(([key, hook]) => {
       const type = key[0].toUpperCase() + key.slice(1).toLowerCase();
       const action = `add${type}Hook`;
-      const pathString = path instanceof RegExp ? path.toString() : path;
 
-      if (hook) self[action](pathString, hook);
+      if (hook) self[action](path.toString(), hook);
     });
   };
 
@@ -35,10 +38,16 @@ const Router = (() => {
     self.off(path);
   };
 
+  const notFound = (handler) => {
+    const handlers = routes.get('notFound');
+    routes.set('notFound', handler ? [...handlers, handler] : handlers);
+  };
+
   return {
     ...self,
     on,
     off,
+    notFound,
     register,
   };
 })();
