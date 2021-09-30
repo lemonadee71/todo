@@ -5,7 +5,7 @@ const VALUES = {
 
 class EventEmitter {
   constructor() {
-    this.events = new Set();
+    this.events = new Map();
   }
 
   on(name, fn, options = {}) {
