@@ -1,6 +1,12 @@
-import { html, createHook } from 'poor-man-jsx';
-import App from '../core';
+import { html } from 'poor-man-jsx';
 
-const List = () => {
-  return html`<div></div>`;
-};
+// * This is is-list and should update for every new task
+const List = (data) =>
+  html`
+    <div>
+      <p>${data.name}</p>
+      <ul is-list></ul>
+    </div>
+  `;
+
+export default List;

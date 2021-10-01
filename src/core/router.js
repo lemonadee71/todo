@@ -5,20 +5,23 @@ const Router = (() => {
   const routes = new Map([['notFound', []]]);
   const navigo = new Navigo('/', { strategy: 'ALL' });
 
+  const _getHandlers = (path) => Array.from(routes.get(path).keys());
+
+  // add not found handler
   navigo.notFound((match) => {
-    routes.get('notFound').forEach((handler) => handler(match));
+    _getHandlers('notFound').forEach((handler) => handler(match));
   });
 
   const on = (path, handler, hooks = {}) => {
     if (!routes.get(path)) {
       navigo.on(path, (match) => {
-        routes.get(path).forEach((cb) => cb(match));
+        _getHandlers(path).forEach((cb) => cb(match));
       });
     }
 
     // add handler
-    const handlers = routes.get(path) || [];
-    routes.set(path, handler ? [...handlers, handler] : handlers);
+    const handlers = routes.get(path) || new Map();
+    routes.set(path, handler ? handlers.set(handler) : handlers);
 
     // add hooks
     Object.entries(hooks).forEach(([key, hook]) => {
@@ -33,7 +36,13 @@ const Router = (() => {
     arr.forEach((route) => on(route.path, route.handler, route.hooks));
   };
 
-  const off = (path) => {
+  const off = (path, handler) => {
+    const handlers = routes.get(path);
+    handlers.delete(handler);
+    routes.set(path, handlers);
+  };
+
+  const remove = (path) => {
     routes.delete(path);
     navigo.off(path);
   };
@@ -47,6 +56,7 @@ const Router = (() => {
     ...navigo,
     on,
     off,
+    remove,
     notFound,
     register,
   };

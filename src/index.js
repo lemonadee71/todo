@@ -21,6 +21,7 @@ const routes = [
     component: pages.Login,
   },
 ];
+
 const Website = () =>
   html`
     <ul>
@@ -29,7 +30,7 @@ const Website = () =>
       <li><a is="navigo-link" href="/login">Login</a></li>
       <li><a is="navigo-link" href="/error">Nowhere</a></li>
     </ul>
-    ${Router(routes, pages.Error, 'main')}
+    ${Router(routes, null, 'main')}
   `;
 
 defineCustomElements();
