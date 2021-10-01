@@ -11,6 +11,10 @@ class Link extends HTMLAnchorElement {
       // the previous path
       if (Core.router.matchLocation(href)) return;
 
+      if (title) {
+        document.title = title;
+      }
+
       Core.router.navigate(href, { title });
     });
   }

@@ -20,7 +20,9 @@ const Sidebar = () => {
       <li>User</li>
       <li>Quick Find</li>
       <li><a is="navigo-link" href="/app">Overview</a></li>
-      <li><a is="navigo-link" href="/app/calendar">Calendar</a></li>
+      <li>
+        <a is="navigo-link" href="/app/calendar" title="Calendar">Calendar</a>
+      </li>
     </ul>
     <ul
       is-list
@@ -35,7 +37,11 @@ const Sidebar = () => {
             (p) =>
               html`
                 <li id="${p.id}">
-                  <a is="navigo-link" href="${`/app/${p.link}`}">
+                  <a
+                    is="navigo-link"
+                    href="${`/app/${p.link}`}"
+                    title="Project | ${p.name}"
+                  >
                     {% ${p.name} %}
                   </a>
                 </li>
