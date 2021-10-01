@@ -3,7 +3,6 @@ import Core from '../core';
 import { PROJECT } from '../core/actions';
 
 const Sidebar = () => {
-  console.log(Core.main.getProjectDetails());
   const [data, revoke] = createHook({
     projects: Core.main.getProjectDetails(),
   });
@@ -17,36 +16,34 @@ const Sidebar = () => {
   // };
 
   return html`
-    <aside id="sidebar">
-      <ul data-name="">
-        <li>User</li>
-        <li>Quick Find</li>
-        <li>Overview</li>
-        <li>Notifications</li>
-      </ul>
-      <ul
-        is-list
-        keystring="id"
-        ${{
-          '@unmount': () => {
-            unsubscribe();
-            revoke();
-          },
-          $children: data.$projects((projects) =>
-            projects.map(
-              (p) =>
-                html`
-                  <li id="${p.id}">
-                    <a is="navigo-link" href="${`/app/${p.link}`}">
-                      {% ${p.name} %}
-                    </a>
-                  </li>
-                `
-            )
-          ),
-        }}
-      ></ul>
-    </aside>
+    <ul data-name="">
+      <li>User</li>
+      <li>Quick Find</li>
+      <li><a is="navigo-link" href="/app">Overview</a></li>
+      <li><a is="navigo-link" href="/app/calendar">Calendar</a></li>
+    </ul>
+    <ul
+      is-list
+      keystring="id"
+      ${{
+        '@unmount': () => {
+          unsubscribe();
+          revoke();
+        },
+        $children: data.$projects((projects) =>
+          projects.map(
+            (p) =>
+              html`
+                <li id="${p.id}">
+                  <a is="navigo-link" href="${`/app/${p.link}`}">
+                    {% ${p.name} %}
+                  </a>
+                </li>
+              `
+          )
+        ),
+      }}
+    ></ul>
   `;
 };
 

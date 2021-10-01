@@ -1,4 +1,4 @@
-import { createHook, html } from 'poor-man-jsx';
+import { html } from 'poor-man-jsx';
 import List from '../components/List';
 import Core from '../core';
 

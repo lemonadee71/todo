@@ -2,10 +2,10 @@ import { createHook, html } from 'poor-man-jsx';
 import Core from '../core';
 // import createRouter from '../utils/createRouter';
 
-const Router = (routes, initialMatch = null, tagName = 'div', classes = '') => {
+const Router = (routes, error = () => null, tagName = 'div', classes = '') => {
   const [current] = createHook({
-    url: initialMatch?.url,
-    match: initialMatch,
+    url: window.location.pathname,
+    match: null,
   });
 
   const handler = (match) => {
@@ -17,6 +17,8 @@ const Router = (routes, initialMatch = null, tagName = 'div', classes = '') => {
     routes.forEach((route) => {
       Core.router.on(route.path, handler);
     });
+
+    Core.router.notFound(handler);
   };
 
   const destroy = () => {
@@ -25,10 +27,12 @@ const Router = (routes, initialMatch = null, tagName = 'div', classes = '') => {
     });
   };
 
-  const changeContent = (url) =>
-    routes
-      .find((route) => Core.router.matchLocation(route.path, url))
-      ?.component(current.match);
+  const changeContent = (url) => {
+    const route = routes.find((r) => Core.router.matchLocation(r.path, url));
+
+    if (route) return route.component(current.match);
+    return error(current.match);
+  };
 
   return html`
     <${tagName}
