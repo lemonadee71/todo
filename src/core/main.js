@@ -12,7 +12,13 @@ const loadDefaultData = () => {
   const data = [];
 
   defaultData.projects.forEach((project) => {
-    const lists = project.lists.map((list) => new List({ name: list.name }));
+    const lists = project.lists.map(
+      (list) =>
+        new List({
+          name: list.name,
+          defaultItems: list.items.map((task) => new Task(task)),
+        })
+    );
 
     data.push(
       new Project({
