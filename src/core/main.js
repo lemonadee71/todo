@@ -178,7 +178,7 @@ export const getListDetails = (projectFilter) =>
   getLists(projectFilter).map((list) => ({ name: list.name, id: list.id }));
 
 export const getList = (projectFilter, listFilter) =>
-  Root.get(projectFilter).lists.get(listFilter);
+  Root.get(projectFilter).getList(listFilter);
 
 export const addList = (projectFilter, name) => {
   const { lists } = getProject(projectFilter);
@@ -251,7 +251,7 @@ export const getLabels = (projectFilter) => [
 ];
 
 export const getLabel = (projectFilter, labelFilter) =>
-  getProject(projectFilter).labels.get(labelFilter);
+  getProject(projectFilter).getLabel(labelFilter);
 
 export const addLabel = (projectFilter, name, color) => {
   const { labels } = getProject(projectFilter);
