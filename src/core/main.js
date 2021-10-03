@@ -8,6 +8,7 @@ import defaultData from '../defaultData.json';
 // import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../utils/date';
 // import { defaultProjects } from './defaults';
 
+// TODO: Fix bugs here (no project in Task)
 const loadDefaultData = () => {
   const data = [];
 
