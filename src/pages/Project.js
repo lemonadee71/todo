@@ -1,7 +1,7 @@
 import { createHook, html } from 'poor-man-jsx';
 import List from '../components/List';
+import { PROJECT, TASK } from '../core/actions';
 import Core from '../core';
-import { PROJECT } from '../core/actions';
 
 // * This is is-list and should update for every new list
 const Project = ({ data: { id } }) => {
@@ -9,7 +9,7 @@ const Project = ({ data: { id } }) => {
   const [data] = createHook({ lists: project.lists.items });
 
   const unsubscribe = Core.event.on(
-    PROJECT.LISTS.ALL,
+    [PROJECT.LISTS.ALL, TASK.ALL],
     () => {
       data.lists = Core.main.getProject(project.id).lists.items;
     },
