@@ -7,9 +7,13 @@ const Sidebar = () => {
     projects: Core.main.getProjectDetails(),
   });
 
-  const unsubscribe = Core.event.on(PROJECT.ALL, () => {
-    data.projects = Core.main.getProjectDetails();
-  });
+  const unsubscribe = Core.event.on(
+    PROJECT.ALL,
+    () => {
+      data.projects = Core.main.getProjectDetails();
+    },
+    { order: 'last' }
+  );
 
   const createNewProject = (e) => {
     e.preventDefault();
