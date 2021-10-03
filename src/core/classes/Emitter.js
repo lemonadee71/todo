@@ -10,12 +10,16 @@ class EventEmitter {
 
   on(name, fn, options = {}) {
     const handlers = this.events.get(name) || [];
-    this.events.set(name, [
-      ...handlers,
-      { fn, options: { return: true, throw: true, ...options } },
-    ]);
+    const eventNames = [name].flat(); // support for arrays
 
-    return () => this.off(name, fn);
+    eventNames.forEach((event) =>
+      this.events.set(event, [
+        ...handlers,
+        { fn, options: { return: true, throw: true, ...options } },
+      ])
+    );
+
+    return () => eventNames.forEach((event) => this.off(event, fn));
   }
 
   once(name, fn, options = {}) {
@@ -48,7 +52,7 @@ class EventEmitter {
       .filter(([event]) =>
         event instanceof RegExp ? event.test(name) : event === name
       )
-      .map(([, handler]) => handler)
+      .flatMap(([, handler]) => handler)
       .sort((a, b) => {
         const x = a.options.order;
         const y = b.options.order;
@@ -63,7 +67,7 @@ class EventEmitter {
         try {
           const result = fn.apply(options.context, payload);
 
-          if (options.return) this.emit(`${name}.success`, result);
+          if (options.return && result) this.emit(`${name}.success`, result);
           if (options.once) this.off(name, fn);
         } catch (e) {
           console.error(e);
