@@ -6,6 +6,20 @@ import * as pages from './pages';
 import Sidebar from './components/Sidebar';
 import Core from './core';
 
+Core.router.on(PATHS.allApp, null, {
+  before: (done, match) => {
+    const newURL = match.url;
+    const isNavigatingToApp =
+      !Core.router.matchLocation(PATHS.allApp) && newURL.startsWith(PATHS.app);
+
+    if (isNavigatingToApp) Core.init();
+
+    // This causes unnecessary renders for app
+    // by always rerendering even if still on the same path
+    done();
+  },
+});
+
 const routes = [
   {
     path: PATHS.home,
