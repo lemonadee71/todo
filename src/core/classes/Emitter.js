@@ -70,7 +70,7 @@ class EventEmitter {
           if (options.once) this.off(name, fn);
         } catch (e) {
           console.error(e);
-          // if (options.throw) this.emit(`${name}.error`, e);
+          if (options.throw) this.emit(`${name}.error`, e);
           if (options.dontCatch) throw e;
         }
       });
