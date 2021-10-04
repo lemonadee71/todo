@@ -8,16 +8,20 @@ class EventEmitter {
     this.events = new Map();
   }
 
+  get size() {
+    return this.events.size;
+  }
+
   on(name, fn, options = {}) {
-    const handlers = this.events.get(name) || [];
     const eventNames = [name].flat(); // support for arrays
 
-    eventNames.forEach((event) =>
-      this.events.set(event, [
-        ...handlers,
-        { fn, options: { return: true, throw: true, ...options } },
-      ])
-    );
+    eventNames.forEach((event) => {
+      const handlers = this.events.get(event) || new Map();
+      this.events.set(
+        event,
+        handlers.set(fn, { return: true, throw: true, ...options })
+      );
+    });
 
     return () => eventNames.forEach((event) => this.off(event, fn));
   }
@@ -27,10 +31,7 @@ class EventEmitter {
   }
 
   off(name, fn) {
-    this.events.set(
-      name,
-      this.events.get(name).filter((handler) => handler.fn !== fn)
-    );
+    this.events.get(name).delete(fn);
 
     return this;
   }
@@ -52,18 +53,16 @@ class EventEmitter {
       .filter(([event]) =>
         event instanceof RegExp ? event.test(name) : event === name
       )
-      .flatMap(([, handler]) => handler)
+      .flatMap(([, handler]) => Array.from(handler.entries()))
       .sort((a, b) => {
-        const x = a.options.order;
-        const y = b.options.order;
+        const x = a[1].order;
+        const y = b[1].order;
         const aValue = Number.isInteger(x) ? x : VALUES[x] || 0;
         const bValue = Number.isInteger(y) ? y : VALUES[y] || 0;
 
         return aValue - bValue;
       })
-      .forEach((handler) => {
-        const { fn, options } = handler;
-
+      .forEach(([fn, options]) => {
         try {
           const result = fn.apply(options.context, payload);
 
@@ -71,10 +70,12 @@ class EventEmitter {
           if (options.once) this.off(name, fn);
         } catch (e) {
           console.error(e);
-          if (options.throw) this.emit(`${name}.error`, e);
+          // if (options.throw) this.emit(`${name}.error`, e);
           if (options.dontCatch) throw e;
         }
       });
+
+    return this;
   }
 }
 
