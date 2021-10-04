@@ -2,7 +2,7 @@ import { createHook, html } from 'poor-man-jsx';
 import Core from '../core';
 // import createRouter from '../utils/createRouter';
 
-const Router = (routes, error = () => null, tagName = 'div', classes = '') => {
+const Router = (routes, tagName = 'div', props = '') => {
   const [current] = createHook({
     url: window.location.pathname,
     match: null,
@@ -31,12 +31,12 @@ const Router = (routes, error = () => null, tagName = 'div', classes = '') => {
     const route = routes.find((r) => Core.router.matchLocation(r.path, url));
 
     if (route) return route.component(current.match);
-    return error(current.match);
+    return [];
   };
 
   return html`
     <${tagName}
-      class="${Array.isArray(classes) ? classes.join(' ') : classes}"
+      ${props}
       ${{
         $children: current.$url(changeContent),
         '@create': init,

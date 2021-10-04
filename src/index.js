@@ -55,8 +55,10 @@ const Website = () =>
       <li><a is="navigo-link" href="/app" title="Overview">App</a></li>
       <li><a is="navigo-link" href="/login" title="Login">Login</a></li>
     </ul>
-    ${Router([{ path: '*', component: renderSidebar }], () => [], 'aside')}
-    ${Router(routes, pages.Error, 'main')}
+    ${Router([{ path: '*', component: renderSidebar }], 'aside', {
+      class: 'sidebar',
+    })}
+    ${Router(routes, 'main')}
   `;
 
 defineCustomElements();
