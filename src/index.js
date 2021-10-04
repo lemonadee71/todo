@@ -5,6 +5,7 @@ import Router from './components/Router';
 import * as pages from './pages';
 import Sidebar from './components/Sidebar';
 import Core from './core';
+import './styles/main.scss';
 
 Core.router.on(PATHS.allApp, null, {
   before: (done, match) => {
@@ -50,11 +51,6 @@ const renderSidebar = (match) => {
 
 const Website = () =>
   html`
-    <ul>
-      <li><a is="navigo-link" href="/" title="To Do List">Home</a></li>
-      <li><a is="navigo-link" href="/app" title="Overview">App</a></li>
-      <li><a is="navigo-link" href="/login" title="Login">Login</a></li>
-    </ul>
     ${Router([{ path: '*', component: renderSidebar }], 'aside', {
       class: 'sidebar',
     })}
@@ -63,3 +59,4 @@ const Website = () =>
 
 defineCustomElements();
 render(Website(), document.body);
+Core.router.navigate('/app'); // for testing purposes
