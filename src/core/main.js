@@ -8,25 +8,25 @@ import defaultData from '../defaultData.json';
 // import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../utils/date';
 // import { defaultProjects } from './defaults';
 
-// TODO: Fix bugs here (no project in Task)
 const loadDefaultData = () => {
   const data = [];
 
-  defaultData.projects.forEach((project) => {
-    const lists = project.lists.map(
-      (list) =>
-        new List({
-          name: list.name,
-          defaultItems: list.items.map((task) => new Task(task)),
-        })
-    );
+  defaultData.projects.forEach((p) => {
+    const project = new Project({ name: p.name });
 
-    data.push(
-      new Project({
-        lists,
-        name: project.name,
-      })
-    );
+    const lists = p.lists.map((l) => {
+      const list = new List({ name: l.name });
+      const tasks = l.items.map(
+        (task) => new Task({ ...task, project: project.id, list: list.id })
+      );
+      list.add(tasks);
+
+      return list;
+    });
+
+    project.lists.add(lists);
+
+    data.push(project);
   });
 
   return data;
