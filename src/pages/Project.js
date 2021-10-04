@@ -8,13 +8,19 @@ const Project = ({ data: { id } }) => {
   const project = Core.main.getProject(`project-${id}`);
   const [data] = createHook({ lists: project.lists.items });
 
-  const unsubscribe = Core.event.on(
-    [PROJECT.LISTS.ALL, TASK.ALL],
-    () => {
-      data.lists = Core.main.getProject(project.id).lists.items;
-    },
-    { order: 'last' }
-  );
+  const unsubscribe = [
+    // eslint-disable-next-line
+    Core.event.on(PROJECT.LISTS.ADD + '.error', (error) =>
+      alert(error.toString())
+    ),
+    Core.event.on(
+      [PROJECT.LISTS.ALL, TASK.ALL],
+      () => {
+        data.lists = Core.main.getProject(project.id).lists.items;
+      },
+      { order: 'last' }
+    ),
+  ];
 
   const createNewList = (e) => {
     e.preventDefault();
@@ -29,7 +35,7 @@ const Project = ({ data: { id } }) => {
   };
 
   return html`
-    <div ${{ '@unmount': unsubscribe }}>
+    <div ${{ '@unmount': () => unsubscribe.forEach((cb) => cb()) }}>
       <form ${{ onSubmit: createNewList }}>
         <input
           type="text"
