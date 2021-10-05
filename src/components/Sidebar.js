@@ -1,6 +1,7 @@
 import { createHook, html } from 'poor-man-jsx';
-import Core from '../core';
 import { PROJECT } from '../core/actions';
+import Core from '../core';
+import ProjectLink from './ProjectLink';
 
 const Sidebar = () => {
   const [data, revoke] = createHook({
@@ -51,27 +52,7 @@ const Sidebar = () => {
           unsubscribe();
           revoke();
         },
-        $children: data.$projects((projects) =>
-          projects.map(
-            (p) =>
-              html`
-                <li id="${p.id}">
-                  <a
-                    is="navigo-link"
-                    href="${`/app/${p.link}`}"
-                    title="Project | ${p.name}"
-                  >
-                    {% ${p.name} %}
-                  </a>
-                  <button
-                    ${{ onClick: () => Core.event.emit(PROJECT.REMOVE, p.id) }}
-                  >
-                    Delete
-                  </button>
-                </li>
-              `
-          )
-        ),
+        $children: data.$projects.map((project) => ProjectLink(project)),
       }}
     ></ul>
   `;

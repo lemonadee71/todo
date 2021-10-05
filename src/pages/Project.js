@@ -48,11 +48,7 @@ const Project = ({ data: { id } }) => {
       <div
         is-list
         keystring="id"
-        ${{
-          $children: data.$lists((lists) =>
-            lists.map((list) => List(project.id, list))
-          ),
-        }}
+        ${{ $children: data.$lists.map((list) => List(project.id, list)) }}
       ></div>
     </div>
   `;
