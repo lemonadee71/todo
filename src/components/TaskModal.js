@@ -1,4 +1,4 @@
-import Component from '../helpers/component';
+import { html, createState } from 'poor-man-jsx';
 import convertToMarkdown from '../helpers/showdown';
 import $, { append } from '../helpers/helpers';
 import { taskItemLabels, labelsArea } from '../helpers/selectors';
@@ -6,7 +6,7 @@ import { CALENDAR_ICON, NOTES_ICON, TAG_ICON } from './Icons';
 import LabelPopover from './LabelPopover';
 import ProjectOptions from './ProjectOptions';
 import Chip from './Chip';
-import event from '../modules/event';
+import { AppEvent } from '../emitters';
 
 // Selectors are so messy for this component
 // Since there's only one modal component at a time
@@ -15,11 +15,11 @@ import event from '../modules/event';
 // TODO: Add a delete button
 const TaskModal = ({ task }) => {
   const updateTaskDetails = (payload) => {
-    event.emit('task.update', { info: task, data: payload });
+    AppEvent.emit('task.update', { info: task, data: payload });
   };
 
   const updateTaskLabels = (method, id) => {
-    event.emit('task.labels.update', {
+    AppEvent.emit('task.labels.update', {
       info: task,
       action: method,
       labelId: id,
@@ -71,7 +71,7 @@ const TaskModal = ({ task }) => {
     const newLocation = e.currentTarget.value;
     task.location = newLocation;
 
-    event.emit('task.transfer', {
+    AppEvent.emit('task.transfer', {
       prevLocation,
       newLocation,
       id: task.id,
@@ -82,8 +82,8 @@ const TaskModal = ({ task }) => {
   /*
    * DOM functions
    */
-  const isEditingTitle = Component.createState(false);
-  const isEditingNotes = Component.createState(false);
+  const [isEditingTitle] = createState(false);
+  const [isEditingNotes] = createState(false);
 
   const toggleTitleEdit = () => {
     isEditingTitle.value = !isEditingTitle.value;
@@ -102,23 +102,21 @@ const TaskModal = ({ task }) => {
   };
 
   const notesTextArea = () =>
-    Component.html`
+    html`
       <textarea id="edit-task-notes">${task.notes}</textarea>
       <button class="submit" type="submit" ${{ onClick: toggleNotesEdit }}>
         Save
-      </button>  
+      </button>
     `;
 
-  const notesPreview = () => ({
-    type: 'div',
-    className: 'markdown-body',
-    prop: {
-      innerHTML: convertToMarkdown(task.notes),
-    },
-  });
+  const notesPreview = () =>
+    html`<div
+      class="markdown-body"
+      ${{ innerHTML: convertToMarkdown(task.notes) }}
+    ></div>`;
 
   // TODO: Clean attributes here
-  return Component.render(Component.html`
+  return html`
     <div class="title">
       <input
         type="text"
@@ -127,14 +125,13 @@ const TaskModal = ({ task }) => {
         placeholder="Unnamed Task"
         value="${task.title}"
         required
-        ${{ $disabled: isEditingTitle.bind('value', (val) => !val) }}
+        ${{ $disabled: isEditingTitle.$value((val) => !val) }}
         ${{ onInput: updateTitle, onFocusout: toggleTitleEdit }}
       />
-      <button is="edit-btn" 
+      <button
+        is="edit-btn"
         ${{
-          '$style:display': isEditingTitle.bind('value', (val) =>
-            val ? 'none' : 'block'
-          ),
+          $display: isEditingTitle.$value((val) => (val ? 'none' : 'block')),
         }}
         ${{ onClick: toggleTitleEdit }}
       ></button>
@@ -154,7 +151,7 @@ const TaskModal = ({ task }) => {
       </div>
       <button ${{ onClick: openLabelPopover }}>+</button>
       <div data-id="labels-area">
-        ${task.labels.map((label) => Chip({ label, expanded: true }))}
+        ${task.labels.map((label) => Chip({ label, showText: true }))}
       </div>
       ${LabelPopover({
         taskLabels: task.labels,
@@ -167,37 +164,35 @@ const TaskModal = ({ task }) => {
         ${NOTES_ICON}
         <span>Notes</span>
       </div>
-      <button is="edit-btn"
+      <button
+        is="edit-btn"
         ${{
-          '$style:display': isEditingNotes.bind('value', (val) =>
-            val ? 'none' : 'block'
-          ),
+          $display: isEditingNotes.$value((val) => (val ? 'none' : 'block')),
         }}
         ${{ onClick: toggleNotesEdit }}
       ></button>
-      <div data-id="notes-area"
+      <div
+        data-id="notes-area"
         ${{
-          $content: isEditingNotes.bind('value', (val) =>
+          $children: isEditingNotes.$value((val) =>
             val ? notesTextArea() : notesPreview()
           ),
         }}
-      >
-        ${notesPreview()}
-      </div>
+      ></div>
     </div>
-    
+
     <div class="date">
       <div class="section-header">
         ${CALENDAR_ICON}
         <span>Due Date</span>
       </div>
-      <input 
+      <input
         type="date"
         ${task.dueDate ? `value="${task.dueDate}"` : ''}
         ${{ onChange: updateDueDate }}
       />
     </div>
-  `);
+  `;
 };
 
 export default TaskModal;

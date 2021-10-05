@@ -1,66 +1,64 @@
-import Component from '../../helpers/component';
-import event from '../../modules/event';
+import { html, render, createHook } from 'poor-man-jsx';
 
-class Modal extends HTMLElement {
+class Modal extends HTMLDivElement {
   constructor() {
     super();
-    this.show = this.show.bind(this);
-    this.close = this.close.bind(this);
-    this.changeContent = this.changeContent.bind(this);
-    this.clearContent = this.clearContent.bind(this);
+    [this.state, this._revoke] = createHook({ content: null });
   }
 
   connectedCallback() {
-    this.classList.add('modal-backdrop');
+    const defaultBackdropStyle = {
+      display: 'none',
+      position: 'fixed',
+      zIndex: '99',
+      left: '0',
+      top: '0',
+      width: '100%',
+      height: '100%',
+      overflow: 'auto',
+      backgroundColor: 'rgba(102, 102, 102, 0.4)',
+    };
 
-    const element = Component.html`
-      <div id="modal">
-        <span class="close" ${{ onClick: this.close }}>&times;</span>
-        <div id="modal-content"></div>
+    if (!this.classList.length) Object.assign(this.style, defaultBackdropStyle);
+
+    const content = html`
+      <div role="modal">
+        <span role="modal__close-btn" ${{ onClick: this.close }}>&times;</span>
+        <div role="modal__content" ${{ $children: this.state.$content }}></div>
       </div>
     `;
 
-    this.appendChild(Component.render(element));
+    render(content, this);
   }
 
-  show() {
+  disconnectedCallback() {
+    this._revoke();
+  }
+
+  show = () => {
     this.style.display = 'block';
 
     return this;
-  }
+  };
 
-  close() {
-    event.emit('modal.close');
+  close = () => {
     this.style.display = 'none';
     this.clearContent();
 
     return this;
-  }
+  };
 
-  changeContent(content) {
-    const isTemplate = (val) => val._type && val._type === 'template';
-    const modalContent = this.querySelector('#modal-content');
-
-    this.clearContent();
-
-    if (isTemplate(content)) {
-      modalContent.appendChild(Component.render(content));
-    } else {
-      modalContent.appendChild(content);
-    }
+  changeContent = (content) => {
+    this.state.content = content;
 
     return this;
-  }
+  };
 
-  clearContent() {
-    const modalContent = this.querySelector('#modal-content');
-
-    while (modalContent.firstElementChild) {
-      modalContent.removeChild(modalContent.lastElementChild);
-    }
+  clearContent = () => {
+    this.state.content = null;
 
     return this;
-  }
+  };
 }
 
 export default Modal;

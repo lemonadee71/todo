@@ -1,9 +1,9 @@
-import Component from '../helpers/component';
+import { html } from 'poor-man-jsx';
 import $, { append } from '../helpers/helpers';
 import { getLabels } from '../modules/labels';
 import NewLabelForm from './NewLabelForm';
 import Label from './Label';
-import event from '../modules/event';
+import { AppEvent } from '../emitters';
 
 const LabelPopover = ({ taskLabels, toggleLabel }) => {
   const labels = getLabels();
@@ -12,10 +12,14 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
     append(Label({ label })).to($('#label-list'));
   };
 
-  event.on('label.add.success', renderLabel);
-  event.on('modal.close', () => event.off('label.add.success', renderLabel), {
-    once: true,
-  });
+  AppEvent.on('label.add.success', renderLabel);
+  AppEvent.on(
+    'modal.close',
+    () => AppEvent.off('label.add.success', renderLabel),
+    {
+      once: true,
+    }
+  );
 
   const closePopover = () => {
     $('#popover').classList.remove('visible');
@@ -46,20 +50,18 @@ const LabelPopover = ({ taskLabels, toggleLabel }) => {
     toggleLabel(data);
   };
 
-  return Component.html`
+  return html`
     <div id="popover">
-      <span class="close" ${{ onClick: closePopover }}>&times;</span>       
+      <span class="close" ${{ onClick: closePopover }}>&times;</span>
       <span class="section-header">Labels</span>
       <div id="label-list" ${{ onClick: updateLabels }}>
-        ${
-          labels.length
-            ? labels.map((label) => Label({ label, taskLabels }))
-            : ''
-        }
+        ${labels.length
+          ? labels.map((label) => Label({ label, taskLabels }))
+          : ''}
       </div>
-      <div id="new-label">   
+      <div id="new-label">
         <span class="section-header">Create New Label</span>
-        ${NewLabelForm()}     
+        ${NewLabelForm()}
       </div>
     </div>
   `;

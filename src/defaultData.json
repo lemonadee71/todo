@@ -1,0 +1,59 @@
+{
+  "projects": [
+    {
+      "name": "Getting Started",
+      "lists": [
+        {
+          "name": "Features",
+          "items": [
+            {
+              "title": "To Do"
+            },
+            {
+              "title": "To Do"
+            },
+            {
+              "title": "To Do"
+            },
+            {
+              "title": "To Do"
+            }
+          ]
+        },
+        {
+          "name": "Tutorials",
+          "items": [
+            {
+              "title": "To Do"
+            },
+            {
+              "title": "To Do"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "To Do",
+      "lists": [
+        {
+          "name": "Chores",
+          "items": [
+            {
+              "title": "To Do"
+            },
+            {
+              "title": "To Do"
+            },
+            {
+              "title": "To Do"
+            },
+            {
+              "title": "To Do"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

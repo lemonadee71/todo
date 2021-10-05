@@ -1,28 +1,43 @@
+import App from '../../core';
+
 class Chip extends HTMLElement {
   connectedCallback() {
+    this.style.width = '30px'; // default width
+
+    this.addEventListener('click', this._triggerExpand);
     this.render();
   }
 
   static get observedAttributes() {
-    return ['expanded', 'text'];
+    return ['show-text', 'text'];
   }
 
   attributeChangedCallback() {
     this.render();
   }
 
-  render() {
-    const expanded = this.getAttribute('expanded');
-    const isExpanded = expanded && expanded === 'true';
+  _triggerExpand = () => {
+    if (this.getAttribute('expandable') === 'true') {
+      App.state.expandLabels = !App.state.expandLabels;
+    }
+  };
 
-    if (isExpanded) {
-      this.className = 'chip-w-text';
+  render = () => {
+    const showText = this.getAttribute('show-text');
+
+    if (showText) {
       this.textContent = this.getAttribute('text');
     } else {
-      this.className = 'chip';
       this.textContent = '';
     }
-  }
+
+    this.style.color = this.getAttribute('color');
+    this._triggerExpand();
+  };
+
+  expand = () => {
+    this.setAttribute('show-text', 'true');
+  };
 }
 
 export default Chip;

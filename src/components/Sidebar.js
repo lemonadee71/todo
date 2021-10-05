@@ -1,96 +1,79 @@
-import Component from '../helpers/component';
-import $, { append, remove } from '../helpers/helpers';
-import { newProjectInput, userProjects } from '../helpers/selectors';
-import { getProjectsDetails } from '../modules/projects';
-import event from '../modules/event';
-import { DELETE_ICON } from './Icons';
-
-const ProjectListItem = ({ proj, deleteHandler }) =>
-  Component.html`
-    <li id="${proj.id}">
-      ${{
-        type: 'a',
-        text: proj.name,
-        attr: {
-          href: `#/${proj.id.replace('-', '/')}`,
-        },
-      }}
-      <span ${{ onClick: deleteHandler }}>${DELETE_ICON}</span>
-    </li>
-  `;
+import { createHook, html } from 'poor-man-jsx';
+import Core from '../core';
+import { PROJECT } from '../core/actions';
 
 const Sidebar = () => {
+  const [data, revoke] = createHook({
+    projects: Core.main.getProjectDetails(),
+  });
+
+  const unsubscribe = Core.event.on(
+    PROJECT.ALL,
+    () => {
+      data.projects = Core.main.getProjectDetails();
+    },
+    { order: 'last' }
+  );
+
   const createNewProject = (e) => {
     e.preventDefault();
-    event.emit('project.add', { name: $(newProjectInput).value });
-    e.target.reset();
+
+    const input = e.target.elements['new-project'];
+    Core.event.emit(PROJECT.ADD, input.value);
+
+    input.value = '';
   };
 
-  const removeProject = (e) => {
-    e.stopPropagation();
-    const projListItem = e.currentTarget.parentElement;
-
-    event.emit('project.delete', { id: projListItem.id });
-    remove(projListItem).from($(userProjects));
-
-    const currentPath = window.location.hash
-      .replace('#/', '')
-      .replace('/', '-');
-
-    if (currentPath === projListItem.id) {
-      event.emit('hashchange', 'all');
-    }
-  };
-
-  const addProject = (project) => {
-    const projectLi = ProjectListItem({
-      proj: project,
-      deleteHandler: removeProject,
-    });
-
-    append(projectLi).to($(userProjects));
-  };
-
-  event.on('project.add.error', (error) => alert(error.toString()));
-  event.on('project.add.success', addProject);
-
-  const projects = getProjectsDetails();
-
-  return Component.html`
-    <aside id="sidebar">
-      <div>
-        <ul id="default-proj">
-          <li><a href="#/all">All Tasks</a></li>
-          <li><a href="#/today">Today</a></li>
-          <li><a href="#/week">This Week</a></li>
-          <li><a href="#/upcoming">Upcoming</a></li>
-        </ul>
-        <br />
-      </div>
-      <div>
-        <form ${{ onSubmit: createNewProject }}>
-          <input
-            type="text"
-            name="new-project"
-            class="dark"
-            id="new-proj"
-            placeholder="Create New Project"
-            required
-          />
-          <button type="submit">+</button>
-        </form>
-        <br />
-        <ul id="user-proj">
-          ${
-            projects.length
-              ? projects.map((proj) =>
-                  ProjectListItem({ proj, deleteHandler: removeProject })
-                )
-              : ''
-          }
-        </ul>
-      </div>
-    </aside>
+  return html`
+    <ul data-name="">
+      <li>User</li>
+      <li>Quick Find</li>
+      <li>
+        <a is="navigo-link" href="/app">Overview</a>
+      </li>
+      <li>
+        <a is="navigo-link" href="/app/calendar" title="Calendar">Calendar</a>
+      </li>
+    </ul>
+    <form ${{ onSubmit: createNewProject }}>
+      <input
+        type="text"
+        name="new-project"
+        id="new-project"
+        placeholder="Create new project"
+      />
+    </form>
+    <ul
+      is-list
+      keystring="id"
+      ${{
+        '@unmount': () => {
+          unsubscribe();
+          revoke();
+        },
+        $children: data.$projects((projects) =>
+          projects.map(
+            (p) =>
+              html`
+                <li id="${p.id}">
+                  <a
+                    is="navigo-link"
+                    href="${`/app/${p.link}`}"
+                    title="Project | ${p.name}"
+                  >
+                    {% ${p.name} %}
+                  </a>
+                  <button
+                    ${{ onClick: () => Core.event.emit(PROJECT.REMOVE, p.id) }}
+                  >
+                    Delete
+                  </button>
+                </li>
+              `
+          )
+        ),
+      }}
+    ></ul>
   `;
 };
 

@@ -1,4 +1,4 @@
-import Component from '../helpers/component';
+import { html } from 'poor-man-jsx';
 import $, { append, remove } from '../helpers/helpers';
 import {
   newTaskFormNotes,
@@ -13,7 +13,7 @@ import { getLabel } from '../modules/labels';
 import ProjectOptions from './ProjectOptions';
 import LabelPopover from './LabelPopover';
 import Chip from './Chip';
-import event from '../modules/event';
+import { AppEvent } from '../emitters';
 
 const CreateTaskForm = () => {
   const openLabelPopover = () => {
@@ -42,11 +42,11 @@ const CreateTaskForm = () => {
       return;
     }
 
-    event.emit('task.add', { title, notes, dueDate, location, labels });
+    AppEvent.emit('task.add', { title, notes, dueDate, location, labels });
     $(modal).close();
   };
 
-  return Component.html`
+  return html`
     <div id="create-task">
       <input
         type="text"
@@ -55,7 +55,7 @@ const CreateTaskForm = () => {
         placeholder="New Task"
         required
       />
-      
+
       <label for="task-location" class="section-header">Project</label>
       <select name="task-location" data-id="new-task-location">
         ${ProjectOptions(
@@ -75,7 +75,7 @@ const CreateTaskForm = () => {
 
       <label for="task-due" class="section-header">Due Date</label>
       <input name="task-due" type="date" data-id="new-task-date" />
-      <br/>
+      <br />
       <button class="submit" ${{ onClick: createNewTask }}>Submit</button>
     </div>
   `;

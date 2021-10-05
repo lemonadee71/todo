@@ -1,6 +1,7 @@
-import Component from '../helpers/component';
+import Sortable from 'sortablejs';
+import { html, render, createState } from 'poor-man-jsx';
 import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../helpers/date';
-import $, { append, remove, hide, show } from '../helpers/helpers';
+import $, { prepend, append, remove, hide, show } from '../helpers/helpers';
 import {
   completedTasks,
   currentTasks,
@@ -15,16 +16,16 @@ import {
   getUpcoming,
   // getTask,
 } from '../modules/projects';
-import event from '../modules/event';
+import { AppEvent } from '../emitters';
 import CreateTaskForm from './CreateTaskForm';
 import TaskItem from './TaskItem';
 
-const currentLocation = Component.createState(
+const [currentLocation] = createState(
   window.location.hash.replace('#/', '') || 'all'
 );
 
 const NoTasksMessage = () =>
-  Component.html`<h3 id="no-tasks">You don't have any tasks</h3>`;
+  html`<h3 id="no-tasks">You don't have any tasks</h3>`;
 
 const MainContent = () => {
   const defaultIds = ['all', 'today', 'week', 'upcoming'];
@@ -35,7 +36,9 @@ const MainContent = () => {
 
   const shouldRenderTask = (task) => {
     const renderConditions = [
-      currentLocation.value === 'list/uncategorized',
+      currentLocation.value === 'all',
+      currentLocation.value === 'list/uncategorized' &&
+        task.location === 'uncategorized',
       currentLocation.value === task.location.replace('-', '/'),
       currentLocation.value === 'today' && isDueToday(parse(task.dueDate)),
       currentLocation.value === 'week' && isDueThisWeek(parse(task.dueDate)),
@@ -47,7 +50,7 @@ const MainContent = () => {
 
   const addTask = (task) => {
     if (shouldRenderTask(task)) {
-      append(TaskItem({ taskData: task })).to($(currentTasks));
+      prepend(TaskItem({ taskData: task })).to($(currentTasks));
     }
   };
 
@@ -68,20 +71,11 @@ const MainContent = () => {
         remove(taskItem).from(taskItem.parentElement);
       }
     }
-
-    // const task = getTask(newLocation, id);
-
-    // else if (!taskEl && shouldRenderTask(task)) {
-    //   const list = task.completed ? completedTasks : currentTasks;
-    //   const taskItem = Component.render(TaskItem({ taskData: task.getData() }));
-
-    //   append(taskItem).to($(list));
-    // }
   };
 
-  event.on('task.add.success', addTask);
-  event.on('task.update.success', moveTask);
-  event.on('hashchange', (path) => {
+  AppEvent.on('task.add.success', addTask);
+  AppEvent.on('task.update.success', moveTask);
+  AppEvent.on('hashchange', (path) => {
     currentLocation.value = path;
   });
 
@@ -97,15 +91,15 @@ const MainContent = () => {
     }
 
     if (isProject(location)) {
-      if (isProjectName(id)) {
-        const project = getProject(
-          (proj) => proj.name.toLowerCase() === id.replace(/-/g, ' ')
-        );
+      const project = getProject(
+        (proj) => proj.id.toLowerCase() === path.replace(/\//g, '-')
+      );
 
-        return project.id;
-      }
+      return project.id;
+      // if (isProjectName(id)) {
+      // }
 
-      return `list-${id}`;
+      // return `list-${id}`;
     }
 
     throw new Error('Invalid path.');
@@ -151,66 +145,88 @@ const MainContent = () => {
     if (hasActiveTasks && noTasks) {
       noTasks.remove();
     } else if (!hasActiveTasks && !noTasks) {
-      $(tasksList).prepend(Component.render(NoTasksMessage()));
+      $(tasksList).prepend(render(NoTasksMessage()));
     }
   };
 
   const renderTitle = (path) => {
     try {
       return getTitle(getId(path));
-    } catch (error) {
-      return error.toString();
+    } catch (e) {
+      return e.toString();
     }
   };
 
   const renderTasks = (path, current = true) => {
     try {
       const allTasks = getTasks(getId(path));
-      const tasks = current
+      let tasks = current
         ? getCurrentTasks(allTasks)
         : getCompletedTasks(allTasks);
 
+      tasks = tasks.sort((a, b) => a - b);
+
       // hacky way to bypass no nested ternary lol
       return tasks.length
-        ? Component.html`${tasks.map((task) =>
-            TaskItem({ taskData: task.getData() })
-          )}`
-        : Component.html`${current ? NoTasksMessage() : ''}`;
-    } catch (error) {
-      console.log(error);
+        ? html`${tasks.map((task) => TaskItem({ taskData: task.data }))}`
+        : html`${current ? NoTasksMessage() : ''}`;
+    } catch (e) {
+      console.error(e, path);
       return current
-        ? Component.html`<h3><a href="#/all">See all tasks</a></h3>`
-        : Component.html``;
+        ? html`<h3><a href="#/all">See all tasks</a></h3>`
+        : html``;
     }
   };
 
-  return Component.html`
-    <main>
-      <h2 ${{ $textContent: currentLocation.bind('value', renderTitle) }}></h2>
-      <hr>
+  return html`
+    <main
+      ${{
+        '@mount': function () {
+          Sortable.create($(currentTasks), {
+            group: 'tasks',
+            animation: 150,
+          });
+          Sortable.create($(completedTasks), {
+            animation: 150,
+          });
+        },
+      }}
+    >
+      <h2 ${{ $textContent: currentLocation.$value(renderTitle) }}></h2>
+      <hr />
       <div id="taskbar">
         <button id="add-task" ${{ onClick: showCreateTaskForm }}>+</button>
         <label for="show">Show Completed</label>
-        <input id="show-completed" type="checkbox" name="show" value="show" 
-        ${{ onChange: showCompleted }}
+        <input
+          id="show-completed"
+          type="checkbox"
+          name="show"
+          value="show"
+          ${{ onChange: showCompleted }}
         />
       </div>
-      <div id="tasks-list" ${{
-        onChildRemoved: checkNoOfTasks,
-        onChildAdded: checkNoOfTasks,
-      }}>
-        <div id="current-tasks" ${{
-          $content: currentLocation.bind('value', renderTasks),
-        }}>
-          ${renderTasks(currentLocation.value)}
-        </div>
-        <div id="completed-tasks" style="display: none;" ${{
-          $content: currentLocation.bind('value', (path) =>
-            renderTasks(path, false)
-          ),
-        }}>
-          ${renderTasks(currentLocation.value, false)}
-        </div>
+      <div
+        id="tasks-list"
+        ${{
+          onChildRemoved: checkNoOfTasks,
+          onChildAdded: checkNoOfTasks,
+        }}
+      >
+        <div
+          id="current-tasks"
+          ${{
+            $children: currentLocation.$value(renderTasks),
+          }}
+        ></div>
+        <div
+          id="completed-tasks"
+          style="display: none;"
+          ${{
+            $children: currentLocation.$value((path) =>
+              renderTasks(path, false)
+            ),
+          }}
+        ></div>
       </div>
       <modal-el></modal-el>
     </main>

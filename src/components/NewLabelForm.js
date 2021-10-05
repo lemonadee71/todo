@@ -1,7 +1,7 @@
-import Component from '../helpers/component';
+import { html } from 'poor-man-jsx';
 import $ from '../helpers/helpers';
 import { defaultLabelColors } from '../modules/defaults';
-import event from '../modules/event';
+import { AppEvent } from '../emitters';
 
 const NewLabelForm = () => {
   let labelColor = defaultLabelColors[0];
@@ -9,7 +9,7 @@ const NewLabelForm = () => {
 
   const createNewLabel = (name, color) => {
     try {
-      event.emit('label.add', { name, color });
+      AppEvent.emit('label.add', { name, color });
     } catch (error) {
       console.log(error);
       alert(error.toString());
@@ -33,7 +33,7 @@ const NewLabelForm = () => {
     e.target.reset();
   };
 
-  return Component.html`
+  return html`
     <form ${{ onSubmit: createLabel }}>
       <input
         type="text"
@@ -51,7 +51,7 @@ const NewLabelForm = () => {
             labelColor === color ? ' selected' : ''
           }"></div>`
       )}
-    </div>  
+    </div>
   `;
 };
 
