@@ -6,38 +6,47 @@ const VALUES = {
 class EventEmitter {
   constructor() {
     this.events = new Map();
+    this.globalOptions = {
+      return: true,
+      throw: true,
+      dontCatch: false,
+    };
   }
 
   get size() {
     return this.events.size;
   }
 
-  on(name, fn, options = {}) {
-    const eventNames = [name].flat(); // support for arrays
+  getTopic(topic) {
+    return [...(this.events.get(topic) || [])];
+  }
 
-    eventNames.forEach((event) => {
-      const handlers = this.events.get(event) || new Map();
-      this.events.set(
-        event,
-        handlers.set(fn, { return: true, throw: true, ...options })
-      );
+  on(topic, fn, options = {}) {
+    const topicNames = [topic].flat(); // support for arrays
+
+    topicNames.forEach((name) => {
+      const handlers = this.events.get(name) || [];
+      this.events.set(name, [...handlers, { fn, options }]);
     });
 
-    return () => eventNames.forEach((event) => this.off(event, fn));
+    return () => topicNames.forEach((name) => this.off(name, fn));
   }
 
-  once(name, fn, options = {}) {
-    this.on(name, fn, { ...options, once: true });
+  once(topic, fn, options = {}) {
+    this.on(topic, fn, { ...options, once: true });
   }
 
-  off(name, fn) {
-    this.events.get(name).delete(fn);
+  off(topic, fn) {
+    this.events.set(
+      topic,
+      this.events.get(topic).filter((handler) => handler.fn !== fn)
+    );
 
     return this;
   }
 
-  delete(name) {
-    this.events.delete(name);
+  delete(topic) {
+    this.events.delete(topic);
 
     return this;
   }
@@ -48,30 +57,37 @@ class EventEmitter {
     return this;
   }
 
-  emit(name, ...payload) {
-    Array.from(this.events.entries())
-      .filter(([event]) =>
-        event instanceof RegExp ? event.test(name) : event === name
-      )
-      .flatMap(([, handler]) => Array.from(handler.entries()))
+  emit(topic, ...payload) {
+    this.getTopic(topic)
       .sort((a, b) => {
-        const x = a[1].order;
-        const y = b[1].order;
+        const x = a.options.order;
+        const y = b.options.order;
         const aValue = Number.isInteger(x) ? x : VALUES[x] || 0;
         const bValue = Number.isInteger(y) ? y : VALUES[y] || 0;
 
         return aValue - bValue;
       })
-      .forEach(([fn, options]) => {
+      .forEach((handler) => {
+        const { fn, options } = handler;
+        const {
+          dontCatch,
+          return: willReturn,
+          throw: willThrow,
+        } = this.globalOptions;
+        const isNotSuccessOrError =
+          !topic.endsWith('.success') && !topic.endsWith('.error');
+
         try {
           const result = fn.apply(options.context, payload);
 
-          if (options.return && result) this.emit(`${name}.success`, result);
-          if (options.once) this.off(name, fn);
+          if (options.once) this.off(topic, fn);
+          if (isNotSuccessOrError && (options.return || willReturn))
+            this.emit(`${topic}.success`, result);
         } catch (e) {
           console.error(e);
-          if (options.throw) this.emit(`${name}.error`, e);
-          if (options.dontCatch) throw e;
+          if (isNotSuccessOrError && (options.throw || willThrow))
+            this.emit(`${topic}.error`, e);
+          if (options.dontCatch || dontCatch) throw e;
         }
       });
 

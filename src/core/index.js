@@ -161,7 +161,17 @@ const Core = (() => {
   );
 
   // only update local storage half a second after all updates
-  event.on(/(task|project)/i, debounce(main.syncLocalStorage, 500));
+  event.on(
+    [
+      ...TASK.ALL,
+      ...TASK.LABELS.ALL,
+      ...TASK.SUBTASKS.ALL,
+      ...PROJECT.ALL,
+      ...PROJECT.LABELS.ALL,
+      ...PROJECT.LISTS.ALL,
+    ],
+    debounce(main.syncLocalStorage, 500)
+  );
 
   return {
     main: getters,

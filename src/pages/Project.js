@@ -14,7 +14,7 @@ const Project = ({ data: { id } }) => {
       alert(error.toString())
     ),
     Core.event.on(
-      [PROJECT.LISTS.ALL, TASK.ALL],
+      [...PROJECT.LISTS.ALL, ...TASK.ALL],
       () => {
         data.lists = Core.main.getProject(project.id).lists.items;
       },
