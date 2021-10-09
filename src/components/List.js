@@ -3,22 +3,28 @@ import { PROJECT, TASK } from '../core/actions';
 import Core from '../core';
 
 // * This is is-list and should update for every new task
-const List = (projectID, data) => {
+const List = (projectId, data) => {
   const addTask = () => {
     const randomTitle = Math.random().toString(36).slice(2);
+
     Core.event.emit(TASK.ADD, {
-      project: projectID,
+      project: projectId,
       list: data.id,
-      title: randomTitle,
+      data: {
+        title: randomTitle,
+      },
     });
   };
 
   const deleteTask = (task) => {
-    Core.event.emit(TASK.REMOVE, task);
+    Core.event.emit(TASK.REMOVE, { data: task });
   };
 
   const deleteList = () => {
-    Core.event.emit(PROJECT.LISTS.REMOVE, { project: projectID, id: data.id });
+    Core.event.emit(PROJECT.LISTS.REMOVE, {
+      project: projectId,
+      list: data.id,
+    });
   };
 
   return html`

@@ -28,7 +28,9 @@ const Project = ({ data: { id } }) => {
     const input = e.target.elements['new-list'];
     Core.event.emit(PROJECT.LISTS.ADD, {
       project: project.id,
-      name: input.value,
+      data: {
+        name: input.value,
+      },
     });
 
     input.value = '';

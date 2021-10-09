@@ -20,7 +20,11 @@ const Sidebar = () => {
     e.preventDefault();
 
     const input = e.target.elements['new-project'];
-    Core.event.emit(PROJECT.ADD, input.value);
+    Core.event.emit(PROJECT.ADD, {
+      data: {
+        name: input.value,
+      },
+    });
 
     input.value = '';
   };

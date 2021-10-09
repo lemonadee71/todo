@@ -36,13 +36,13 @@ const recoverData = () => {
   const data = [];
   const stored = Storage.filter((key) => key !== LAST_UPDATE);
   const cache = Object.entries(stored).reduce((acc, [key, value]) => {
-    const [projectID, type] = key.split('__');
+    const [projectId, type] = key.split('__');
 
-    if (!acc[projectID]) {
-      acc[projectID] = {};
+    if (!acc[projectId]) {
+      acc[projectId] = {};
     }
 
-    acc[projectID][type] = value;
+    acc[projectId][type] = value;
 
     return acc;
   }, {});
@@ -88,9 +88,9 @@ const recoverData = () => {
 const storeData = function (data) {
   // remove deleted projects
   Storage.keys().forEach((key) => {
-    const [projectID] = key.split('__');
+    const [projectId] = key.split('__');
 
-    if (!data.has(projectID)) {
+    if (!data.has(projectId)) {
       Storage.remove(key);
     }
   });
@@ -147,45 +147,45 @@ export const getProjectDetails = () =>
     link: project.link,
   }));
 
-export const getProject = (projectFilter) => {
-  const project = Root.get(projectFilter);
+export const getProject = (projectId) => {
+  const project = Root.get(projectId);
 
-  if (!project) throw new Error('No project that matches the condition.');
+  if (!project) throw new Error(`There's no project with the id: ${projectId}`);
 
   return project;
 };
 
 export const addProject = (name) => {
   if (Root.has((project) => project.name === name)) {
-    throw new Error('Project with the same name already exists');
+    throw new Error(`Project with the name "${name}"" already exists`);
   }
 
-  const newProject = new Project({ name });
-  Root.add(newProject);
+  const project = new Project({ name });
+  Root.add(project);
 
-  return newProject;
+  return project;
 };
 
-export const deleteProject = (id) => Root.delete(id);
+export const deleteProject = (projectId) => Root.delete(projectId);
 
 // =====================================================================================
 // Lists
 // =====================================================================================
-export const getLists = (projectFilter) => [
-  ...Root.get(projectFilter).lists.items,
-];
+export const getLists = (projectId) => [...getProject(projectId).lists.items];
 
-export const getListDetails = (projectFilter) =>
-  getLists(projectFilter).map((list) => ({ name: list.name, id: list.id }));
+export const getListDetails = (projectId) =>
+  getLists(projectId).map((list) => ({ name: list.name, id: list.id }));
 
-export const getList = (projectFilter, listFilter) =>
-  Root.get(projectFilter).getList(listFilter);
+export const getList = (projectId, listId) =>
+  Root.get(projectId).getList(listId);
 
-export const addList = (projectFilter, name) => {
-  const { lists } = getProject(projectFilter);
+export const addList = (projectId, name) => {
+  const { lists } = getProject(projectId);
 
   if (lists.has((list) => list.name === name)) {
-    throw new Error('List with the same name already exists');
+    throw new Error(
+      `List with the name "${name}"" already exists in this project`
+    );
   }
 
   const list = new List({ name });
@@ -194,8 +194,8 @@ export const addList = (projectFilter, name) => {
   return list;
 };
 
-export const deleteList = (projectFilter, listFilter) =>
-  getProject(projectFilter).lists.delete(listFilter);
+export const deleteList = (projectId, listId) =>
+  getProject(projectId).lists.delete(listId);
 
 // =====================================================================================
 // Tasks
@@ -205,23 +205,28 @@ export const getAllTasks = () =>
     .flatMap((project) => project.lists.items)
     .flatMap((list) => list.items);
 
-export const getTaskFromRoot = (taskID) =>
-  getAllTasks().filter((task) => task.id === taskID);
+export const getTaskFromRoot = (taskId) =>
+  getAllTasks().filter((task) => task.id === taskId);
 
-export const getTasksFromProject = (projectFilter) =>
-  getProject(projectFilter).lists.items.flatMap((list) => list.items);
+export const getTasksFromProject = (projectId) =>
+  getProject(projectId).lists.items.flatMap((list) => list.items);
 
-export const getTasksFromList = (projectFilter, listFilter) => [
-  ...getList(projectFilter, listFilter).items,
+export const getTasksFromList = (projectId, listId) => [
+  ...getList(projectId, listId).items,
 ];
 
-export const getTask = (projectID, listID, taskID) =>
-  getList(projectID, listID).get(taskID);
+export const getTask = (projectId, listId, taskId) =>
+  getList(projectId, listId).get(taskId);
 
-export const addTask = (data) => {
-  const project = getProject(data.project);
-  const task = new Task({ ...data, numId: ++project.totalTasks });
-  project.lists.get(data.list).add(task);
+export const addTask = (projectId, listId, data) => {
+  const project = getProject(projectId);
+  const task = new Task({
+    ...data,
+    project: projectId,
+    list: listId,
+    numId: ++project.totalTasks,
+  });
+  project.getList(listId).add(task);
 
   return task;
 };
@@ -229,33 +234,26 @@ export const addTask = (data) => {
 export const deleteTask = (task) =>
   getList(task.project, task.list).delete(task.id);
 
-export const transferTaskToProject = (
-  taskID,
-  listID,
-  prevProject,
-  newProject
-) => {
-  const task = getList(prevProject, listID).extract(taskID);
-  getList(newProject, 'default').add(task);
+export const transferTaskToProject = (taskId, listId, from, to) => {
+  const task = getList(from, listId).extract(taskId);
+  getList(to, 'default').add(task);
 };
 
-export const transferTaskToList = (taskID, projectID, prevList, newList) => {
-  const task = getList(projectID, prevList).extract(taskID);
-  getList(projectID, newList).add(task);
+export const transferTaskToList = (taskId, projectId, from, to) => {
+  const task = getList(projectId, from).extract(taskId);
+  getList(projectId, to).add(task);
 };
 
 // =====================================================================================
 // Labels
 // =====================================================================================
-export const getLabels = (projectFilter) => [
-  ...getProject(projectFilter).labels.items,
-];
+export const getLabels = (projectId) => [...getProject(projectId).labels.items];
 
-export const getLabel = (projectFilter, labelFilter) =>
-  getProject(projectFilter).getLabel(labelFilter);
+export const getLabel = (projectId, labelId) =>
+  getProject(projectId).getLabel(labelId);
 
-export const addLabel = (projectFilter, name, color) => {
-  const { labels } = getProject(projectFilter);
+export const addLabel = (projectId, name, color) => {
+  const { labels } = getProject(projectId);
 
   if (labels.has((label) => label.name === name)) {
     throw new Error('Label already exists');
@@ -267,29 +265,24 @@ export const addLabel = (projectFilter, name, color) => {
   return label;
 };
 
-export const deleteLabel = (projectFilter, labelID) => {
-  getProject(projectFilter).labels.delete(labelID);
-  getTasksFromProject(projectFilter).forEach((task) =>
-    task.removeLabel(labelID)
-  );
+export const deleteLabel = (projectId, labelId) => {
+  getProject(projectId).labels.delete(labelId);
+  getTasksFromProject(projectId).forEach((task) => task.removeLabel(labelId));
 };
 
-export const editLabel = (projectFilter, labelID, prop, value) => {
-  const { labels } = getProject(projectFilter);
-  const label = labels.get(labelID);
+export const editLabel = (projectId, labelId, prop, value) => {
+  const { labels } = getProject(projectId);
+  const label = labels.get(labelId);
   const labelAlreadyExists = labels.has((item) => item.name === value);
 
   if (prop === 'name' && labelAlreadyExists) {
-    throw new Error('Label already exists');
+    throw new Error(
+      `Label with the name "${value}" already exists in this project`
+    );
   }
 
   if (label) label[prop] = value;
+  else throw new Error(`Label with the id ${labelId} does not exists`);
 
-  // may not be necessary
-  // getTasksFromProject(projectFilter).forEach((task) => {
-  //   const taskLabel = task.labels.get(labelID);
-
-  //   if (taskLabel) taskLabel[prop] = value;
-  // });
   return label;
 };
