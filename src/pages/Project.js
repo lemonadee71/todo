@@ -9,7 +9,6 @@ const Project = ({ data: { id } }) => {
   const [data] = createHook({ lists: project.lists.items });
 
   const unsubscribe = [
-    // eslint-disable-next-line
     Core.event.on(PROJECT.LISTS.ADD + '.error', (error) =>
       alert(error.toString())
     ),
