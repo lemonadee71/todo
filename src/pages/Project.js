@@ -9,8 +9,9 @@ const Project = ({ data: { id } }) => {
   const [data] = createHook({ lists: project.lists.items });
 
   const unsubscribe = [
-    Core.event.on(PROJECT.LISTS.ADD + '.error', (error) =>
-      alert(error.toString())
+    Core.event.on(
+      [PROJECT.ADD + '.error', PROJECT.LISTS.ADD + '.error'],
+      (error) => alert(error.message)
     ),
     Core.event.on(
       [...PROJECT.LISTS.ALL, ...TASK.ALL],
