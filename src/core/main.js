@@ -157,7 +157,7 @@ export const getProject = (projectId) => {
 
 export const addProject = (name) => {
   if (Root.has((project) => project.name === name)) {
-    throw new Error(`Project with the name "${name}"" already exists`);
+    throw new Error(`Project with the name "${name}" already exists`);
   }
 
   const project = new Project({ name });
@@ -184,7 +184,7 @@ export const addList = (projectId, name) => {
 
   if (lists.has((list) => list.name === name)) {
     throw new Error(
-      `List with the name "${name}"" already exists in this project`
+      `List with the name "${name}" already exists in this project`
     );
   }
 
