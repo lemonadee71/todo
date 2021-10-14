@@ -17,7 +17,13 @@ const loadDefaultData = () => {
     const lists = p.lists.map((l) => {
       const list = new List({ name: l.name });
       const tasks = l.items.map(
-        (task) => new Task({ ...task, project: project.id, list: list.id })
+        (task) =>
+          new Task({
+            ...task,
+            project: project.id,
+            list: list.id,
+            numId: ++project.totalTasks,
+          })
       );
       list.add(tasks);
 

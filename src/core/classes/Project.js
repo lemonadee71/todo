@@ -13,7 +13,8 @@ export default class Project {
     this.id = id || `project-${uuid(8)}`;
     this.labels = new List({ name, id: this.id, defaultItems: labels });
     this.lists = new List({ name, id: this.id, defaultItems: lists });
-    this.totalTasks = totalTasks || 0;
+    this.totalTasks =
+      totalTasks || this.lists.items.flatMap((list) => list.items).length || 0;
   }
 
   get link() {

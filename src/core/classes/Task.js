@@ -16,7 +16,7 @@ class Task {
     numId,
   }) {
     // main
-    this.num = numId;
+    this.numId = numId;
     this.id = id;
     this.title = title || 'Unnamed Task';
     this.notes = notes || '';

@@ -37,7 +37,7 @@ const Task = (data) => {
         <div class="task__labels"></div>
         <p class="task__title">
           <span class="task__name">${data.title}</span>
-          <span class="task__number">${data.num}</span>
+          <span class="task__number">${data.numId}</span>
         </p>
         <div class="task__badges"></div>
       </div>
