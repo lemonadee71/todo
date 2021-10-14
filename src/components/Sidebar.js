@@ -30,16 +30,31 @@ const Sidebar = () => {
   };
 
   return html`
-    <ul data-name="">
-      <li>User</li>
-      <li>Quick Find</li>
-      <li>
-        <a is="navigo-link" href="/app">Overview</a>
-      </li>
-      <li>
-        <a is="navigo-link" href="/app/calendar" title="Calendar">Calendar</a>
-      </li>
-    </ul>
+    <nav class="quick-links">
+      <ul>
+        <li>User</li>
+        <li>Quick Find</li>
+        <li>
+          <a is="navigo-link" href="/app">Overview</a>
+        </li>
+        <li>
+          <a is="navigo-link" href="/app/calendar" title="Calendar">Calendar</a>
+        </li>
+      </ul>
+    </nav>
+    <nav class="projects">
+      <ul
+        is-list
+        keystring="id"
+        ${{
+          '@unmount': () => {
+            unsubscribe();
+            revoke();
+          },
+          $children: data.$projects.map((project) => ProjectLink(project)),
+        }}
+      ></ul>
+    </nav>
     <form ${{ onSubmit: createNewProject }}>
       <input
         type="text"
@@ -48,17 +63,6 @@ const Sidebar = () => {
         placeholder="Create new project"
       />
     </form>
-    <ul
-      is-list
-      keystring="id"
-      ${{
-        '@unmount': () => {
-          unsubscribe();
-          revoke();
-        },
-        $children: data.$projects.map((project) => ProjectLink(project)),
-      }}
-    ></ul>
   `;
 };
 

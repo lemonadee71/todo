@@ -1,3 +1,7 @@
-@use 'base/reset';
+@import 'base/reset';
 
-@use 'vendors/hamburgers';
+@import 'layout/sidebar';
+
+@import 'pages/app';
+
+@import 'vendors/hamburgers';

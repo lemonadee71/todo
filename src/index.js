@@ -54,7 +54,7 @@ const Website = () =>
     ${Router([{ path: '*', component: renderSidebar }], 'aside', {
       class: 'sidebar',
     })}
-    ${Router(routes, 'main')}
+    ${Router(routes, 'main', { class: 'app' })}
   `;
 
 defineCustomElements();
