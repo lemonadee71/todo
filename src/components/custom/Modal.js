@@ -3,10 +3,16 @@ import { html, render, createHook } from 'poor-man-jsx';
 class Modal extends HTMLDivElement {
   constructor() {
     super();
-    [this.state, this._revoke] = createHook({ content: null });
+    [this.state, this._revoke] = createHook({
+      content: null,
+      contentClass: '',
+      closeBtnClass: '',
+    });
   }
 
   connectedCallback() {
+    this.state.closeBtnClass = this.getAttribute('close-btn-class') || '';
+
     const defaultBackdropStyle = {
       display: 'none',
       position: 'fixed',
@@ -23,8 +29,19 @@ class Modal extends HTMLDivElement {
 
     const content = html`
       <div role="modal">
-        <span role="modal__close-btn" ${{ onClick: this.close }}>&times;</span>
-        <div role="modal__content" ${{ $children: this.state.$content }}></div>
+        <span
+          role="modal__close-btn"
+          ${{ $class: this.state.$closeBtnClass, onClick: this.close }}
+        >
+          &times;
+        </span>
+        <div
+          role="modal__content"
+          ${{
+            $class: this.state.$contentClass,
+            $children: this.state.$content,
+          }}
+        ></div>
       </div>
     `;
 
@@ -48,14 +65,18 @@ class Modal extends HTMLDivElement {
     return this;
   };
 
-  changeContent = (content) => {
+  changeContent = (content, contentClass = '', closeBtnClass = '') => {
     this.state.content = content;
+    this.state.contentClass = contentClass;
+    this.state.closeBtnClass = closeBtnClass || this.state.closeBtnClass;
 
     return this;
   };
 
   clearContent = () => {
     this.state.content = null;
+    this.state.contentClass = '';
+    this.state.closeBtnClass = this.getAttribute('close-btn-class') || '';
 
     return this;
   };
