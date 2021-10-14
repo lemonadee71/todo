@@ -31,6 +31,7 @@ const Task = (data) => {
         type="checkbox"
         name="mark-as-done"
         id="cb-${data.id}"
+        ${{ checked: task.isComplete }}
         ${{ onChange: updateTask }}
       />
       <div class="task__body">
