@@ -1,6 +1,7 @@
 import { html } from 'poor-man-jsx';
 import { PROJECT, TASK } from '../core/actions';
 import Core from '../core';
+import Task from './Task';
 
 const List = (projectId, data) => {
   const createTask = (e) => {
@@ -16,10 +17,6 @@ const List = (projectId, data) => {
     });
 
     input.value = '';
-  };
-
-  const deleteTask = (task) => {
-    Core.event.emit(TASK.REMOVE, { data: task });
   };
 
   const deleteList = () => {
@@ -42,15 +39,7 @@ const List = (projectId, data) => {
         />
       </form>
       <ul is-list keystring="id">
-        ${data.items.map(
-          (todo) =>
-            html`
-              <li id="${todo.id}">
-                <span>${todo.title}</span>
-                <button ${{ onClick: () => deleteTask(todo) }}>Delete</button>
-              </li>
-            `
-        )}
+        ${data.items.map((todo) => Task(todo))}
       </ul>
     </div>
   `;
