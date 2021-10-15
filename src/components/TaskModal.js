@@ -1,195 +1,83 @@
-import { html, createState } from 'poor-man-jsx';
-import convertToMarkdown from '../helpers/showdown';
-import $, { append } from '../helpers/helpers';
-import { taskItemLabels, labelsArea } from '../helpers/selectors';
-import { CALENDAR_ICON, NOTES_ICON, TAG_ICON } from './Icons';
-import LabelPopover from './LabelPopover';
-import ProjectOptions from './ProjectOptions';
-import Chip from './Chip';
-import { AppEvent } from '../emitters';
+import { createHook, html } from 'poor-man-jsx';
+import convertToMarkdown from '../utils/showdown';
+import { debounce } from '../utils/delay';
+import { TASK } from '../core/actions';
+import Core from '../core';
 
-// Selectors are so messy for this component
-// Since there's only one modal component at a time
-// Maybe change it to ids
-// But make sure to not have conflicts with other components that shows modal-content too
-// TODO: Add a delete button
-const TaskModal = ({ task }) => {
-  const updateTaskDetails = (payload) => {
-    AppEvent.emit('task.update', { info: task, data: payload });
+const TaskModal = (projectId, listId, taskId) => {
+  const [state] = createHook({
+    isEditingTitle: false,
+    isEditingNotes: false,
+    data: Core.main.getTask(projectId, listId, taskId),
+  });
+
+  const getLatestData = () => {
+    state.data = Core.main.getTask(projectId, listId, taskId);
   };
 
-  const updateTaskLabels = (method, id) => {
-    AppEvent.emit('task.labels.update', {
-      info: task,
-      action: method,
-      labelId: id,
+  const unsubscribe = Core.event.on(TASK.UPDATE + '.success', getLatestData);
+
+  const editTask = debounce((e) => {
+    console.log('Updating...', e.target);
+
+    Core.event.emit(TASK.UPDATE, {
+      project: projectId,
+      list: listId,
+      task: taskId,
+      data: {
+        [e.target.name]: e.target.value,
+      },
     });
-  };
-
-  const updateTitle = (e) => {
-    if (!e.target.value) {
-      alert('Task name must not be empty');
-      e.target.value = task.title;
-      return;
-    }
-
-    task.title = e.target.value;
-    updateTaskDetails({ title: e.target.value });
-  };
-
-  const updateNotes = () => {
-    task.notes = $('#edit-task-notes').value;
-    updateTaskDetails({ notes: $('#edit-task-notes').value });
-  };
-
-  const updateDueDate = (e) => {
-    task.dueDate = e.target.value;
-    updateTaskDetails({ dueDate: e.target.value });
-  };
-
-  // This is a mess
-  const updateLabels = (label) => {
-    if (label.selected) {
-      updateTaskLabels('add', label.id);
-
-      append(Chip({ label, clickable: true })).to($(taskItemLabels(task.id)));
-      append(Chip({ label, expanded: true })).to($(labelsArea));
-    } else {
-      updateTaskLabels('remove', label.id);
-
-      const labelSelector = `label-chip[data-label-id="${label.id}"]`;
-      const labelChip = $(`#${task.id} ${labelSelector}`);
-      const labelChipWithText = $(`${labelsArea} ${labelSelector}`);
-
-      labelChip.remove();
-      labelChipWithText.remove();
-    }
-  };
-
-  const updateLocation = (e) => {
-    const prevLocation = task.location;
-    const newLocation = e.currentTarget.value;
-    task.location = newLocation;
-
-    AppEvent.emit('task.transfer', {
-      prevLocation,
-      newLocation,
-      id: task.id,
-    });
-    updateTaskDetails({ location: newLocation });
-  };
-
-  /*
-   * DOM functions
-   */
-  const [isEditingTitle] = createState(false);
-  const [isEditingNotes] = createState(false);
+  }, 200);
 
   const toggleTitleEdit = () => {
-    isEditingTitle.value = !isEditingTitle.value;
+    state.isEditingTitle = !state.isEditingTitle;
   };
 
   const toggleNotesEdit = () => {
-    if (isEditingNotes.value) {
-      updateNotes();
-    }
-
-    isEditingNotes.value = !isEditingNotes.value;
+    state.isEditingNotes = !state.isEditingNotes;
   };
 
-  const openLabelPopover = () => {
-    $('#popover').classList.add('visible');
-  };
-
-  const notesTextArea = () =>
-    html`
-      <textarea id="edit-task-notes">${task.notes}</textarea>
-      <button class="submit" type="submit" ${{ onClick: toggleNotesEdit }}>
-        Save
-      </button>
-    `;
-
-  const notesPreview = () =>
-    html`<div
-      class="markdown-body"
-      ${{ innerHTML: convertToMarkdown(task.notes) }}
-    ></div>`;
-
-  // TODO: Clean attributes here
   return html`
-    <div class="title">
+    <div ${{ '@unmount': unsubscribe }}>
       <input
         type="text"
+        value="${state.data.title}"
         name="title"
-        class="light"
-        placeholder="Unnamed Task"
-        value="${task.title}"
         required
-        ${{ $disabled: isEditingTitle.$value((val) => !val) }}
-        ${{ onInput: updateTitle, onFocusout: toggleTitleEdit }}
+        ${{
+          $disabled: state.$isEditingTitle,
+          onInput: editTask,
+        }}
       />
-      <button
-        is="edit-btn"
-        ${{
-          $display: isEditingTitle.$value((val) => (val ? 'none' : 'block')),
-        }}
-        ${{ onClick: toggleTitleEdit }}
-      ></button>
-    </div>
-
-    <div class="proj">
-      <span>in Project</span>
-      <select ${{ onChange: updateLocation }}>
-        ${ProjectOptions(task.location)}
-      </select>
-    </div>
-
-    <div id="labels">
-      <div class="section-header">
-        ${TAG_ICON}
-        <span>Labels</span>
-      </div>
-      <button ${{ onClick: openLabelPopover }}>+</button>
-      <div data-id="labels-area">
-        ${task.labels.map((label) => Chip({ label, showText: true }))}
-      </div>
-      ${LabelPopover({
-        taskLabels: task.labels,
-        toggleLabel: updateLabels,
-      })}
-    </div>
-
-    <div class="notes">
-      <div class="section-header">
-        ${NOTES_ICON}
-        <span>Notes</span>
-      </div>
-      <button
-        is="edit-btn"
-        ${{
-          $display: isEditingNotes.$value((val) => (val ? 'none' : 'block')),
-        }}
-        ${{ onClick: toggleNotesEdit }}
-      ></button>
       <div
-        data-id="notes-area"
+        component="notes"
         ${{
-          $children: isEditingNotes.$value((val) =>
-            val ? notesTextArea() : notesPreview()
-          ),
+          // prettier-ignore
+          $children: state.$isEditingNotes((val) =>
+            val
+                ? html`
+                    <textarea
+                      name="notes"
+                      cols="30"
+                      rows="10"
+                      ${{ onInput: editTask, onBlur: toggleNotesEdit }}
+                    >
+                      ${state.data.notes}
+                    </textarea>
+                    `
+                : html`
+                    <div ${{ innerHTML: convertToMarkdown(state.data.notes) }}></div>
+                    <button ${{ onClick: toggleNotesEdit }}>Edit</button>
+                    `
+                ),
         }}
       ></div>
-    </div>
-
-    <div class="date">
-      <div class="section-header">
-        ${CALENDAR_ICON}
-        <span>Due Date</span>
-      </div>
       <input
         type="date"
-        ${task.dueDate ? `value="${task.dueDate}"` : ''}
-        ${{ onChange: updateDueDate }}
+        value="${state.data.dueDate}"
+        name="dueDate"
+        ${{ onChange: editTask }}
       />
     </div>
   `;

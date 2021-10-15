@@ -55,6 +55,7 @@ const Website = () =>
       class: 'sidebar',
     })}
     ${Router(routes, 'main', { class: 'app' })}
+    <my-modal id="main-modal" close-btn-class="modal__close-btn"></my-modal>
   `;
 
 defineCustomElements();
