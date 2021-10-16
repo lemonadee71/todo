@@ -18,14 +18,20 @@ const TaskModal = (projectId, listId, taskId) => {
   const unsubscribe = Core.event.on(TASK.UPDATE + '.success', getLatestData);
 
   const editTask = debounce((e) => {
-    console.log('Updating...', e.target);
+    const { name, value } = e.target;
+
+    if (name === 'title' && !value.trim()) {
+      alert('Task must have a title');
+      e.target.value = state.data.title;
+      return;
+    }
 
     Core.event.emit(TASK.UPDATE, {
       project: projectId,
       list: listId,
       task: taskId,
       data: {
-        [e.target.name]: e.target.value,
+        [name]: value,
       },
     });
   }, 200);
@@ -46,7 +52,9 @@ const TaskModal = (projectId, listId, taskId) => {
         name="title"
         required
         ${{
-          $disabled: state.$isEditingTitle,
+          $readonly: state.$isEditingTitle,
+          onDblclick: toggleTitleEdit,
+          onBlur: toggleTitleEdit,
           onInput: editTask,
         }}
       />
