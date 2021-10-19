@@ -15,11 +15,6 @@
   overflow-y: auto;
 
   transition: 0.5s;
-
-  .create-form {
-    position: absolute;
-    bottom: 1.5rem;
-  }
 }
 
 .quick-links,
@@ -45,4 +40,10 @@
 
 .quick-links {
   margin-bottom: 2rem;
+}
+
+.create-project {
+  @include create-form($btn-color: #aba8a8, $width: 75%);
+  position: absolute;
+  bottom: 1.5rem;
 }

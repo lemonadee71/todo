@@ -55,15 +55,15 @@ const Sidebar = () => {
         }}
       ></ul>
     </nav>
-    <form class="create-form" ${{ onSubmit: createNewProject }}>
+    <form class="create-project" ${{ onSubmit: createNewProject }}>
       <input
         type="text"
         name="new-project"
         id="new-project"
         placeholder="Create new project"
-        class="text-input create-form__input"
+        class="form__input"
       />
-      <button class="create-form__button">+</button>
+      <button class="form__btn">+</button>
     </form>
   `;
 };
