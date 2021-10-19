@@ -1,0 +1,14 @@
+%link {
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+@mixin input($bg: transparent) {
+  background-color: $bg;
+  border: none;
+  transition: border-color 0.3s;
+}
