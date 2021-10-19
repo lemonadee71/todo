@@ -4,11 +4,13 @@
 @import 'abstracts/mixins';
 @import 'abstracts/variables';
 
+@import 'components/list';
 @import 'components/modal';
 @import 'components/task-modal';
 
 @import 'layout/sidebar';
 
 @import 'pages/app';
+@import 'pages/project';
 
 @import 'vendors/hamburgers';

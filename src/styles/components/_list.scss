@@ -1,0 +1,17 @@
+.task-list {
+  background-color: $color-light;
+
+  width: 400px;
+  padding: 14px 20px;
+  margin-right: 1.5rem;
+
+  border-radius: 10px;
+
+  &__title {
+    font-family: $secondary-font;
+    font-weight: bold;
+    font-size: 24px;
+
+    margin-bottom: 5px;
+  }
+}

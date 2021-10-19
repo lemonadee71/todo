@@ -36,7 +36,10 @@ const Project = ({ data: { id } }) => {
   };
 
   return html`
-    <div ${{ '@unmount': () => unsubscribe.forEach((cb) => cb()) }}>
+    <div
+      class="project"
+      ${{ '@unmount': () => unsubscribe.forEach((cb) => cb()) }}
+    >
       <form ${{ onSubmit: createNewList }}>
         <input
           type="text"
@@ -45,8 +48,9 @@ const Project = ({ data: { id } }) => {
           placeholder="Create new list"
         />
       </form>
-      <h3>${project.name}</h3>
+      <h1 class="project__title">${project.name}</h1>
       <div
+        class="project__body"
         is-list
         keystring="id"
         ${{ $children: data.$lists.map((list) => List(project.id, list)) }}

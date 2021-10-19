@@ -27,20 +27,21 @@ const List = (projectId, data) => {
   };
 
   return html`
-    <div id="${data.id}">
-      <p>${data.name}</p>
-      <button ${{ onClick: deleteList }}>Delete</button>
-      <form ${{ onSubmit: createTask }}>
-        <input
-          type="text"
-          name="new-task"
-          id="new-task"
-          placeholder="Create new task"
-        />
-      </form>
-      <ul is-list keystring="id">
+    <div class="task-list" id="${data.id}">
+      <p class="task-list__title">${data.name}</p>
+      <ul class="task-list__body" is-list keystring="id">
         ${data.items.map((todo) => Task(todo))}
       </ul>
+      <button ${{ onClick: deleteList }}>Delete</button>
+      <form class="create-list" ${{ onSubmit: createTask }}>
+        <input
+        type="text"
+        name="new-task"
+        id="new-task"
+        placeholder="Create new task"
+        class="form__input"
+        />
+        <button class="form__btn">+</button>
     </div>
   `;
 };
