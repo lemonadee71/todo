@@ -1,6 +1,9 @@
 @import 'base/reset';
+@import 'base/typography';
 
-@import 'components/input';
+@import 'abstracts/mixins';
+@import 'abstracts/variables';
+
 @import 'components/modal';
 @import 'components/task-modal';
 
