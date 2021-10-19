@@ -18,8 +18,13 @@ const Sidebar = () => {
 
   const createNewProject = (e) => {
     e.preventDefault();
-
     const input = e.target.elements['new-project'];
+
+    if (!input.value.trim()) {
+      alert('Project must have a name');
+      return;
+    }
+
     Core.event.emit(PROJECT.ADD, {
       data: {
         name: input.value,
