@@ -5,6 +5,7 @@ import Router from './components/Router';
 import * as pages from './pages';
 import Sidebar from './components/Sidebar';
 import Core from './core';
+import 'github-markdown-css';
 import './styles/main.scss';
 
 Core.router.on(PATHS.allApp, null, {

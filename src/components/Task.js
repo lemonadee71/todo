@@ -26,7 +26,7 @@ const Task = (data) => {
 
   const editTask = () => {
     $('#main-modal')
-      .changeContent(TaskModal(task.project, task.list, task.id))
+      .changeContent(TaskModal(task.project, task.list, task.id), 'task-modal')
       .show();
   };
 

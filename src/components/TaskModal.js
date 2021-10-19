@@ -44,16 +44,29 @@ const TaskModal = (projectId, listId, taskId) => {
     state.isEditingNotes = !state.isEditingNotes;
   };
 
+  const toggleEdit = (e) => {
+    if (e.target.matches('.task-modal')) {
+      state.isEditingTitle = false;
+      state.isEditingNotes = false;
+    }
+  };
+
   return html`
-    <div ${{ '@unmount': unsubscribe }}>
+    <div
+      ${{
+        '@unmount': unsubscribe,
+        onClick: toggleEdit,
+      }}
+    >
       <input
         type="text"
         value="${state.data.title}"
         name="title"
+        class="text-input task-modal__title"
         required
         ${{
           $readonly: state.$isEditingTitle,
-          onDblclick: toggleTitleEdit,
+          onClick: toggleTitleEdit,
           onBlur: toggleTitleEdit,
           onInput: editTask,
         }}
@@ -67,20 +80,23 @@ const TaskModal = (projectId, listId, taskId) => {
                 ? html`
                     <textarea
                       name="notes"
-                      cols="30"
-                      rows="10"
+                      class="text-input task-modal__notes"
                       ${{ onInput: editTask, onBlur: toggleNotesEdit }}
-                    >
-                      ${state.data.notes}
-                    </textarea>
+                    >${state.data.notes.trim()}</textarea>
                     `
                 : html`
-                    <div ${{ innerHTML: convertToMarkdown(state.data.notes) }}></div>
-                    <button ${{ onClick: toggleNotesEdit }}>Edit</button>
+                    <div 
+                      class="task-modal__notes markdown-body"
+                    ${{ 
+                      innerHTML: convertToMarkdown(state.data.notes),
+                      onClick: toggleNotesEdit 
+                    }}></div>
+                   
                     `
                 ),
         }}
       ></div>
+      <!-- Change this to a better date picker -->
       <input
         type="date"
         value="${state.data.dueDate}"
