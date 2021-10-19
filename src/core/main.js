@@ -166,6 +166,8 @@ export const addProject = (name) => {
     throw new Error(`Project with the name "${name}" already exists`);
   }
 
+  if (!name.trim()) throw new Error('Project must have a name');
+
   const project = new Project({ name });
   Root.add(project);
 

@@ -8,22 +8,20 @@ const Sidebar = () => {
     projects: Core.main.getProjectDetails(),
   });
 
-  const unsubscribe = Core.event.on(
-    PROJECT.ALL,
-    () => {
-      data.projects = Core.main.getProjectDetails();
-    },
-    { order: 'last' }
-  );
+  const unsubscribe = [
+    Core.event.on(PROJECT.ADD + '.error', (error) => alert(error.message)),
+    Core.event.on(
+      PROJECT.ALL,
+      () => {
+        data.projects = Core.main.getProjectDetails();
+      },
+      { order: 'last' }
+    ),
+  ];
 
   const createNewProject = (e) => {
     e.preventDefault();
     const input = e.target.elements['new-project'];
-
-    if (!input.value.trim()) {
-      alert('Project must have a name');
-      return;
-    }
 
     Core.event.emit(PROJECT.ADD, {
       data: {
@@ -53,7 +51,7 @@ const Sidebar = () => {
         keystring="id"
         ${{
           '@unmount': () => {
-            unsubscribe();
+            unsubscribe.forEach((cb) => cb());
             revoke();
           },
           $children: data.$projects.map((project) => ProjectLink(project)),
