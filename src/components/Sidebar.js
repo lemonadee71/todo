@@ -32,8 +32,8 @@ const Sidebar = () => {
   return html`
     <nav class="quick-links">
       <ul>
-        <li><a href="#">User</a></li>
-        <li><a href="#">Quick Find</a></li>
+        <li>User</li>
+        <li>Quick Find</li>
         <li>
           <a is="navigo-link" href="/app">Overview</a>
         </li>
@@ -55,15 +55,13 @@ const Sidebar = () => {
         }}
       ></ul>
     </nav>
-    <form class="create-form" ${{ onSubmit: createNewProject }}>
+    <form ${{ onSubmit: createNewProject }}>
       <input
         type="text"
         name="new-project"
         id="new-project"
         placeholder="Create new project"
-        class="text-input create-form__input"
       />
-      <button class="create-form__button">+</button>
     </form>
   `;
 };

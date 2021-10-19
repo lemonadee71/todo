@@ -1,25 +1,14 @@
 /* The side navigation menu */
-.sidebar {
+aside {
+  height: 100%;
+  width: 250px;
   position: fixed;
   z-index: 1;
   left: 0;
-
-  box-sizing: border-box;
-  height: 100%;
-  width: 250px;
-  padding: 3rem 1.5rem 1rem;
-
-  background-color: $color-darker;
-
+  background-color: black;
   overflow-x: hidden; /* Disable horizontal scroll */
   overflow-y: auto;
-
   transition: 0.5s;
-
-  .create-form {
-    position: absolute;
-    bottom: 1.5rem;
-  }
 }
 
 .quick-links,
@@ -30,19 +19,14 @@
 
   li {
     list-style: none;
-
+    font-size: 18px;
     margin: 3px;
     padding: 3px;
-
-    a {
-      @extend %link;
-      font-size: $secondary-font-size;
-      font-family: $secondary-font;
-      color: $font-dark;
-    }
+    cursor: pointer;
+    color: white;
   }
-}
 
-.quick-links {
-  margin-bottom: 2rem;
+  li:hover {
+    text-decoration: underline;
+  }
 }
