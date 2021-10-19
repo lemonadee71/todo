@@ -77,7 +77,7 @@ class Modal extends HTMLElement {
   };
 
   clearContent = () => {
-    this.state.content = null;
+    this.state.content = [];
     this.state.contentClass = '';
 
     return this;
