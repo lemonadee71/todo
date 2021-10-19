@@ -15,16 +15,13 @@ const TaskModal = (projectId, listId, taskId) => {
     state.data = Core.main.getTask(projectId, listId, taskId);
   };
 
-  const unsubscribe = Core.event.on(TASK.UPDATE + '.success', getLatestData);
+  const unsubscribe = [
+    Core.event.on(TASK.UPDATE + '.error', (error) => alert(error.message)),
+    Core.event.on(TASK.UPDATE + '.success', getLatestData),
+  ];
 
   const editTask = debounce((e) => {
     const { name, value } = e.target;
-
-    if (name === 'title' && !value.trim()) {
-      alert('Task must have a title');
-      e.target.value = state.data.title;
-      return;
-    }
 
     Core.event.emit(TASK.UPDATE, {
       project: projectId,
@@ -51,10 +48,12 @@ const TaskModal = (projectId, listId, taskId) => {
     }
   };
 
+  // TODO: Fix issue with title input
+  // where keyboard inputs are not going in even if focused
   return html`
     <div
       ${{
-        '@unmount': unsubscribe,
+        '@unmount': () => unsubscribe.forEach((cb) => cb()),
         onClick: toggleEdit,
       }}
     >

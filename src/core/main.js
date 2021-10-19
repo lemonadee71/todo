@@ -239,6 +239,25 @@ export const addTask = (projectId, listId, data) => {
   return task;
 };
 
+export const updateTask = (
+  projectId,
+  listId,
+  taskId,
+  data = {},
+  type = 'task'
+) => {
+  const _task = getTask(projectId, listId, taskId);
+  const task = type === 'task' ? _task : _task.getSubtask(data.id);
+
+  Object.entries(data).forEach(([prop, value]) => {
+    if (prop === 'title' && !value) throw new Error('Task must have a title');
+
+    task[prop] = value;
+  });
+
+  return task;
+};
+
 export const deleteTask = (task) =>
   getList(task.project, task.list).delete(task.id);
 

@@ -89,15 +89,9 @@ const Core = (() => {
     main.addTask(project, list, data)
   );
   event.on(TASK.REMOVE, ({ data }) => main.deleteTask(data));
-  event.on(TASK.UPDATE, ({ project, list, task: id, data }) => {
-    const task = main.getTask(project, list, id);
-
-    Object.entries(data).forEach(([prop, value]) => {
-      task[prop] = value;
-    });
-
-    return task;
-  });
+  event.on(TASK.UPDATE, ({ project, list, task: id, data }) =>
+    main.updateTask(project, list, id, data)
+  );
   event.on(TASK.TRANSFER, ({ type, project, list, task: id, data }) => {
     switch (type) {
       case 'project':
@@ -145,12 +139,7 @@ const Core = (() => {
         task.clearSubtasks();
         break;
       case 'update': {
-        const subtask = task.getSubtask(data.id);
-
-        Object.entries(data).forEach(([prop, value]) => {
-          subtask[prop] = value;
-        });
-
+        main.updateTask(project, list, id, data, 'subtask');
         break;
       }
       default:
