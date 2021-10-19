@@ -6,13 +6,10 @@ class Modal extends HTMLElement {
     [this.state, this._revoke] = createHook({
       content: [],
       contentClass: '',
-      closeBtnClass: '',
     });
   }
 
   connectedCallback() {
-    this.state.closeBtnClass = this.getAttribute('close-btn-class') || '';
-
     const defaultBackdropStyle = {
       display: 'none',
       position: 'fixed',
@@ -29,17 +26,24 @@ class Modal extends HTMLElement {
 
     const content = html`
       <div role="modal">
-        <span
-          role="modal__close-btn"
-          ${{ $class: this.state.$closeBtnClass, onClick: this.close }}
-        >
-          &times;
-        </span>
         <div
           role="modal__content"
+          style="position: relative;"
           ${{
             $class: this.state.$contentClass,
-            $children: this.state.$content,
+            $children: this.state.$content(
+              (value) =>
+                html`
+                  <span
+                    role="modal__close-btn"
+                    class="close"
+                    ${{ onClick: this.close }}
+                  >
+                    &times;
+                  </span>
+                  ${value}
+                `
+            ),
           }}
         ></div>
       </div>
@@ -65,10 +69,9 @@ class Modal extends HTMLElement {
     return this;
   };
 
-  changeContent = (content, contentClass = '', closeBtnClass = '') => {
+  changeContent = (content, contentClass = '') => {
     this.state.content = content;
     this.state.contentClass = contentClass;
-    this.state.closeBtnClass = closeBtnClass || this.state.closeBtnClass;
 
     return this;
   };
@@ -76,7 +79,6 @@ class Modal extends HTMLElement {
   clearContent = () => {
     this.state.content = null;
     this.state.contentClass = '';
-    this.state.closeBtnClass = this.getAttribute('close-btn-class') || '';
 
     return this;
   };
