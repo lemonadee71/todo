@@ -1,0 +1,56 @@
+.task,
+.task--done {
+  box-sizing: border-box;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 360px;
+  padding: 1rem;
+
+  background: $color-lighter;
+  box-shadow: 2px 4px 10px -1px rgba(0, 0, 0, 0.25);
+  border-radius: 1rem;
+
+  margin-bottom: $task-default-spacing;
+
+  &__checkbox {
+    width: 32px;
+    height: 32px;
+
+    margin-right: $task-default-spacing;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  &__labels {
+    margin-bottom: $task-default-spacing;
+  }
+
+  &__title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: $task-default-spacing;
+  }
+
+  &__name {
+    font-family: $primary-font;
+    font-size: $primary-font-size;
+    color: $font-color-light;
+    word-wrap: break-word;
+
+    width: 100%;
+  }
+
+  &__number {
+    font-family: $primary-font;
+    font-size: 14px;
+    color: #757575;
+  }
+}
