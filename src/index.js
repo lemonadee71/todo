@@ -6,6 +6,7 @@ import * as pages from './pages';
 import Sidebar from './components/Sidebar';
 import Core from './core';
 import 'github-markdown-css';
+import 'toastify-js/src/toastify.css';
 import './styles/main.scss';
 
 Core.router.on(PATHS.allApp, null, {

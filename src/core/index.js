@@ -16,6 +16,7 @@ const Core = (() => {
     currentPage: '/app',
     currentOpenedTask: null,
     expandLabels: false,
+    toasts: [],
   });
   const event = new EventEmitter();
   const router = Router;

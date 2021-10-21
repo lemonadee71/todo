@@ -54,6 +54,7 @@
     "navigo": "^8.11.1",
     "poor-man-jsx": "^2.1.0",
     "showdown": "^1.9.1",
-    "sortablejs": "^1.13.0"
+    "sortablejs": "^1.13.0",
+    "toastify-js": "^1.11.2"
   }
 }

@@ -1,8 +1,10 @@
-import { createHook, html } from 'poor-man-jsx';
+import { createHook, html, render } from 'poor-man-jsx';
 import { $ } from '../utils/query';
 import { TASK } from '../core/actions';
 import Core from '../core';
 import TaskModal from './TaskModal';
+import { cancellable } from '../utils/delay';
+import { showToast } from '../utils/showToast';
 
 const Task = (data) => {
   const [task] = createHook({ completed: data.completed });
@@ -21,7 +23,38 @@ const Task = (data) => {
   };
 
   const deleteTask = () => {
-    Core.event.emit(TASK.REMOVE, { data });
+    const [_delete, _cancelDelete] = cancellable(
+      () => Core.event.emit(TASK.REMOVE, { data }),
+      3000
+    );
+
+    $.attr('key', data.id).style.display = 'none';
+    _delete();
+
+    const toast = showToast({
+      node: render(
+        html`
+          <div style="display: flex;">
+            <p>Task removed</p>
+            <button
+              ${{
+                onClick: () => {
+                  const taskItem = $.attr('key', data.id);
+                  // to prevent error when undo is triggered
+                  // after a project switch
+                  if (taskItem) taskItem.style.display = 'flex';
+
+                  _cancelDelete();
+                  toast.hideToast();
+                },
+              }}
+            >
+              Undo
+            </button>
+          </div>
+        `
+      ).firstElementChild,
+    });
   };
 
   const editTask = () => {
