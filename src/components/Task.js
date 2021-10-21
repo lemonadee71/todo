@@ -5,7 +5,7 @@ import Core from '../core';
 import TaskModal from './TaskModal';
 
 const Task = (data) => {
-  const [task] = createHook({ ...data });
+  const [task] = createHook({ completed: data.completed });
 
   const updateTask = (e) => {
     task.completed = e.target.checked;
@@ -26,29 +26,27 @@ const Task = (data) => {
 
   const editTask = () => {
     $('#main-modal')
-      .changeContent(TaskModal(task.project, task.list, task.id), 'task-modal')
+      .changeContent(TaskModal(data.project, data.list, data.id), 'task-modal')
       .show();
   };
 
   return html`
     <div
-      key="${task.id}"
+      key="${data.id}"
       ${{ $class: task.$completed((val) => (val ? 'task--done' : 'task')) }}
     >
       <input
         type="checkbox"
         name="mark-as-done"
-        id="cb-${task.id}"
-        ${{ checked: task.isComplete }}
-        ${{ onChange: updateTask }}
+        ${{ checked: data.completed, onChange: updateTask }}
       />
       <div class="task__body">
         <div class="task__labels"></div>
-        <div class="task__title">
-          <p class="task__name">${task.title}</p>
-          <p class="task__number">${task.numId}</p>
-        </div>
-        <div class="task__badges"><p>${task.notes ? 'Has notes' : ''}</p></div>
+        <p class="task__title">
+          <span class="task__name">${data.title}</span>
+          <span class="task__number">${data.numId}</span>
+        </p>
+        <div class="task__badges"></div>
       </div>
       <button ${{ onClick: deleteTask }}>Delete</button>
       <button ${{ onClick: editTask }}>Edit</button>
