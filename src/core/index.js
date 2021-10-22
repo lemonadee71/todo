@@ -90,16 +90,19 @@ const Core = (() => {
     main.addTask(project, list, data)
   );
   event.on(TASK.REMOVE, ({ data }) => main.deleteTask(data));
+  event.on(TASK.MOVE, ({ project, list, task: id, data: { position } }) =>
+    main.moveTask(project, list, id, position)
+  );
   event.on(TASK.UPDATE, ({ project, list, task: id, data }) =>
     main.updateTask(project, list, id, data)
   );
   event.on(TASK.TRANSFER, ({ type, project, list, task: id, data }) => {
     switch (type) {
       case 'project':
-        main.transferTaskToProject(id, list, data.from, data.to);
+        main.transferTaskToProject(id, list, data.from, data.to, data.position);
         break;
       case 'list':
-        main.transferTaskToList(id, project, data.from, data.to);
+        main.transferTaskToList(id, project, data.from, data.to, data.position);
         break;
       default:
         throw new Error('Type must be either project or list');

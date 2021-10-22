@@ -8,7 +8,7 @@ class Task {
     dueDate,
     project,
     list,
-    position = 0,
+    position = null,
     completed = false,
     labels = [],
     subtasks = [],

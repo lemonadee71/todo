@@ -1,5 +1,6 @@
 import List from './classes/List';
 import Task from './classes/Task';
+import TaskList from './classes/TaskList';
 import Label from './classes/Label';
 import Project from './classes/Project';
 import Storage from './storage';
@@ -15,7 +16,7 @@ const loadDefaultData = () => {
     const project = new Project({ name: p.name });
 
     const lists = p.lists.map((l) => {
-      const list = new List({ name: l.name });
+      const list = new TaskList({ name: l.name, project: project.id });
       const tasks = l.items.map(
         (task) =>
           new Task({
@@ -76,7 +77,7 @@ const recoverData = () => {
         });
       });
 
-      return new List({ ...list, defaultItems: tasks });
+      return new TaskList({ ...list, defaultItems: tasks });
     });
 
     data.push(
@@ -196,7 +197,7 @@ export const addList = (projectId, name) => {
     );
   }
 
-  const list = new List({ name });
+  const list = new TaskList({ name, project: projectId });
   lists.add(list);
 
   return list;
@@ -258,17 +259,24 @@ export const updateTask = (
   return task;
 };
 
+export const moveTask = (projectId, listId, taskId, pos) => {
+  const list = getList(projectId, listId);
+  list.move(taskId, pos);
+
+  return list;
+};
+
 export const deleteTask = (task) =>
   getList(task.project, task.list).delete(task.id);
 
-export const transferTaskToProject = (taskId, listId, from, to) => {
+export const transferTaskToProject = (taskId, listId, from, to, position) => {
   const task = getList(from, listId).extract(taskId);
-  getList(to, 'default').add(task);
+  getList(to, 'default').add(task, position);
 };
 
-export const transferTaskToList = (taskId, projectId, from, to) => {
+export const transferTaskToList = (taskId, projectId, from, to, position) => {
   const task = getList(projectId, from).extract(taskId);
-  getList(projectId, to).add(task);
+  getList(projectId, to).add(task, position);
 };
 
 // =====================================================================================
