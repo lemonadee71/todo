@@ -28,6 +28,7 @@
   }
 
   &__labels {
+    display: flex;
     margin-bottom: $task-default-spacing;
   }
 
@@ -43,6 +44,7 @@
     font-family: $primary-font;
     font-size: $primary-font-size;
     color: $font-color-light;
+    overflow-wrap: break-word;
     word-wrap: break-word;
 
     width: 100%;
@@ -50,7 +52,11 @@
 
   &__number {
     font-family: $primary-font;
-    font-size: 14px;
+    font-size: $secondary-font-size - 2px;
     color: #757575;
+  }
+
+  &__badges {
+    display: flex;
   }
 }
