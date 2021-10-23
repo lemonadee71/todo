@@ -78,9 +78,7 @@ const List = (projectId, data) => {
         keystring="id"
         ${{ '@create': init }}
       >
-        ${data.items
-          .sort((a, b) => a.position - b.position)
-          .map((todo) => Task(todo))}
+        ${data.items.map((task) => Task(task))}
       </ul>
       <button ${{ onClick: deleteList }}>Delete</button>
       <form class="create-list" ${{ onSubmit: createTask }}>

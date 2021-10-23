@@ -1,18 +1,18 @@
 import uuid from '../../utils/id';
-import List from './List';
+import IdList from './IdList';
+import TaskList from './TaskList';
+import OrderedIdList from './OrderedIdList';
 
 export default class Project {
-  constructor({
-    name,
-    id,
-    totalTasks,
-    labels = [],
-    lists = [new List({ name: 'default', id: 'default' })],
-  }) {
+  constructor({ name, id, totalTasks, labels, lists }) {
     this.name = name;
     this.id = id || `project-${uuid(8)}`;
-    this.labels = new List({ name, id: this.id, defaultItems: labels });
-    this.lists = new List({ name, id: this.id, defaultItems: lists });
+    this.labels = new IdList(labels || []);
+    this.lists = new OrderedIdList(
+      lists || [
+        new TaskList({ name: 'Default', id: 'default', project: this.id }),
+      ]
+    );
     this.totalTasks =
       totalTasks || this.lists.items.flatMap((list) => list.items).length || 0;
   }

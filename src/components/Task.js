@@ -1,4 +1,4 @@
-import { createHook, html, render } from 'poor-man-jsx';
+import { html, render } from 'poor-man-jsx';
 import { $ } from '../utils/query';
 import { TASK } from '../core/actions';
 import Core from '../core';
@@ -7,24 +7,30 @@ import { cancellable } from '../utils/delay';
 import { showToast } from '../utils/showToast';
 
 const Task = (data) => {
-  const [task] = createHook({ completed: data.completed });
+  const getLocationData = () => {
+    const taskItem = $.attr('key', data.id);
+
+    return {
+      id: data.id,
+      project: taskItem.dataset.project,
+      list: taskItem.dataset.list,
+    };
+  };
 
   const updateTask = (e) => {
-    task.completed = e.target.checked;
-
     Core.event.emit(TASK.UPDATE, {
       project: data.project,
       list: data.list,
       task: data.id,
       data: {
-        completed: task.completed,
+        completed: e.target.checked,
       },
     });
   };
 
   const deleteTask = () => {
     const [_delete, _cancelDelete] = cancellable(
-      () => Core.event.emit(TASK.REMOVE, { data }),
+      () => Core.event.emit(TASK.REMOVE, { data: getLocationData() }),
       3000
     );
 
@@ -40,9 +46,9 @@ const Task = (data) => {
               ${{
                 onClick: () => {
                   const taskItem = $.attr('key', data.id);
-                  // to prevent error when undo is triggered
-                  // after a project switch
-                  if (taskItem) taskItem.style.display = 'flex';
+                  if (taskItem) {
+                    taskItem.style.display = 'flex';
+                  }
 
                   _cancelDelete();
                   toast.hideToast();
@@ -58,21 +64,29 @@ const Task = (data) => {
   };
 
   const editTask = () => {
+    const location = getLocationData();
+
     $('#main-modal')
-      .changeContent(TaskModal(data.project, data.list, data.id), 'task-modal')
+      .changeContent(
+        TaskModal(location.project, location.list, location.id),
+        'task-modal'
+      )
       .show();
   };
 
   return html`
     <div
       key="${data.id}"
-      ${{ $class: task.$completed((val) => (val ? 'task--done' : 'task')) }}
+      data-project="${data.project}"
+      data-list="${data.list}"
+      class="${data.completed ? 'task--done' : 'task'}"
     >
       <input
         class="task__checkbox"
         type="checkbox"
         name="mark-as-done"
-        ${{ checked: data.completed, onChange: updateTask }}
+        ${data.completed ? 'checked' : ''}
+        ${{ onChange: updateTask }}
       />
       <div class="task__body">
         <div class="task__labels"></div>

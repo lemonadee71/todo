@@ -1,10 +1,10 @@
-import List from './classes/List';
 import Task from './classes/Task';
+import IdList from './classes/IdList';
 import TaskList from './classes/TaskList';
 import Label from './classes/Label';
 import Project from './classes/Project';
 import Storage from './storage';
-import { LAST_UPDATE, ROOT_NAME } from './constants';
+import { LAST_UPDATE } from './constants';
 import defaultData from '../defaultData.json';
 // import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../utils/date';
 // import { defaultProjects } from './defaults';
@@ -62,13 +62,13 @@ const recoverData = () => {
     });
 
     const projectLists = project.lists.map((list) => {
-      const tasks = list.items.map((task) => {
+      const tasks = list._items.map((task) => {
         let { labels, subtasks } = task;
 
-        labels = labels.items.map((taskLabel) =>
+        labels = labels._items.map((taskLabel) =>
           projectLabels.find((label) => label.id === taskLabel.id)
         );
-        subtasks = subtasks.items.map((subtask) => new Task(subtask));
+        subtasks = subtasks._items.map((subtask) => new Task(subtask));
 
         return new Task({
           ...task,
@@ -123,11 +123,7 @@ export const init = () => {
   const recoveredData = recoverData();
   const initData = recoveredData.length ? recoveredData : loadDefaultData();
 
-  Root = new List({
-    name: ROOT_NAME,
-    id: ROOT_NAME,
-    defaultItems: initData,
-  });
+  Root = new IdList(initData);
   Storage.store(LAST_UPDATE, Root, storeData);
 };
 
@@ -215,7 +211,7 @@ export const getAllTasks = () =>
     .flatMap((list) => list.items);
 
 export const getTaskFromRoot = (taskId) =>
-  getAllTasks().filter((task) => task.id === taskId);
+  getAllTasks().filter((task) => task.id === taskId)[0];
 
 export const getTasksFromProject = (projectId) =>
   getProject(projectId).lists.items.flatMap((list) => list.items);
@@ -231,8 +227,6 @@ export const addTask = (projectId, listId, data) => {
   const project = getProject(projectId);
   const task = new Task({
     ...data,
-    project: projectId,
-    list: listId,
     numId: ++project.totalTasks,
   });
   project.getList(listId).add(task);
@@ -256,27 +250,23 @@ export const updateTask = (
     task[prop] = value;
   });
 
-  return task;
+  return task.data;
 };
 
-export const moveTask = (projectId, listId, taskId, pos) => {
-  const list = getList(projectId, listId);
-  list.move(taskId, pos);
-
-  return list;
-};
+export const moveTask = (projectId, listId, taskId, pos) =>
+  getList(projectId, listId).move(taskId, pos);
 
 export const deleteTask = (task) =>
   getList(task.project, task.list).delete(task.id);
 
 export const transferTaskToProject = (taskId, listId, from, to, position) => {
   const task = getList(from, listId).extract(taskId);
-  getList(to, 'default').add(task, position);
+  getList(to, 'default').insert(task, position);
 };
 
 export const transferTaskToList = (taskId, projectId, from, to, position) => {
   const task = getList(projectId, from).extract(taskId);
-  getList(projectId, to).add(task, position);
+  getList(projectId, to).insert(task, position);
 };
 
 // =====================================================================================

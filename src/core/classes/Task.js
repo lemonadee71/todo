@@ -1,5 +1,6 @@
-import List from './List';
 import uuid from '../../utils/id';
+import IdList from './IdList';
+import OrderedIdList from './OrderedIdList';
 
 class Task {
   constructor({
@@ -28,16 +29,8 @@ class Task {
     this.list = list;
     this.position = position;
 
-    this.labels = new List({
-      id: this.id,
-      name: this.id,
-      defaultItems: labels,
-    });
-    this.subtasks = new List({
-      id: this.id,
-      name: this.id,
-      defaultItems: subtasks,
-    });
+    this.labels = new IdList(labels);
+    this.subtasks = new OrderedIdList(subtasks);
   }
 
   get data() {
@@ -57,11 +50,11 @@ class Task {
   }
 
   addSubtask(task) {
-    this.subtasks.add(task).sort((a, b) => a.position > b.position);
+    this.subtasks.add(task);
   }
 
   deleteSubtask(id) {
-    this.subtasks.delete(id).sort((a, b) => a.position > b.position);
+    this.subtasks.delete(id);
   }
 
   clearSubtasks() {
