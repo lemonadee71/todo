@@ -19,7 +19,8 @@ export const createUndoFn =
       node: Toast(text, {
         text: 'Undo',
         callback: () => {
-          if (node) node.style.display = previousStyle;
+          const _node = $(selector);
+          if (_node) _node.style.display = previousStyle;
 
           cancel();
           toast.hideToast();
