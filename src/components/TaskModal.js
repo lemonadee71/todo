@@ -1,10 +1,9 @@
 import { createHook, html } from 'poor-man-jsx';
-import convertToMarkdown from '../utils/showdown';
-import { debounce } from '../utils/delay';
 import { TASK } from '../core/actions';
 import Core from '../core';
-import { showToast } from '../utils/showToast';
-import Toast from './Toast';
+import convertToMarkdown from '../utils/showdown';
+import { debounce } from '../utils/delay';
+import logger from '../utils/logger';
 
 const TaskModal = (projectId, listId, taskId) => {
   const [state] = createHook({
@@ -18,13 +17,7 @@ const TaskModal = (projectId, listId, taskId) => {
   };
 
   const unsubscribe = [
-    Core.event.on(TASK.UPDATE + '.error', (error) =>
-      showToast({
-        className: 'custom-toast--warning',
-        close: true,
-        node: Toast(error.message),
-      })
-    ),
+    Core.event.on(TASK.UPDATE + '.error', logger.warning),
     Core.event.on(TASK.UPDATE + '.success', getLatestData),
   ];
 

@@ -2,21 +2,14 @@ import { createHook, html } from 'poor-man-jsx';
 import List from '../components/List';
 import { PROJECT, TASK } from '../core/actions';
 import Core from '../core';
-import { showToast } from '../utils/showToast';
-import Toast from '../components/Toast';
+import logger from '../utils/logger';
 
 const Project = ({ data: { id } }) => {
   const project = Core.main.getProject(`project-${id}`);
   const [data] = createHook({ lists: project.lists.items });
 
   const unsubscribe = [
-    Core.event.on(PROJECT.LISTS.ADD + '.error', (error) =>
-      showToast({
-        className: 'custom-toast--warning',
-        close: true,
-        node: Toast(error.message),
-      })
-    ),
+    Core.event.on(PROJECT.LISTS.ADD + '.error', logger.warning),
     Core.event.on(
       [...PROJECT.LISTS.ALL, ...TASK.ALL],
       () => {
