@@ -2,6 +2,8 @@ import { createHook, html } from 'poor-man-jsx';
 import { PROJECT } from '../core/actions';
 import Core from '../core';
 import ProjectLink from './ProjectLink';
+import { showToast } from '../utils/showToast';
+import Toast from './Toast';
 
 const Sidebar = () => {
   const [data, revoke] = createHook({
@@ -9,7 +11,13 @@ const Sidebar = () => {
   });
 
   const unsubscribe = [
-    Core.event.on(PROJECT.ADD + '.error', (error) => alert(error.message)),
+    Core.event.on(PROJECT.ADD + '.error', (error) =>
+      showToast({
+        className: 'custom-toast--warning',
+        close: true,
+        node: Toast(error.message),
+      })
+    ),
     Core.event.on(
       PROJECT.ALL,
       () => {

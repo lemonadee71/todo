@@ -23,6 +23,66 @@
   transition: border-color 0.3s;
 }
 
+@mixin toast(
+  $bg: $color-dark,
+  $color: white,
+  $border-color: gray,
+  $close-btn-color: white
+) {
+  padding: 0.75rem 1rem;
+  background: $bg;
+  border: 1px solid $border-color;
+  border-radius: 3px;
+
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: center;
+
+  box-sizing: border-box;
+  width: 17.5rem;
+
+  .toast-close {
+    font-size: $primary-font-size;
+    color: $close-btn-color;
+    opacity: 0.6;
+  }
+
+  .toast__body {
+    flex: 1;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .toast__text {
+    @include secondary-font;
+    color: $color;
+
+    flex: 1;
+
+    word-wrap: break-word;
+    margin-right: 0.5rem;
+  }
+
+  .toast__btn {
+    @include secondary-font;
+    font-size: $secondary-font-size - 2px;
+    font-weight: bold;
+    color: #aecbfa;
+
+    border: none;
+    background: transparent;
+
+    &:hover {
+      cursor: pointer;
+      border-radius: 3px;
+      background: rgba(107, 165, 237, 0.15);
+    }
+  }
+}
+
 @mixin create-form(
   $inp-color: white,
   $btn-color: white,

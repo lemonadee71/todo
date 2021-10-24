@@ -3,6 +3,8 @@ import convertToMarkdown from '../utils/showdown';
 import { debounce } from '../utils/delay';
 import { TASK } from '../core/actions';
 import Core from '../core';
+import { showToast } from '../utils/showToast';
+import Toast from './Toast';
 
 const TaskModal = (projectId, listId, taskId) => {
   const [state] = createHook({
@@ -16,7 +18,13 @@ const TaskModal = (projectId, listId, taskId) => {
   };
 
   const unsubscribe = [
-    Core.event.on(TASK.UPDATE + '.error', (error) => alert(error.message)),
+    Core.event.on(TASK.UPDATE + '.error', (error) =>
+      showToast({
+        className: 'custom-toast--warning',
+        close: true,
+        node: Toast(error.message),
+      })
+    ),
     Core.event.on(TASK.UPDATE + '.success', getLatestData),
   ];
 

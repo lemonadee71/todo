@@ -1,10 +1,11 @@
-import { html, render } from 'poor-man-jsx';
+import { html } from 'poor-man-jsx';
 import { TASK } from '../core/actions';
 import Core from '../core';
-import TaskModal from './TaskModal';
 import { $ } from '../utils/query';
 import { cancellable } from '../utils/delay';
 import { showToast } from '../utils/showToast';
+import TaskModal from './TaskModal';
+import Toast from './Toast';
 
 // data here points to the Task stored in main
 // so we rely on the fact that changes are reflected on data
@@ -37,28 +38,20 @@ const Task = (data) => {
     _delete();
 
     const toast = showToast({
-      node: render(
-        html`
-          <div style="display: flex;">
-            <p>Task removed</p>
-            <button
-              ${{
-                onClick: () => {
-                  const taskItem = $.attr('key', data.id);
-                  if (taskItem) {
-                    taskItem.style.display = 'flex';
-                  }
+      className: 'custom-toast',
+      close: true,
+      node: Toast('Task removed', {
+        text: 'Undo',
+        callback: () => {
+          const taskItem = $.attr('key', data.id);
+          if (taskItem) {
+            taskItem.style.display = 'flex';
+          }
 
-                  _cancelDelete();
-                  toast.hideToast();
-                },
-              }}
-            >
-              Undo
-            </button>
-          </div>
-        `
-      ).firstElementChild,
+          _cancelDelete();
+          toast.hideToast();
+        },
+      }),
     });
   };
 
