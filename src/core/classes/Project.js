@@ -4,7 +4,7 @@ import TaskList from './TaskList';
 import OrderedIdList from './OrderedIdList';
 
 export default class Project {
-  constructor({ name, id, totalTasks, labels, lists }) {
+  constructor({ name, id, totalTasks, labels, lists, position }) {
     this.name = name;
     this.id = id || `project-${uuid(8)}`;
     this.labels = new IdList(labels || []);
@@ -15,6 +15,7 @@ export default class Project {
     );
     this.totalTasks =
       totalTasks || this.lists.items.flatMap((list) => list.items).length || 0;
+    this.position = position;
   }
 
   get link() {

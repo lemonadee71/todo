@@ -56,12 +56,12 @@ const Core = (() => {
 
   event.on(PROJECT.ADD, ({ data: { name } }) => main.addProject(name));
   event.on(PROJECT.REMOVE, ({ project }) => main.deleteProject(project));
-  event.on(PROJECT.UPDATE, ({ project: id, data: { name } }) => {
-    const project = main.getProject(id);
-    project.name = name; // since only name is editable
-
-    return project;
-  });
+  event.on(PROJECT.UPDATE, ({ project: id, data: { name } }) =>
+    main.updateProjectName(id, name)
+  );
+  event.on(PROJECT.MOVE, ({ project: id, data: { position } }) =>
+    main.moveProject(id, position)
+  );
 
   event.on(PROJECT.LISTS.ADD, ({ project, data: { name } }) =>
     main.addList(project, name)

@@ -1,3 +1,4 @@
+import Sortable from 'sortablejs';
 import { createHook, html } from 'poor-man-jsx';
 import { PROJECT } from '../core/actions';
 import Core from '../core';
@@ -33,6 +34,19 @@ const Sidebar = () => {
     input.value = '';
   };
 
+  const init = function () {
+    Sortable.create(this, {
+      animation: 150,
+      draggable: 'li',
+      onUpdate: (e) => {
+        Core.event.emit(PROJECT.MOVE, {
+          project: e.item.id,
+          data: { position: e.newIndex },
+        });
+      },
+    });
+  };
+
   return html`
     <nav class="quick-links">
       <ul>
@@ -51,6 +65,7 @@ const Sidebar = () => {
         is-list
         keystring="id"
         ${{
+          '@create': init,
           '@unmount': () => {
             unsubscribe.forEach((cb) => cb());
             revoke();

@@ -1,6 +1,6 @@
 import Task from './classes/Task';
-import IdList from './classes/IdList';
 import TaskList from './classes/TaskList';
+import OrderedIdList from './classes/OrderedIdList';
 import Label from './classes/Label';
 import Project from './classes/Project';
 import Storage from './storage';
@@ -12,8 +12,8 @@ import defaultData from '../defaultData.json';
 const loadDefaultData = () => {
   const data = [];
 
-  defaultData.projects.forEach((p) => {
-    const project = new Project({ name: p.name });
+  defaultData.projects.forEach((p, i) => {
+    const project = new Project({ name: p.name, position: i });
 
     const lists = p.lists.map((l) => {
       const list = new TaskList({ name: l.name, project: project.id });
@@ -89,6 +89,8 @@ const recoverData = () => {
     );
   });
 
+  data.sort((a, b) => a.position - b.position);
+
   return data;
 };
 
@@ -108,6 +110,7 @@ const storeData = function (data) {
       id: project.id,
       name: project.name,
       totalTasks: project.totalTasks,
+      position: project.position,
     });
     Storage.set(`${project.id}__labels`, project.labels.items);
     Storage.set(`${project.id}__lists`, project.lists.items);
@@ -123,7 +126,7 @@ export const init = () => {
   const recoveredData = recoverData();
   const initData = recoveredData.length ? recoveredData : loadDefaultData();
 
-  Root = new IdList(initData);
+  Root = new OrderedIdList(initData);
   Storage.store(LAST_UPDATE, Root, storeData);
 };
 
@@ -170,6 +173,21 @@ export const addProject = (name) => {
 
   return project;
 };
+
+export const updateProjectName = (projectId, name) => {
+  if (Root.has((project) => project.name === name)) {
+    throw new Error(`Project with the name "${name}" already exists`);
+  }
+
+  if (!name.trim()) throw new Error('Project must have a name');
+
+  const project = getProject(projectId);
+  project.name = name;
+
+  return project;
+};
+
+export const moveProject = (projectId, pos) => Root.move(projectId, pos);
 
 export const deleteProject = (projectId) => Root.delete(projectId);
 
