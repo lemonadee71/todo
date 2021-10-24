@@ -3,7 +3,6 @@ import List from '../components/List';
 import { PROJECT, TASK } from '../core/actions';
 import Core from '../core';
 
-// * This is is-list and should update for every new list
 const Project = ({ data: { id } }) => {
   const project = Core.main.getProject(`project-${id}`);
   const [data] = createHook({ lists: project.lists.items });
@@ -15,7 +14,7 @@ const Project = ({ data: { id } }) => {
     Core.event.on(
       [...PROJECT.LISTS.ALL, ...TASK.ALL],
       () => {
-        data.lists = Core.main.getProject(project.id).lists.items;
+        data.lists = Core.main.getLists(project.id);
       },
       { order: 'last' }
     ),
@@ -53,7 +52,7 @@ const Project = ({ data: { id } }) => {
         class="project__body"
         is-list
         keystring="id"
-        ${{ $children: data.$lists.map((list) => List(project.id, list)) }}
+        ${{ $children: data.$lists.map((list) => List(list)) }}
       ></div>
     </div>
   `;

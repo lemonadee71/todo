@@ -176,7 +176,7 @@ export const deleteProject = (projectId) => Root.delete(projectId);
 // =====================================================================================
 // Lists
 // =====================================================================================
-export const getLists = (projectId) => [...getProject(projectId).lists.items];
+export const getLists = (projectId) => getProject(projectId).lists.items;
 
 export const getListDetails = (projectId) =>
   getLists(projectId).map((list) => ({ name: list.name, id: list.id }));
@@ -214,11 +214,10 @@ export const getTaskFromRoot = (taskId) =>
   getAllTasks().filter((task) => task.id === taskId)[0];
 
 export const getTasksFromProject = (projectId) =>
-  getProject(projectId).lists.items.flatMap((list) => list.items);
+  getLists(projectId).flatMap((list) => list.items);
 
-export const getTasksFromList = (projectId, listId) => [
-  ...getList(projectId, listId).items,
-];
+export const getTasksFromList = (projectId, listId) =>
+  getList(projectId, listId).items;
 
 export const getTask = (projectId, listId, taskId) =>
   getList(projectId, listId).get(taskId);

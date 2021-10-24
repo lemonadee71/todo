@@ -21,10 +21,6 @@ class TaskList extends OrderedIdList {
     task.list = this.id;
     return super.insert(task, idx);
   }
-
-  move(predicate, idx) {
-    return super.move(predicate, idx);
-  }
 }
 
 export default TaskList;

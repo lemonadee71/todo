@@ -4,13 +4,11 @@ import { PROJECT, TASK } from '../core/actions';
 import Core from '../core';
 import Task from './Task';
 
-const List = (projectId, data) => {
-  const listId = data.id;
-
+const List = (data) => {
   const deleteList = () => {
     Core.event.emit(PROJECT.LISTS.REMOVE, {
-      project: projectId,
-      list: listId,
+      project: data.project,
+      list: data.id,
     });
   };
 
@@ -19,8 +17,8 @@ const List = (projectId, data) => {
 
     const input = e.target.elements['new-task'];
     Core.event.emit(TASK.ADD, {
-      project: projectId,
-      list: listId,
+      project: data.project,
+      list: data.id,
       data: {
         title: input.value,
       },
@@ -31,8 +29,8 @@ const List = (projectId, data) => {
 
   const transferTask = (id, to, from, position) => {
     Core.event.emit(TASK.TRANSFER, {
-      project: projectId,
-      list: listId,
+      project: data.project,
+      list: data.id,
       task: id,
       type: 'list',
       data: { to, from, position },
@@ -41,8 +39,8 @@ const List = (projectId, data) => {
 
   const moveTask = (id, position) => {
     Core.event.emit(TASK.MOVE, {
-      project: projectId,
-      list: listId,
+      project: data.project,
+      list: data.id,
       task: id,
       data: { position },
     });
@@ -69,10 +67,10 @@ const List = (projectId, data) => {
   };
 
   return html`
-    <div class="task-list" id="${listId}">
+    <div class="task-list" id="${data.id}">
       <p class="task-list__title">${data.name}</p>
       <ul
-        id="${listId}"  
+        id="${data.id}"  
         class="task-list__body"
         is-list
         keystring="id"
