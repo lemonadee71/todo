@@ -2,11 +2,9 @@ import { html, render } from 'poor-man-jsx';
 import { PATHS } from './core/constants';
 import defineCustomElements from './components/custom';
 import Router from './components/Router';
-import * as pages from './pages';
 import Sidebar from './components/Sidebar';
+import * as pages from './pages';
 import Core from './core';
-import 'github-markdown-css';
-import 'toastify-js/src/toastify.css';
 import './styles/main.scss';
 
 Core.router.on(PATHS.allApp, null, {
