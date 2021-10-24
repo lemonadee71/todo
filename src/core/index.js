@@ -36,23 +36,13 @@ const Core = (() => {
     // router.navigate((state.currentPage = Storage.get('lastOpenedPage')));
   };
 
-  // wrappers for core functions
-  // just so multiple components can listen to an event
   event.on(PROJECT.SELECT, (id) => {
     // track the current project
     state.currentProject = id;
   });
 
-  /**
-   * For uniformity, any payload for callbacks should be in the form of
-   * {
-   *    project,
-   *    ?list,
-   *    ?task,
-   *    ?type
-   *    data: {}
-   * }
-   */
+  // wrappers for core functions
+  // just so multiple components can listen to an event
 
   event.on(PROJECT.ADD, ({ data: { name } }) => main.addProject(name));
   event.on(PROJECT.REMOVE, ({ project }) => main.deleteProject(project));
@@ -142,10 +132,12 @@ const Core = (() => {
       case 'clear':
         task.clearSubtasks();
         break;
-      case 'update': {
+      case 'update':
         main.updateTask(project, list, id, data, 'subtask');
         break;
-      }
+      case 'move':
+        task.moveSubtask(data.id, data.position);
+        break;
       default:
         throw new Error('Type must be add, remove, clear, or update.');
     }
@@ -164,6 +156,9 @@ const Core = (() => {
   event.on(TASK.SUBTASKS.REMOVE, taskSubtasksReducer);
   event.on(TASK.SUBTASKS.UPDATE, (payload) =>
     taskSubtasksReducer({ ...payload, type: 'update' })
+  );
+  event.on(TASK.SUBTASKS.MOVE, (payload) =>
+    taskSubtasksReducer({ ...payload, type: 'move' })
   );
 
   // only update local storage half a second after all updates

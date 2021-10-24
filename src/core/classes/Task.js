@@ -53,6 +53,10 @@ class Task {
     this.subtasks.add(task);
   }
 
+  moveSubtask(id, idx) {
+    this.subtasks.move(id, idx);
+  }
+
   deleteSubtask(id) {
     this.subtasks.delete(id);
   }
