@@ -11,7 +11,11 @@ const ProjectLink = (data) => html`
     >
       {% ${data.name} %}
     </a>
-    <button ${{ onClick: () => Core.event.emit(PROJECT.REMOVE, data.id) }}>
+    <button
+      ${{
+        onClick: () => Core.event.emit(PROJECT.REMOVE, { project: data.id }),
+      }}
+    >
       Delete
     </button>
   </li>

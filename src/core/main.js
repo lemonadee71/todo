@@ -193,6 +193,8 @@ export const addList = (projectId, name) => {
     );
   }
 
+  if (!name.trim()) throw new Error('List must have a name');
+
   const list = new TaskList({ name, project: projectId });
   lists.add(list);
 
