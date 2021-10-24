@@ -1,23 +1,15 @@
 import { html, render } from 'poor-man-jsx';
-import { $ } from '../utils/query';
 import { TASK } from '../core/actions';
 import Core from '../core';
 import TaskModal from './TaskModal';
+import { $ } from '../utils/query';
 import { cancellable } from '../utils/delay';
 import { showToast } from '../utils/showToast';
 
+// data here points to the Task stored in main
+// so we rely on the fact that changes are reflected on data
 const Task = (data) => {
-  const getLocationData = () => {
-    const taskItem = $.attr('key', data.id);
-
-    return {
-      id: data.id,
-      project: taskItem.dataset.project,
-      list: taskItem.dataset.list,
-    };
-  };
-
-  const updateTask = (e) => {
+  const toggleComplete = (e) => {
     Core.event.emit(TASK.UPDATE, {
       project: data.project,
       list: data.list,
@@ -30,7 +22,14 @@ const Task = (data) => {
 
   const deleteTask = () => {
     const [_delete, _cancelDelete] = cancellable(
-      () => Core.event.emit(TASK.REMOVE, { data: getLocationData() }),
+      () =>
+        Core.event.emit(TASK.REMOVE, {
+          data: {
+            project: data.project,
+            list: data.list,
+            id: data.id,
+          },
+        }),
       3000
     );
 
@@ -64,13 +63,8 @@ const Task = (data) => {
   };
 
   const editTask = () => {
-    const location = getLocationData();
-
     $('#main-modal')
-      .changeContent(
-        TaskModal(location.project, location.list, location.id),
-        'task-modal'
-      )
+      .changeContent(TaskModal(data.project, data.list, data.id), 'task-modal')
       .show();
   };
 
@@ -86,7 +80,7 @@ const Task = (data) => {
         type="checkbox"
         name="mark-as-done"
         ${data.completed ? 'checked' : ''}
-        ${{ onChange: updateTask }}
+        ${{ onChange: toggleComplete }}
       />
       <div class="task__body">
         <div class="task__labels"></div>
