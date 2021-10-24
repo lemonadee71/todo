@@ -201,6 +201,24 @@ export const addList = (projectId, name) => {
   return list;
 };
 
+export const updateListName = (projectId, listId, name) => {
+  const { lists } = getProject(projectId);
+
+  if (lists.has((list) => list.name === name)) {
+    throw new Error(
+      `List with the name "${name}" already exists in this project`
+    );
+  }
+
+  const list = lists.get(listId);
+  list.name = name;
+
+  return list;
+};
+
+export const moveList = (projectId, listId, pos) =>
+  getProject(projectId).lists.move(listId, pos);
+
 export const deleteList = (projectId, listId) =>
   getProject(projectId).lists.delete(listId);
 
@@ -213,13 +231,12 @@ export const getAllTasks = () =>
     .flatMap((list) => list.items);
 
 export const getTaskFromRoot = (taskId) =>
-  getAllTasks().filter((task) => task.id === taskId)[0];
+  getAllTasks().find((task) => task.id === taskId);
 
 export const getTasksFromProject = (projectId) =>
   getLists(projectId).flatMap((list) => list.items);
 
-export const getTasksFromList = (projectId, listId) =>
-  getList(projectId, listId).items;
+export const getTasks = (projectId, listId) => getList(projectId, listId).items;
 
 export const getTask = (projectId, listId, taskId) =>
   getList(projectId, listId).get(taskId);
@@ -273,7 +290,7 @@ export const transferTaskToList = (taskId, projectId, from, to, position) => {
 // =====================================================================================
 // Labels
 // =====================================================================================
-export const getLabels = (projectId) => [...getProject(projectId).labels.items];
+export const getLabels = (projectId) => getProject(projectId).labels.items;
 
 export const getLabel = (projectId, labelId) =>
   getProject(projectId).getLabel(labelId);
