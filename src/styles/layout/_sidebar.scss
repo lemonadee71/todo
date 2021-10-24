@@ -31,8 +31,7 @@
 
     a {
       @extend %link;
-      font-size: $secondary-font-size;
-      font-family: $secondary-font;
+      @include secondary-font;
       color: $font-color-dark;
     }
   }

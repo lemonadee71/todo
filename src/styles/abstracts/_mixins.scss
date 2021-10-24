@@ -7,6 +7,16 @@
   }
 }
 
+@mixin primary-font() {
+  font-family: $primary-font;
+  font-size: $primary-font-size;
+}
+
+@mixin secondary-font() {
+  font-family: $secondary-font;
+  font-size: $secondary-font-size;
+}
+
 @mixin input($bg: transparent) {
   background-color: $bg;
   border: none;

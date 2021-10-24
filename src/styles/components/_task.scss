@@ -41,8 +41,7 @@
   }
 
   &__name {
-    font-family: $primary-font;
-    font-size: $primary-font-size;
+    @include primary-font;
     color: $font-color-light;
     overflow-wrap: break-word;
     word-wrap: break-word;
