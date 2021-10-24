@@ -2,10 +2,8 @@ import { html } from 'poor-man-jsx';
 import { TASK } from '../core/actions';
 import Core from '../core';
 import { $ } from '../utils/query';
-import { cancellable } from '../utils/delay';
-import { showToast } from '../utils/showToast';
+import { createUndoFn } from '../utils/undo';
 import TaskModal from './TaskModal';
-import Toast from './Toast';
 
 // data here points to the Task stored in main
 // so we rely on the fact that changes are reflected on data
@@ -21,39 +19,18 @@ const Task = (data) => {
     });
   };
 
-  const deleteTask = () => {
-    const [_delete, _cancelDelete] = cancellable(
-      () =>
-        Core.event.emit(TASK.REMOVE, {
-          data: {
-            project: data.project,
-            list: data.list,
-            id: data.id,
-          },
-        }),
-      3000
-    );
-
-    $.attr('key', data.id).style.display = 'none';
-    _delete();
-
-    const toast = showToast({
-      className: 'custom-toast',
-      close: true,
-      node: Toast('Task removed', {
-        text: 'Undo',
-        callback: () => {
-          const taskItem = $.attr('key', data.id);
-          if (taskItem) {
-            taskItem.style.display = 'flex';
-          }
-
-          _cancelDelete();
-          toast.hideToast();
+  const deleteTask = createUndoFn(
+    `#${data.id}`,
+    () =>
+      Core.event.emit(TASK.REMOVE, {
+        data: {
+          project: data.project,
+          list: data.list,
+          id: data.id,
         },
       }),
-    });
-  };
+    'Task removed'
+  );
 
   const editTask = () => {
     $('#main-modal')
@@ -63,6 +40,7 @@ const Task = (data) => {
 
   return html`
     <div
+      id="${data.id}"
       key="${data.id}"
       data-project="${data.project}"
       data-list="${data.list}"

@@ -3,14 +3,18 @@ import { html } from 'poor-man-jsx';
 import { PROJECT, TASK } from '../core/actions';
 import Core from '../core';
 import Task from './Task';
+import { createUndoFn } from '../utils/undo';
 
 const List = (data) => {
-  const deleteList = () => {
-    Core.event.emit(PROJECT.LISTS.REMOVE, {
-      project: data.project,
-      list: data.id,
-    });
-  };
+  const deleteList = createUndoFn(
+    `#${data.id}`,
+    () =>
+      Core.event.emit(PROJECT.LISTS.REMOVE, {
+        project: data.project,
+        list: data.id,
+      }),
+    'List removed'
+  );
 
   const createTask = (e) => {
     e.preventDefault();
