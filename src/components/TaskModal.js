@@ -62,7 +62,7 @@ const TaskModal = (projectId, listId, taskId) => {
         type="text"
         value="${state.data.title}"
         name="title"
-        class="text-input task-modal__title"
+        class="task-modal__title"
         required
         ${{
           $readonly: state.$isEditingTitle,
@@ -80,7 +80,7 @@ const TaskModal = (projectId, listId, taskId) => {
                 ? html`
                     <textarea
                       name="notes"
-                      class="text-input task-modal__notes"
+                      class="task-modal__notes"
                       ${{ onInput: editTask, onBlur: toggleNotesEdit }}
                     >${state.data.notes.trim()}</textarea>
                     `

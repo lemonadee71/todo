@@ -7,6 +7,21 @@
   }
 }
 
+%close-btn {
+  font-size: 28px;
+  font-weight: bold;
+  color: #aaa;
+
+  position: absolute;
+
+  &:hover,
+  &:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+
 @mixin primary-font() {
   font-family: $primary-font;
   font-size: $primary-font-size;

@@ -1,4 +1,4 @@
-import App from '../../core';
+import Core from '../../core';
 
 class Chip extends HTMLElement {
   connectedCallback() {
@@ -18,7 +18,7 @@ class Chip extends HTMLElement {
 
   _triggerExpand = () => {
     if (this.getAttribute('expandable') === 'true') {
-      App.state.expandLabels = !App.state.expandLabels;
+      Core.state.expandLabels = !Core.state.expandLabels;
     }
   };
 

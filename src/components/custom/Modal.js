@@ -25,20 +25,19 @@ class Modal extends HTMLElement {
     if (!this.classList.length) Object.assign(this.style, defaultBackdropStyle);
 
     const content = html`
-      <div role="modal">
+      <div
+        ${{
+          $class: this.state.$contentClass((cls) => `modal__content ${cls}`),
+        }}
+      >
         <div
-          role="modal__content"
+          class="modal__content"
           style="position: relative;"
           ${{
-            $class: this.state.$contentClass,
             $children: this.state.$content(
               (value) =>
                 html`
-                  <span
-                    role="modal__close-btn"
-                    class="close"
-                    ${{ onClick: this.close }}
-                  >
+                  <span class="modal__close-btn" ${{ onClick: this.close }}>
                     &times;
                   </span>
                   ${value}

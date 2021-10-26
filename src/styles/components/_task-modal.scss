@@ -1,11 +1,13 @@
 .task-modal {
-  box-sizing: border-box;
-  position: relative;
-  background-color: white;
-  margin: 5% auto;
-  padding: 2rem 1.5rem;
-  border: 1px solid #888;
-  width: 40rem;
+  .modal__content {
+    box-sizing: border-box;
+    position: relative;
+    background-color: white;
+    margin: 5% auto;
+    padding: 2rem 1.5rem;
+    border: 1px solid #888;
+    width: 40rem;
+  }
 
   &__title {
     @include input;
