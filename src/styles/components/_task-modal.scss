@@ -9,6 +9,10 @@
     width: 40rem;
   }
 
+  &__section {
+    @include section-title;
+  }
+
   &__title {
     @include input;
     font-size: $primary-font-size;

@@ -1,14 +1,20 @@
 import { createHook, html } from 'poor-man-jsx';
+import { createPopper } from '@popperjs/core';
 import { TASK } from '../core/actions';
 import Core from '../core';
+import { popperShowWrapper, popperHideWrapper } from '../utils/popper';
+import { dispatchCustomEvent } from '../utils/dispatch';
 import convertToMarkdown from '../utils/showdown';
 import { debounce } from '../utils/delay';
 import logger from '../utils/logger';
+import { $ } from '../utils/query';
+import LabelPopover from './LabelPopover';
 
 const TaskModal = (projectId, listId, taskId) => {
   const [state] = createHook({
     isEditingTitle: false,
     isEditingNotes: false,
+    showPopover: false,
     data: Core.main.getTask(projectId, listId, taskId),
   });
 
@@ -49,6 +55,29 @@ const TaskModal = (projectId, listId, taskId) => {
     }
   };
 
+  const initPopover = function () {
+    const popover = $(`#label-popover`);
+    const popperInstance = createPopper(this, popover, {
+      placement: 'right-end',
+      modifiers: [
+        {
+          name: 'offset',
+          options: {
+            offset: [0, 8],
+          },
+        },
+      ],
+    });
+
+    const show = popperShowWrapper(popperInstance, () => {
+      dispatchCustomEvent(popover, 'popover:open');
+    });
+    const hide = popperHideWrapper(popperInstance);
+
+    this.addEventListener('click', show);
+    popover.addEventListener('popover:hide', hide);
+  };
+
   // TODO: Fix issue with title input
   // where keyboard inputs are not going in even if focused
   return html`
@@ -71,6 +100,10 @@ const TaskModal = (projectId, listId, taskId) => {
           onInput: editTask,
         }}
       />
+      <p class="task-modal__section">Labels</p>
+      <button ${{ '@mount': initPopover }}>Add label</button>
+      ${LabelPopover(projectId, (id) => console.log(id))}
+      <p class="task-modal__section">Notes</p>
       <div
         component="notes"
         ${{
@@ -97,6 +130,7 @@ const TaskModal = (projectId, listId, taskId) => {
         }}
       ></div>
       <!-- Change this to a better date picker -->
+      <p class="task-modal__section">Due Date</p>
       <input
         type="date"
         value="${state.data.dueDate}"

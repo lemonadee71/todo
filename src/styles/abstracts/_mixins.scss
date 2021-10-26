@@ -98,6 +98,11 @@
   }
 }
 
+@mixin section-title {
+  font-family: $primary-font;
+  font-size: $secondary-font-size;
+}
+
 @mixin create-form(
   $inp-color: white,
   $btn-color: white,
