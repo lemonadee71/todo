@@ -1,6 +1,6 @@
 import { html } from 'poor-man-jsx';
 
-const Label = (data, action) => {
+const Label = (data, action, isSelected) => {
   const clickLabel = (e) => {
     const label = e.currentTarget;
     const [base, modifier] = label.className.split('--');
@@ -8,12 +8,12 @@ const Label = (data, action) => {
     if (modifier) label.className = base;
     else label.className = `${base}--selected`;
 
-    action(label.getAttribute('key'));
+    action(label.getAttribute('key'), !modifier);
   };
 
   return html`
     <div
-      class="label"
+      class="label${isSelected ? '--selected' : ''}"
       key="${data.id}"
       style="background-color: ${data.color};"
       ${{ onClick: clickLabel }}

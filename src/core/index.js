@@ -1,7 +1,6 @@
 import { createHook } from 'poor-man-jsx';
 import EventEmitter from './classes/Emitter';
 import Task from './classes/Task';
-// import History from './history';
 import * as main from './main';
 import Router from './router';
 import Storage from './storage';
@@ -148,7 +147,9 @@ const Core = (() => {
   event.on(TASK.LABELS.ADD, (payload) =>
     taskLabelsReducer({ ...payload, type: 'add' })
   );
-  event.on(TASK.LABELS.REMOVE, taskLabelsReducer);
+  event.on(TASK.LABELS.REMOVE, (payload) =>
+    taskLabelsReducer({ ...payload, type: 'remove' })
+  );
 
   event.on(TASK.SUBTASKS.ADD, (payload) =>
     taskSubtasksReducer({ ...payload, type: 'add' })

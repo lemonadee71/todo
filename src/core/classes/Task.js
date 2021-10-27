@@ -65,6 +65,10 @@ class Task {
     this.subtasks.clear();
   }
 
+  getLabels() {
+    return this.labels.items.map((label) => label.id);
+  }
+
   addLabel(label) {
     if (this.labels.has(label.id)) {
       throw new Error(`Label (${label.id}) is already added.`);

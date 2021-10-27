@@ -12,7 +12,12 @@ const Project = ({ data: { id } }) => {
   const unsubscribe = [
     Core.event.on(PROJECT.LISTS.ADD + '.error', logger.warning),
     Core.event.on(
-      [...PROJECT.LISTS.ALL, ...TASK.ALL],
+      [
+        ...PROJECT.LISTS.ALL,
+        ...TASK.ALL,
+        ...TASK.LABELS.ALL,
+        ...TASK.SUBTASKS.ALL,
+      ],
       () => {
         data.lists = Core.main.getLists(project.id);
       },

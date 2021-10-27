@@ -5,14 +5,14 @@ import { dispatchCustomEvent } from '../utils/dispatch';
 import { $ } from '../utils/query';
 import Label from './Label';
 
-const LabelPopover = (projectId, action) => {
+const LabelPopover = (task, action) => {
   const [state] = createHook({
     isVisible: false,
-    labels: Core.main.getLabels(projectId),
+    labels: Core.main.getLabels(task.data.project),
   });
 
   const unsubscribe = Core.event.on(PROJECT.LABELS.ALL, () => {
-    state.labels = Core.main.getLabels(projectId);
+    task.labels = Core.main.getLabels(task.data.project);
   });
 
   const toggleVisibility = (value) => {
@@ -45,7 +45,11 @@ const LabelPopover = (projectId, action) => {
       <div
         is-list
         class="popover__body"
-        ${{ $children: state.$labels.map((label) => Label(label, action)) }}
+        ${{
+          $children: state.$labels.map((label) =>
+            Label(label, action, task.data.getLabels().includes(label.id))
+          ),
+        }}
       ></div>
       <div id="new-label">
         <p class="popover__title">Create New Label</p>

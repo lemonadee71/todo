@@ -4,6 +4,7 @@ import Core from '../core';
 import { $ } from '../utils/query';
 import { createUndoFn } from '../utils/undo';
 import TaskModal from './TaskModal';
+import Chip from './Chip';
 
 // data here points to the Task stored in main
 // so we rely on the fact that changes are reflected on data
@@ -54,7 +55,9 @@ const Task = (data) => {
         ${{ onChange: toggleComplete }}
       />
       <div class="task__body">
-        <div class="task__labels"></div>
+        <div class="task__labels" is-list>
+          ${data.labels.items.map((label) => Chip(label))}
+        </div>
         <div class="task__title">
           <p class="task__name">${data.title}</p>
           <span class="task__number">#${data.numId}</span>

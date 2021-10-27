@@ -9,6 +9,7 @@ import { debounce } from '../utils/delay';
 import logger from '../utils/logger';
 import { $ } from '../utils/query';
 import LabelPopover from './LabelPopover';
+import TaskLabel from './TaskLabel';
 
 const TaskModal = (projectId, listId, taskId) => {
   const [state] = createHook({
@@ -25,6 +26,7 @@ const TaskModal = (projectId, listId, taskId) => {
   const unsubscribe = [
     Core.event.on(TASK.UPDATE + '.error', logger.warning),
     Core.event.on(TASK.UPDATE + '.success', getLatestData),
+    Core.event.on(TASK.LABELS.ALL, getLatestData, { order: 'last' }),
   ];
 
   const editTask = debounce((e) => {
@@ -39,6 +41,17 @@ const TaskModal = (projectId, listId, taskId) => {
       },
     });
   }, 200);
+
+  const updateLabels = debounce((id, isSelected) => {
+    const action = isSelected ? TASK.LABELS.ADD : TASK.LABELS.REMOVE;
+
+    Core.event.emit(action, {
+      project: projectId,
+      list: listId,
+      task: taskId,
+      data: { id },
+    });
+  }, 100);
 
   const toggleTitleEdit = () => {
     state.isEditingTitle = !state.isEditingTitle;
@@ -101,8 +114,19 @@ const TaskModal = (projectId, listId, taskId) => {
         }}
       />
       <p class="task-modal__section">Labels</p>
+      <div
+        class="task-modal__labels"
+        is-list
+        ${{
+          $children: state.$data((data) => {
+            const labels = data.labels.items;
+
+            return labels.map((label) => TaskLabel(label));
+          }),
+        }}
+      ></div>
       <button ${{ '@mount': initPopover }}>Add label</button>
-      ${LabelPopover(projectId, (id) => console.log(id))}
+      ${LabelPopover(state, updateLabels)}
       <p class="task-modal__section">Notes</p>
       <div
         component="notes"
