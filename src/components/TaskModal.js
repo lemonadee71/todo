@@ -58,7 +58,7 @@ const TaskModal = (projectId, listId, taskId) => {
   const initPopover = function () {
     const popover = $(`#label-popover`);
     const popperInstance = createPopper(this, popover, {
-      placement: 'right-end',
+      placement: 'right-start',
       modifiers: [
         {
           name: 'offset',

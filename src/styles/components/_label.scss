@@ -3,12 +3,43 @@
   height: 0.5rem;
 
   border-radius: 4px;
+
+  margin-right: 0.25rem;
 }
 
-.label {
-  font-family: $secondary-font;
-  font-size: 12px;
+.label,
+.label--selected {
+  @include secondary-font;
+  text-align: center;
 
-  padding: 4px 6px;
+  box-sizing: border-box;
+  width: 100%;
+
+  padding: 0.25rem 0.7rem;
+  margin-bottom: 0.25rem;
+
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+
+  overflow-x: hidden;
+
+  cursor: pointer;
+}
+
+.label--selected {
+  border: 1px solid white;
+}
+
+.task-label {
+  display: inline-block;
+
+  font-family: $secondary-font;
+  font-size: $secondary-font-size - 2px;
+  color: white;
+
+  padding: 6px 8px;
   border-radius: 5px;
+
+  margin-right: 0.25rem;
+  margin-bottom: 0.5rem;
 }

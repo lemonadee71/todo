@@ -98,9 +98,11 @@
   }
 }
 
-@mixin section-title {
+@mixin section-title($mb: 0.5rem) {
   font-family: $primary-font;
   font-size: $secondary-font-size;
+
+  margin-bottom: $mb;
 }
 
 @mixin create-form(

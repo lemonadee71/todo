@@ -41,14 +41,14 @@ const LabelPopover = (projectId, action) => {
       <span class="popover__close-btn" ${{ onClick: closePopover }}>
         &times;
       </span>
-      <span class="popover__title">Labels</span>
+      <p class="popover__title">Labels</p>
       <div
         is-list
         class="popover__body"
         ${{ $children: state.$labels.map((label) => Label(label, action)) }}
       ></div>
       <div id="new-label">
-        <span class="popover__title">Create New Label</span>
+        <p class="popover__title">Create New Label</p>
       </div>
     </div>
   `;
