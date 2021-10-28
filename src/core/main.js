@@ -175,7 +175,7 @@ export const addProject = (name) => {
 };
 
 export const updateProjectName = (projectId, name) => {
-  if (Root.has((project) => project.name === name)) {
+  if (Root.has((proj) => proj.name === name && proj.id !== projectId)) {
     throw new Error(`Project with the name "${name}" already exists`);
   }
 
