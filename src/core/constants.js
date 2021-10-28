@@ -2,6 +2,7 @@ export const GH_PATH = '/todo';
 export const LOCAL_USER = '@@local';
 export const ROOT_NAME = 'root';
 export const LAST_UPDATE = 'lastUpdate';
+export const LAST_OPENED_PAGE = 'lastOpenedPage';
 export const PATHS = {
   home: '/',
   login: 'login',

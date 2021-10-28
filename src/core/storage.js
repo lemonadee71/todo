@@ -83,7 +83,6 @@ class Storage {
 
 Storage.global = new Storage();
 
-const GlobalLocalStorage = Storage.global;
 const LocalStorage = new Storage(LOCAL_USER + '__');
 
-export { LocalStorage, GlobalLocalStorage, Storage };
+export { LocalStorage, Storage };

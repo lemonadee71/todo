@@ -4,6 +4,7 @@ const UPDATE = 'update';
 const MOVE = 'move';
 const TRANSFER = 'transfer';
 const SYNC = 'sync';
+const NAVIGATE_TO_PAGE = 'navigate.to.page';
 
 const createActions = (prefix) => {
   const actions = [ADD, REMOVE, UPDATE, TRANSFER, MOVE];
@@ -27,4 +28,4 @@ PROJECT.LISTS = createActions('project.lists');
 
 PROJECT.SELECT = 'app.project.select';
 
-export { TASK, PROJECT, SYNC };
+export { TASK, PROJECT, SYNC, NAVIGATE_TO_PAGE };

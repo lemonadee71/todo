@@ -3,9 +3,9 @@ import EventEmitter from './classes/Emitter';
 import Task from './classes/Task';
 import * as main from './main';
 import Router from './router';
-import Storage from './storage';
-import { TASK, PROJECT } from './actions';
-import { LOCAL_USER } from './constants';
+import { Storage, LocalStorage } from './storage';
+import { TASK, PROJECT, NAVIGATE_TO_PAGE } from './actions';
+import { LAST_OPENED_PAGE, LOCAL_USER } from './constants';
 import { debounce } from '../utils/delay';
 
 const Core = (() => {
@@ -30,18 +30,25 @@ const Core = (() => {
   // * This should be evoked when user navigated to /app
   // * Run before any renders
   const init = (user) => {
-    Storage.init((state.currentUser = user || LOCAL_USER));
+    state.currentUser = user || LOCAL_USER;
+    LocalStorage.prefix = state.currentUser + '__';
+
     main.init();
-    // router.navigate((state.currentPage = Storage.get('lastOpenedPage')));
+
+    state.currentPage =
+      Storage.global.get(LAST_OPENED_PAGE) || state.currentPage;
+    router.navigate(state.currentPage);
   };
 
-  event.on(PROJECT.SELECT, (id) => {
-    // track the current project
-    state.currentProject = id;
+  event.on(NAVIGATE_TO_PAGE, (path) => {
+    state.currentPage = path;
+    Storage.global.store(LAST_OPENED_PAGE, path);
   });
 
-  // wrappers for core functions
-  // just so multiple components can listen to an event
+  /**
+   * wrappers for core functions
+   * just so multiple components can listen to an event
+   */
 
   event.on(PROJECT.ADD, ({ data: { name } }) => main.addProject(name));
   event.on(PROJECT.REMOVE, ({ project }) => main.deleteProject(project));
@@ -154,7 +161,9 @@ const Core = (() => {
   event.on(TASK.SUBTASKS.ADD, (payload) =>
     taskSubtasksReducer({ ...payload, type: 'add' })
   );
-  event.on(TASK.SUBTASKS.REMOVE, taskSubtasksReducer);
+  event.on(TASK.SUBTASKS.REMOVE, (payload) =>
+    taskSubtasksReducer({ ...payload, type: 'remove' })
+  );
   event.on(TASK.SUBTASKS.UPDATE, (payload) =>
     taskSubtasksReducer({ ...payload, type: 'update' })
   );

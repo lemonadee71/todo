@@ -1,4 +1,5 @@
 import Core from '../../core';
+import { NAVIGATE_TO_PAGE } from '../../core/actions';
 
 class Link extends HTMLAnchorElement {
   connectedCallback() {
@@ -16,6 +17,7 @@ class Link extends HTMLAnchorElement {
       }
 
       Core.router.navigate(href, { title });
+      Core.event.emit(NAVIGATE_TO_PAGE, href);
     });
   }
 }
