@@ -44,6 +44,7 @@ const Project = ({ data: { id } }) => {
     Sortable.create(this, {
       animation: 150,
       draggable: '.task-list',
+      filter: '.task,.task--done',
       onUpdate: (e) => {
         Core.event.emit(PROJECT.LISTS.MOVE, {
           project: project.id,

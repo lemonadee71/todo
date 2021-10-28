@@ -54,6 +54,7 @@ const List = (data) => {
     Sortable.create(this, {
       group: 'tasks',
       animation: 150,
+      delay: 10,
       draggable: '.task,.task--done',
       onUpdate: (e) => {
         const id = e.item.getAttribute('key');
@@ -70,18 +71,28 @@ const List = (data) => {
     });
   };
 
+  // ?TODO: Add animation when task is moved to completed
   return html`
     <div class="task-list" id="${data.id}">
       <p class="task-list__title">{% ${data.name} %}</p>
-      <ul
-        id="${data.id}"  
-        class="task-list__body"
-        is-list
-        keystring="id"
-        ${{ '@create': init }}
-      >
-        ${data.items.map((task) => Task(task))}
-      </ul>
+      <div class="task-list__body">
+        <ul
+          id="${data.id}"
+          data-name="current-tasks"
+          is-list
+          keystring="id"
+          ${{ '@create': init }}
+        >
+          ${data.items
+            .filter((task) => !task.completed)
+            .map((task) => Task(task))}
+        </ul>
+        <ul data-name="completed-tasks" is-list keystring="id">
+          ${data.items
+            .filter((task) => task.completed)
+            .map((task) => Task(task))}
+        </ul>
+      </div>
       <button ${{ onClick: deleteList }}>Delete</button>
       <form class="create-list" ${{ onSubmit: createTask }}>
         <input
