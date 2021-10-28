@@ -6,7 +6,7 @@ const TaskLabel = (data) => html`
     class="task-label"
     style="background-color: ${data.color};"
   >
-    <span>${data.name}</span>
+    <span>{% ${data.name} %}</span>
   </div>
 `;
 

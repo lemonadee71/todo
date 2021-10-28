@@ -1,6 +1,6 @@
 import { createHook, html } from 'poor-man-jsx';
 import { createPopper } from '@popperjs/core';
-import { TASK } from '../core/actions';
+import { PROJECT, TASK } from '../core/actions';
 import Core from '../core';
 import { popperShowWrapper, popperHideWrapper } from '../utils/popper';
 import { dispatchCustomEvent } from '../utils/dispatch';
@@ -27,6 +27,7 @@ const TaskModal = (projectId, listId, taskId) => {
     Core.event.on(TASK.UPDATE + '.error', logger.warning),
     Core.event.on(TASK.UPDATE + '.success', getLatestData),
     Core.event.on(TASK.LABELS.ALL, getLatestData, { order: 'last' }),
+    Core.event.on(PROJECT.LABELS.ALL, getLatestData, { order: 'last' }),
   ];
 
   const editTask = debounce((e) => {

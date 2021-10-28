@@ -21,6 +21,7 @@ const LabelPopover = (task, action) => {
       $('#label-name').value = '';
     }),
     Core.event.on(PROJECT.LABELS.ADD + '.error', logger.warning),
+    Core.event.on(PROJECT.LABELS.UPDATE + '.error', logger.warning),
   ];
 
   const toggleVisibility = (value) => {
@@ -67,7 +68,11 @@ const LabelPopover = (task, action) => {
         class="popover__body"
         ${{
           $children: state.$labels.map((label) =>
-            Label(label, action, task.data.getLabels().includes(label.id))
+            Label(
+              { ...label, project: task.data.project },
+              action,
+              task.data.getLabels().includes(label.id)
+            )
           ),
         }}
       ></div>

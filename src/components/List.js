@@ -72,7 +72,7 @@ const List = (data) => {
 
   return html`
     <div class="task-list" id="${data.id}">
-      <p class="task-list__title">${data.name}</p>
+      <p class="task-list__title">{% ${data.name} %}</p>
       <ul
         id="${data.id}"  
         class="task-list__body"

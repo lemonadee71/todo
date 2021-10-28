@@ -10,8 +10,7 @@
 
 .label,
 .label--selected {
-  @include secondary-font;
-  text-align: center;
+  display: flex;
 
   box-sizing: border-box;
   width: 100%;
@@ -24,7 +23,20 @@
 
   overflow-x: hidden;
 
-  cursor: pointer;
+  .label__text {
+    @include secondary-font;
+    @include input;
+    color: white;
+
+    width: 100%;
+
+    padding: 0;
+
+    span {
+      text-align: center;
+      cursor: pointer;
+    }
+  }
 }
 
 .label--selected {

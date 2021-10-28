@@ -14,6 +14,7 @@ const Project = ({ data: { id } }) => {
     Core.event.on(
       [
         ...PROJECT.LISTS.ALL,
+        ...PROJECT.LABELS.ALL,
         ...TASK.ALL,
         ...TASK.LABELS.ALL,
         ...TASK.SUBTASKS.ALL,

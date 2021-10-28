@@ -316,6 +316,10 @@ export const getLabel = (projectId, labelId) =>
 export const addLabel = (projectId, name, color) => {
   const { labels } = getProject(projectId);
 
+  if (!name.trim()) {
+    throw new Error('Label must have a name');
+  }
+
   if (labels.has((label) => label.name === name)) {
     throw new Error('Label already exists');
   }
@@ -334,7 +338,13 @@ export const deleteLabel = (projectId, labelId) => {
 export const editLabel = (projectId, labelId, prop, value) => {
   const { labels } = getProject(projectId);
   const label = labels.get(labelId);
-  const labelAlreadyExists = labels.has((item) => item.name === value);
+  const labelAlreadyExists = labels.has(
+    (item) => item.name === value && item.id !== labelId
+  );
+
+  if (prop === 'name' && !value.trim()) {
+    throw new Error('Label must have a name');
+  }
 
   if (prop === 'name' && labelAlreadyExists) {
     throw new Error(
