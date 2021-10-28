@@ -3,7 +3,7 @@ import TaskList from './classes/TaskList';
 import OrderedIdList from './classes/OrderedIdList';
 import Label from './classes/Label';
 import Project from './classes/Project';
-import Storage from './storage';
+import { LocalStorage } from './storage';
 import { LAST_UPDATE } from './constants';
 import defaultData from '../defaultData.json';
 // import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../utils/date';
@@ -41,7 +41,7 @@ const loadDefaultData = () => {
 
 const recoverData = () => {
   const data = [];
-  const stored = Storage.filter((key) => key !== LAST_UPDATE);
+  const stored = LocalStorage.filter((key) => key !== LAST_UPDATE);
   const cache = Object.entries(stored).reduce((acc, [key, value]) => {
     const [projectId, type] = key.split('__');
 
@@ -96,24 +96,24 @@ const recoverData = () => {
 
 const storeData = function (data) {
   // remove deleted projects
-  Storage.keys().forEach((key) => {
+  LocalStorage.keys.forEach((key) => {
     const [projectId] = key.split('__');
 
     if (!data.has(projectId)) {
-      Storage.remove(key);
+      LocalStorage.remove(key);
     }
   });
 
   // sync new and existing ones
   data.items.forEach((project) => {
-    Storage.set(`${project.id}__metadata`, {
+    LocalStorage.set(`${project.id}__metadata`, {
       id: project.id,
       name: project.name,
       totalTasks: project.totalTasks,
       position: project.position,
     });
-    Storage.set(`${project.id}__labels`, project.labels.items);
-    Storage.set(`${project.id}__lists`, project.lists.items);
+    LocalStorage.set(`${project.id}__labels`, project.labels.items);
+    LocalStorage.set(`${project.id}__lists`, project.lists.items);
   });
 
   // store the date last synced
@@ -127,10 +127,10 @@ export const init = () => {
   const initData = recoveredData.length ? recoveredData : loadDefaultData();
 
   Root = new OrderedIdList(initData);
-  Storage.store(LAST_UPDATE, Root, storeData);
+  LocalStorage.store(LAST_UPDATE, Root, storeData);
 };
 
-export const syncLocalStorage = () => Storage.sync(LAST_UPDATE, Root);
+export const syncLocalStorage = () => LocalStorage.sync(LAST_UPDATE, Root);
 
 // const getDueThisWeek = () =>
 //   getAllTasks().filter((task) => isDueThisWeek(parse(task.dueDate)));

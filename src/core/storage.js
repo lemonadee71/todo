@@ -1,78 +1,89 @@
-const Storage = (() => {
-  const storage = window.localStorage;
-  const cache = new Map();
-  let root = '';
+import { LOCAL_USER } from './constants';
 
-  const _resolveKey = (key, useRoot) => (useRoot ? root + key : key);
+class Storage {
+  constructor(prefix = '') {
+    this.prefix = prefix;
+    this._cache = new Map();
+    this._localStorage = window.localStorage;
+  }
 
-  const init = (str, separator = '__') => {
-    root = str + separator;
-  };
+  get items() {
+    return this.filter(() => true);
+  }
 
-  const keys = (useRoot = true) =>
-    Object.keys(storage)
-      .filter((key) => (useRoot ? key.startsWith(root) : true))
-      .map((key) => (useRoot ? key.replace(root, '') : key));
+  get keys() {
+    return Object.keys(this._localStorage)
+      .filter((key) => key.startsWith(this.prefix))
+      .map((key) => key.replace(this.prefix, ''));
+  }
 
-  const get = (key, useRoot = true) =>
-    JSON.parse(storage.getItem(_resolveKey(key, useRoot)));
+  get values() {
+    return Object.values(this.items);
+  }
 
-  const set = (key, data, useRoot = true) =>
-    storage.setItem(_resolveKey(key, useRoot), JSON.stringify(data));
+  get(key) {
+    return JSON.parse(this._localStorage.getItem(this.prefix + key));
+  }
 
-  const remove = (key, useRoot = true) =>
-    storage.removeItem(_resolveKey(key, useRoot));
+  set(key, data, resolver = JSON.stringify) {
+    this._localStorage.setItem(this.prefix + key, resolver(data));
 
-  const clear = (useRoot = true) => {
-    if (useRoot) keys().forEach((key) => remove(key));
-    else storage.clear();
-  };
+    return this;
+  }
 
-  const filter = (condition, useRoot = true) =>
-    keys(useRoot).reduce((data, key) => {
-      if (condition(key)) {
-        data[key] = get(key);
+  remove(key) {
+    this._localStorage.removeItem(this.prefix + key);
+
+    return this;
+  }
+
+  clear() {
+    this.keys.forEach((key) => this.remove(key));
+
+    return this;
+  }
+
+  filter(predicate) {
+    return this.keys.reduce((data, key) => {
+      if (predicate(key)) {
+        data[key] = this.get(key);
       }
 
       return data;
     }, {});
+  }
 
-  const items = (useRoot = true) => filter(() => true, useRoot);
+  store(key, data, resolver = null) {
+    this._cache.set(key, { data, resolver });
 
-  const sync = (key, newData = null, useRoot = true) => {
+    return this.sync(key, data);
+  }
+
+  sync(key, newData) {
     Promise.resolve().then(() => {
-      const { resolver, data: cached } = cache.get(key);
+      const { resolver, data: cached } = this._cache.get(key);
       const data = newData || cached;
 
       if (resolver && typeof resolver === 'function') {
-        set(key, resolver.call(null, data), useRoot);
+        this.set(key, resolver(data));
       } else {
-        set(key, data, useRoot);
+        this.set(key, data);
       }
     });
-  };
 
-  const store = (key, data, resolver = null, useRoot = true) => {
-    cache.set(key, { data, resolver });
+    return this;
+  }
 
-    sync(key, data, useRoot);
-  };
+  onChange(callback) {
+    window.addEventListener('storage', callback);
 
-  const onChange = (callback) => window.addEventListener('storage', callback);
+    return this;
+  }
+}
 
-  return {
-    init,
-    clear,
-    filter,
-    get,
-    items,
-    keys,
-    remove,
-    set,
-    store,
-    sync,
-    onChange,
-  };
-})();
+Storage.global = new Storage();
 
-export default Storage;
+const GlobalLocalStorage = Storage.global;
+const LocalStorage = new Storage(LOCAL_USER + '__');
+
+export { LocalStorage, GlobalLocalStorage, Storage };
