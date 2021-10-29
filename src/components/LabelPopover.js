@@ -7,15 +7,15 @@ import logger from '../utils/logger';
 import { $ } from '../utils/query';
 import Label from './Label';
 
-const LabelPopover = (task, action) => {
+const LabelPopover = (data, action) => {
   const [state] = createHook({
     isVisible: false,
-    labels: Core.main.getLabels(task.data.project),
+    labels: Core.main.getLabels(data.project),
   });
 
   const unsubscribe = [
     Core.event.on(PROJECT.LABELS.ALL, () => {
-      state.labels = Core.main.getLabels(task.data.project);
+      state.labels = Core.main.getLabels(data.project);
     }),
     Core.event.on(PROJECT.LABELS.ADD + '.success', () => {
       $('#label-name').value = '';
@@ -35,7 +35,7 @@ const LabelPopover = (task, action) => {
     const color = e.target.elements.color.value;
 
     Core.event.emit(PROJECT.LABELS.ADD, {
-      project: task.data.project,
+      project: data.project,
       data: { name, color },
     });
   };
@@ -69,9 +69,9 @@ const LabelPopover = (task, action) => {
         ${{
           $children: state.$labels.map((label) =>
             Label(
-              { ...label, project: task.data.project },
+              { ...label, project: data.project },
               action,
-              task.data.getLabels().includes(label.id)
+              data.getLabels().includes(label.id)
             )
           ),
         }}
@@ -81,7 +81,6 @@ const LabelPopover = (task, action) => {
           Create New Label
         </label>
         <input type="text" name="label-name" id="label-name" />
-
         <div class="color-picker">
           ${DEFAULT_COLORS.map(
             (color) =>

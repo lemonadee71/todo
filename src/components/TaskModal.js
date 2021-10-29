@@ -10,32 +10,33 @@ import { $ } from '../utils/query';
 import LabelPopover from './LabelPopover';
 import TaskLabel from './TaskLabel';
 
-const TaskModal = (projectId, listId, taskId) => {
+// data here points to the Task stored in main
+// so we rely on the fact that changes are reflected on data
+const TaskModal = (data) => {
   const [state] = createHook({
     isEditingTitle: false,
     isEditingNotes: false,
     showPopover: false,
-    data: Core.main.getTask(projectId, listId, taskId),
+    labels: data.labels.items,
   });
 
-  const getLatestData = () => {
-    state.data = Core.main.getTask(projectId, listId, taskId);
+  const getLabels = () => {
+    state.labels = data.labels.items;
   };
 
   const unsubscribe = [
     Core.event.on(TASK.UPDATE + '.error', logger.warning),
-    Core.event.on(TASK.UPDATE + '.success', getLatestData),
-    Core.event.on(TASK.LABELS.ALL, getLatestData, { order: 'last' }),
-    Core.event.on(PROJECT.LABELS.ALL, getLatestData, { order: 'last' }),
+    Core.event.on(TASK.LABELS.ALL, getLabels, { order: 'last' }),
+    Core.event.on(PROJECT.LABELS.ALL, getLabels, { order: 'last' }),
   ];
 
   const editTask = debounce((e) => {
     const { name, value } = e.target;
 
     Core.event.emit(TASK.UPDATE, {
-      project: projectId,
-      list: listId,
-      task: taskId,
+      project: data.project,
+      list: data.list,
+      task: data.id,
       data: {
         [name]: value,
       },
@@ -46,9 +47,9 @@ const TaskModal = (projectId, listId, taskId) => {
     const action = isSelected ? TASK.LABELS.ADD : TASK.LABELS.REMOVE;
 
     Core.event.emit(action, {
-      project: projectId,
-      list: listId,
-      task: taskId,
+      project: data.project,
+      list: data.list,
+      task: data.id,
       data: { id },
     });
   }, 100);
@@ -102,7 +103,7 @@ const TaskModal = (projectId, listId, taskId) => {
     >
       <input
         type="text"
-        value="${state.data.title}"
+        value="${data.title}"
         name="title"
         class="task-modal__title"
         required
@@ -117,16 +118,10 @@ const TaskModal = (projectId, listId, taskId) => {
       <div
         class="task-modal__labels"
         is-list
-        ${{
-          $children: state.$data((data) => {
-            const labels = data.labels.items;
-
-            return labels.map((label) => TaskLabel(label));
-          }),
-        }}
+        ${{ $children: state.$labels.map((label) => TaskLabel(label)) }}
       ></div>
       <button ${{ '@mount': initPopover }}>Add label</button>
-      ${LabelPopover(state, updateLabels)}
+      ${LabelPopover(data, updateLabels)}
       <p class="task-modal__section">Notes</p>
       <div
         component="notes"
@@ -139,15 +134,15 @@ const TaskModal = (projectId, listId, taskId) => {
                       name="notes"
                       class="task-modal__notes"
                       ${{ onInput: editTask, onBlur: toggleNotesEdit }}
-                    >${state.data.notes.trim()}</textarea>
+                    >${data.notes.trim()}</textarea>
                     `
                 : html`
                     <div 
                       class="task-modal__notes markdown-body"
-                    ${{ 
-                      innerHTML: convertToMarkdown(state.data.notes),
-                      onClick: toggleNotesEdit 
-                    }}></div>
+                      ${{ onClick: toggleNotesEdit }}
+                    >
+                      ${convertToMarkdown(data.notes)}
+                    </div>
                    
                     `
                 ),
@@ -157,7 +152,7 @@ const TaskModal = (projectId, listId, taskId) => {
       <p class="task-modal__section">Due Date</p>
       <input
         type="date"
-        value="${state.data.dueDate}"
+        value="${data.dueDate}"
         name="dueDate"
         ${{ onChange: editTask }}
       />

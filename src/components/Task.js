@@ -34,9 +34,7 @@ const Task = (data) => {
   });
 
   const editTask = () => {
-    $('#main-modal')
-      .changeContent(TaskModal(data.project, data.list, data.id), 'task-modal')
-      .show();
+    $('#main-modal').changeContent(TaskModal(data), 'task-modal').show();
   };
 
   return html`
