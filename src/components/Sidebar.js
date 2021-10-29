@@ -2,7 +2,6 @@ import Sortable from 'sortablejs';
 import { createHook, html } from 'poor-man-jsx';
 import { PROJECT } from '../core/actions';
 import Core from '../core';
-import logger from '../utils/logger';
 import ProjectLink from './ProjectLink';
 
 const Sidebar = () => {
@@ -11,7 +10,6 @@ const Sidebar = () => {
   });
 
   const unsubscribe = [
-    Core.event.on(PROJECT.ADD + '.error', logger.warning),
     Core.event.on(
       PROJECT.ALL,
       () => {

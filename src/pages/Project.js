@@ -10,6 +10,9 @@ const Project = ({ data: { id } }) => {
   const [data] = createHook({ lists: project.lists.items });
 
   const unsubscribe = [
+    // I'm not sure if this should be here
+    // But if I put this on Sidebar this doesn't trigger
+    Core.event.on(PROJECT.ADD + '.error', logger.warning),
     Core.event.on(PROJECT.LISTS.ADD + '.error', logger.warning),
     Core.event.on(
       [
