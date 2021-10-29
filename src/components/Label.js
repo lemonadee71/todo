@@ -16,7 +16,12 @@ const Label = (data, action, isSelected) => {
   const clickLabel = (e) => {
     // label element triggers click twice
     // so ignore the other one for the input
-    if (!state.isNotEditing || e.target.matches('input')) return;
+    if (
+      !state.isNotEditing ||
+      e.target.matches('input') ||
+      e.target.matches('button')
+    )
+      return;
 
     const label = e.currentTarget;
     const [base, modifier] = label.className.split('--');
