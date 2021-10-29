@@ -1,32 +1,19 @@
 import Sortable from 'sortablejs';
-import { createHook, html } from 'poor-man-jsx';
-import { PROJECT, TASK } from '../core/actions';
+import { html } from 'poor-man-jsx';
+import { PROJECT } from '../core/actions';
 import Core from '../core';
 import logger from '../utils/logger';
 import List from '../components/List';
+import { useProject } from '../utils/hooks';
 
 const Project = ({ data: { id } }) => {
-  const project = Core.main.getProject(`project-${id}`);
-  const [data] = createHook({ lists: project.lists.items });
+  const [project, revoke] = useProject(`project-${id}`);
 
   const unsubscribe = [
     // I'm not sure if this should be here
     // But if I put this on Sidebar this doesn't trigger
     Core.event.on(PROJECT.ADD + '.error', logger.warning),
     Core.event.on(PROJECT.LISTS.ADD + '.error', logger.warning),
-    Core.event.on(
-      [
-        ...PROJECT.LISTS.ALL,
-        ...PROJECT.LABELS.ALL,
-        ...TASK.ALL,
-        ...TASK.LABELS.ALL,
-        ...TASK.SUBTASKS.ALL,
-      ],
-      () => {
-        data.lists = Core.main.getLists(project.id);
-      },
-      { order: 'last' }
-    ),
   ];
 
   const createNewList = (e) => {
@@ -61,7 +48,12 @@ const Project = ({ data: { id } }) => {
   return html`
     <div
       class="project"
-      ${{ '@unmount': () => unsubscribe.forEach((cb) => cb()) }}
+      ${{
+        '@unmount': () => {
+          revoke();
+          unsubscribe.forEach((cb) => cb());
+        },
+      }}
     >
       <form ${{ onSubmit: createNewList }}>
         <input
@@ -71,13 +63,13 @@ const Project = ({ data: { id } }) => {
           placeholder="Create new list"
         />
       </form>
-      <h1 class="project__title">${project.name}</h1>
+      <h1 class="project__title" ${{ $textContent: project.$name }}></h1>
       <div
         class="project__body"
         is-list
         keystring="id"
         ${{ '@create': init }}
-        ${{ $children: data.$lists.map((list) => List(list)) }}
+        ${{ $children: project.$lists.map((list) => List(list)) }}
       ></div>
     </div>
   `;
