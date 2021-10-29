@@ -1,17 +1,17 @@
 import { html } from 'poor-man-jsx';
 import Core from '../core';
 import { PROJECT } from '../core/actions';
-import { createUndoFn } from '../utils/undo';
+import { useUndo } from '../utils/undo';
 
 const ProjectLink = (data) => {
-  const deleteProject = createUndoFn(
-    `#${data.id}`,
-    () =>
+  const deleteProject = useUndo({
+    element: `#${data.id}`,
+    text: 'Project removed',
+    callback: () =>
       Core.event.emit(PROJECT.REMOVE, {
         project: data.id,
       }),
-    'Project removed'
-  );
+  });
 
   return html`
     <li id="${data.id}">

@@ -3,15 +3,15 @@ import { $ } from './query';
 import { cancellable } from './delay';
 import { showToast } from './showToast';
 
-export const createUndoFn =
-  (selector, cb, text, delay = 3000) =>
-  () => {
-    const [deleteFn, cancel] = cancellable(cb, delay);
+export const useUndo =
+  ({ element, text, callback: cb, delay = 3000 }) =>
+  (e) => {
+    const [callback, cancel] = cancellable(cb, delay);
 
-    const node = $(selector);
-    const previousStyle = window.getComputedStyle(node).display;
+    const node = element instanceof HTMLElement ? element : $(element);
+    const { display } = window.getComputedStyle(node);
     node.style.display = 'none';
-    deleteFn();
+    callback(e);
 
     const toast = showToast({
       className: 'custom-toast',
@@ -19,8 +19,7 @@ export const createUndoFn =
       node: Toast(text, {
         text: 'Undo',
         callback: () => {
-          const _node = $(selector);
-          if (_node) _node.style.display = previousStyle;
+          if (document.body.contains(node)) node.style.display = display;
 
           cancel();
           toast.hideToast();

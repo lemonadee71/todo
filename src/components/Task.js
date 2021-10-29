@@ -2,7 +2,7 @@ import { html } from 'poor-man-jsx';
 import { TASK } from '../core/actions';
 import Core from '../core';
 import { $ } from '../utils/query';
-import { createUndoFn } from '../utils/undo';
+import { useUndo } from '../utils/undo';
 import TaskModal from './TaskModal';
 import Chip from './Chip';
 
@@ -20,9 +20,10 @@ const Task = (data) => {
     });
   };
 
-  const deleteTask = createUndoFn(
-    `#${data.id}`,
-    () =>
+  const deleteTask = useUndo({
+    element: `#${data.id}`,
+    text: 'Task removed',
+    callback: () =>
       Core.event.emit(TASK.REMOVE, {
         data: {
           project: data.project,
@@ -30,8 +31,7 @@ const Task = (data) => {
           id: data.id,
         },
       }),
-    'Task removed'
-  );
+  });
 
   const editTask = () => {
     $('#main-modal')
