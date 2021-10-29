@@ -1,28 +1,33 @@
-export const popperShowWrapper = (popperInstance, callback) => (e) => {
-  callback?.(e);
+import { createPopper } from '@popperjs/core';
 
-  // Enable the event listeners
-  popperInstance.setOptions((options) => ({
-    ...options,
-    modifiers: [
-      ...options.modifiers,
-      { name: 'eventListeners', enabled: true },
-    ],
-  }));
+export const usePopper = (ref, el, options) => {
+  const popperInstance = createPopper(ref, el, options);
 
-  // Update its position
-  popperInstance.update();
-};
+  const showPopper = (callback) => (e) => {
+    callback?.(e);
 
-export const popperHideWrapper = (popperInstance, callback) => (e) => {
-  callback?.(e);
+    // Enable the event listeners
+    popperInstance.setOptions((opts) => ({
+      ...opts,
+      modifiers: [...opts.modifiers, { name: 'eventListeners', enabled: true }],
+    }));
 
-  // Disable the event listeners
-  popperInstance.setOptions((options) => ({
-    ...options,
-    modifiers: [
-      ...options.modifiers,
-      { name: 'eventListeners', enabled: false },
-    ],
-  }));
+    // Update its position
+    popperInstance.update();
+  };
+
+  const hidePopper = (callback) => (e) => {
+    callback?.(e);
+
+    // Disable the event listeners
+    popperInstance.setOptions((opts) => ({
+      ...opts,
+      modifiers: [
+        ...opts.modifiers,
+        { name: 'eventListeners', enabled: false },
+      ],
+    }));
+  };
+
+  return [popperInstance, showPopper, hidePopper];
 };

@@ -1,8 +1,7 @@
 import { createHook, html } from 'poor-man-jsx';
-import { createPopper } from '@popperjs/core';
 import { PROJECT, TASK } from '../core/actions';
 import Core from '../core';
-import { popperShowWrapper, popperHideWrapper } from '../utils/popper';
+import { usePopper } from '../utils/popper';
 import { dispatchCustomEvent } from '../utils/dispatch';
 import convertToMarkdown from '../utils/showdown';
 import { debounce } from '../utils/delay';
@@ -71,7 +70,7 @@ const TaskModal = (projectId, listId, taskId) => {
 
   const initPopover = function () {
     const popover = $(`#label-popover`);
-    const popperInstance = createPopper(this, popover, {
+    const [, onShow, onHide] = usePopper(this, popover, {
       placement: 'right-start',
       modifiers: [
         {
@@ -83,13 +82,13 @@ const TaskModal = (projectId, listId, taskId) => {
       ],
     });
 
-    const show = popperShowWrapper(popperInstance, () => {
-      dispatchCustomEvent(popover, 'popover:open');
-    });
-    const hide = popperHideWrapper(popperInstance);
-
-    this.addEventListener('click', show);
-    popover.addEventListener('popover:hide', hide);
+    this.addEventListener(
+      'click',
+      onShow(() => {
+        dispatchCustomEvent(popover, 'popover:open');
+      })
+    );
+    popover.addEventListener('popover:hide', onHide());
   };
 
   // TODO: Fix issue with title input
