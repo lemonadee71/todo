@@ -1,5 +1,5 @@
 import { createHook, html } from 'poor-man-jsx';
-import { PROJECT, TASK } from '../core/actions';
+import { TASK } from '../core/actions';
 import Core from '../core';
 import { usePopper } from '../utils/popper';
 import { dispatchCustomEvent } from '../utils/dispatch';
@@ -7,28 +7,20 @@ import convertToMarkdown from '../utils/showdown';
 import { debounce } from '../utils/delay';
 import logger from '../utils/logger';
 import { $ } from '../utils/query';
+import { useTask } from '../utils/hooks';
 import LabelPopover from './LabelPopover';
 import TaskLabel from './TaskLabel';
 
 // data here points to the Task stored in main
 // so we rely on the fact that changes are reflected on data
 const TaskModal = (data) => {
+  const [task, revoke] = useTask(data.project, data.list, data.id);
   const [state] = createHook({
     isEditingTitle: false,
     isEditingNotes: false,
-    showPopover: false,
-    labels: data.labels.items,
   });
 
-  const getLabels = () => {
-    state.labels = data.labels.items;
-  };
-
-  const unsubscribe = [
-    Core.event.on(TASK.UPDATE + '.error', logger.warning),
-    Core.event.on(TASK.LABELS.ALL, getLabels, { order: 'last' }),
-    Core.event.on(PROJECT.LABELS.ALL, getLabels, { order: 'last' }),
-  ];
+  const unsubscribe = Core.event.on(TASK.UPDATE + '.error', logger.warning);
 
   const editTask = debounce((e) => {
     const { name, value } = e.target;
@@ -97,7 +89,10 @@ const TaskModal = (data) => {
   return html`
     <div
       ${{
-        '@unmount': () => unsubscribe.forEach((cb) => cb()),
+        '@unmount': () => {
+          unsubscribe();
+          revoke();
+        },
         onClick: toggleEdit,
       }}
     >
@@ -118,7 +113,7 @@ const TaskModal = (data) => {
       <div
         class="task-modal__labels"
         is-list
-        ${{ $children: state.$labels.map((label) => TaskLabel(label)) }}
+        ${{ $children: task.$labels.map((label) => TaskLabel(label)) }}
       ></div>
       <button ${{ '@mount': initPopover }}>Add label</button>
       ${LabelPopover(data, updateLabels)}

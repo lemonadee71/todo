@@ -42,3 +42,32 @@ export const useProject = memoize((projectId) => {
 
   return [project, revoke];
 });
+
+export const useTask = (projectId, listId, taskId) => {
+  const taskRef = Core.main.getTask(projectId, listId, taskId);
+  const [task] = createHook(taskRef.data);
+
+  const unsubscribe = [
+    Core.event.on(TASK.UPDATE + '.success', (newData) => {
+      Object.assign(task, newData);
+    }),
+    Core.event.on(
+      [...TASK.LABELS.ALL, ...PROJECT.LABELS.ALL],
+      () => {
+        task.labels = taskRef.data.labels;
+      },
+      { order: 'last' }
+    ),
+    Core.event.on(
+      TASK.SUBTASKS.ALL,
+      () => {
+        task.subtasks = taskRef.subtasks.items;
+      },
+      { order: 'last' }
+    ),
+  ];
+
+  const revoke = () => unsubscribe.forEach((cb) => cb());
+
+  return [task, revoke];
+};
