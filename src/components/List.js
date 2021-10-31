@@ -34,10 +34,10 @@ const List = (data) => {
   const transferTask = (id, to, from, position) => {
     Core.event.emit(TASK.TRANSFER, {
       project: data.project,
-      list: data.id,
+      list: { to, from },
       task: id,
       type: 'list',
-      data: { to, from, position },
+      data: { position },
     });
   };
 

@@ -50,19 +50,31 @@ class Task {
   }
 
   addSubtask(task) {
-    this.subtasks.add(task);
+    task.project = this.project;
+    task.list = this.list;
+    return this.subtasks.add(task);
   }
 
   moveSubtask(id, idx) {
-    this.subtasks.move(id, idx);
+    return this.subtasks.move(id, idx);
+  }
+
+  insertSubtask(task, idx) {
+    task.project = this.project;
+    task.list = this.list;
+    return this.subtasks.insert(task, idx);
+  }
+
+  extractSubtask(id) {
+    return this.subtasks.extract(id);
   }
 
   deleteSubtask(id) {
-    this.subtasks.delete(id);
+    return this.subtasks.delete(id);
   }
 
   clearSubtasks() {
-    this.subtasks.clear();
+    return this.subtasks.clear();
   }
 
   getLabels() {
@@ -74,15 +86,15 @@ class Task {
       throw new Error(`Label (${label.id}) is already added.`);
     }
 
-    this.labels.add(label);
+    return this.labels.add(label);
   }
 
   removeLabel(id) {
-    this.labels.delete(id);
+    return this.labels.delete(id);
   }
 
   clearLabels() {
-    this.labels.clear();
+    return this.labels.clear();
   }
 
   toggleComplete() {

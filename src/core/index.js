@@ -1,6 +1,5 @@
 import { createHook } from 'poor-man-jsx';
 import EventEmitter from './classes/Emitter';
-import Task from './classes/Task';
 import * as main from './main';
 import Router from './router';
 import { Storage, LocalStorage } from './storage';
@@ -92,18 +91,22 @@ const Core = (() => {
   event.on(TASK.UPDATE, ({ project, list, task: id, data }) =>
     main.updateTask(project, list, id, data)
   );
-  event.on(TASK.TRANSFER, ({ type, project, list, task: id, data }) => {
-    switch (type) {
-      case 'project':
-        main.transferTaskToProject(id, list, data.from, data.to, data.position);
-        break;
-      case 'list':
-        main.transferTaskToList(id, project, data.from, data.to, data.position);
-        break;
-      default:
-        throw new Error('Type must be either project or list');
+  event.on(
+    TASK.TRANSFER,
+    ({ type, project, list, task, data: { position } }) => {
+      switch (type) {
+        case 'project':
+          return main.transferTaskToProject(project, list, task, position);
+        case 'list':
+          return main.transferTaskToList(project, list, task, position);
+        // transfer from list to task
+        case 'task':
+          return main.convertTaskToSubtask(project, list, task, position);
+        default:
+          throw new Error('Type must be either project, list, or task');
+      }
     }
-  });
+  );
 
   const taskLabelsReducer = ({ type, project, list, task: id, data }) => {
     const task = main.getTask(project, list, id);
@@ -125,32 +128,6 @@ const Core = (() => {
     return task;
   };
 
-  const taskSubtasksReducer = ({ type, project, list, task: id, data }) => {
-    const task = main.getTask(project, list, id);
-
-    switch (type) {
-      case 'add':
-        task.addSubtask(new Task(data));
-        break;
-      case 'remove':
-        task.deleteSubtask(data.id);
-        break;
-      case 'clear':
-        task.clearSubtasks();
-        break;
-      case 'update':
-        main.updateTask(project, list, id, data, 'subtask');
-        break;
-      case 'move':
-        task.moveSubtask(data.id, data.position);
-        break;
-      default:
-        throw new Error('Type must be add, remove, clear, or update.');
-    }
-
-    return task;
-  };
-
   event.on(TASK.LABELS.ADD, (payload) =>
     taskLabelsReducer({ ...payload, type: 'add' })
   );
@@ -158,17 +135,42 @@ const Core = (() => {
     taskLabelsReducer({ ...payload, type: 'remove' })
   );
 
-  event.on(TASK.SUBTASKS.ADD, (payload) =>
-    taskSubtasksReducer({ ...payload, type: 'add' })
+  event.on(TASK.SUBTASKS.ADD, ({ project, list, task, data }) =>
+    main.addSubtask(project, list, task, data)
   );
-  event.on(TASK.SUBTASKS.REMOVE, (payload) =>
-    taskSubtasksReducer({ ...payload, type: 'remove' })
+  event.on(TASK.SUBTASKS.REMOVE, ({ project, list, task, subtask }) =>
+    main.deleteSubtask(project, list, task, subtask)
   );
-  event.on(TASK.SUBTASKS.UPDATE, (payload) =>
-    taskSubtasksReducer({ ...payload, type: 'update' })
+  event.on(TASK.SUBTASKS.UPDATE, ({ project, list, task, data }) =>
+    main.updateSubtask(project, list, task, data)
   );
-  event.on(TASK.SUBTASKS.MOVE, (payload) =>
-    taskSubtasksReducer({ ...payload, type: 'move' })
+  event.on(
+    TASK.SUBTASKS.MOVE,
+    ({ project, list, task, subtask, data: { position } }) =>
+      main.moveSubtask(project, list, task, subtask, position)
+  );
+  event.on(
+    TASK.SUBTASKS.TRANSFER,
+    ({ type, project, list, task, subtask, data: { position } }) => {
+      switch (type) {
+        // transfer from task to list
+        // list should be in the form of { to, from }
+        case 'list':
+          return main.convertSubtaskToTask(
+            project,
+            list,
+            task,
+            subtask,
+            position
+          );
+        // transfer from task to task
+        // list and task should be { to, from }
+        case 'task':
+          return main.transferSubtask(project, list, task, subtask, position);
+        default:
+          throw new Error('Type must either be "list" or "task"');
+      }
+    }
   );
 
   // only update local storage half a second after all updates

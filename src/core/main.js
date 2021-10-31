@@ -292,14 +292,73 @@ export const moveTask = (projectId, listId, taskId, pos) =>
 export const deleteTask = (task) =>
   getList(task.project, task.list).delete(task.id);
 
-export const transferTaskToProject = (taskId, listId, from, to, position) => {
-  const task = getList(from, listId).extract(taskId);
-  getList(to, 'default').insert(task, position);
+export const transferTaskToProject = (project, listId, taskId, position) => {
+  const task = getList(project.from, listId).extract(taskId);
+  getList(project.to, 'default').insert(task, position);
 };
 
-export const transferTaskToList = (taskId, projectId, from, to, position) => {
-  const task = getList(projectId, from).extract(taskId);
-  getList(projectId, to).insert(task, position);
+export const transferTaskToList = (projectId, list, taskId, position) => {
+  const task = getList(projectId, list.from).extract(taskId);
+  getList(projectId, list.to).insert(task, position);
+};
+
+export const convertTaskToSubtask = (projectId, list, task, position) => {
+  const item = getList(projectId, list.from).extract(task.from);
+  getTask(projectId, list.to, task.to).insertSubtask(item, position);
+
+  return item;
+};
+
+// =====================================================================================
+// Subtasks
+// =====================================================================================
+
+export const getSubtask = (projectId, listId, taskId, subtaskId) =>
+  getTask(projectId, listId, taskId).getSubtask(subtaskId);
+
+export const addSubtask = (projectId, listId, taskId, data) => {
+  const project = getProject(projectId);
+  const task = getTask(projectId, listId, taskId);
+  const subtask = new Task({
+    ...data,
+    numId: ++project.totalTasks,
+  });
+  task.addSubtask(subtask);
+
+  return task;
+};
+
+export const deleteSubtask = (projectId, listId, taskId, subtaskId) =>
+  getTask(projectId, listId, taskId).deleteSubtask(subtaskId);
+
+export const updateSubtask = (projectId, listId, taskId, data) =>
+  updateTask(projectId, listId, taskId, data, 'subtask');
+
+export const moveSubtask = (projectId, listId, taskId, subtaskId, position) =>
+  getTask(projectId, listId, taskId).moveSubtask(subtaskId, position);
+
+export const convertSubtaskToTask = (
+  projectId,
+  list,
+  taskId,
+  subtaskId,
+  position
+) => {
+  const subtask = getTask(projectId, list.from, taskId).extractSubtask(
+    subtaskId
+  );
+  getList(projectId, list.to).insert(subtask, position);
+
+  return subtask;
+};
+
+export const transferSubtask = (projectId, list, task, subtaskId, position) => {
+  const subtask = getTask(projectId, list.from, task.from).extractSubtask(
+    subtaskId
+  );
+  getTask(projectId, list.to, task.to).insertSubtask(subtask, position);
+
+  return subtask;
 };
 
 // =====================================================================================
