@@ -1,10 +1,10 @@
 import Sortable from 'sortablejs';
 import { html } from 'poor-man-jsx';
 import { PROJECT } from '../core/actions';
+import { useProject } from '../core/hooks';
 import Core from '../core';
 import logger from '../utils/logger';
 import List from '../components/List';
-import { useProject } from '../utils/hooks';
 
 const Project = ({ data: { id } }) => {
   const [project, revoke] = useProject(`project-${id}`);

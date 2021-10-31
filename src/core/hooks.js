@@ -1,7 +1,7 @@
 import { createHook } from 'poor-man-jsx';
-import Core from '../core';
-import { PROJECT, TASK } from '../core/actions';
-import { memoize } from './memo';
+import Core from '.';
+import { PROJECT, TASK } from './actions';
+import { memoize } from '../utils/memo';
 
 // we rely on changes to original references
 // to be reflected here

@@ -3,7 +3,7 @@ import Core from '../core';
 import { PROJECT } from '../core/actions';
 import { DEFAULT_COLORS } from '../core/constants';
 import { dispatchCustomEvent } from '../utils/dispatch';
-import { useProject } from '../utils/hooks';
+import { useProject } from '../core/hooks';
 import logger from '../utils/logger';
 import { $ } from '../utils/query';
 import Label from './Label';

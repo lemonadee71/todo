@@ -1,5 +1,6 @@
 import { createHook, html } from 'poor-man-jsx';
 import { TASK } from '../core/actions';
+import { useTask } from '../core/hooks';
 import Core from '../core';
 import { usePopper } from '../utils/popper';
 import { dispatchCustomEvent } from '../utils/dispatch';
@@ -7,7 +8,6 @@ import convertToMarkdown from '../utils/showdown';
 import { debounce } from '../utils/delay';
 import logger from '../utils/logger';
 import { $ } from '../utils/query';
-import { useTask } from '../utils/hooks';
 import LabelPopover from './LabelPopover';
 import TaskLabel from './TaskLabel';
 
