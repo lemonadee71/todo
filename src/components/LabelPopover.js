@@ -2,8 +2,8 @@ import { html, createHook } from 'poor-man-jsx';
 import Core from '../core';
 import { PROJECT } from '../core/actions';
 import { DEFAULT_COLORS } from '../core/constants';
-import { dispatchCustomEvent } from '../utils/dispatch';
 import { useProject } from '../core/hooks';
+import { dispatchCustomEvent } from '../utils/dispatch';
 import logger from '../utils/logger';
 import { $ } from '../utils/query';
 import Label from './Label';
@@ -40,7 +40,7 @@ const LabelPopover = (data, action) => {
     dispatchCustomEvent($('#label-popover'), 'popover:hide');
 
   const init = function () {
-    this.addEventListener('popover:toggle', toggleVisibility);
+    this.addEventListener('popover:toggle', () => toggleVisibility());
     this.addEventListener('popover:open', () => toggleVisibility(true));
     this.addEventListener('popover:hide', () => toggleVisibility(false));
   };
