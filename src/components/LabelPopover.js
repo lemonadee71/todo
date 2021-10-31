@@ -3,20 +3,16 @@ import Core from '../core';
 import { PROJECT } from '../core/actions';
 import { DEFAULT_COLORS } from '../core/constants';
 import { dispatchCustomEvent } from '../utils/dispatch';
+import { useProject } from '../core/hooks';
 import logger from '../utils/logger';
 import { $ } from '../utils/query';
 import Label from './Label';
 
 const LabelPopover = (data, action) => {
-  const [state] = createHook({
-    isVisible: false,
-    labels: Core.main.getLabels(data.project),
-  });
+  const [project] = useProject(data.project);
+  const [state] = createHook({ isVisible: false });
 
   const unsubscribe = [
-    Core.event.on(PROJECT.LABELS.ALL, () => {
-      state.labels = Core.main.getLabels(data.project);
-    }),
     Core.event.on(PROJECT.LABELS.ADD + '.success', () => {
       $('#label-name').value = '';
     }),
@@ -67,7 +63,7 @@ const LabelPopover = (data, action) => {
         is-list
         class="popover__body"
         ${{
-          $children: state.$labels.map((label) =>
+          $children: project.$labels.map((label) =>
             Label(
               { ...label, project: data.project },
               action,
