@@ -12,8 +12,8 @@ export default class Project {
     this.labels = new IdList(
       labels || [
         // default labels
-        new Label('Urgent', DEFAULT_COLORS[2]),
-        new Label('Important', DEFAULT_COLORS[3]),
+        new Label({ name: 'Urgent', color: DEFAULT_COLORS[2] }),
+        new Label({ name: 'Important', color: DEFAULT_COLORS[3] }),
       ]
     );
     this.lists = new OrderedIdList(
@@ -34,7 +34,19 @@ export default class Project {
     return this.labels.get(labelFilter);
   }
 
+  addLabel(label) {
+    label.project = this.id;
+
+    return this.labels.add(label);
+  }
+
   getList(listFilter) {
     return this.lists.get(listFilter);
+  }
+
+  addList(list) {
+    list.project = this.id;
+
+    return this.lists.add(list);
   }
 }

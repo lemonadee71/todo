@@ -64,11 +64,7 @@ const LabelPopover = (data, action) => {
         class="popover__body"
         ${{
           $children: project.$labels.map((label) =>
-            Label(
-              { ...label, project: data.project },
-              action,
-              data.getLabels().includes(label.id)
-            )
+            Label(label, action, data.getLabels().includes(label.id))
           ),
         }}
       ></div>

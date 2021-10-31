@@ -56,10 +56,7 @@ const recoverData = () => {
 
   // reinitialize data
   Object.values(cache).forEach((project) => {
-    const projectLabels = project.labels.map((label) => {
-      const { name, color, id } = label;
-      return new Label(name, color, id);
-    });
+    const projectLabels = project.labels.map((label) => new Label(label));
 
     const projectLists = project.lists.map((list) => {
       const tasks = list._items.map((task) => {
@@ -203,9 +200,9 @@ export const getList = (projectId, listId) =>
   Root.get(projectId).getList(listId);
 
 export const addList = (projectId, name) => {
-  const { lists } = getProject(projectId);
+  const project = getProject(projectId);
 
-  if (lists.has((list) => list.name === name)) {
+  if (project.lists.has((list) => list.name === name)) {
     throw new Error(
       `List with the name "${name}" already exists in this project`
     );
@@ -213,8 +210,8 @@ export const addList = (projectId, name) => {
 
   if (!name.trim()) throw new Error('List must have a name');
 
-  const list = new TaskList({ name, project: projectId });
-  lists.add(list);
+  const list = new TaskList({ name });
+  project.addList(list);
 
   return list;
 };
@@ -314,18 +311,18 @@ export const getLabel = (projectId, labelId) =>
   getProject(projectId).getLabel(labelId);
 
 export const addLabel = (projectId, name, color) => {
-  const { labels } = getProject(projectId);
+  const project = getProject(projectId);
 
   if (!name.trim()) {
     throw new Error('Label must have a name');
   }
 
-  if (labels.has((label) => label.name === name)) {
+  if (project.labels.has((label) => label.name === name)) {
     throw new Error('Label already exists');
   }
 
-  const label = new Label(name, color);
-  labels.add(label);
+  const label = new Label({ name, color });
+  project.addLabel(label);
 
   return label;
 };
