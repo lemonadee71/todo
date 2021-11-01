@@ -1,3 +1,4 @@
+import Sortable from 'sortablejs';
 import { html } from 'poor-man-jsx';
 import { TASK } from '../core/actions';
 import Core from '../core';
@@ -8,15 +9,15 @@ import Chip from './Chip';
 
 // data here points to the Task stored in main
 // so we rely on the fact that changes are reflected on data
-const Task = (data, parent = '') => {
-  const type = parent ? 'subtask' : 'task';
-  const base = type === 'task' ? TASK : TASK.SUBTASKS;
+const Task = (data) => {
+  const getType = () => (data.parentTask ? 'subtask' : 'task');
+  const getBase = () => (data.parentTask ? TASK.SUBTASKS : TASK);
 
   const toggleComplete = (e) => {
-    Core.event.emit(base.UPDATE, {
+    Core.event.emit(getBase().UPDATE, {
       project: data.project,
       list: data.list,
-      task: parent || data.id,
+      task: data.parentTask || data.id,
       subtask: data.id,
       data: {
         completed: e.target.checked,
@@ -28,10 +29,10 @@ const Task = (data, parent = '') => {
     element: `#${data.id}`,
     text: 'Task removed',
     callback: () =>
-      Core.event.emit(base.REMOVE, {
+      Core.event.emit(getBase().REMOVE, {
         project: data.project,
         list: data.list,
-        task: parent || data.id,
+        task: data.parentTask || data.id,
         subtask: data.id,
       }),
   });
@@ -40,14 +41,57 @@ const Task = (data, parent = '') => {
     $('#main-modal').changeContent(TaskModal(data), 'task-modal').show();
   };
 
+  const transferSubtask = (action, fromTask, fromList, subtaskId, position) => {
+    Core.event.emit(action, {
+      project: data.project,
+      list: { to: data.list, from: fromList },
+      task: { to: data.id, from: fromTask },
+      subtask: subtaskId,
+      type: 'task',
+      data: { position },
+    });
+  };
+
+  const moveSubtask = (id, position) => {
+    Core.event.emit(TASK.SUBTASKS.MOVE, {
+      project: data.project,
+      list: data.list,
+      task: data.id,
+      subtask: id,
+      data: { position },
+    });
+  };
+
+  const initSubtasks = function () {
+    if (data.parentTask) return;
+
+    Sortable.create(this, {
+      group: 'tasks',
+      animation: 150,
+      delay: 10,
+      draggable: '.subtask',
+      filter: 'input,button',
+      onUpdate: (e) => moveSubtask(e.item.id, e.newIndex),
+      onAdd: (e) => {
+        const isSubtask = !!e.item.dataset.parent;
+        const fromTask = e.item.dataset.parent || e.item.id;
+        const fromList = fromTask ? e.item.dataset.list : e.from.id;
+        const id = e.item.getAttribute('key');
+        const action = isSubtask ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
+
+        transferSubtask(action, fromTask, fromList, id, e.newIndex);
+      },
+    });
+  };
+
   return html`
     <div
       id="${data.id}"
       key="${data.id}"
+      class="${data.completed ? `${getType()}--done` : getType()}"
       data-project="${data.project}"
       data-list="${data.list}"
-      ${parent ? `data-parent="${parent}"` : ''}
-      class="${data.completed ? `${type}--done` : type}"
+      ${data.parentTask ? `data-parent="${data.parentTask}"` : ''}
     >
       <div class="task__main">
         <input
@@ -73,7 +117,12 @@ const Task = (data, parent = '') => {
           <button ${{ onClick: editTask }}>Edit</button>
         </div>
       </div>
-      <div class="task__subtasks" is-list keystring="id">
+      <div
+        class="task__subtasks"
+        is-list
+        keystring="id"
+        ${{ '@create': initSubtasks }}
+      >
         ${data.subtasks.items.map((subtask) => Task(subtask, data.id))}
       </div>
     </div>

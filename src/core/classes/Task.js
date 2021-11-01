@@ -9,6 +9,7 @@ class Task {
     dueDate,
     project,
     list,
+    parentTask = null,
     position = null,
     completed = false,
     labels = [],
@@ -27,6 +28,7 @@ class Task {
     // location data
     this.project = project;
     this.list = list;
+    this.parentTask = parentTask;
     this.position = position;
 
     this.labels = new IdList(labels);
@@ -52,6 +54,7 @@ class Task {
   addSubtask(task) {
     task.project = this.project;
     task.list = this.list;
+    task.parentTask = this.id;
     return this.subtasks.add(task);
   }
 
@@ -62,6 +65,7 @@ class Task {
   insertSubtask(task, idx) {
     task.project = this.project;
     task.list = this.list;
+    task.parentTask = this.id;
     return this.subtasks.insert(task, idx);
   }
 

@@ -182,6 +182,7 @@ const TaskModal = (data) => {
           is-list
           ${{
             $children: task.$subtasks.map(
+              // TODO: Filter out completed tasks and make own subtask component
               (subtask) => html`<li key="${subtask.id}">${subtask.title}</li>`
             ),
           }}

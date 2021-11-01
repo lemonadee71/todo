@@ -355,6 +355,7 @@ export const convertSubtaskToTask = (
   const subtask = getTask(projectId, list.from, taskId).extractSubtask(
     subtaskId
   );
+  subtask.parentTask = null;
   getList(projectId, list.to).insert(subtask, position);
 
   return subtask;
@@ -364,6 +365,7 @@ export const transferSubtask = (projectId, list, task, subtaskId, position) => {
   const subtask = getTask(projectId, list.from, task.from).extractSubtask(
     subtaskId
   );
+  console.log(subtask, list, task);
   getTask(projectId, list.to, task.to).insertSubtask(subtask, position);
 
   return subtask;
