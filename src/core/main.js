@@ -65,7 +65,13 @@ const recoverData = () => {
         labels = labels._items.map((taskLabel) =>
           projectLabels.find((label) => label.id === taskLabel.id)
         );
-        subtasks = subtasks._items.map((subtask) => new Task(subtask));
+        subtasks = subtasks._items.map((subtask) => {
+          const subtaskLabels = subtask.labels._items.map((subtaskLabel) =>
+            projectLabels.find((label) => label.id === subtaskLabel.id)
+          );
+
+          return new Task({ ...subtask, labels: subtaskLabels, subtasks: [] });
+        });
 
         return new Task({
           ...task,
@@ -267,15 +273,8 @@ export const addTask = (projectId, listId, data) => {
   return task;
 };
 
-export const updateTask = (
-  projectId,
-  listId,
-  taskId,
-  data = {},
-  type = 'task'
-) => {
-  const _task = getTask(projectId, listId, taskId);
-  const task = type === 'task' ? _task : _task.getSubtask(data.id);
+export const updateTask = (projectId, listId, taskId, data) => {
+  const task = getTask(projectId, listId, taskId);
 
   Object.entries(data).forEach(([prop, value]) => {
     if (prop === 'title' && !value) throw new Error('Task must have a title');
@@ -289,8 +288,8 @@ export const updateTask = (
 export const moveTask = (projectId, listId, taskId, pos) =>
   getList(projectId, listId).move(taskId, pos);
 
-export const deleteTask = (task) =>
-  getList(task.project, task.list).delete(task.id);
+export const deleteTask = (projectId, listId, taskId) =>
+  getList(projectId, listId).delete(taskId);
 
 export const transferTaskToProject = (project, listId, taskId, position) => {
   const task = getList(project.from, listId).extract(taskId);
@@ -325,14 +324,23 @@ export const addSubtask = (projectId, listId, taskId, data) => {
   });
   task.addSubtask(subtask);
 
-  return task;
+  return subtask;
 };
 
 export const deleteSubtask = (projectId, listId, taskId, subtaskId) =>
   getTask(projectId, listId, taskId).deleteSubtask(subtaskId);
 
-export const updateSubtask = (projectId, listId, taskId, data) =>
-  updateTask(projectId, listId, taskId, data, 'subtask');
+export const updateSubtask = (projectId, listId, taskId, subtaskId, data) => {
+  const subtask = getTask(projectId, listId, taskId).getSubtask(subtaskId);
+
+  Object.entries(data).forEach(([prop, value]) => {
+    if (prop === 'title' && !value) throw new Error('Task must have a title');
+
+    subtask[prop] = value;
+  });
+
+  return subtask.data;
+};
 
 export const moveSubtask = (projectId, listId, taskId, subtaskId, position) =>
   getTask(projectId, listId, taskId).moveSubtask(subtaskId, position);

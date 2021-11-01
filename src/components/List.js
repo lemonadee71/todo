@@ -31,11 +31,12 @@ const List = (data) => {
     input.value = '';
   };
 
-  const transferTask = (id, to, from, position) => {
-    Core.event.emit(TASK.TRANSFER, {
+  const transferTask = (action, taskId, subtaskId, to, from, position) => {
+    Core.event.emit(action, {
       project: data.project,
       list: { to, from },
-      task: id,
+      task: taskId,
+      subtask: subtaskId,
       type: 'list',
       data: { position },
     });
@@ -55,18 +56,19 @@ const List = (data) => {
       group: 'tasks',
       animation: 150,
       delay: 10,
-      draggable: '.task,.task--done',
+      draggable: '.task',
       onUpdate: (e) => {
         const id = e.item.getAttribute('key');
         moveTask(id, e.newIndex);
       },
       onAdd: (e) => {
+        const { parent } = e.item.dataset;
         const id = e.item.getAttribute('key');
         const to = e.to.id;
-        const from = e.from.id;
-        const idx = e.newIndex;
+        const from = parent ? e.item.dataset.list : e.from.id;
+        const action = parent ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
 
-        transferTask(id, to, from, idx);
+        transferTask(action, parent || id, id, to, from, e.newIndex);
       },
     });
   };
@@ -76,7 +78,7 @@ const List = (data) => {
     <div class="task-list" id="${data.id}">
       <p class="task-list__title">{% ${data.name} %}</p>
       <div class="task-list__body">
-        <ul
+        <div
           id="${data.id}"
           data-name="current-tasks"
           is-list
@@ -86,23 +88,24 @@ const List = (data) => {
           ${data.items
             .filter((task) => !task.completed)
             .map((task) => Task(task))}
-        </ul>
-        <ul data-name="completed-tasks" is-list keystring="id">
+        </div>
+        <div data-name="completed-tasks" is-list keystring="id">
           ${data.items
             .filter((task) => task.completed)
             .map((task) => Task(task))}
-        </ul>
+        </div>
       </div>
       <button ${{ onClick: deleteList }}>Delete</button>
       <form class="create-list" ${{ onSubmit: createTask }}>
         <input
-        type="text"
-        name="new-task"
-        id="new-task"
-        placeholder="Create new task"
-        class="form__input"
+          type="text"
+          name="new-task"
+          id="new-task"
+          placeholder="Create new task"
+          class="form__input"
         />
         <button class="form__btn">+</button>
+      </form>
     </div>
   `;
 };

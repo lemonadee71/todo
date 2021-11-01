@@ -35,6 +35,22 @@ const TaskModal = (data) => {
     });
   }, 200);
 
+  const createSubtask = (e) => {
+    e.preventDefault();
+
+    const input = e.target.elements['new-subtask'];
+    Core.event.emit(TASK.SUBTASKS.ADD, {
+      project: data.project,
+      list: data.list,
+      task: data.id,
+      data: {
+        title: input.value,
+      },
+    });
+
+    input.value = '';
+  };
+
   const updateLabels = debounce((id, isSelected) => {
     const action = isSelected ? TASK.LABELS.ADD : TASK.LABELS.REMOVE;
 
@@ -84,8 +100,8 @@ const TaskModal = (data) => {
     popover.addEventListener('popover:hide', onHide());
   };
 
-  // TODO: Fix issue with title input
-  // where keyboard inputs are not going in even if focused
+  // TODO: Fix issue with title input where keyboard inputs are not going in even if focused
+  // TODO: Fix data attr and classes here
   return html`
     <div
       ${{
@@ -109,48 +125,79 @@ const TaskModal = (data) => {
           onInput: editTask,
         }}
       />
-      <p class="task-modal__section">Labels</p>
-      <div
-        class="task-modal__labels"
-        is-list
-        ${{ $children: task.$labels.map((label) => TaskLabel(label)) }}
-      ></div>
-      <button ${{ '@mount': initPopover }}>Add label</button>
-      ${LabelPopover(data, updateLabels)}
-      <p class="task-modal__section">Notes</p>
-      <div
-        component="notes"
-        ${{
-          // prettier-ignore
-          $children: state.$isEditingNotes((val) =>
-            val
+
+      <div data-name="task__labels">
+        <p class="task-modal__section">Labels</p>
+        <div
+          class="task-modal__labels"
+          is-list
+          ${{ $children: task.$labels.map((label) => TaskLabel(label)) }}
+        ></div>
+        <button ${{ '@mount': initPopover }}>Add label</button>
+        ${LabelPopover(data, updateLabels)}
+      </div>
+
+      <div data-name="task__notes">
+        <p class="task-modal__section">Notes</p>
+        <div
+          component="notes"
+          ${{
+            // prettier-ignore
+            $children: state.$isEditingNotes((val) =>
+          val
                 ? html`
                     <textarea
-                      name="notes"
+                    name="notes"
                       class="task-modal__notes"
                       ${{ onInput: editTask, onBlur: toggleNotesEdit }}
-                    >${data.notes.trim()}</textarea>
-                    `
+                      >${data.notes.trim()}</textarea>
+                      `
                 : html`
                     <div 
-                      class="task-modal__notes markdown-body"
-                      ${{ onClick: toggleNotesEdit }}
+                    class="task-modal__notes markdown-body"
+                    ${{ onClick: toggleNotesEdit }}
                     >
-                      ${convertToMarkdown(data.notes)}
-                    </div>
-                   
-                    `
+                    ${convertToMarkdown(data.notes)}
+                  </div>
+                  
+                  `
                 ),
-        }}
-      ></div>
+          }}
+        ></div>
+      </div>
+
+      <div data-name="task__subtasks">
+        <p class="task-modal__section">Subtasks</p>
+        <form class="create-list" ${{ onSubmit: createSubtask }}>
+          <input
+            type="text"
+            name="new-subtask"
+            id="new-subtask"
+            placeholder="Create new task"
+            class="form__input"
+          />
+          <button class="form__btn">+</button>
+        </form>
+        <ul
+          is-list
+          ${{
+            $children: task.$subtasks.map(
+              (subtask) => html`<li key="${subtask.id}">${subtask.title}</li>`
+            ),
+          }}
+        ></ul>
+      </div>
+
       <!-- Change this to a better date picker -->
-      <p class="task-modal__section">Due Date</p>
-      <input
-        type="date"
-        value="${data.dueDate}"
-        name="dueDate"
-        ${{ onChange: editTask }}
-      />
+      <div data-name="task__date">
+        <p class="task-modal__section">Due Date</p>
+        <input
+          type="date"
+          value="${data.dueDate}"
+          name="dueDate"
+          ${{ onChange: editTask }}
+        />
+      </div>
     </div>
   `;
 };

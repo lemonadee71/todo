@@ -84,7 +84,9 @@ const Core = (() => {
   event.on(TASK.ADD, ({ project, list, data }) =>
     main.addTask(project, list, data)
   );
-  event.on(TASK.REMOVE, ({ data }) => main.deleteTask(data));
+  event.on(TASK.REMOVE, ({ project, list, task: id }) =>
+    main.deleteTask(project, list, id)
+  );
   event.on(TASK.MOVE, ({ project, list, task: id, data: { position } }) =>
     main.moveTask(project, list, id, position)
   );
@@ -141,8 +143,8 @@ const Core = (() => {
   event.on(TASK.SUBTASKS.REMOVE, ({ project, list, task, subtask }) =>
     main.deleteSubtask(project, list, task, subtask)
   );
-  event.on(TASK.SUBTASKS.UPDATE, ({ project, list, task, data }) =>
-    main.updateSubtask(project, list, task, data)
+  event.on(TASK.SUBTASKS.UPDATE, ({ project, list, task, subtask, data }) =>
+    main.updateSubtask(project, list, task, subtask, data)
   );
   event.on(
     TASK.SUBTASKS.MOVE,

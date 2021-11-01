@@ -8,12 +8,16 @@ import Chip from './Chip';
 
 // data here points to the Task stored in main
 // so we rely on the fact that changes are reflected on data
-const Task = (data) => {
+const Task = (data, parent = '') => {
+  const type = parent ? 'subtask' : 'task';
+  const base = type === 'task' ? TASK : TASK.SUBTASKS;
+
   const toggleComplete = (e) => {
-    Core.event.emit(TASK.UPDATE, {
+    Core.event.emit(base.UPDATE, {
       project: data.project,
       list: data.list,
-      task: data.id,
+      task: parent || data.id,
+      subtask: data.id,
       data: {
         completed: e.target.checked,
       },
@@ -24,12 +28,11 @@ const Task = (data) => {
     element: `#${data.id}`,
     text: 'Task removed',
     callback: () =>
-      Core.event.emit(TASK.REMOVE, {
-        data: {
-          project: data.project,
-          list: data.list,
-          id: data.id,
-        },
+      Core.event.emit(base.REMOVE, {
+        project: data.project,
+        list: data.list,
+        task: parent || data.id,
+        subtask: data.id,
       }),
   });
 
@@ -43,28 +46,35 @@ const Task = (data) => {
       key="${data.id}"
       data-project="${data.project}"
       data-list="${data.list}"
-      class="${data.completed ? 'task--done' : 'task'}"
+      ${parent ? `data-parent="${parent}"` : ''}
+      class="${data.completed ? `${type}--done` : type}"
     >
-      <input
-        class="task__checkbox"
-        type="checkbox"
-        name="mark-as-done"
-        ${data.completed ? 'checked' : ''}
-        ${{ onChange: toggleComplete }}
-      />
-      <div class="task__body">
-        <div class="task__labels" is-list>
-          ${data.labels.items.map((label) => Chip(label))}
+      <div class="task__main">
+        <input
+          class="task__checkbox"
+          type="checkbox"
+          name="mark-as-done"
+          ${data.completed ? 'checked' : ''}
+          ${{ onChange: toggleComplete }}
+        />
+        <div class="task__body">
+          <div class="task__labels" is-list>
+            ${data.labels.items.map((label) => Chip(label))}
+          </div>
+          <div class="task__title">
+            <p class="task__name">${data.title}</p>
+            <span class="task__number">#${data.numId}</span>
+          </div>
+          <div class="task__badges"></div>
         </div>
-        <div class="task__title">
-          <p class="task__name">${data.title}</p>
-          <span class="task__number">#${data.numId}</span>
+
+        <div class="task__menu">
+          <button ${{ onClick: deleteTask }}>Delete</button>
+          <button ${{ onClick: editTask }}>Edit</button>
         </div>
-        <div class="task__badges"></div>
       </div>
-      <div class="task__menu">
-        <button ${{ onClick: deleteTask }}>Delete</button>
-        <button ${{ onClick: editTask }}>Edit</button>
+      <div class="task__subtasks" is-list keystring="id">
+        ${data.subtasks.items.map((subtask) => Task(subtask, data.id))}
       </div>
     </div>
   `;
