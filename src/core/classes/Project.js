@@ -12,8 +12,16 @@ export default class Project {
     this.labels = new IdList(
       labels || [
         // default labels
-        new Label({ name: 'Urgent', color: DEFAULT_COLORS[2] }),
-        new Label({ name: 'Important', color: DEFAULT_COLORS[3] }),
+        new Label({
+          name: 'Urgent',
+          color: DEFAULT_COLORS[2],
+          project: this.id,
+        }),
+        new Label({
+          name: 'Important',
+          color: DEFAULT_COLORS[3],
+          project: this.id,
+        }),
       ]
     );
     this.lists = new OrderedIdList(
