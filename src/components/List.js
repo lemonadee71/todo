@@ -57,13 +57,10 @@ const List = (data) => {
       animation: 150,
       delay: 10,
       draggable: '.task',
-      onUpdate: (e) => {
-        const id = e.item.getAttribute('key');
-        moveTask(id, e.newIndex);
-      },
+      onUpdate: (e) => moveTask(e.item.id, e.newIndex),
       onAdd: (e) => {
         const { parent } = e.item.dataset;
-        const id = e.item.getAttribute('key');
+        const { id } = e.item;
         const to = e.to.id;
         const from = parent ? e.item.dataset.list : e.from.id;
         const action = parent ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
@@ -82,17 +79,16 @@ const List = (data) => {
           id="${data.id}"
           data-name="current-tasks"
           is-list
-          keystring="id"
           ${{ '@create': init }}
         >
           ${data.items
             .filter((task) => !task.completed)
-            .map((task) => Task(task))}
+            .map((task) => new Task(task).render())}
         </div>
         <div data-name="completed-tasks" is-list keystring="id">
           ${data.items
             .filter((task) => task.completed)
-            .map((task) => Task(task))}
+            .map((task) => new Task(task).render())}
         </div>
       </div>
       <button ${{ onClick: deleteList }}>Delete</button>
