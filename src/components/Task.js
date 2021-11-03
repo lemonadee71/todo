@@ -12,7 +12,7 @@ export default class Task extends BaseTask {
     this.extraContent = html`
       <div class="task__subtasks" is-list ${{ '@create': this.initSubtasks }}>
         ${this.data.subtasks.items.map((subtask) =>
-          new Subtask(subtask).render()
+          new Subtask(subtask).render(this.data.completed)
         )}
       </div>
     `;

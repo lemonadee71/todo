@@ -1,3 +1,4 @@
+import { html } from 'poor-man-jsx';
 import { TASK } from '../core/actions';
 import { $ } from '../utils/query';
 import BaseTask from './BaseTask';
@@ -25,4 +26,22 @@ export default class Subtask extends BaseTask {
       'task-modal'
     );
   };
+
+  render(isParentComplete = false) {
+    this.checkboxComponent = html`
+      <input
+        class="task__checkbox"
+        type="checkbox"
+        name="mark-as-done"
+        ${{
+          // disable checking task if parent is complete
+          disabled: isParentComplete,
+          checked: this.data.completed,
+          onClick: this.toggleComplete.bind(this),
+        }}
+      />
+    `;
+
+    return super.render();
+  }
 }
