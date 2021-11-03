@@ -43,29 +43,38 @@ export const useProject = memoize((projectId) => {
   return [project, revoke];
 });
 
-export const useTask = (projectId, listId, taskId) => {
-  const taskRef = Core.main.getTask(projectId, listId, taskId);
+// for both task and subtask
+export const useTask = (projectId, listId, taskId, subtaskId = null) => {
+  const get = subtaskId ? Core.main.getSubtask : Core.main.getTask;
+  const taskRef = get(projectId, listId, taskId, subtaskId);
   const [task] = createHook(taskRef.data);
 
+  const action = subtaskId ? TASK.SUBTASKS : TASK;
+
   const unsubscribe = [
-    Core.event.on(TASK.UPDATE + '.success', (newData) => {
+    Core.event.on(action.UPDATE + '.success', (newData) => {
       Object.assign(task, newData);
     }),
     Core.event.on(
-      [...TASK.LABELS.ALL, ...PROJECT.LABELS.ALL],
+      [...action.LABELS.ALL, ...PROJECT.LABELS.ALL],
       () => {
         task.labels = taskRef.data.labels;
       },
       { order: 'last' }
     ),
-    Core.event.on(
-      TASK.SUBTASKS.ALL,
-      () => {
-        task.subtasks = taskRef.subtasks.items;
-      },
-      { order: 'last' }
-    ),
   ];
+
+  if (!subtaskId) {
+    unsubscribe.push(
+      Core.event.on(
+        TASK.SUBTASKS.ALL,
+        () => {
+          task.subtasks = taskRef.subtasks.items;
+        },
+        { order: 'last' }
+      )
+    );
+  }
 
   const revoke = () => unsubscribe.forEach((cb) => cb());
 
