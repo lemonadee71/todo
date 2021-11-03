@@ -1,6 +1,6 @@
 import Sortable from 'sortablejs';
 import { html } from 'poor-man-jsx';
-import { PROJECT } from '../core/actions';
+import { PROJECT, TASK } from '../core/actions';
 import { useProject } from '../core/hooks';
 import Core from '../core';
 import logger from '../utils/logger';
@@ -9,11 +9,12 @@ import List from '../components/List';
 const Project = ({ data: { id } }) => {
   const [project, revoke] = useProject(`project-${id}`);
 
+  // this is like the root of app
+  // so catch errors here for now
   const unsubscribe = [
-    // I'm not sure if this should be here
-    // But if I put this on Sidebar this doesn't trigger
     Core.event.on(PROJECT.ADD + '.error', logger.warning),
     Core.event.on(PROJECT.LISTS.ADD + '.error', logger.warning),
+    Core.event.on(TASK.UPDATE + '.error', logger.error),
   ];
 
   const createNewList = (e) => {

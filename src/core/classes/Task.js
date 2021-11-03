@@ -12,6 +12,7 @@ class Task {
     parentTask = null,
     position = null,
     completed = false,
+    required = null,
     labels = [],
     subtasks = [],
     id = `task-${uuid(8)}`,
@@ -28,8 +29,11 @@ class Task {
     // location data
     this.project = project;
     this.list = list;
-    this.parentTask = parentTask;
     this.position = position;
+
+    // subtask specific
+    this.parentTask = parentTask;
+    this.required = required;
 
     this.labels = new IdList(labels);
     this.subtasks = new OrderedIdList(subtasks);
@@ -54,7 +58,10 @@ class Task {
   addSubtask(task) {
     task.project = this.project;
     task.list = this.list;
+    // add subtask specific info
     task.parentTask = this.id;
+    task.required = true;
+
     return this.subtasks.add(task);
   }
 
@@ -65,7 +72,10 @@ class Task {
   insertSubtask(task, idx) {
     task.project = this.project;
     task.list = this.list;
+
     task.parentTask = this.id;
+    task.required = true;
+
     return this.subtasks.insert(task, idx);
   }
 
@@ -102,6 +112,15 @@ class Task {
   }
 
   toggleComplete() {
+    const isParentTask = !this.parentTask;
+    const hasIncompleteSubtask = this.subtasks.items.some(
+      (subtask) => subtask.required && !subtask.completed
+    );
+
+    if (isParentTask && !this.completed && hasIncompleteSubtask) {
+      throw new Error('Complete all required subtasks first');
+    }
+
     this.completed = !this.completed;
 
     return this.completed;

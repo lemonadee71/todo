@@ -18,6 +18,20 @@ export default class Task extends BaseTask {
     `;
   }
 
+  // ?TODO: Try setting the checkbox as indeterminate
+  toggleComplete(e) {
+    super.toggleComplete();
+
+    const unchecked = this.data.subtasks.items.reduce(
+      (acc, curr) => (!curr.completed ? ++acc : acc),
+      0
+    );
+
+    if (unchecked > 0) {
+      e.preventDefault();
+    }
+  }
+
   transferSubtask = (action, fromTask, fromList, subtaskId, position) => {
     Core.event.emit(action, {
       project: this.data.project,

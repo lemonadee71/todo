@@ -18,6 +18,18 @@ export default class BaseTask {
     // so to allow for conversion, prefix key with actual type instead
     this.key = `${this.type}-${this.data.id.split('-')[1]}`;
 
+    this.checkboxComponent = html`
+      <input
+        class="task__checkbox"
+        type="checkbox"
+        name="mark-as-done"
+        ${{
+          checked: this.data.completed,
+          onClick: this.toggleComplete.bind(this),
+        }}
+      />
+    `;
+
     // title component could change between types so we separate it
     this.titleComponent = html`
       <div class="task__title">
@@ -38,12 +50,14 @@ export default class BaseTask {
     };
   }
 
-  toggleComplete = (e) => {
+  // do not use arrow; use bind instead
+  // see https://stackoverflow.com/questions/64498584
+  toggleComplete() {
     Core.event.emit(this.action.UPDATE, {
       ...this.location,
-      data: { completed: e.target.checked },
+      data: { completed: null },
     });
-  };
+  }
 
   deleteTask = () => Core.event.emit(this.action.REMOVE, this.location);
 
@@ -72,12 +86,8 @@ export default class BaseTask {
         ${this.extraProps}
       >
         <div class="task__main">
-          <input
-            class="task__checkbox"
-            type="checkbox"
-            name="mark-as-done"
-            ${{ checked: this.data.completed, onChange: this.toggleComplete }}
-          />
+          ${this.checkboxComponent}
+
           <div class="task__body">
             <div class="task__labels" is-list>
               ${this.data.labels.items.map((label) => Chip(label))}
