@@ -19,8 +19,9 @@ export default class Subtask extends BaseTask {
   }
 
   editTask = () => {
-    $('#main-modal')
-      .changeContent(new SubtaskModal(this.data).render(), 'task-modal')
-      .show();
+    $('#main-modal').changeContent(
+      new SubtaskModal(this.data).render(),
+      'task-modal'
+    );
   };
 }

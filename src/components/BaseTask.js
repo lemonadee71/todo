@@ -47,10 +47,10 @@ export default class BaseTask {
 
   editTask = () => {
     // TODO: Change class if we have subtask specific modal styles
-    // TODO: Make this work for subtasks
-    $('#main-modal')
-      .changeContent(new TaskModal(this.data).render(), 'task-modal')
-      .show();
+    $('#main-modal').changeContent(
+      new TaskModal(this.data).render(),
+      'task-modal'
+    );
   };
 
   render() {

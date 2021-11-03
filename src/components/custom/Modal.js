@@ -3,6 +3,7 @@ import { html, render, createHook } from 'poor-man-jsx';
 class Modal extends HTMLElement {
   constructor() {
     super();
+    this.stack = [];
     [this.state, this._revoke] = createHook({
       content: [],
       contentClass: '',
@@ -69,15 +70,22 @@ class Modal extends HTMLElement {
   };
 
   changeContent = (content, contentClass = '') => {
+    this.stack.push({ content, cls: contentClass });
     this.state.content = content;
     this.state.contentClass = contentClass;
+
+    this.show();
 
     return this;
   };
 
   clearContent = () => {
-    this.state.content = [];
-    this.state.contentClass = '';
+    // remove top of the stack
+    this.stack.pop();
+    const prevContent = this.stack[this.stack.length - 1];
+
+    this.state.content = prevContent?.content || '';
+    this.state.contentClass = prevContent?.cls || '';
 
     return this;
   };
