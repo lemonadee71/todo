@@ -275,12 +275,16 @@ export const addTask = (projectId, listId, data) => {
 
 export const updateTask = (projectId, listId, taskId, data) => {
   const task = getTask(projectId, listId, taskId);
+  // since only one prop can be updated at a time
+  const [prop, value] = Object.entries(data).flat();
 
-  Object.entries(data).forEach(([prop, value]) => {
-    if (prop === 'title' && !value) throw new Error('Task must have a title');
+  if (prop === 'title' && !value) throw new Error('Task must have a title');
 
+  if (prop === 'completed') {
+    task.toggleComplete();
+  } else {
     task[prop] = value;
-  });
+  }
 
   return task.data;
 };
@@ -332,12 +336,15 @@ export const deleteSubtask = (projectId, listId, taskId, subtaskId) =>
 
 export const updateSubtask = (projectId, listId, taskId, subtaskId, data) => {
   const subtask = getTask(projectId, listId, taskId).getSubtask(subtaskId);
+  const [prop, value] = Object.entries(data).flat();
 
-  Object.entries(data).forEach(([prop, value]) => {
-    if (prop === 'title' && !value) throw new Error('Task must have a title');
+  if (prop === 'title' && !value) throw new Error('Task must have a title');
 
+  if (prop === 'completed') {
+    subtask.toggleComplete();
+  } else {
     subtask[prop] = value;
-  });
+  }
 
   return subtask.data;
 };
