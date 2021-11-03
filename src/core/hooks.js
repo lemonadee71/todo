@@ -56,7 +56,7 @@ export const useTask = (projectId, listId, taskId, subtaskId = null) => {
       Object.assign(task, newData);
     }),
     Core.event.on(
-      [...action.LABELS.ALL, ...PROJECT.LABELS.ALL],
+      [...TASK.LABELS.ALL, ...PROJECT.LABELS.ALL],
       () => {
         task.labels = taskRef.data.labels;
       },

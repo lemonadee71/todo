@@ -1,5 +1,7 @@
 import { TASK } from '../core/actions';
+import { $ } from '../utils/query';
 import BaseTask from './BaseTask';
+import SubtaskModal from './SubtaskModal';
 
 export default class Subtask extends BaseTask {
   constructor(data) {
@@ -15,4 +17,10 @@ export default class Subtask extends BaseTask {
 
     this.extraProps = `data-parent="${this.data.parentTask}"`;
   }
+
+  editTask = () => {
+    $('#main-modal')
+      .changeContent(new SubtaskModal(this.data).render(), 'task-modal')
+      .show();
+  };
 }
