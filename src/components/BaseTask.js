@@ -18,12 +18,6 @@ export default class BaseTask {
     // so to allow for conversion, prefix key with actual type instead
     this.key = `${this.type}-${this.data.id.split('-')[1]}`;
 
-    this.location = {
-      project: this.data.project,
-      list: this.data.list,
-      task: this.data.id,
-    };
-
     // title component could change between types so we separate it
     this.titleComponent = html`
       <div class="task__title">
@@ -34,6 +28,14 @@ export default class BaseTask {
 
     this.extraProps = '';
     this.extraContent = '';
+  }
+
+  get location() {
+    return {
+      project: this.data.project,
+      list: this.data.list,
+      task: this.data.id,
+    };
   }
 
   toggleComplete = (e) => {
