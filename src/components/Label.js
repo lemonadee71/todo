@@ -6,7 +6,6 @@ import { $ } from '../utils/query';
 import uuid from '../utils/id';
 
 const Label = (data, action, isSelected) => {
-  console.log(data);
   const [state] = createHook({ inputId: uuid(), isNotEditing: true });
 
   const unsubscribe = Core.event.on(PROJECT.LABELS.UPDATE + '.error', () => {

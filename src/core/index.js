@@ -110,8 +110,19 @@ const Core = (() => {
     }
   );
 
-  const taskLabelsReducer = ({ type, project, list, task: id, data }) => {
-    const task = main.getTask(project, list, id);
+  // Task and subtask share the same label callback
+  // So subtasks should emit TASK.LABELS instead
+  const taskLabelsReducer = ({
+    type,
+    project,
+    list,
+    task: taskId,
+    subtask: subtaskId,
+    data,
+  }) => {
+    const task = subtaskId
+      ? main.getSubtask(project, list, taskId, subtaskId)
+      : main.getTask(project, list, taskId);
 
     switch (type) {
       case 'add':

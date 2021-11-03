@@ -75,11 +75,10 @@ const Task = (data) => {
       onAdd: (e) => {
         const isSubtask = !!e.item.dataset.parent;
         const fromTask = e.item.dataset.parent || e.item.id;
-        const fromList = fromTask ? e.item.dataset.list : e.from.id;
-        const id = e.item.getAttribute('key');
+        const fromList = e.item.dataset.list;
         const action = isSubtask ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
 
-        transferSubtask(action, fromTask, fromList, id, e.newIndex);
+        transferSubtask(action, fromTask, fromList, e.item.id, e.newIndex);
       },
     });
   };
@@ -111,7 +110,6 @@ const Task = (data) => {
           </div>
           <div class="task__badges"></div>
         </div>
-
         <div class="task__menu">
           <button ${{ onClick: deleteTask }}>Delete</button>
           <button ${{ onClick: editTask }}>Edit</button>

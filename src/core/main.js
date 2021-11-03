@@ -365,7 +365,6 @@ export const transferSubtask = (projectId, list, task, subtaskId, position) => {
   const subtask = getTask(projectId, list.from, task.from).extractSubtask(
     subtaskId
   );
-  console.log(subtask, list, task);
   getTask(projectId, list.to, task.to).insertSubtask(subtask, position);
 
   return subtask;
