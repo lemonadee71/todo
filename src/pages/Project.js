@@ -17,7 +17,12 @@ const Project = ({ data: { id } }) => {
   const unsubscribe = [
     Core.event.on(PROJECT.ADD + '.error', logger.warning),
     Core.event.on(PROJECT.LISTS.ADD + '.error', logger.warning),
-    Core.event.on(TASK.UPDATE + '.error', logger.error),
+    Core.event.on(PROJECT.LABELS.ADD + '.error', logger.warning),
+    Core.event.on(PROJECT.LABELS.UPDATE + '.error', logger.error),
+    Core.event.on(
+      [TASK.UPDATE + '.error', TASK.SUBTASKS.UPDATE + '.error'],
+      logger.error
+    ),
     // we put this here to avoid dependency cycle
     Core.event.on('task.modal.open', (data) => {
       $('#main-modal').changeContent(

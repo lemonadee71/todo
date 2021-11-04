@@ -58,14 +58,20 @@ export default class Task extends BaseTask {
       delay: 10,
       draggable: '.subtask',
       filter: 'input,button',
-      onUpdate: (e) => this.moveSubtask(e.item.id, e.newIndex),
+      onUpdate: (e) => this.moveSubtask(e.item.dataset.id, e.newIndex),
       onAdd: (e) => {
         const isSubtask = !!e.item.dataset.parent;
-        const fromTask = e.item.dataset.parent || e.item.id;
+        const fromTask = e.item.dataset.parent || e.item.dataset.id;
         const fromList = e.item.dataset.list;
         const action = isSubtask ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
 
-        this.transferSubtask(action, fromTask, fromList, e.item.id, e.newIndex);
+        this.transferSubtask(
+          action,
+          fromTask,
+          fromList,
+          e.item.dataset.id,
+          e.newIndex
+        );
       },
     });
   };

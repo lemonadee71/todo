@@ -16,26 +16,6 @@ export default class BaseTask {
     // so to allow for conversion, prefix key with actual type instead
     this.key = `${this.type}-${this.data.id.split('-')[1]}`;
 
-    this.checkboxComponent = html`
-      <input
-        class="task__checkbox"
-        type="checkbox"
-        name="mark-as-done"
-        ${{
-          checked: this.data.completed,
-          onClick: this.toggleComplete.bind(this),
-        }}
-      />
-    `;
-
-    // title component could change between types so we separate it
-    this.titleComponent = html`
-      <div class="task__title">
-        <p class="task__name">${this.data.title}</p>
-        <span class="task__number">#${this.data.numId}</span>
-      </div>
-    `;
-
     this.extraProps = '';
     this.extraContent = '';
   }
@@ -62,8 +42,28 @@ export default class BaseTask {
   editTask = () => Core.event.emit(`${this.type}.modal.open`, this.data);
 
   render() {
+    this.checkboxComponent = html`
+      <input
+        class="task__checkbox"
+        type="checkbox"
+        name="mark-as-done"
+        ${{
+          checked: this.data.completed,
+          onClick: this.toggleComplete.bind(this),
+        }}
+      />
+    `;
+
+    // title component could change between types so we separate it
+    this.titleComponent = html`
+      <div class="task__title">
+        <p class="task__name">${this.data.title}</p>
+        <span class="task__number">#${this.data.numId}</span>
+      </div>
+    `;
+
     const deleteTaskWithUndo = useUndo({
-      element: `#${this.data.id}`,
+      element: `[data-id="${this.id}"]`,
       text: 'Task removed',
       callback: this.deleteTask,
     });
@@ -71,8 +71,8 @@ export default class BaseTask {
     return html`
       <div
         class="${this.data.completed ? `${this.type}--done` : this.type}"
-        id="${this.id}"
         key="${this.key}"
+        data-id="${this.id}"
         data-project="${this.data.project}"
         data-list="${this.data.list}"
         ${this.extraProps}

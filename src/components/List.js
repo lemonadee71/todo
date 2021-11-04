@@ -59,9 +59,8 @@ const List = (data) => {
       draggable: '.task',
       onUpdate: (e) => moveTask(e.item.id, e.newIndex),
       onAdd: (e) => {
-        const { parent } = e.item.dataset;
-        const { id } = e.item;
-        const to = e.to.id;
+        const { parent, id } = e.item.dataset;
+        const to = data.id;
         const from = parent ? e.item.dataset.list : e.from.id;
         const action = parent ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
 

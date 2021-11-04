@@ -4,22 +4,18 @@ import { PROJECT } from '../core/actions';
 import { DEFAULT_COLORS } from '../core/constants';
 import { useProject } from '../core/hooks';
 import { dispatchCustomEvent } from '../utils/dispatch';
-import logger from '../utils/logger';
+import uuid from '../utils/id';
 import { $ } from '../utils/query';
 import Label from './Label';
 
 const LabelPopover = (data, action) => {
-  let ref = null;
+  const ref = { main: uuid(), name: uuid() };
   const [project] = useProject(data.project);
   const [state] = createHook({ isVisible: false });
 
-  const unsubscribe = [
-    Core.event.on(PROJECT.LABELS.ADD + '.success', () => {
-      $('#label-name').value = '';
-    }),
-    Core.event.on(PROJECT.LABELS.ADD + '.error', logger.warning),
-    Core.event.on(PROJECT.LABELS.UPDATE + '.error', logger.warning),
-  ];
+  const unsubscribe = Core.event.on(PROJECT.LABELS.ADD + '.success', () => {
+    $.data('id', ref.name).value = '';
+  });
 
   const toggleVisibility = (value) => {
     state.isVisible = value ?? !state.isVisible;
@@ -37,10 +33,10 @@ const LabelPopover = (data, action) => {
     });
   };
 
-  const closePopover = () => dispatchCustomEvent(ref, 'popover:hide');
+  const closePopover = () =>
+    dispatchCustomEvent($.data('id', ref.main), 'popover:hide');
 
   const init = function () {
-    ref = this;
     this.addEventListener('popover:toggle', () => toggleVisibility());
     this.addEventListener('popover:open', () => toggleVisibility(true));
     this.addEventListener('popover:hide', () => toggleVisibility(false));
@@ -49,9 +45,10 @@ const LabelPopover = (data, action) => {
   return html`
     <div
       class="popover"
+      data-id="${ref.main}"
       ${{
         '@create': init,
-        '@destroy': () => unsubscribe.forEach((cb) => cb()),
+        '@destroy': unsubscribe,
         $visibility: state.$isVisible((val) => (val ? 'visible' : 'hidden')),
       }}
     >
@@ -72,7 +69,7 @@ const LabelPopover = (data, action) => {
         <label for="label-name" class="popover__title">
           Create New Label
         </label>
-        <input type="text" name="label-name" id="label-name" />
+        <input type="text" name="label-name" data-id="${ref.name}" />
         <div class="color-picker">
           ${DEFAULT_COLORS.map(
             (color) =>

@@ -2,8 +2,8 @@ import { createHook, html, render } from 'poor-man-jsx';
 import Core from '../core';
 import { TASK } from '../core/actions';
 import { useTask } from '../core/hooks';
+import { debounce } from '../utils/delay';
 import { dispatchCustomEvent } from '../utils/dispatch';
-import logger from '../utils/logger';
 import { usePopper } from '../utils/popper';
 import convertToMarkdown from '../utils/showdown';
 import LabelPopover from './LabelPopover';
@@ -82,23 +82,11 @@ export default class BaseTaskModal {
     popover.addEventListener('popover:hide', onHide());
   };
 
-  render = () => {
-    const unsubscribe = Core.event.on(
-      this.action.UPDATE + '.error',
-      logger.warning
-    );
-
+  render = () =>
     // TODO: Fix issue with title input where keyboard inputs are not going in even if focused
     // TODO: Fix data attr and classes here
-    return html`
-      <div
-        ${{
-          '@destroy': () => {
-            unsubscribe();
-            this.__revoke();
-          },
-        }}
-      >
+    html`
+      <div ${{ '@destroy': this.__revoke }}>
         <input
           type="text"
           value="${this.data.title}"
@@ -109,7 +97,7 @@ export default class BaseTaskModal {
             $readonly: this.state.$isEditingTitle,
             onClick: this.toggleTitleEdit,
             onBlur: this.toggleTitleEdit,
-            onInput: this.editTask,
+            onInput: debounce(this.editTask, 200),
           }}
         />
 
@@ -167,5 +155,4 @@ export default class BaseTaskModal {
         ${this.extraContent}
       </div>
     `;
-  };
 }
