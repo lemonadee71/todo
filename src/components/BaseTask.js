@@ -64,6 +64,7 @@ export default class BaseTask {
 
     const deleteTaskWithUndo = useUndo({
       element: `[data-id="${this.id}"]`,
+      multiple: true,
       text: 'Task removed',
       callback: this.deleteTask,
     });
