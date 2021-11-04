@@ -1,8 +1,6 @@
 import { html } from 'poor-man-jsx';
 import { TASK } from '../core/actions';
-import { $ } from '../utils/query';
 import BaseTask from './BaseTask';
-import SubtaskModal from './SubtaskModal';
 
 export default class Subtask extends BaseTask {
   constructor(data) {
@@ -19,13 +17,6 @@ export default class Subtask extends BaseTask {
       subtask: this.data.id,
     };
   }
-
-  editTask = () => {
-    $('#main-modal').changeContent(
-      new SubtaskModal(this.data).render(),
-      'task-modal'
-    );
-  };
 
   render(isParentComplete = false) {
     this.checkboxComponent = html`

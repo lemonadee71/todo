@@ -1,8 +1,6 @@
 import { html } from 'poor-man-jsx';
 import Core from '../core';
-import { $ } from '../utils/query';
 import { useUndo } from '../utils/undo';
-import TaskModal from './TaskModal';
 import Chip from './Chip';
 
 // data here points to the Task stored in main
@@ -61,13 +59,7 @@ export default class BaseTask {
 
   deleteTask = () => Core.event.emit(this.action.REMOVE, this.location);
 
-  editTask = () => {
-    // TODO: Change class if we have subtask specific modal styles
-    $('#main-modal').changeContent(
-      new TaskModal(this.data).render(),
-      'task-modal'
-    );
-  };
+  editTask = () => Core.event.emit(`${this.type}.modal.open`, this.data);
 
   render() {
     const deleteTaskWithUndo = useUndo({

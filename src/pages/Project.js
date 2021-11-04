@@ -5,6 +5,9 @@ import { useProject } from '../core/hooks';
 import Core from '../core';
 import logger from '../utils/logger';
 import List from '../components/List';
+import { $ } from '../utils/query';
+import TaskModal from '../components/TaskModal';
+import SubtaskModal from '../components/SubtaskModal';
 
 const Project = ({ data: { id } }) => {
   const [project, revoke] = useProject(`project-${id}`);
@@ -15,6 +18,19 @@ const Project = ({ data: { id } }) => {
     Core.event.on(PROJECT.ADD + '.error', logger.warning),
     Core.event.on(PROJECT.LISTS.ADD + '.error', logger.warning),
     Core.event.on(TASK.UPDATE + '.error', logger.error),
+    // we put this here to avoid dependency cycle
+    Core.event.on('task.modal.open', (data) => {
+      $('#main-modal').changeContent(
+        new TaskModal(data).render(),
+        'task-modal'
+      );
+    }),
+    Core.event.on('subtask.modal.open', (data) => {
+      $('#main-modal').changeContent(
+        new SubtaskModal(data).render(),
+        'task-modal'
+      );
+    }),
   ];
 
   const createNewList = (e) => {
