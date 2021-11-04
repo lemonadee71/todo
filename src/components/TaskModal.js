@@ -2,6 +2,7 @@ import { html } from 'poor-man-jsx';
 import { TASK } from '../core/actions';
 import Core from '../core';
 import BaseTaskModal from './BaseTaskModal';
+import Subtask from './Subtask';
 
 export default class TaskModal extends BaseTaskModal {
   constructor(data) {
@@ -23,9 +24,8 @@ export default class TaskModal extends BaseTaskModal {
         <ul
           is-list
           ${{
-            $children: this.task.$subtasks.map(
-              // TODO: Filter out completed tasks and make own subtask component
-              (subtask) => html`<li key="${subtask.id}">${subtask.title}</li>`
+            $children: this.task.$subtasks.map((subtask) =>
+              new Subtask(subtask).render(this.data.completed)
             ),
           }}
         ></ul>

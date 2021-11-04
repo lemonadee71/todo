@@ -1,13 +1,11 @@
 import { html, render, createHook } from 'poor-man-jsx';
+import { $ } from '../../utils/query';
 
 class Modal extends HTMLElement {
   constructor() {
     super();
     this.stack = [];
-    [this.state, this._revoke] = createHook({
-      content: [],
-      contentClass: '',
-    });
+    [this.state, this._revoke] = createHook({ contentClass: '' });
   }
 
   connectedCallback() {
@@ -26,26 +24,12 @@ class Modal extends HTMLElement {
     if (!this.classList.length) Object.assign(this.style, defaultBackdropStyle);
 
     const content = html`
-      <div
-        ${{
-          $class: this.state.$contentClass((cls) => `modal__content ${cls}`),
-        }}
-      >
-        <div
-          class="modal__content"
-          style="position: relative;"
-          ${{
-            $children: this.state.$content(
-              (value) =>
-                html`
-                  <span class="modal__close-btn" ${{ onClick: this.close }}>
-                    &times;
-                  </span>
-                  ${value}
-                `
-            ),
-          }}
-        ></div>
+      <div ${{ $class: this.state.$contentClass }} style="position: relative;">
+        <div class="modal__content" data-name="modal-content">
+          <span class="modal__close-btn" ${{ onClick: this.close }}>
+            &times;
+          </span>
+        </div>
       </div>
     `;
 
@@ -68,13 +52,23 @@ class Modal extends HTMLElement {
     if (!this.stack.length) {
       this.style.display = 'none';
     }
+
     return this;
   };
 
   changeContent = (content, contentClass = '') => {
-    this.stack.push({ content, cls: contentClass });
-    this.state.content = content;
+    const length = this.stack.push({ content, cls: contentClass });
     this.state.contentClass = contentClass;
+
+    // hide previous ones
+    $.by('data-modalId', this.content).forEach((node) => {
+      node.style.display = 'none';
+    });
+
+    // add and show new content
+    $.data('name', 'modal-content', this).append(
+      render(html` <div data-modalId="${length - 1}">${content}</div> `)
+    );
 
     this.show();
 
@@ -82,11 +76,19 @@ class Modal extends HTMLElement {
   };
 
   clearContent = () => {
+    const prevLength = this.stack.length;
+
     // remove top of the stack
     this.stack.pop();
-    const prevContent = this.stack[this.stack.length - 1];
+    $.data('modalId', `${prevLength - 1}`).remove();
 
-    this.state.content = prevContent?.content || '';
+    // show new top of the stack
+    const newLength = this.stack.length;
+    const prevContent = this.stack[newLength - 1];
+    if (prevContent) {
+      $.data('modalId', `${newLength - 1}`).style.display = 'block';
+    }
+
     this.state.contentClass = prevContent?.cls || '';
 
     return this;

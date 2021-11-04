@@ -1,11 +1,10 @@
-import { createHook, html } from 'poor-man-jsx';
+import { createHook, html, render } from 'poor-man-jsx';
 import Core from '../core';
 import { TASK } from '../core/actions';
 import { useTask } from '../core/hooks';
 import { dispatchCustomEvent } from '../utils/dispatch';
 import logger from '../utils/logger';
 import { usePopper } from '../utils/popper';
-import { $ } from '../utils/query';
 import convertToMarkdown from '../utils/showdown';
 import LabelPopover from './LabelPopover';
 import TaskLabel from './TaskLabel';
@@ -56,7 +55,12 @@ export default class BaseTaskModal {
   };
 
   initPopover = (node) => {
-    const popover = $(`#label-popover`);
+    // append popover
+    const popover = render(
+      LabelPopover(this.data, this.updateLabels)
+    ).firstElementChild;
+    node.after(popover);
+
     const [, onShow, onHide] = usePopper(node, popover, {
       placement: 'right-start',
       modifiers: [
@@ -89,7 +93,7 @@ export default class BaseTaskModal {
     return html`
       <div
         ${{
-          '@unmount': () => {
+          '@destroy': () => {
             unsubscribe();
             this.__revoke();
           },
@@ -128,7 +132,6 @@ export default class BaseTaskModal {
             ${{ $children: this.task.$labels.map((label) => TaskLabel(label)) }}
           ></div>
           <button ${{ '@mount': this.initPopover }}>Add label</button>
-          ${LabelPopover(this.data, this.updateLabels)}
         </div>
 
         <div data-name="task__notes">

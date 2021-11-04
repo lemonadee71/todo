@@ -67,7 +67,7 @@ export const useTask = (projectId, listId, taskId, subtaskId = null) => {
   if (!subtaskId) {
     unsubscribe.push(
       Core.event.on(
-        TASK.SUBTASKS.ALL,
+        [...TASK.SUBTASKS.ALL, ...TASK.LABELS.ALL, ...PROJECT.LABELS.ALL],
         () => {
           task.subtasks = taskRef.subtasks.items;
         },

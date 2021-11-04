@@ -9,6 +9,7 @@ import { $ } from '../utils/query';
 import Label from './Label';
 
 const LabelPopover = (data, action) => {
+  let ref = null;
   const [project] = useProject(data.project);
   const [state] = createHook({ isVisible: false });
 
@@ -36,10 +37,10 @@ const LabelPopover = (data, action) => {
     });
   };
 
-  const closePopover = () =>
-    dispatchCustomEvent($('#label-popover'), 'popover:hide');
+  const closePopover = () => dispatchCustomEvent(ref, 'popover:hide');
 
   const init = function () {
+    ref = this;
     this.addEventListener('popover:toggle', () => toggleVisibility());
     this.addEventListener('popover:open', () => toggleVisibility(true));
     this.addEventListener('popover:hide', () => toggleVisibility(false));
@@ -47,7 +48,6 @@ const LabelPopover = (data, action) => {
 
   return html`
     <div
-      id="label-popover"
       class="popover"
       ${{
         '@create': init,
