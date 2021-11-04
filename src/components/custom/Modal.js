@@ -63,9 +63,11 @@ class Modal extends HTMLElement {
   };
 
   close = () => {
-    this.style.display = 'none';
     this.clearContent();
 
+    if (!this.stack.length) {
+      this.style.display = 'none';
+    }
     return this;
   };
 
