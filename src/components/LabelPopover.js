@@ -10,7 +10,7 @@ import Label from './Label';
 
 const LabelPopover = (data, action) => {
   const ref = { main: uuid(), name: uuid() };
-  const [project] = useProject(data.project);
+  const [project, revoke] = useProject(data.project);
   const [state] = createHook({ isVisible: false });
 
   const unsubscribe = Core.event.on(PROJECT.LABELS.ADD + '.success', () => {
@@ -48,7 +48,10 @@ const LabelPopover = (data, action) => {
       data-id="${ref.main}"
       ${{
         '@create': init,
-        '@destroy': unsubscribe,
+        '@destroy': () => {
+          revoke();
+          unsubscribe();
+        },
         $visibility: state.$isVisible((val) => (val ? 'visible' : 'hidden')),
       }}
     >

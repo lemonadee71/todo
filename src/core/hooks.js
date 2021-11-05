@@ -1,11 +1,10 @@
 import { createHook } from 'poor-man-jsx';
 import Core from '.';
 import { PROJECT, TASK } from './actions';
-import { memoize } from '../utils/memo';
 
 // we rely on changes to original references
 // to be reflected here
-export const useProject = memoize((projectId) => {
+export const useProject = (projectId) => {
   const projectRef = Core.main.getProject(projectId);
   const [project] = createHook({
     // Add other properties if needed
@@ -35,13 +34,10 @@ export const useProject = memoize((projectId) => {
     }),
   ];
 
-  const revoke = () => {
-    unsubscribe.forEach((cb) => cb());
-    useProject.__cache__.delete(JSON.stringify([projectId]));
-  };
+  const revoke = () => unsubscribe.forEach((cb) => cb());
 
   return [project, revoke];
-});
+};
 
 // for both task and subtask
 export const useTask = (projectId, listId, taskId, subtaskId = null) => {
