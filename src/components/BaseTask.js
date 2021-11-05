@@ -18,6 +18,29 @@ export default class BaseTask {
 
     this.extraProps = '';
     this.extraContent = '';
+
+    this.checkboxComponent = html`
+      <label class="task__checkbox">
+        <input
+          class="checkbox__input"
+          type="checkbox"
+          name="mark-as-done"
+          ${{
+            checked: this.data.completed,
+            onClick: this.toggleComplete.bind(this),
+          }}
+        />
+        <div class="checkbox__box"><div class="checkbox__check"></div></div>
+      </label>
+    `;
+
+    // title component could change between types so we separate it
+    this.titleComponent = html`
+      <div class="task__title">
+        <p class="task__name">${this.data.title}</p>
+        <span class="task__number">#${this.data.numId}</span>
+      </div>
+    `;
   }
 
   get location() {
@@ -42,26 +65,6 @@ export default class BaseTask {
   editTask = () => Core.event.emit(`${this.type}.modal.open`, this.data);
 
   render() {
-    this.checkboxComponent = html`
-      <input
-        class="task__checkbox"
-        type="checkbox"
-        name="mark-as-done"
-        ${{
-          checked: this.data.completed,
-          onClick: this.toggleComplete.bind(this),
-        }}
-      />
-    `;
-
-    // title component could change between types so we separate it
-    this.titleComponent = html`
-      <div class="task__title">
-        <p class="task__name">${this.data.title}</p>
-        <span class="task__number">#${this.data.numId}</span>
-      </div>
-    `;
-
     const deleteTaskWithUndo = useUndo({
       element: `[data-id="${this.id}"]`,
       multiple: true,

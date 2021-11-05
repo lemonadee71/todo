@@ -20,10 +20,56 @@
     margin-bottom: $task-default-spacing - 2px;
 
     .task__checkbox {
-      width: 32px;
-      height: 32px;
+      position: relative;
+
+      cursor: pointer;
+      user-select: none;
 
       margin-right: $task-default-spacing;
+
+      /* Hide the original indicator */
+      input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+      }
+
+      .checkbox__box {
+        box-sizing: border-box;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 28px;
+        height: 28px;
+
+        background: #ffffff;
+        border: 1.5px solid #aba8a8;
+        border-radius: 4px;
+      }
+
+      .checkbox__check {
+        display: none;
+
+        box-sizing: border-box;
+
+        width: 18px;
+        height: 18px;
+
+        background: #5bc5dc;
+        border-radius: 2px;
+      }
+
+      &:hover .checkbox__box {
+        opacity: 0.8;
+      }
+
+      input:checked ~ .checkbox__box > .checkbox__check {
+        display: block;
+      }
     }
 
     .task__body {
@@ -76,13 +122,6 @@
     align-items: center;
 
     margin-bottom: $task-default-spacing - 2px;
-
-    .task__checkbox {
-      width: 24px;
-      height: 24px;
-
-      margin-right: $task-default-spacing;
-    }
 
     .task__name {
       font-family: $primary-font;

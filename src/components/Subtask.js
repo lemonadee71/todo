@@ -20,17 +20,20 @@ export default class Subtask extends BaseTask {
 
   render(isParentComplete = false) {
     this.checkboxComponent = html`
-      <input
-        class="task__checkbox"
-        type="checkbox"
-        name="mark-as-done"
-        ${{
-          // disable checking task if parent is complete
-          disabled: isParentComplete,
-          checked: this.data.completed,
-          onClick: this.toggleComplete.bind(this),
-        }}
-      />
+      <label class="task__checkbox">
+        <input
+          class="checkbox__input"
+          type="checkbox"
+          name="mark-as-done"
+          ${{
+            // disable checking task if parent is complete
+            disabled: isParentComplete,
+            checked: this.data.completed,
+            onClick: this.toggleComplete.bind(this),
+          }}
+        />
+        <div class="checkbox__box"><div class="checkbox__check"></div></div>
+      </label>
     `;
 
     return super.render();
