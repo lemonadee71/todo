@@ -66,10 +66,6 @@
       &:hover .checkbox__box {
         opacity: 0.8;
       }
-
-      input:checked ~ .checkbox__box > .checkbox__check {
-        display: block;
-      }
     }
 
     .task__body {

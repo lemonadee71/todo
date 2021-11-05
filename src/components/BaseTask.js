@@ -16,23 +16,8 @@ export default class BaseTask {
     // so to allow for conversion, prefix key with actual type instead
     this.key = `${this.type}-${this.data.id.split('-')[1]}`;
 
-    this.extraProps = '';
+    this.extraProps = { main: '', checkbox: '' };
     this.extraContent = '';
-
-    this.checkboxComponent = html`
-      <label class="task__checkbox">
-        <input
-          class="checkbox__input"
-          type="checkbox"
-          name="mark-as-done"
-          ${{
-            checked: this.data.completed,
-            onClick: this.toggleComplete.bind(this),
-          }}
-        />
-        <div class="checkbox__box"><div class="checkbox__check"></div></div>
-      </label>
-    `;
 
     // title component could change between types so we separate it
     this.titleComponent = html`
@@ -79,10 +64,27 @@ export default class BaseTask {
         data-id="${this.id}"
         data-project="${this.data.project}"
         data-list="${this.data.list}"
-        ${this.extraProps}
+        ${this.extraProps.main}
       >
         <div class="task__main">
-          ${this.checkboxComponent}
+          <label class="task__checkbox">
+            <input
+              class="checkbox__input"
+              type="checkbox"
+              name="mark-as-done"
+              ${{
+                checked: this.data.completed,
+                onClick: this.toggleComplete.bind(this),
+              }}
+              ${this.extraProps.checkbox}
+            />
+            <div class="checkbox__box">
+              <div
+                class="checkbox__check"
+                style="display: ${this.data.completed ? 'block' : 'none'}"
+              ></div>
+            </div>
+          </label>
 
           <div class="task__body">
             <div class="task__labels" is-list>
