@@ -95,7 +95,6 @@ const List = (data) => {
         <input
           type="text"
           name="new-task"
-          id="new-task"
           placeholder="Create new task"
           class="form__input"
         />

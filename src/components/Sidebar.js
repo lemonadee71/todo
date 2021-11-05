@@ -5,19 +5,17 @@ import Core from '../core';
 import ProjectLink from './ProjectLink';
 
 const Sidebar = () => {
-  const [data, revoke] = createHook({
+  const [data] = createHook({
     projects: Core.main.getProjectDetails(),
   });
 
-  const unsubscribe = [
-    Core.event.on(
-      PROJECT.ALL,
-      () => {
-        data.projects = Core.main.getProjectDetails();
-      },
-      { order: 'last' }
-    ),
-  ];
+  const unsubscribe = Core.event.on(
+    PROJECT.ALL,
+    () => {
+      data.projects = Core.main.getProjectDetails();
+    },
+    { order: 'last' }
+  );
 
   const createNewProject = (e) => {
     e.preventDefault();
@@ -63,10 +61,7 @@ const Sidebar = () => {
         keystring="id"
         ${{
           '@create': init,
-          '@unmount': () => {
-            unsubscribe.forEach((cb) => cb());
-            revoke();
-          },
+          '@unmount': unsubscribe,
           $children: data.$projects.map((project) => ProjectLink(project)),
         }}
       ></ul>

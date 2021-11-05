@@ -7,7 +7,21 @@ import Subtask from './Subtask';
 export default class TaskModal extends BaseTaskModal {
   constructor(data) {
     super('task', data, TASK);
+  }
 
+  createSubtask = (e) => {
+    e.preventDefault();
+
+    const input = e.target.elements['new-subtask'];
+    Core.event.emit(TASK.SUBTASKS.ADD, {
+      ...this.location,
+      data: { title: input.value },
+    });
+
+    input.value = '';
+  };
+
+  render() {
     this.extraContent = html`
       <div data-name="task__subtasks">
         <p class="task-modal__section">Subtasks</p>
@@ -31,17 +45,7 @@ export default class TaskModal extends BaseTaskModal {
         ></ul>
       </div>
     `;
+
+    return super.render();
   }
-
-  createSubtask = (e) => {
-    e.preventDefault();
-
-    const input = e.target.elements['new-subtask'];
-    Core.event.emit(TASK.SUBTASKS.ADD, {
-      ...this.location,
-      data: { title: input.value },
-    });
-
-    input.value = '';
-  };
 }

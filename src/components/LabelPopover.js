@@ -17,10 +17,6 @@ const LabelPopover = (data, action) => {
     $.data('id', ref.name).value = '';
   });
 
-  const toggleVisibility = (value) => {
-    state.isVisible = value ?? !state.isVisible;
-  };
-
   const createLabel = (e) => {
     e.preventDefault();
 
@@ -31,6 +27,10 @@ const LabelPopover = (data, action) => {
       project: data.project,
       data: { name, color },
     });
+  };
+
+  const toggleVisibility = (value) => {
+    state.isVisible = value ?? !state.isVisible;
   };
 
   const closePopover = () =>

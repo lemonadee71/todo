@@ -8,14 +8,6 @@ import Subtask from './Subtask';
 export default class Task extends BaseTask {
   constructor(data) {
     super('task', data, TASK);
-
-    this.extraContent = html`
-      <div class="task__subtasks" is-list ${{ '@create': this.initSubtasks }}>
-        ${this.data.subtasks.items.map((subtask) =>
-          new Subtask(subtask).render(this.data.completed)
-        )}
-      </div>
-    `;
   }
 
   // ?TODO: Try setting the checkbox as indeterminate
@@ -75,4 +67,16 @@ export default class Task extends BaseTask {
       },
     });
   };
+
+  render() {
+    this.extraContent = html`
+      <div class="task__subtasks" is-list ${{ '@create': this.initSubtasks }}>
+        ${this.data.subtasks.items.map((subtask) =>
+          new Subtask(subtask).render(this.data.completed)
+        )}
+      </div>
+    `;
+
+    return super.render();
+  }
 }

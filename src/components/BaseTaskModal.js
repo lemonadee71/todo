@@ -26,7 +26,7 @@ export default class BaseTaskModal {
       subtask: this.data.parentTask && this.data.id,
     };
 
-    [this.task, this.__revoke] = useTask(...Object.values(this.location));
+    [this.task, this._revoke] = useTask(...Object.values(this.location));
     [this.state] = createHook({ isEditingTitle: false, isEditingNotes: false });
 
     this.extraContent = '';
@@ -82,11 +82,11 @@ export default class BaseTaskModal {
     popover.addEventListener('popover:hide', onHide());
   };
 
-  render = () =>
+  render() {
     // TODO: Fix issue with title input where keyboard inputs are not going in even if focused
     // TODO: Fix data attr and classes here
-    html`
-      <div ${{ '@destroy': this.__revoke }}>
+    return html`
+      <div ${{ '@destroy': this._revoke }}>
         <input
           type="text"
           value="${this.data.title}"
@@ -132,12 +132,12 @@ export default class BaseTaskModal {
                   ? // prettier-ignore
                     html`
                       <textarea
-                        name="notes"
-                        class="task-modal__notes"
-                        ${{
-                          onInput: this.editTask,
-                          onBlur: this.toggleNotesEdit,
-                        }}
+                      name="notes"
+                      class="task-modal__notes"
+                      ${{
+                        onInput: this.editTask,
+                        onBlur: this.toggleNotesEdit,
+                      }}
                       >${this.data.notes.trim()}</textarea>`
                   : html`
                       <div
@@ -155,4 +155,5 @@ export default class BaseTaskModal {
         ${this.extraContent}
       </div>
     `;
+  }
 }
