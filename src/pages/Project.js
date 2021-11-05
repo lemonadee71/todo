@@ -4,10 +4,11 @@ import { PROJECT, TASK } from '../core/actions';
 import { useProject } from '../core/hooks';
 import Core from '../core';
 import logger from '../utils/logger';
-import List from '../components/List';
 import { $ } from '../utils/query';
+import { appendError, wrap } from '../utils/misc';
 import TaskModal from '../components/TaskModal';
 import SubtaskModal from '../components/SubtaskModal';
+import List from '../components/List';
 
 const Project = ({ data: { id } }) => {
   const [project, revoke] = useProject(`project-${id}`);
@@ -15,13 +16,19 @@ const Project = ({ data: { id } }) => {
   // this is like the root of app
   // so catch errors here for now
   const unsubscribe = [
-    Core.event.on(PROJECT.ADD + '.error', logger.warning),
-    Core.event.on(PROJECT.LISTS.ADD + '.error', logger.warning),
-    Core.event.on(PROJECT.LABELS.ADD + '.error', logger.warning),
-    Core.event.on(PROJECT.LABELS.UPDATE + '.error', logger.error),
     Core.event.on(
-      [TASK.UPDATE + '.error', TASK.SUBTASKS.UPDATE + '.error'],
-      logger.error
+      appendError([PROJECT.ADD, PROJECT.LISTS.ADD, PROJECT.LABELS.ADD]),
+      wrap(logger.warning)
+    ),
+    Core.event.on(
+      appendError([
+        PROJECT.UPDATE,
+        PROJECT.LABELS.UPDATE,
+        PROJECT.LISTS.UPDATE,
+        TASK.UPDATE,
+        TASK.SUBTASKS.UPDATE,
+      ]),
+      wrap(logger.error)
     ),
     // we put this here to avoid dependency cycle
     Core.event.on('task.modal.open', (data) => {
@@ -71,7 +78,7 @@ const Project = ({ data: { id } }) => {
     <div
       class="project"
       ${{
-        '@unmount': () => {
+        '@destroy': () => {
           revoke();
           unsubscribe.forEach((cb) => cb());
         },
