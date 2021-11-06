@@ -83,6 +83,6 @@ class Storage {
 
 Storage.root = Object.freeze(new Storage());
 
-const LocalStorage = new Storage(LOCAL_USER + '__');
+const LocalStorage = new Storage(`${LOCAL_USER}__`);
 
 export { LocalStorage, Storage };

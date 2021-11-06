@@ -30,17 +30,20 @@ const Core = (() => {
   // * Run before any renders
   const init = (user) => {
     state.currentUser = user || LOCAL_USER;
-    LocalStorage.prefix = state.currentUser + '__';
+    LocalStorage.prefix = `${state.currentUser}__`;
 
     main.init();
 
-    state.currentPage = Storage.root.get(LAST_OPENED_PAGE) || state.currentPage;
+    const cached = Storage.root.get(LAST_OPENED_PAGE);
+    state.currentPage = cached?.href || state.currentPage;
+
     router.navigate(state.currentPage);
+    if (cached?.title) document.title = cached.title;
   };
 
-  event.on(NAVIGATE_TO_PAGE, (path) => {
-    state.currentPage = path;
-    Storage.root.store(LAST_OPENED_PAGE, path);
+  event.on(NAVIGATE_TO_PAGE, (data) => {
+    state.currentPage = data.href;
+    Storage.root.store(LAST_OPENED_PAGE, data);
   });
 
   /**

@@ -17,7 +17,7 @@ class Link extends HTMLAnchorElement {
       }
 
       Core.router.navigate(href, { title });
-      Core.event.emit(NAVIGATE_TO_PAGE, href);
+      Core.event.emit(NAVIGATE_TO_PAGE, { title, href });
     });
   }
 }
