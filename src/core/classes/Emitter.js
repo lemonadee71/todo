@@ -81,7 +81,7 @@ class EventEmitter {
           if (isPlain && (handler.options.emitSuccess || emitSuccess))
             this.emit(`${topic}.success`, result);
         } catch (e) {
-          console.error(e.message);
+          console.error(e);
 
           if (isPlain && (handler.options.emitError || emitError)) {
             this.emit(`${topic}.error`, e);
