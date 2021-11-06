@@ -84,7 +84,7 @@ const List = (data) => {
             .filter((task) => !task.completed)
             .map((task) => new Task(task).render())}
         </div>
-        <div data-name="completed-tasks" is-list keystring="id">
+        <div data-name="completed-tasks" is-list>
           ${data.items
             .filter((task) => task.completed)
             .map((task) => new Task(task).render())}
