@@ -47,8 +47,8 @@ const LabelPopover = (data, action) => {
       class="popover"
       data-id="${ref.main}"
       ${{
-        '@create': init,
-        '@destroy': () => {
+        onCreate: init,
+        onDestroy: () => {
           revoke();
           unsubscribe();
         },

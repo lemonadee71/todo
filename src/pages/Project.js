@@ -78,7 +78,7 @@ const Project = ({ data: { id } }) => {
     <div
       class="project"
       ${{
-        '@destroy': () => {
+        onDestroy: () => {
           revoke();
           unsubscribe.forEach((cb) => cb());
         },
@@ -97,7 +97,7 @@ const Project = ({ data: { id } }) => {
         class="project__body"
         is-list
         keystring="id"
-        ${{ '@create': init }}
+        ${{ onCreate: init }}
         ${{ $children: project.$lists.map((list) => List(list)) }}
       ></div>
     </div>

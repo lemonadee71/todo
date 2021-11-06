@@ -63,7 +63,9 @@ export default class BaseTaskModal {
     this.state.isEditingNotes = !this.state.isEditingNotes;
   };
 
-  initPopover = (node) => {
+  initPopover = (evt) => {
+    const node = evt.target;
+
     // append popover
     const popover = render(
       LabelPopover(this.data, this.updateLabels)
@@ -95,7 +97,7 @@ export default class BaseTaskModal {
     // TODO: Fix issue with title input where keyboard inputs are not going in even if focused
     // TODO: Fix data attr and classes here
     return html`
-      <div ${{ '@destroy': this._revoke }}>
+      <div ${{ onDestroy: this._revoke }}>
         <input
           type="text"
           value="${this.data.title}"
@@ -128,7 +130,7 @@ export default class BaseTaskModal {
             is-list
             ${{ $children: this.task.$labels.map((label) => TaskLabel(label)) }}
           ></div>
-          <button ${{ '@mount': this.initPopover }}>Add label</button>
+          <button ${{ onMount: this.initPopover }}>Add label</button>
         </div>
 
         <div data-name="task__notes">

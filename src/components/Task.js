@@ -29,8 +29,8 @@ export default class Task extends BaseTask {
     });
   };
 
-  initSubtasks = (node) => {
-    Sortable.create(node, {
+  initSubtasks = (evt) => {
+    Sortable.create(evt.target, {
       group: 'tasks',
       animation: 150,
       delay: 10,
@@ -56,7 +56,7 @@ export default class Task extends BaseTask {
 
   render() {
     this.extraContent = html`
-      <div class="task__subtasks" is-list ${{ '@create': this.initSubtasks }}>
+      <div class="task__subtasks" is-list ${{ onCreate: this.initSubtasks }}>
         ${this.data.subtasks.items.map((subtask) =>
           new Subtask(subtask).render(this.data.completed)
         )}

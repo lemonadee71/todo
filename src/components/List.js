@@ -78,7 +78,7 @@ const List = (data) => {
           id="${data.id}"
           data-name="current-tasks"
           is-list
-          ${{ '@create': init }}
+          ${{ onCreate: init }}
         >
           ${data.items
             .filter((task) => !task.completed)

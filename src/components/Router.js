@@ -39,8 +39,8 @@ const Router = (routes, tagName = 'div', props = '') => {
       ${props}
       ${{
         $children: current.$url(changeContent),
-        '@create': init,
-        '@destroy': destroy,
+        onCreate: init,
+        onDestroy: destroy,
       }}
     ></${tagName}>
   `;

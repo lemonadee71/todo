@@ -60,8 +60,8 @@ const Sidebar = () => {
         is-list
         keystring="id"
         ${{
-          '@create': init,
-          '@unmount': unsubscribe,
+          onCreate: init,
+          onUnmount: unsubscribe,
           $children: data.$projects.map((project) => ProjectLink(project)),
         }}
       ></ul>
