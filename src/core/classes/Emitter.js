@@ -4,13 +4,15 @@ const VALUES = {
 };
 
 class EventEmitter {
-  constructor() {
+  constructor(options = {}) {
     this.events = new Map();
     this.globalOptions = {
-      return: true,
-      throw: true,
-      dontCatch: false,
+      emitSuccess: true,
+      emitError: true,
+      rethrow: false,
     };
+
+    Object.assign(this.globalOptions, options);
   }
 
   get size() {
@@ -57,7 +59,7 @@ class EventEmitter {
     return this;
   }
 
-  emit(topic, ...payload) {
+  emit(topic, payload, options = {}) {
     this.getTopic(topic)
       .sort((a, b) => {
         const x = a.options.order;
@@ -68,26 +70,26 @@ class EventEmitter {
         return aValue - bValue;
       })
       .forEach((handler) => {
-        const { fn, options } = handler;
-        const {
-          dontCatch,
-          return: willReturn,
-          throw: willThrow,
-        } = this.globalOptions;
-        const isNotSuccessOrError =
+        const { emitSuccess, emitError, rethrow } = this.globalOptions;
+        const isPlain =
           !topic.endsWith('.success') && !topic.endsWith('.error');
 
         try {
-          const result = fn.apply(options.context, payload);
+          const result = handler.fn.call(handler.options.context, payload);
 
-          if (options.once) this.off(topic, fn);
-          if (isNotSuccessOrError && (options.return || willReturn))
+          if (handler.options.once) this.off(topic, handler.fn);
+          if (isPlain && (handler.options.emitSuccess || emitSuccess))
             this.emit(`${topic}.success`, result);
         } catch (e) {
-          console.error(e);
-          if (isNotSuccessOrError && (options.throw || willThrow))
+          console.error(e.message);
+
+          if (isPlain && (handler.options.emitError || emitError)) {
             this.emit(`${topic}.error`, e);
-          if (options.dontCatch || dontCatch) throw e;
+          }
+
+          if (options.rethrow || handler.options.rethrow || rethrow) {
+            throw e;
+          }
         }
       });
 

@@ -34,11 +34,20 @@ export default class BaseTaskModal {
 
   editTask = (e) => {
     const { name, value } = e.target;
-
-    Core.event.emit(this.action.UPDATE, {
-      ...this.location,
-      data: { [name]: value },
-    });
+    try {
+      Core.event.emit(
+        this.action.UPDATE,
+        {
+          ...this.location,
+          data: { [name]: value },
+        },
+        { rethrow: true }
+      );
+    } catch (error) {
+      if (name === 'title') {
+        e.target.value = this.data.title;
+      }
+    }
   };
 
   updateLabels = (id, isSelected) => {
