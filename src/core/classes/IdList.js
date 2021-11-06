@@ -1,11 +1,9 @@
 import List from './List';
 
 class IdList extends List {
-  constructor(items, defaultProp = 'id') {
+  constructor(items) {
     super(items);
-    this.identifier = defaultProp;
-    this.__defaultPredicate = (value) => (item) =>
-      item[this.identifier] === value;
+    this.__defaultPredicate = (value) => (item) => item.id === value;
   }
 
   _createPredicate(predicate) {

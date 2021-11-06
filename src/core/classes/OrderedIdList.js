@@ -1,19 +1,20 @@
 import IdList from './IdList';
 
 class OrderedIdList extends IdList {
-  constructor(items, defaultIdentifer = 'id', defaultIdxProp = 'position') {
-    super(items, defaultIdentifer);
-    this.idxProp = defaultIdxProp;
+  constructor(items) {
+    super(items);
 
+    // we only need to sort on init
+    // since we already have an insert method
+    this._items.sort((a, b) => a.position - b.position);
     this.updatePosition();
   }
 
   updatePosition() {
     // update items position based on their index
     this._items.forEach((item, i) => {
-      item[this.idxProp] = i;
+      item.position = i;
     });
-    this._items.sort((a, b) => a[this.idxProp] - b[this.idxProp]);
 
     return this;
   }
