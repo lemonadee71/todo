@@ -57,7 +57,7 @@ const List = (data) => {
       animation: 150,
       delay: 10,
       draggable: '.task',
-      onUpdate: (e) => moveTask(e.item.id, e.newIndex),
+      onUpdate: (e) => moveTask(e.item.dataset.id, e.newIndex),
       onAdd: (e) => {
         const { parent, id } = e.item.dataset;
         const to = data.id;
