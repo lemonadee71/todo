@@ -10,14 +10,14 @@ export default class Subtask extends BaseTask {
     return {
       project: this.data.project,
       list: this.data.list,
-      task: this.data.parentTask,
+      task: this.data.parent,
       subtask: this.data.id,
     };
   }
 
   render(isParentComplete = false) {
     this.extraProps = {
-      main: `data-parent="${this.data.parentTask}"`,
+      main: `data-parent="${this.data.parent}"`,
       checkbox: { disabled: isParentComplete },
     };
 

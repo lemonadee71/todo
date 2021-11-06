@@ -1,4 +1,5 @@
 import Task from './classes/Task';
+import Subtask from './classes/Subtask';
 import TaskList from './classes/TaskList';
 import OrderedIdList from './classes/OrderedIdList';
 import Label from './classes/Label';
@@ -64,7 +65,7 @@ const recoverData = () => {
             projectLabels.find((label) => label.id === subtaskLabel.id)
           );
 
-          return new Task({ ...subtask, labels: subtaskLabels, subtasks: [] });
+          return new Subtask({ ...subtask, labels: subtaskLabels });
         });
 
         return new Task({
@@ -85,8 +86,6 @@ const recoverData = () => {
       })
     );
   });
-
-  data.sort((a, b) => a.position - b.position);
 
   return data;
 };
@@ -301,7 +300,10 @@ export const transferTaskToList = (projectId, list, taskId, position) => {
 
 export const convertTaskToSubtask = (projectId, list, task, position) => {
   const item = getList(projectId, list.from).extract(task.from);
-  getTask(projectId, list.to, task.to).insertSubtask(item, position);
+  getTask(projectId, list.to, task.to).insertSubtask(
+    new Subtask(item.data),
+    position
+  );
 
   return item;
 };
@@ -316,10 +318,7 @@ export const getSubtask = (projectId, listId, taskId, subtaskId) =>
 export const addSubtask = (projectId, listId, taskId, data) => {
   const project = getProject(projectId);
   const task = getTask(projectId, listId, taskId);
-  const subtask = new Task({
-    ...data,
-    numId: ++project.totalTasks,
-  });
+  const subtask = new Subtask({ ...data, numId: ++project.totalTasks });
   task.addSubtask(subtask);
 
   return subtask;
@@ -356,8 +355,7 @@ export const convertSubtaskToTask = (
   const subtask = getTask(projectId, list.from, taskId).extractSubtask(
     subtaskId
   );
-  subtask.parentTask = null;
-  getList(projectId, list.to).insert(subtask, position);
+  getList(projectId, list.to).insert(new Task(subtask.data), position);
 
   return subtask;
 };

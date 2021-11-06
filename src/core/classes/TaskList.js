@@ -11,16 +11,11 @@ class TaskList extends OrderedIdList {
     this.position = position;
   }
 
-  set name(name) {
-    this.name = name || 'Unnamed List';
-
-    return this.name;
-  }
-
   add(task) {
     const tasks = [task].flat().map((item) => {
       item.project = this.project;
       item.list = this.id;
+      item.updateSubtasks();
 
       return item;
     });
@@ -31,6 +26,7 @@ class TaskList extends OrderedIdList {
   insert(task, idx) {
     task.project = this.project;
     task.list = this.id;
+    task.updateSubtasks();
 
     return super.insert(task, idx);
   }

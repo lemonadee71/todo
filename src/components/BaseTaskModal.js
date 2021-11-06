@@ -22,8 +22,8 @@ export default class BaseTaskModal {
       list: this.data.list,
       // this should be implemented by inheriting children
       // but this is a quick fix for now
-      task: this.data.parentTask || this.data.id,
-      subtask: this.data.parentTask && this.data.id,
+      task: this.data.parent || this.data.id,
+      subtask: this.data.parent && this.data.id,
     };
 
     [this.task, this._revoke] = useTask(...Object.values(this.location));
