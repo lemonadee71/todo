@@ -81,7 +81,7 @@ class Storage {
   }
 }
 
-Storage.global = new Storage();
+Storage.root = Object.freeze(new Storage());
 
 const LocalStorage = new Storage(LOCAL_USER + '__');
 

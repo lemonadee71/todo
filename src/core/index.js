@@ -34,14 +34,13 @@ const Core = (() => {
 
     main.init();
 
-    state.currentPage =
-      Storage.global.get(LAST_OPENED_PAGE) || state.currentPage;
+    state.currentPage = Storage.root.get(LAST_OPENED_PAGE) || state.currentPage;
     router.navigate(state.currentPage);
   };
 
   event.on(NAVIGATE_TO_PAGE, (path) => {
     state.currentPage = path;
-    Storage.global.store(LAST_OPENED_PAGE, path);
+    Storage.root.store(LAST_OPENED_PAGE, path);
   });
 
   /**
