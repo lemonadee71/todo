@@ -15,16 +15,9 @@ const Chip = (data) => {
         $class: Core.state.$expandLabels((val) =>
           val ? 'task-label' : 'chip'
         ),
+        $textContent: Core.state.$expandLabels((val) => (val ? data.name : '')),
       }}
-    >
-      <span
-        ${{
-          $textContent: Core.state.$expandLabels((val) =>
-            val ? data.name : ''
-          ),
-        }}
-      ></span>
-    </div>
+    ></div>
   `;
 };
 

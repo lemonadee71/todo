@@ -7,7 +7,6 @@ import { dispatchCustomEvent } from '../utils/dispatch';
 import { usePopper } from '../utils/popper';
 import convertToMarkdown from '../utils/showdown';
 import LabelPopover from './LabelPopover';
-import TaskLabel from './TaskLabel';
 
 export default class BaseTaskModal {
   constructor(type, data, action) {
@@ -128,7 +127,20 @@ export default class BaseTaskModal {
           <div
             class="task-modal__labels"
             is-list
-            ${{ $children: this.task.$labels.map((label) => TaskLabel(label)) }}
+            ${{
+              $children: this.task.$labels.map(
+                (label) => html`
+                  <div
+                    is-text
+                    key="${label.id}"
+                    class="task-label"
+                    ${{ backgroundColor: label.color }}
+                  >
+                    {% ${label.name} %}
+                  </div>
+                `
+              ),
+            }}
           ></div>
           <button ${{ onMount: this.initPopover }}>Add label</button>
         </div>
