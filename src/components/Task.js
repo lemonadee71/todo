@@ -1,5 +1,6 @@
 import Sortable from 'sortablejs';
 import { html } from 'poor-man-jsx';
+import { DEFAULT_COLORS } from '../core/constants';
 import { TASK } from '../core/actions';
 import Core from '../core';
 import BaseTask from './BaseTask';
@@ -56,12 +57,30 @@ export default class Task extends BaseTask {
 
   render() {
     this.extraContent = html`
-      <div class="task__subtasks" is-list ${{ onCreate: this.initSubtasks }}>
+      <div is-list class="task__subtasks" ${{ onCreate: this.initSubtasks }}>
         ${this.data.subtasks.items.map((subtask) =>
           new Subtask(subtask).render(this.data.completed)
         )}
       </div>
     `;
+
+    const totalSubtasks = this.data.subtasks.items.length;
+    const completedSubtasks = this.data.subtasks.items.reduce(
+      (count, subtask) => (subtask.completed ? ++count : count),
+      0
+    );
+    const subtasksBadge = totalSubtasks
+      ? html`<div
+          is-text
+          key="subtasks"
+          class="badge"
+          style="background-color: ${DEFAULT_COLORS[9]};"
+        >
+          ${completedSubtasks} / ${totalSubtasks}
+        </div>`
+      : '';
+
+    this.badges = [...this.badges, subtasksBadge];
 
     return super.render();
   }

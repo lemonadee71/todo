@@ -106,6 +106,10 @@
     .task__badges {
       display: flex;
       flex-wrap: wrap;
+
+      .badge {
+        @extend %badge;
+      }
     }
   }
 }
