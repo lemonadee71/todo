@@ -55,6 +55,10 @@ const Website = () =>
       class: 'sidebar',
     })}
     ${Router(routes, 'main', { class: 'app' })}
+    <div id="tooltip" class="tooltip">
+      <span></span>
+      <div class="arrow" data-popper-arrow></div>
+    </div>
     <my-modal id="main-modal" close-btn-class="modal__close-btn"></my-modal>
   `;
 

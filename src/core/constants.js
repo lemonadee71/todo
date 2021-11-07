@@ -24,3 +24,5 @@ export const DEFAULT_COLORS = [
   '#FF78CB', // 8, pink
   '#344563', // 9, black
 ];
+export const SHOW_EVENTS = ['mouseenter', 'focus'];
+export const HIDE_EVENTS = ['mouseleave', 'blur'];

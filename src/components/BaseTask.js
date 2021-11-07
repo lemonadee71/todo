@@ -1,8 +1,9 @@
 import { html } from 'poor-man-jsx';
 import Core from '../core';
-import { DEFAULT_COLORS } from '../core/constants';
-import { formatDate, isDueToday, parse } from '../utils/date';
+import { DEFAULT_COLORS, HIDE_EVENTS, SHOW_EVENTS } from '../core/constants';
+import { formatDate, formatDateToNow, isDueToday, parse } from '../utils/date';
 import { useUndo } from '../utils/undo';
+import { useTooltip } from '../utils/useTooltip';
 import Chip from './Chip';
 
 // data here points to the Task stored in main
@@ -38,6 +39,7 @@ export default class BaseTask {
           style="background-color: ${isDueToday(parse(this.data.dueDate))
             ? DEFAULT_COLORS[3]
             : DEFAULT_COLORS[0]};"
+          data-tooltip-text="Due in ${formatDateToNow(this.data.dueDate)}"
         >
           ${formatDate(this.data.dueDate)}
         </div>`,
@@ -72,6 +74,21 @@ export default class BaseTask {
       text: 'Task removed',
       callback: this.deleteTask,
     });
+
+    // enable tooltips to badges
+    const initBadges = (e) => {
+      const badges = [...e.target.children];
+      badges.forEach((badge) => {
+        const [showTooltip, hideTooltip] = useTooltip(badge);
+
+        SHOW_EVENTS.forEach((event) =>
+          badge.addEventListener(event, showTooltip)
+        );
+        HIDE_EVENTS.forEach((event) =>
+          badge.addEventListener(event, hideTooltip)
+        );
+      });
+    };
 
     return html`
       <div
@@ -109,7 +126,9 @@ export default class BaseTask {
 
             ${this.titleComponent}
 
-            <div class="task__badges" is-list>${this.badges}</div>
+            <div class="task__badges" is-list ${{ onCreate: initBadges }}>
+              ${this.badges}
+            </div>
           </div>
           <div class="task__menu">
             <button ${{ onClick: this.editTask }}>Edit</button>

@@ -19,9 +19,11 @@ const isUpcomingInFuture = (date) => !isThisMonth(date) && isFuture(date);
 
 const parse = (date) => parseISO(date);
 
+const formatDateToNow = (dirtyDate) =>
+  formatDistanceToNow(parse(dirtyDate, { addSuffix: true }));
+
 const formatDate = (dirtyDate) => {
   const date = parse(dirtyDate);
-  const opts = { addSuffix: true };
 
   if (isDueToday(date)) {
     return 'Due today';
@@ -33,7 +35,7 @@ const formatDate = (dirtyDate) => {
     return 'Due yesterday';
   }
   if (isPast(date) || isUpcomingInFuture(date)) {
-    return `Due ${formatDistanceToNow(date, opts)}`;
+    return `Due in ${formatDateToNow(dirtyDate)}`;
   }
   if (isDueThisWeek(date)) {
     return `Due ${format(date, 'E, MMM dd')}`;
@@ -48,5 +50,6 @@ export {
   isDueThisWeek,
   isUpcoming,
   formatDate,
+  formatDateToNow,
   parse,
 };

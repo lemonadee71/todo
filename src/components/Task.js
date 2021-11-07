@@ -75,6 +75,7 @@ export default class Task extends BaseTask {
           key="subtasks"
           class="badge"
           style="background-color: ${DEFAULT_COLORS[9]};"
+          data-tooltip-text="This task has subtasks"
         >
           ${completedSubtasks} / ${totalSubtasks}
         </div>`
