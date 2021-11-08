@@ -1,18 +1,24 @@
 import Sortable from 'sortablejs';
-import { createHook, html, render } from 'poor-man-jsx';
+import { createHook, html } from 'poor-man-jsx';
 import { DEFAULT_COLORS } from '../core/constants';
 import { TASK } from '../core/actions';
 import Core from '../core';
 import BaseTask from './BaseTask';
 import Subtask from './Subtask';
-import uuid from '../utils/id';
 
 export default class Task extends BaseTask {
   constructor(data) {
     super('task', data, TASK);
 
-    this._subtasksId = uuid();
-    [this.state, this._revoke] = createHook({ showSubtasks: false });
+    [this.state, this._revoke] = createHook({
+      showSubtasks: false,
+      showSubtasksBadge: true,
+      subtasksCount: `${this.completedSubtasks} / ${this.totalSubtasks}`,
+    });
+
+    this._unsubscribe = Core.event.on(TASK.SUBTASKS.ADD, () => {
+      this.state.showSubtasksBadge = true;
+    });
   }
 
   get totalSubtasks() {
@@ -71,34 +77,66 @@ export default class Task extends BaseTask {
   };
 
   initBadges(e) {
-    // create subtasks badge
-    const subtasksBadge = html`<div
-      is-text
-      key="subtasks"
-      class="badge"
-      style="background-color: ${DEFAULT_COLORS[9]};"
-      data-tooltip-text="This task has subtasks"
-    >
-      ${this.completedSubtasks} / ${this.totalSubtasks}
-    </div>`;
-
     // initialize badges; add toggling of subtasks
     const badges = e.target;
     badges.addEventListener('click', () => {
       this.state.showSubtasks = !this.state.showSubtasks;
     });
 
-    if (this.totalSubtasks) render(subtasksBadge, badges);
-    // initialize to enable tooltips
     super.initBadges(e);
   }
 
   render() {
+    this.badges = [
+      ...this.badges,
+      html`<div
+        is-text
+        ignore="style"
+        key="subtasks"
+        class="badge"
+        data-tooltip-text="This task has subtasks"
+        ${{
+          backgroundColor: DEFAULT_COLORS[9],
+          $display: this.state.$showSubtasksBadge((val) =>
+            val && this.totalSubtasks ? 'block' : 'none'
+          ),
+          $textContent: this.state.$subtasksCount,
+        }}
+      ></div>`,
+    ];
+
+    let deletedSubtasks = 0;
+
+    this.extraProps.main = {
+      onDestroy: () => {
+        this._revoke();
+        this._unsubscribe();
+      },
+      onSubtaskDelete: (e) => {
+        if (e.detail.cancelled || e.detail.success) {
+          deletedSubtasks -= 1;
+          this.state.showSubtasksBadge = true;
+        } else {
+          deletedSubtasks += 1;
+        }
+
+        const total = this.totalSubtasks - deletedSubtasks;
+        const completed = Math.max(
+          e.detail.completed
+            ? this.completedSubtasks - deletedSubtasks
+            : this.completedSubtasks,
+          0
+        );
+
+        this.state.subtasksCount = `${completed} / ${total}`;
+        if (!total) this.state.showSubtasksBadge = false;
+      },
+    };
+
     this.extraContent = html`
       <div
         is-list
-        ignore="data-id,style"
-        data-id="${this._subtasksId}"
+        ignore="style"
         class="task__subtasks"
         ${{
           $display: this.state.$showSubtasks((val) => (val ? 'block' : 'none')),
