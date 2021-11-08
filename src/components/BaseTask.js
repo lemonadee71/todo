@@ -71,14 +71,23 @@ export default class BaseTask {
   initBadges(e) {
     const badges = [...e.target.children];
     badges.forEach((badge) => {
-      const [showTooltip, hideTooltip] = useTooltip(badge);
+      const [onShow, onHide] = useTooltip(badge);
 
       SHOW_EVENTS.forEach((event) =>
-        badge.addEventListener(event, showTooltip)
+        badge.addEventListener(
+          event,
+          onShow(() => {
+            if (badge.getAttribute('key') !== 'date') return;
+
+            // show latest on hover
+            // this is to avoid using setInterval
+            badge.dataset.tooltipText = `Due in ${formatDateToNow(
+              this.data.dueDate
+            )}`;
+          })
+        )
       );
-      HIDE_EVENTS.forEach((event) =>
-        badge.addEventListener(event, hideTooltip)
-      );
+      HIDE_EVENTS.forEach((event) => badge.addEventListener(event, onHide()));
     });
   }
 
