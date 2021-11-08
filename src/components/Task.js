@@ -1,11 +1,10 @@
 import Sortable from 'sortablejs';
-import { html, render } from 'poor-man-jsx';
+import { createHook, html, render } from 'poor-man-jsx';
 import { DEFAULT_COLORS } from '../core/constants';
 import { TASK } from '../core/actions';
 import Core from '../core';
 import BaseTask from './BaseTask';
 import Subtask from './Subtask';
-import { $ } from '../utils/query';
 import uuid from '../utils/id';
 
 export default class Task extends BaseTask {
@@ -13,6 +12,18 @@ export default class Task extends BaseTask {
     super('task', data, TASK);
 
     this._subtasksId = uuid();
+    [this.state, this._revoke] = createHook({ showSubtasks: false });
+  }
+
+  get totalSubtasks() {
+    return this.data.subtasks.items.length;
+  }
+
+  get completedSubtasks() {
+    return this.data.subtasks.items.reduce(
+      (count, subtask) => (subtask.completed ? ++count : count),
+      0
+    );
   }
 
   transferSubtask = (action, fromTask, fromList, subtaskId, position) => {
@@ -61,11 +72,6 @@ export default class Task extends BaseTask {
 
   initBadges(e) {
     // create subtasks badge
-    const totalSubtasks = this.data.subtasks.items.length;
-    const completedSubtasks = this.data.subtasks.items.reduce(
-      (count, subtask) => (subtask.completed ? ++count : count),
-      0
-    );
     const subtasksBadge = html`<div
       is-text
       key="subtasks"
@@ -73,26 +79,16 @@ export default class Task extends BaseTask {
       style="background-color: ${DEFAULT_COLORS[9]};"
       data-tooltip-text="This task has subtasks"
     >
-      ${completedSubtasks} / ${totalSubtasks}
+      ${this.completedSubtasks} / ${this.totalSubtasks}
     </div>`;
 
     // initialize badges; add toggling of subtasks
     const badges = e.target;
-
-    badges.setAttribute('ignore', 'data-state');
-    badges.dataset.state = JSON.stringify({ showSubtasks: false });
-
     badges.addEventListener('click', () => {
-      const state = JSON.parse(badges.dataset.state);
-      state.showSubtasks = !state.showSubtasks;
-
-      $.data('id', this._subtasksId).style.display = state.showSubtasks
-        ? 'block'
-        : 'none';
-      badges.dataset.state = JSON.stringify(state);
+      this.state.showSubtasks = !this.state.showSubtasks;
     });
 
-    if (totalSubtasks) render(subtasksBadge, badges);
+    if (this.totalSubtasks) render(subtasksBadge, badges);
     // initialize to enable tooltips
     super.initBadges(e);
   }
@@ -104,8 +100,10 @@ export default class Task extends BaseTask {
         ignore="data-id,style"
         data-id="${this._subtasksId}"
         class="task__subtasks"
-        style="display: none;"
-        ${{ onCreate: this.initSubtasks }}
+        ${{
+          $display: this.state.$showSubtasks((val) => (val ? 'block' : 'none')),
+          onCreate: this.initSubtasks,
+        }}
       >
         ${this.data.subtasks.items.map((subtask) =>
           new Subtask(subtask).render(this.data.completed)
