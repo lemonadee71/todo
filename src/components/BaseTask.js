@@ -63,9 +63,18 @@ export default class BaseTask {
     });
   }
 
-  deleteTask = () => Core.event.emit(this.action.REMOVE, this.location);
+  editTask() {
+    Core.event.emit(`${this.type}.modal.open`, this.data);
+  }
 
-  editTask = () => Core.event.emit(`${this.type}.modal.open`, this.data);
+  deleteTask() {
+    useUndo({
+      element: `[data-id="${this.id}"]`,
+      multiple: true,
+      text: 'Task removed',
+      callback: () => Core.event.emit(this.action.REMOVE, this.location),
+    })();
+  }
 
   // enable tooltips for badges
   initBadges(e) {
@@ -83,13 +92,6 @@ export default class BaseTask {
   }
 
   render() {
-    const deleteTaskWithUndo = useUndo({
-      element: `[data-id="${this.id}"]`,
-      multiple: true,
-      text: 'Task removed',
-      callback: this.deleteTask,
-    });
-
     return html`
       <div
         class="${this.data.completed ? `${this.type}--done` : this.type}"
@@ -135,8 +137,8 @@ export default class BaseTask {
             </div>
           </div>
           <div class="task__menu">
-            <button ${{ onClick: this.editTask }}>Edit</button>
-            <button ${{ onClick: deleteTaskWithUndo }}>Delete</button>
+            <button ${{ onClick: this.editTask.bind(this) }}>Edit</button>
+            <button ${{ onClick: this.deleteTask.bind(this) }}>Delete</button>
           </div>
         </div>
 
