@@ -67,6 +67,21 @@ export default class BaseTask {
 
   editTask = () => Core.event.emit(`${this.type}.modal.open`, this.data);
 
+  // enable tooltips for badges
+  initBadges(e) {
+    const badges = [...e.target.children];
+    badges.forEach((badge) => {
+      const [showTooltip, hideTooltip] = useTooltip(badge);
+
+      SHOW_EVENTS.forEach((event) =>
+        badge.addEventListener(event, showTooltip)
+      );
+      HIDE_EVENTS.forEach((event) =>
+        badge.addEventListener(event, hideTooltip)
+      );
+    });
+  }
+
   render() {
     const deleteTaskWithUndo = useUndo({
       element: `[data-id="${this.id}"]`,
@@ -74,21 +89,6 @@ export default class BaseTask {
       text: 'Task removed',
       callback: this.deleteTask,
     });
-
-    // enable tooltips to badges
-    const initBadges = (e) => {
-      const badges = [...e.target.children];
-      badges.forEach((badge) => {
-        const [showTooltip, hideTooltip] = useTooltip(badge);
-
-        SHOW_EVENTS.forEach((event) =>
-          badge.addEventListener(event, showTooltip)
-        );
-        HIDE_EVENTS.forEach((event) =>
-          badge.addEventListener(event, hideTooltip)
-        );
-      });
-    };
 
     return html`
       <div
@@ -126,7 +126,11 @@ export default class BaseTask {
 
             ${this.titleComponent}
 
-            <div class="task__badges" is-list ${{ onCreate: initBadges }}>
+            <div
+              class="task__badges"
+              is-list
+              ${{ onCreate: this.initBadges.bind(this) }}
+            >
               ${this.badges}
             </div>
           </div>
