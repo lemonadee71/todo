@@ -4,7 +4,14 @@ import { cancellable } from './delay';
 import { showToast } from './showToast';
 
 export const useUndo =
-  ({ element, text, callback: cb, delay = 3000, multiple = false }) =>
+  ({
+    element,
+    text,
+    callback: cb,
+    delay = 3000,
+    multiple = false,
+    onCancel = null,
+  }) =>
   (e) => {
     const [callback, cancel] = cancellable(cb, delay);
     const query = multiple ? $$ : $;
@@ -29,6 +36,7 @@ export const useUndo =
           });
 
           cancel();
+          onCancel?.();
           toast.hideToast();
         },
       }),
