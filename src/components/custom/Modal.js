@@ -61,13 +61,13 @@ class Modal extends HTMLElement {
     this.state.contentClass = contentClass;
 
     // hide previous ones
-    $.by('data-modalId', this.content).forEach((node) => {
+    $.by('data-modal-id', this.content).forEach((node) => {
       node.style.display = 'none';
     });
 
     // add and show new content
     $.data('name', 'modal-content', this).append(
-      render(html` <div data-modalId="${length - 1}">${content}</div> `)
+      render(html` <div data-modal-id="${length - 1}">${content}</div> `)
     );
 
     this.show();
@@ -80,13 +80,13 @@ class Modal extends HTMLElement {
 
     // remove top of the stack
     this.stack.pop();
-    $.data('modalId', `${prevLength - 1}`).remove();
+    $.data('modal-id', `${prevLength - 1}`).remove();
 
     // show new top of the stack
     const newLength = this.stack.length;
     const prevContent = this.stack[newLength - 1];
     if (prevContent) {
-      $.data('modalId', `${newLength - 1}`).style.display = 'block';
+      $.data('modal-id', `${newLength - 1}`).style.display = 'block';
     }
 
     this.state.contentClass = prevContent?.cls || '';

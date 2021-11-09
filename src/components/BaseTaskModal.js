@@ -98,10 +98,10 @@ export default class BaseTaskModal {
     return html`
       <div ${{ onDestroy: this._revoke }}>
         <input
-          type="text"
-          value="${this.data.title}"
-          name="title"
           class="task-modal__title"
+          type="text"
+          name="title"
+          value="${this.data.title}"
           required
           ${{
             $readonly: this.state.$isEditingTitle,
@@ -116,8 +116,8 @@ export default class BaseTaskModal {
           <p class="task-modal__section">Due Date</p>
           <input
             type="date"
-            value="${this.data.dueDate}"
             name="dueDate"
+            value="${this.data.dueDate}"
             ${{ onChange: this.editTask }}
           />
         </div>
@@ -125,8 +125,8 @@ export default class BaseTaskModal {
         <div data-name="task__labels">
           <p class="task-modal__section">Labels</p>
           <div
-            class="task-modal__labels"
             is-list
+            class="task-modal__labels"
             ${{
               $children: this.task.$labels.map(
                 (label) => html`
@@ -148,23 +148,23 @@ export default class BaseTaskModal {
         <div data-name="task__notes">
           <p class="task-modal__section">Notes</p>
           <div
-            component="notes"
             ${{
               $children: this.state.$isEditingNotes((val) =>
                 val
                   ? // prettier-ignore
                     html`
                       <textarea
-                      name="notes"
-                      class="task-modal__notes"
-                      ${{
-                        onInput: this.editTask,
-                        onBlur: this.toggleNotesEdit,
-                      }}
-                      >${this.data.notes.trim()}</textarea>`
+                        class="task-modal__notes"
+                        name="notes"
+                        ${{
+                          onInput: this.editTask,
+                          onBlur: this.toggleNotesEdit,
+                        }}
+                      >${this.data.notes.trim()}</textarea>
+                    `
                   : html`
                       <div
-                        class="task-modal__notes markdown-body"
+                        class="markdown-body task-modal__notes"
                         ${{ onClick: this.toggleNotesEdit }}
                       >
                         ${convertToMarkdown(this.data.notes)}

@@ -5,7 +5,7 @@ import { useProject } from '../core/hooks';
 import Core from '../core';
 import logger from '../utils/logger';
 import { $ } from '../utils/query';
-import { appendError, wrap } from '../utils/misc';
+import { appendError as error, wrap } from '../utils/misc';
 import TaskModal from '../components/TaskModal';
 import SubtaskModal from '../components/SubtaskModal';
 import List from '../components/List';
@@ -17,11 +17,11 @@ const Project = ({ data: { id } }) => {
   // so catch errors here for now
   const unsubscribe = [
     Core.event.on(
-      appendError([PROJECT.ADD, PROJECT.LISTS.ADD, PROJECT.LABELS.ADD]),
+      error([PROJECT.ADD, PROJECT.LISTS.ADD, PROJECT.LABELS.ADD]),
       wrap(logger.warning)
     ),
     Core.event.on(
-      appendError([
+      error([
         PROJECT.UPDATE,
         PROJECT.LABELS.UPDATE,
         PROJECT.LISTS.UPDATE,
@@ -94,9 +94,8 @@ const Project = ({ data: { id } }) => {
       </form>
       <h1 class="project__title" ${{ $textContent: project.$name }}></h1>
       <div
-        class="project__body"
         is-list
-        keystring="id"
+        class="project__body"
         ${{ onCreate: init }}
         ${{ $children: project.$lists.map((list) => List(list)) }}
       ></div>
