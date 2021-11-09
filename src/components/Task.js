@@ -8,7 +8,7 @@ import Subtask from './Subtask';
 
 export default class Task extends BaseTask {
   constructor(data) {
-    super('task', data, TASK);
+    super(data, TASK);
 
     [this.state, this._revoke] = createHook({
       showSubtasks: false,
@@ -60,31 +60,16 @@ export default class Task extends BaseTask {
       filter: 'input,button',
       onUpdate: (e) => this.moveSubtask(e.item.dataset.id, e.newIndex),
       onAdd: (e) => {
-        const isSubtask = !!e.item.dataset.parent;
-        const fromTask = e.item.dataset.parent || e.item.dataset.id;
-        const fromList = e.item.dataset.list;
+        const { id, parent, list } = e.item.dataset;
+        const isSubtask = !!parent;
+        const fromTask = parent || id;
+        const fromList = list;
         const action = isSubtask ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
 
-        this.transferSubtask(
-          action,
-          fromTask,
-          fromList,
-          e.item.dataset.id,
-          e.newIndex
-        );
+        this.transferSubtask(action, fromTask, fromList, id, e.newIndex);
       },
     });
   };
-
-  initBadges(e) {
-    // initialize badges; add toggling of subtasks
-    const badges = e.target;
-    badges.addEventListener('click', () => {
-      this.state.showSubtasks = !this.state.showSubtasks;
-    });
-
-    super.initBadges(e);
-  }
 
   render() {
     this.badges = [
@@ -107,29 +92,36 @@ export default class Task extends BaseTask {
 
     let deletedSubtasks = 0;
 
-    this.extraProps.main = {
-      onDestroy: () => {
-        this._revoke();
-        this._unsubscribe();
+    this.extraProps = {
+      main: {
+        onDestroy: () => {
+          this._revoke();
+          this._unsubscribe();
+        },
+        onSubtaskDelete: (e) => {
+          if (e.detail.cancelled || e.detail.success) {
+            deletedSubtasks -= 1;
+            this.state.showSubtasksBadge = true;
+          } else {
+            deletedSubtasks += 1;
+          }
+
+          const total = this.totalSubtasks - deletedSubtasks;
+          const completed = Math.max(
+            e.detail.completed
+              ? this.completedSubtasks - deletedSubtasks
+              : this.completedSubtasks,
+            0
+          );
+
+          this.state.subtasksCount = `${completed} / ${total}`;
+          if (!total) this.state.showSubtasksBadge = false;
+        },
       },
-      onSubtaskDelete: (e) => {
-        if (e.detail.cancelled || e.detail.success) {
-          deletedSubtasks -= 1;
-          this.state.showSubtasksBadge = true;
-        } else {
-          deletedSubtasks += 1;
-        }
-
-        const total = this.totalSubtasks - deletedSubtasks;
-        const completed = Math.max(
-          e.detail.completed
-            ? this.completedSubtasks - deletedSubtasks
-            : this.completedSubtasks,
-          0
-        );
-
-        this.state.subtasksCount = `${completed} / ${total}`;
-        if (!total) this.state.showSubtasksBadge = false;
+      badges: {
+        onClick: () => {
+          this.state.showSubtasks = !this.state.showSubtasks;
+        },
       },
     };
 

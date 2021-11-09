@@ -7,7 +7,7 @@ import BaseTask from './BaseTask';
 
 export default class Subtask extends BaseTask {
   constructor(data) {
-    super('subtask', data, TASK.SUBTASKS);
+    super(data, TASK.SUBTASKS);
   }
 
   get location() {

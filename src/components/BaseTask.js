@@ -9,8 +9,8 @@ import Chip from './Chip';
 // data here points to the Task stored in main
 // so we rely on the fact that changes are reflected on data
 export default class BaseTask {
-  constructor(type, data, action) {
-    this.type = type;
+  constructor(data, action) {
+    this.type = data.type;
     this.data = data;
     this.action = action;
 
@@ -21,14 +21,6 @@ export default class BaseTask {
 
     this.extraProps = { main: '', checkbox: '' };
     this.extraContent = '';
-
-    // title component could change between types so we separate it
-    this.titleComponent = html`
-      <div class="task__title">
-        <p class="task__name">${this.data.title}</p>
-        <span class="task__number">#${this.data.numId}</span>
-      </div>
-    `;
 
     this.badges = [
       this.data.dueDate &&
@@ -122,16 +114,20 @@ export default class BaseTask {
           </label>
 
           <div class="task__body">
-            <div class="task__labels" is-list>
+            <div is-list class="task__labels" ${this.extraProps.labels}>
               ${this.data.labels.items.map((label) => Chip(label))}
             </div>
 
-            ${this.titleComponent}
+            <div class="task__title" ${this.extraProps.title}>
+              <p class="task__name">${this.data.title}</p>
+              <span class="task__number">#${this.data.numId}</span>
+            </div>
 
             <div
-              class="task__badges"
               is-list
+              class="task__badges"
               ${{ onCreate: this.initBadges.bind(this) }}
+              ${this.extraProps.badges}
             >
               ${this.badges}
             </div>
