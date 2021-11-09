@@ -26,19 +26,19 @@ const Label = (data, action, isSelected) => {
   };
 
   const editLabel = debounce((e) => {
-    try {
-      Core.event.emit(
-        PROJECT.LABELS.UPDATE,
-        {
-          project: data.project,
-          label: data.id,
-          data: { prop: 'name', value: e.target.value },
+    Core.event.emit(
+      PROJECT.LABELS.UPDATE,
+      {
+        project: data.project,
+        label: data.id,
+        data: { prop: 'name', value: e.target.value },
+      },
+      {
+        onError: () => {
+          e.target.value = data.name;
         },
-        { rethrow: true }
-      );
-    } catch (error) {
-      e.target.value = data.name;
-    }
+      }
+    );
   }, 200);
 
   const deleteLabel = () => {

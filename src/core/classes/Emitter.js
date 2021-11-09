@@ -77,19 +77,22 @@ class EventEmitter {
         try {
           const result = handler.fn.call(handler.options.context, payload);
 
+          options.onSuccess?.(result, payload);
+
           if (handler.options.once) this.off(topic, handler.fn);
-          if (isPlain && (handler.options.emitSuccess || emitSuccess))
+          if (isPlain && (handler.options.emitSuccess || emitSuccess)) {
             this.emit(`${topic}.success`, result);
+          }
         } catch (e) {
           console.error(e);
+
+          options.onError?.(e, payload);
 
           if (isPlain && (handler.options.emitError || emitError)) {
             this.emit(`${topic}.error`, e);
           }
 
-          if (options.rethrow || handler.options.rethrow || rethrow) {
-            throw e;
-          }
+          if (handler.options.rethrow || rethrow) throw e;
         }
       });
 
