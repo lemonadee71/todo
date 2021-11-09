@@ -61,7 +61,7 @@ const List = (data) => {
       onAdd: (e) => {
         const { parent, id } = e.item.dataset;
         const to = data.id;
-        const from = parent ? e.item.dataset.list : e.from.id;
+        const from = parent ? e.item.dataset.list : e.from.dataset.id;
         const action = parent ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
 
         transferTask(action, parent || id, id, to, from, e.newIndex);
@@ -75,16 +75,16 @@ const List = (data) => {
       <p class="task-list__title">{% ${data.name} %}</p>
       <div class="task-list__body">
         <div
-          id="${data.id}"
-          data-name="current-tasks"
           is-list
+          data-id="${data.id}"
+          data-name="current-tasks"
           ${{ onCreate: init }}
         >
           ${data.items
             .filter((task) => !task.completed)
             .map((task) => new Task(task).render())}
         </div>
-        <div data-name="completed-tasks" is-list>
+        <div is-list data-name="completed-tasks">
           ${data.items
             .filter((task) => task.completed)
             .map((task) => new Task(task).render())}

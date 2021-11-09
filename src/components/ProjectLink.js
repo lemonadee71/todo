@@ -14,7 +14,7 @@ const ProjectLink = (data) => {
   });
 
   return html`
-    <li id="${data.id}">
+    <li data-id="${data.id}">
       <a
         is="navigo-link"
         href="${`/app/${data.link}`}"

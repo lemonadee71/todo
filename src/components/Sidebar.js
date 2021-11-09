@@ -35,7 +35,7 @@ const Sidebar = () => {
       draggable: 'li',
       onUpdate: (e) => {
         Core.event.emit(PROJECT.MOVE, {
-          project: e.item.id,
+          project: e.item.dataset.id,
           data: { position: e.newIndex },
         });
       },
@@ -58,7 +58,7 @@ const Sidebar = () => {
     <nav class="projects">
       <ul
         is-list
-        keystring="id"
+        keystring="data-id"
         ${{
           onCreate: init,
           onUnmount: unsubscribe,
