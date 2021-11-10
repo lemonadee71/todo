@@ -28,7 +28,7 @@ export default class Subtask extends BaseTask {
     });
 
     useUndo({
-      element: `[data-id="${this.id}"]`,
+      selector: `[data-id="${this.id}"]`,
       multiple: true,
       text: 'Task removed',
       callback: () => {

@@ -5,7 +5,7 @@ import { showToast } from './showToast';
 
 export const useUndo =
   ({
-    element,
+    selector,
     text,
     callback: cb,
     delay = 3000,
@@ -16,8 +16,11 @@ export const useUndo =
     const [callback, cancel] = cancellable(cb, delay);
     const query = multiple ? $$ : $;
 
-    const nodes =
-      element instanceof HTMLElement ? [element] : [query(element)].flat();
+    const nodes = selector
+      .split(',')
+      .map((str) => query(str))
+      .flat();
+
     nodes.forEach((node) => {
       node.style.display = 'none';
     });
