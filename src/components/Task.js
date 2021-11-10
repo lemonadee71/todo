@@ -16,9 +16,13 @@ export default class Task extends BaseTask {
       subtasksCount: `${this.completedSubtasks} / ${this.totalSubtasks}`,
     });
 
-    this._unsubscribe = Core.event.on(TASK.SUBTASKS.ADD, () => {
-      this.state.showSubtasksBadge = true;
-    });
+    this._unsubscribe = Core.event.on(
+      // show subtasks badge when new ones are added
+      [TASK.TRANSFER, TASK.SUBTASKS.ADD, TASK.SUBTASKS.TRANSFER],
+      () => {
+        this.state.showSubtasksBadge = true;
+      }
+    );
   }
 
   get totalSubtasks() {
@@ -61,10 +65,9 @@ export default class Task extends BaseTask {
       onUpdate: (e) => this.moveSubtask(e.item.dataset.id, e.newIndex),
       onAdd: (e) => {
         const { id, parent, list } = e.item.dataset;
-        const isSubtask = !!parent;
         const fromTask = parent || id;
         const fromList = list;
-        const action = isSubtask ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
+        const action = parent ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
 
         this.transferSubtask(action, fromTask, fromList, id, e.newIndex);
       },
