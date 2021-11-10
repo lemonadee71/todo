@@ -95,6 +95,7 @@ const Project = ({ data: { id } }) => {
       <h1 class="project__title" ${{ $textContent: project.$name }}></h1>
       <div
         is-list
+        keystring="id"
         class="project__body"
         ${{ onCreate: init }}
         ${{ $children: project.$lists.map((list) => List(list)) }}

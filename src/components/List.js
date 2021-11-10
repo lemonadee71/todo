@@ -71,7 +71,7 @@ const List = (data) => {
 
   // ?TODO: Add animation when task is moved to completed
   return html`
-    <div class="task-list" key="${data.id}">
+    <div class="task-list" id="${data.id}">
       <p class="task-list__title">{% ${data.name} %}</p>
       <div class="task-list__body">
         <div
