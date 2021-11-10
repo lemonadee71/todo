@@ -6,7 +6,7 @@ import Subtask from './Subtask';
 
 export default class TaskModal extends BaseTaskModal {
   constructor(data) {
-    super('task', data, TASK);
+    super(data, TASK);
   }
 
   createSubtask = (e) => {

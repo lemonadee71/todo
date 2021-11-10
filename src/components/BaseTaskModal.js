@@ -9,26 +9,25 @@ import convertToMarkdown from '../utils/showdown';
 import LabelPopover from './LabelPopover';
 
 export default class BaseTaskModal {
-  constructor(type, data, action) {
-    this.type = type;
+  constructor(data, action) {
+    this.type = data.type;
     this.data = data;
     this.action = action;
 
     this.id = this.data.id;
 
-    this.location = {
-      project: this.data.project,
-      list: this.data.list,
-      // this should be implemented by inheriting children
-      // but this is a quick fix for now
-      task: this.data.parent || this.data.id,
-      subtask: this.data.parent && this.data.id,
-    };
-
     [this.task, this._revoke] = useTask(...Object.values(this.location));
     [this.state] = createHook({ isEditingTitle: false, isEditingNotes: false });
 
     this.extraContent = '';
+  }
+
+  get location() {
+    return {
+      project: this.data.project,
+      list: this.data.list,
+      task: this.data.id,
+    };
   }
 
   editTask = (e) => {
