@@ -86,8 +86,9 @@ export default class BaseTask {
   render() {
     return html`
       <div
-        class="${this.data.completed ? `${this.type}--done` : this.type}"
         key="${this.key}"
+        ignore="style"
+        class="${this.data.completed ? `${this.type}--done` : this.type}"
         data-id="${this.id}"
         data-project="${this.data.project}"
         data-list="${this.data.list}"
