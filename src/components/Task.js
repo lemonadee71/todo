@@ -97,6 +97,7 @@ export default class Task extends BaseTask {
 
     this.extraProps = {
       main: {
+        ignore: 'style',
         onDestroy: () => {
           this._revoke();
           this._unsubscribe();

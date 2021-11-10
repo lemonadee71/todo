@@ -87,7 +87,6 @@ export default class BaseTask {
     return html`
       <div
         key="${this.key}"
-        ignore="style"
         class="${this.data.completed ? `${this.type}--done` : this.type}"
         data-id="${this.id}"
         data-project="${this.data.project}"
