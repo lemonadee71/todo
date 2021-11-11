@@ -18,6 +18,41 @@
     font-size: $primary-font-size;
   }
 
+  &__date {
+    // taken from flatpickr: https://flatpickr.js.org/examples/
+    input[type='text'],
+    input[type='date'],
+    input[type='datetime-local'],
+    input[type='time'] {
+      background: $color-lighter;
+
+      line-height: 2rem;
+
+      height: 1rem;
+      width: 100%;
+      max-width: 12rem;
+      padding: 8px;
+
+      border: 1px solid #c3c3c3;
+      border-radius: 0.25rem;
+    }
+
+    span {
+      display: inline-block;
+      box-sizing: border-box;
+
+      font-size: 2rem;
+      color: #f64747;
+      text-decoration: none;
+      line-height: 1;
+
+      align-self: center;
+      justify-content: center;
+
+      cursor: pointer;
+    }
+  }
+
   &__notes {
     @include input;
     width: 100%;

@@ -1,3 +1,4 @@
+import flatpickr from 'flatpickr';
 import { createHook, html, render } from 'poor-man-jsx';
 import Core from '../core';
 import { TASK } from '../core/actions';
@@ -5,6 +6,7 @@ import { useTask } from '../core/hooks';
 import { debounce } from '../utils/delay';
 import { dispatchCustomEvent } from '../utils/dispatch';
 import { usePopper } from '../utils/popper';
+import { $ } from '../utils/query';
 import convertToMarkdown from '../utils/showdown';
 import LabelPopover from './LabelPopover';
 
@@ -61,6 +63,27 @@ export default class BaseTaskModal {
     this.state.isEditingNotes = !this.state.isEditingNotes;
   };
 
+  initDatePicker = (evt) => {
+    const input = $('input', evt.target);
+
+    const editDate = debounce(() => {
+      this.editTask({ target: input });
+    }, 100);
+
+    const instance = flatpickr(evt.target, {
+      // TODO: Enable this once calendar view is available
+      // mode: 'range',
+      wrap: true,
+      enableTime: true,
+      altInput: true,
+      altFormat: 'F j, Y',
+      onChange: editDate,
+      onValueUpdate: editDate,
+    });
+
+    input.addEventListener('@destroy', () => instance.destroy());
+  };
+
   initPopover = (evt) => {
     const node = evt.target;
 
@@ -110,15 +133,20 @@ export default class BaseTaskModal {
           }}
         />
 
-        <!-- Change this to a better date picker -->
-        <div data-name="task__date">
+        <div
+          class="flatpickr task-modal__date"
+          data-name="task__date"
+          ${{ onCreate: this.initDatePicker }}
+        >
           <p class="task-modal__section">Due Date</p>
           <input
-            type="date"
+            type="text"
             name="dueDate"
             value="${this.data.dueDate}"
-            ${{ onChange: this.editTask }}
+            placeholder="Select date..."
+            data-input
           />
+          <span title="clear" data-clear>&times;</span>
         </div>
 
         <div data-name="task__labels">
