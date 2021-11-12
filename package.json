@@ -58,6 +58,7 @@
     "poor-man-jsx": "^3.0.0-5",
     "showdown": "^1.9.1",
     "sortablejs": "^1.13.0",
-    "toastify-js": "^1.11.2"
+    "toastify-js": "^1.11.2",
+    "tui-calendar": "^1.15.0"
   }
 }
