@@ -31,7 +31,7 @@ export default class BaseTask {
           style="background-color: ${isDueToday(parse(this.data.dueDate))
             ? DEFAULT_COLORS[3]
             : DEFAULT_COLORS[0]};"
-          data-tooltip-text="Due in ${formatDateToNow(this.data.dueDate)}"
+          data-tooltip-text="Due ${formatDateToNow(this.data.dueDate)}"
         >
           ${formatDate(this.data.dueDate)}
         </div>`,
@@ -72,14 +72,23 @@ export default class BaseTask {
   initBadges(e) {
     const badges = [...e.target.children];
     badges.forEach((badge) => {
-      const [showTooltip, hideTooltip] = useTooltip(badge);
+      const [onShow, onHide] = useTooltip(badge);
 
       SHOW_EVENTS.forEach((event) =>
-        badge.addEventListener(event, showTooltip)
+        badge.addEventListener(
+          event,
+          onShow(() => {
+            if (badge.getAttribute('key') !== 'date') return;
+
+            // show latest on hover
+            // this is to avoid using setInterval
+            badge.dataset.tooltipText = `Due ${formatDateToNow(
+              this.data.dueDate
+            )}`;
+          })
+        )
       );
-      HIDE_EVENTS.forEach((event) =>
-        badge.addEventListener(event, hideTooltip)
-      );
+      HIDE_EVENTS.forEach((event) => badge.addEventListener(event, onHide()));
     });
   }
 
