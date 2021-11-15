@@ -39,7 +39,7 @@ export default class BaseTask {
           style="background-color: ${isDueToday(parse(this.data.dueDate))
             ? DEFAULT_COLORS[3]
             : DEFAULT_COLORS[0]};"
-          data-tooltip-text="Due in ${formatDateToNow(this.data.dueDate)}"
+          data-tooltip-text="Due ${formatDateToNow(this.data.dueDate)}"
         >
           ${formatDate(this.data.dueDate)}
         </div>`,
@@ -81,7 +81,7 @@ export default class BaseTask {
 
             // show latest on hover
             // this is to avoid using setInterval
-            badge.dataset.tooltipText = `Due in ${formatDateToNow(
+            badge.dataset.tooltipText = `Due ${formatDateToNow(
               this.data.dueDate
             )}`;
           })
