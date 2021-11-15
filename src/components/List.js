@@ -7,7 +7,7 @@ import { useUndo } from '../utils/undo';
 
 const List = (data) => {
   const deleteList = useUndo({
-    element: `#${data.id}`,
+    selector: `#${data.id}`,
     text: 'List removed',
     callback: () =>
       Core.event.emit(PROJECT.LISTS.REMOVE, {

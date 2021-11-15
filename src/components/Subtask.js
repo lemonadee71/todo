@@ -28,7 +28,7 @@ export default class Subtask extends BaseTask {
     });
 
     useUndo({
-      element: `[data-id="${this.id}"]`,
+      selector: `[data-id="${this.id}"]`,
       multiple: true,
       text: 'Task removed',
       callback: () => {
@@ -50,7 +50,12 @@ export default class Subtask extends BaseTask {
 
   render(isParentComplete = false) {
     this.extraProps = {
-      main: `data-parent="${this.data.parent}"`,
+      main: {
+        'data-parent': this.data.parent,
+        display: Core.state.undo.includes(`[data-id="${this.id}"]`)
+          ? 'none'
+          : 'block',
+      },
       checkbox: { disabled: isParentComplete },
     };
 

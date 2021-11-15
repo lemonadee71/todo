@@ -5,7 +5,7 @@ import { useUndo } from '../utils/undo';
 
 const ProjectLink = (data) => {
   const deleteProject = useUndo({
-    element: `[data-id="${data.id}"]`,
+    selector: `#${data.id}`,
     text: 'Project removed',
     callback: () =>
       Core.event.emit(PROJECT.REMOVE, {
