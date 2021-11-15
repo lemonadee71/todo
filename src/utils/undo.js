@@ -14,7 +14,7 @@ export const useUndo =
     onCancel = null,
   }) =>
   (e) => {
-    const [callback, cancel] = cancellable(cb, delay);
+    const [callback, cancel] = cancellable(cb, delay + 500);
     const query = multiple ? $$ : $;
 
     const selectors = selector.split(',');
