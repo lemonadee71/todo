@@ -30,6 +30,7 @@ export const useUndo =
     Core.state.undo.push(...selectors);
 
     const toast = showToast({
+      delay,
       className: 'custom-toast',
       close: true,
       node: Toast(text, {
