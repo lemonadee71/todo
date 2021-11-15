@@ -11,30 +11,47 @@ export default class Task extends BaseTask {
     super(data, TASK);
 
     [this.state, this._revoke] = createHook({
+      deletedSubtasks: 0,
+      completedSubtasks: 0,
       showSubtasks: false,
       showSubtasksBadge: true,
-      subtasksCount: `${this.completedSubtasks} / ${this.totalSubtasks}`,
+      subtasksCount: '',
     });
 
     this._unsubscribe = Core.event.on(
-      // show subtasks badge when new ones are added
-      [TASK.TRANSFER, TASK.SUBTASKS.ADD, TASK.SUBTASKS.TRANSFER],
+      [
+        TASK.SUBTASKS.UPDATE,
+        TASK.TRANSFER,
+        TASK.SUBTASKS.ADD,
+        TASK.SUBTASKS.TRANSFER,
+      ],
       () => {
-        this.state.showSubtasksBadge = true;
+        this._updateSubtaskBadge();
       }
     );
   }
 
-  get totalSubtasks() {
-    return this.data.subtasks.items.length;
-  }
+  _totalSubtasks = () =>
+    this.data.subtasks.items.length - this.state.deletedSubtasks;
 
-  get completedSubtasks() {
-    return this.data.subtasks.items.reduce(
+  _completedSubtasks = () => {
+    const completed = this.data.subtasks.items.reduce(
       (count, subtask) => (subtask.completed ? ++count : count),
       0
     );
-  }
+
+    return completed - this.state.completedSubtasks;
+  };
+
+  // we update the subtask badge manually
+  // to be compatible with undoing deletes
+  _updateSubtaskBadge = () => {
+    const total = this._totalSubtasks();
+    const completed = this._completedSubtasks();
+
+    this.state.subtasksCount = `${completed} / ${total}`;
+    this.state.showSubtasksBadge = !!total;
+  };
 
   transferSubtask = (action, fromTask, fromList, subtaskId, position) => {
     Core.event.emit(action, {
@@ -70,7 +87,9 @@ export default class Task extends BaseTask {
         const action = parent ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
 
         this.transferSubtask(action, fromTask, fromList, id, e.newIndex);
+        this._updateSubtaskBadge();
       },
+      onRemove: this._updateSubtaskBadge,
     });
   };
 
@@ -78,22 +97,19 @@ export default class Task extends BaseTask {
     this.badges = [
       ...this.badges,
       html`<div
-        is-text
-        ignore="style"
         key="subtasks"
+        ignore-all
         class="badge"
         data-tooltip-text="This task has subtasks"
         ${{
           backgroundColor: DEFAULT_COLORS[9],
           $display: this.state.$showSubtasksBadge((val) =>
-            val && this.totalSubtasks ? 'block' : 'none'
+            val && this._totalSubtasks ? 'block' : 'none'
           ),
           $textContent: this.state.$subtasksCount,
         }}
       ></div>`,
     ];
-
-    let deletedSubtasks = 0;
 
     this.extraProps = {
       main: {
@@ -103,26 +119,28 @@ export default class Task extends BaseTask {
           this._unsubscribe();
         },
         onSubtaskDelete: (e) => {
-          if (e.detail.cancelled || e.detail.success) {
-            deletedSubtasks -= 1;
+          const { cancelled, success, completed } = e.detail;
+
+          if (cancelled || success) {
+            this.state.deletedSubtasks -= 1;
+            if (completed) {
+              this.state.completedSubtasks -= 1;
+            }
+
             this.state.showSubtasksBadge = true;
           } else {
-            deletedSubtasks += 1;
+            this.state.deletedSubtasks += 1;
+
+            if (completed) {
+              this.state.completedSubtasks += 1;
+            }
           }
 
-          const total = this.totalSubtasks - deletedSubtasks;
-          const completed = Math.max(
-            e.detail.completed
-              ? this.completedSubtasks - deletedSubtasks
-              : this.completedSubtasks,
-            0
-          );
-
-          this.state.subtasksCount = `${completed} / ${total}`;
-          if (!total) this.state.showSubtasksBadge = false;
+          this._updateSubtaskBadge();
         },
       },
       badges: {
+        onMount: this._updateSubtaskBadge,
         onClick: () => {
           this.state.showSubtasks = !this.state.showSubtasks;
         },
