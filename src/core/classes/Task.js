@@ -22,6 +22,14 @@ export default class Task extends BaseTask {
     );
   }
 
+  _inherit(subtask) {
+    Object.assign(subtask, {
+      project: this.project,
+      list: this.list,
+      parent: this.id,
+    });
+  }
+
   toggleComplete() {
     if (this.hasIncompleteRequiredSubtask) {
       throw new Error('Complete all required subtasks');
@@ -35,28 +43,20 @@ export default class Task extends BaseTask {
   }
 
   updateSubtasks() {
-    this.subtasks.items.forEach((subtask) => {
-      subtask.project = this.project;
-      subtask.list = this.list;
-      subtask.parent = this.id;
-    });
+    this.subtasks.items.forEach(this._inherit);
 
     return this;
   }
 
   addSubtask(task) {
-    task.project = this.project;
-    task.list = this.list;
-    task.parent = this.id;
+    this._inherit(task);
     task.required = true;
 
     return this.subtasks.add(task);
   }
 
   insertSubtask(task, idx) {
-    task.project = this.project;
-    task.list = this.list;
-    task.parent = this.id;
+    this._inherit(task);
     task.required = true;
 
     return this.subtasks.insert(task, idx);
