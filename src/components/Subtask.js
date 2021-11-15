@@ -1,6 +1,7 @@
 import Core from '../core';
 import { TASK } from '../core/actions';
 import { dispatchCustomEvent } from '../utils/dispatch';
+import { curry } from '../utils/misc';
 import { $ } from '../utils/query';
 import { useUndo } from '../utils/undo';
 import BaseTask from './BaseTask';
@@ -21,8 +22,9 @@ export default class Subtask extends BaseTask {
 
   deleteTask() {
     const parent = $.data('id', this.data.parent);
+    const dispatch = curry(dispatchCustomEvent)(parent, 'subtaskdelete');
 
-    dispatchCustomEvent(parent, 'subtaskdelete', {
+    dispatch({
       cancelled: false,
       completed: this.data.completed,
     });
@@ -34,13 +36,13 @@ export default class Subtask extends BaseTask {
       callback: () => {
         Core.event.emit(this.action.REMOVE, this.location);
 
-        dispatchCustomEvent(parent, 'subtaskdelete', {
+        dispatch({
           success: true,
           completed: this.data.completed,
         });
       },
       onCancel: () => {
-        dispatchCustomEvent(parent, 'subtaskdelete', {
+        dispatch({
           cancelled: true,
           completed: this.data.completed,
         });
