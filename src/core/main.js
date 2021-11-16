@@ -7,6 +7,7 @@ import Project from './classes/Project';
 import { LocalStorage } from './storage';
 import { LAST_UPDATE } from './constants';
 import defaultData from '../defaultData.json';
+import uuid from '../utils/id';
 // import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../utils/date';
 // import { defaultProjects } from './defaults';
 
@@ -273,17 +274,75 @@ export const addTask = (projectId, listId, data) => {
   return task;
 };
 
+export const removeTaskDependency = (projectId, listId, taskId, id) => {
+  const task = getTask(projectId, listId, taskId);
+  task.dependencies = task.dependencies.filter(
+    (dependency) => dependency.uuid !== id
+  );
+
+  return task.data;
+};
+
+export const addTaskDependency = (projectId, listId, taskId, data) => {
+  const type = Number.isInteger(+data.id) ? 'numId' : 'id';
+  const { id, numId } = getTasksFromProject(projectId).find(
+    (task) => task[type].toString() === data.id
+  );
+
+  if (!id) throw new Error(`No task with the ${type} ${data.id}`);
+
+  const task = getTask(projectId, listId, taskId);
+  const dependencies = task.dependencies.map((item) => item.id);
+
+  if (!dependencies.includes(id)) {
+    task.dependencies.push({
+      id,
+      numId,
+      type: data.type,
+      uuid: uuid(),
+    });
+  }
+};
+
 export const updateTask = (projectId, listId, taskId, data) => {
   const task = getTask(projectId, listId, taskId);
   // since only one prop can be updated at a time
   const [prop, value] = Object.entries(data).flat();
 
-  if (prop === 'title' && !value) throw new Error('Task must have a title');
+  switch (prop) {
+    case 'completed': {
+      // eslint-disable-next-line
+      let { dependencies, project } = task;
+      dependencies = dependencies
+        .filter((item) => item.type === 'blocked')
+        .map((item) => item.id);
 
-  if (prop === 'completed') {
-    task.toggleComplete();
-  } else {
-    task[prop] = value;
+      // only get incomplete tasks
+      const ids = getTasksFromProject(project)
+        .filter((item) => !item.completed)
+        .map((item) => item.id);
+      const blockingTasks = dependencies.filter((id) => ids.includes(id));
+
+      if (blockingTasks.length) {
+        throw new Error(`Task blocked by ${blockingTasks.join(', ')}`);
+      } else {
+        task.toggleComplete();
+      }
+      break;
+    }
+    case 'dependency':
+      if (value.action === 'add') {
+        addTaskDependency(projectId, listId, taskId, value);
+      } else if (value.action === 'remove') {
+        removeTaskDependency(projectId, listId, taskId, value.id);
+      }
+      break;
+    case 'title':
+      if (!value) throw new Error('Task must have a title');
+    // eslint-disable-next-line no-fallthrough
+    default:
+      task[prop] = value;
+      break;
   }
 
   return task.data;

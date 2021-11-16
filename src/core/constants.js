@@ -38,3 +38,13 @@ export const POPPER_CONFIG = {
 };
 export const TZ_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssxxxxx";
 export const DATE_TIME_FORMAT = 'yyyy-MM-dd HH:mm';
+export const DEPENDENCY_COLORS = {
+  blocked: DEFAULT_COLORS[3],
+  related: DEFAULT_COLORS[5],
+  duplicate: DEFAULT_COLORS[1],
+};
+export const DEPENDENCY_PREFIX = {
+  blocked: 'Blocked by',
+  related: 'Related to',
+  duplicate: 'Duplicate of',
+};

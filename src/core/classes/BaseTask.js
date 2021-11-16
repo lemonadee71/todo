@@ -13,6 +13,7 @@ class BaseTask {
     list,
     project,
     position = null,
+    dependencies = [],
     labels = [],
   }) {
     // meta
@@ -31,6 +32,9 @@ class BaseTask {
     this.project = project;
     this.list = list;
     this.position = position;
+
+    // extra
+    this.dependencies = dependencies;
 
     this.labels = new IdList(labels);
   }
