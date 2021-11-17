@@ -7,13 +7,12 @@ import { useUndo } from '../utils/undo';
 
 const List = (data) => {
   const deleteList = useUndo({
-    selector: `#${data.id}`,
+    type: PROJECT.LISTS,
     text: 'List removed',
-    callback: () =>
-      Core.event.emit(PROJECT.LISTS.REMOVE, {
-        project: data.project,
-        list: data.id,
-      }),
+    payload: {
+      project: data.project,
+      list: data.id,
+    },
   });
 
   const createTask = (e) => {

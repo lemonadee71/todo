@@ -1,33 +1,19 @@
 import Toast from '../components/Toast';
-import { $, $$ } from './query';
-import { cancellable } from './delay';
 import { showToast } from './showToast';
 import Core from '../core';
 
 export const useUndo =
-  ({
-    selector,
-    text,
-    callback: cb,
-    delay = 3000,
-    multiple = false,
-    onCancel = null,
-  }) =>
-  (e) => {
-    const [callback, cancel] = cancellable(cb, delay + 500);
-    const query = multiple ? $$ : $;
-
-    const selectors = selector.split(',');
-
-    selectors
-      .map((str) => query(str))
-      .flat()
-      .forEach((node) => {
-        node.style.display = 'none';
-      });
-
-    callback(e);
-    Core.state.undo.push(...selectors);
+  ({ type, payload, text, onCancel, delay = 3000 }) =>
+  () => {
+    let extracted;
+    Core.event.emit(type.REMOVE, payload, {
+      onSuccess: (result) => {
+        // we're assuming that there's only one listener
+        // and that it is our main function
+        // this will fail otherwise
+        extracted = result;
+      },
+    });
 
     const toast = showToast({
       delay,
@@ -36,21 +22,14 @@ export const useUndo =
       node: Toast(text, {
         text: 'Undo',
         callback: () => {
-          selectors
-            .map((str) => query(str))
-            .flat()
-            .forEach((node) => {
-              if (document.body.contains(node))
-                node.style.removeProperty('display');
-            });
+          // insert the deleted item
+          Core.event.emit(type.INSERT, {
+            ...payload,
+            data: { item: extracted, position: extracted.position },
+          });
 
-          cancel();
           onCancel?.();
           toast.hideToast();
-
-          Core.state.undo = Core.state.undo.filter(
-            (str) => !selectors.includes(str)
-          );
         },
       }),
     });

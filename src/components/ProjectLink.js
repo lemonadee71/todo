@@ -1,13 +1,12 @@
 import { html } from 'poor-man-jsx';
-import Core from '../core';
 import { PROJECT } from '../core/actions';
 import { useUndo } from '../utils/undo';
 
 const ProjectLink = (data) => {
   const deleteProject = useUndo({
-    selector: `[data-id="${data.id}"]`,
+    type: PROJECT,
     text: 'Project removed',
-    callback: () => Core.event.emit(PROJECT.REMOVE, { project: data.id }),
+    payload: { project: data.id },
   });
 
   return html`

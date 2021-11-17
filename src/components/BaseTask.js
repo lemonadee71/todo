@@ -61,10 +61,9 @@ export default class BaseTask {
 
   deleteTask() {
     useUndo({
-      selector: `[data-id="${this.id}"]`,
-      multiple: true,
+      type: this.action,
       text: 'Task removed',
-      callback: () => Core.event.emit(this.action.REMOVE, this.location),
+      payload: this.location,
     })();
   }
 
