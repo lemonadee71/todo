@@ -10,48 +10,17 @@ export default class Task extends BaseTask {
   constructor(data) {
     super(data, TASK);
 
-    [this.state, this._revoke] = createHook({
-      deletedSubtasks: 0,
-      completedSubtasks: 0,
-      showSubtasks: false,
-      showSubtasksBadge: true,
-      subtasksCount: '',
-    });
-
-    this._unsubscribe = Core.event.on(
-      [
-        TASK.SUBTASKS.UPDATE,
-        TASK.TRANSFER,
-        TASK.SUBTASKS.ADD,
-        TASK.SUBTASKS.TRANSFER,
-      ],
-      () => {
-        this._updateSubtaskBadge();
-      }
-    );
+    [this.state, this._revoke] = createHook({ showSubtasks: false });
   }
 
-  _totalSubtasks = () =>
-    this.data.subtasks.items.length - this.state.deletedSubtasks;
+  get totalSubtasks() {
+    return this.data.subtasks.items.length;
+  }
 
-  _completedSubtasks = () => {
-    const completed = this.data.subtasks.items.reduce(
-      (count, subtask) => (subtask.completed ? ++count : count),
-      0
-    );
-
-    return completed - this.state.completedSubtasks;
-  };
-
-  // we update the subtask badge manually
-  // to be compatible with undoing deletes
-  _updateSubtaskBadge = () => {
-    const total = this._totalSubtasks();
-    const completed = this._completedSubtasks();
-
-    this.state.subtasksCount = `${completed} / ${total}`;
-    this.state.showSubtasksBadge = !!total;
-  };
+  get currentSubtasks() {
+    return this.data.subtasks.items.filter((subtask) => subtask.completed)
+      .length;
+  }
 
   transferSubtask = (action, fromTask, fromList, subtaskId, position) => {
     Core.event.emit(action, {
@@ -87,60 +56,30 @@ export default class Task extends BaseTask {
         const action = parent ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
 
         this.transferSubtask(action, fromTask, fromList, id, e.newIndex);
-        this._updateSubtaskBadge();
       },
-      onRemove: this._updateSubtaskBadge,
     });
   };
 
   render() {
     this.badges = [
       ...this.badges,
-      html`<div
-        key="subtasks"
-        ignore-all
-        class="badge"
-        data-tooltip-text="This task has subtasks"
-        ${{
-          backgroundColor: DEFAULT_COLORS[9],
-          $display: this.state.$showSubtasksBadge((val) =>
-            val && this._totalSubtasks ? 'block' : 'none'
-          ),
-          $textContent: this.state.$subtasksCount,
-        }}
-      ></div>`,
+      this.totalSubtasks
+        ? html`<div
+            is-text
+            key="subtasks"
+            class="badge"
+            data-tooltip-text="This task has subtasks"
+            ${{ backgroundColor: DEFAULT_COLORS[9] }}
+          >
+            ${this.currentSubtasks} / ${this.totalSubtasks}
+          </div>`
+        : '',
     ];
 
     this.extraProps = {
-      main: {
-        ignore: 'style',
-        onDestroy: () => {
-          this._revoke();
-          this._unsubscribe();
-        },
-        onSubtaskDelete: (e) => {
-          const { cancelled, success, completed } = e.detail;
-
-          if (cancelled || success) {
-            this.state.deletedSubtasks -= 1;
-            if (completed) {
-              this.state.completedSubtasks -= 1;
-            }
-
-            this.state.showSubtasksBadge = true;
-          } else {
-            this.state.deletedSubtasks += 1;
-
-            if (completed) {
-              this.state.completedSubtasks += 1;
-            }
-          }
-
-          this._updateSubtaskBadge();
-        },
-      },
+      // this causes a bug; there's an early revoke which causes the proxy to not work
+      // main: { onDestroy: this._revoke() },
       badges: {
-        onMount: this._updateSubtaskBadge,
         onClick: () => {
           this.state.showSubtasks = !this.state.showSubtasks;
         },
