@@ -9,24 +9,28 @@ import { $ } from '../utils/query';
 import Label from './Label';
 
 const LabelPopover = (data, action) => {
-  const ref = { main: uuid(), name: uuid() };
+  const ref = { main: uuid() };
   const [project, revoke] = useProject(data.project);
   const [state] = createHook({ isVisible: false });
-
-  const unsubscribe = Core.event.on(PROJECT.LABELS.ADD + '.success', () => {
-    $.data('id', ref.name).value = '';
-  });
 
   const createLabel = (e) => {
     e.preventDefault();
 
-    const name = e.target.elements['label-name'].value;
+    const name = e.target.elements['label-name'];
     const color = e.target.elements.color.value;
 
-    Core.event.emit(PROJECT.LABELS.ADD, {
-      project: data.project,
-      data: { name, color },
-    });
+    Core.event.emit(
+      PROJECT.LABELS.ADD,
+      {
+        project: data.project,
+        data: { name: name.value, color },
+      },
+      {
+        onSuccess: () => {
+          name.value = '';
+        },
+      }
+    );
   };
 
   const toggleVisibility = (value) => {
@@ -48,10 +52,7 @@ const LabelPopover = (data, action) => {
       data-id="${ref.main}"
       ${{
         onCreate: init,
-        onDestroy: () => {
-          revoke();
-          unsubscribe();
-        },
+        onDestroy: revoke,
         $visibility: state.$isVisible((val) => (val ? 'visible' : 'hidden')),
       }}
     >
@@ -72,7 +73,7 @@ const LabelPopover = (data, action) => {
         <label for="label-name" class="popover__title">
           Create New Label
         </label>
-        <input type="text" name="label-name" data-id="${ref.name}" />
+        <input type="text" name="label-name" />
         <div class="color-picker">
           ${DEFAULT_COLORS.map(
             (color) =>
