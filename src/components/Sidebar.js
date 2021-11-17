@@ -1,16 +1,12 @@
 import Sortable from 'sortablejs';
-import { createHook, html } from 'poor-man-jsx';
+import { html } from 'poor-man-jsx';
 import { PROJECT } from '../core/actions';
+import { useRoot } from '../core/hooks';
 import Core from '../core';
-import { appendSuccess as success } from '../utils/misc';
 import ProjectLink from './ProjectLink';
 
 const Sidebar = () => {
-  const [data] = createHook({ projects: Core.main.getProjectDetails() });
-
-  const unsubscribe = Core.event.on(success(PROJECT.ALL), () => {
-    data.projects = Core.main.getProjectDetails();
-  });
+  const [data, revoke] = useRoot();
 
   const createNewProject = (e) => {
     e.preventDefault();
@@ -54,7 +50,7 @@ const Sidebar = () => {
         keystring="data-id"
         ${{
           onCreate: init,
-          onUnmount: unsubscribe,
+          onUnmount: revoke,
           $children: data.$projects.map((project) => ProjectLink(project)),
         }}
       ></ul>

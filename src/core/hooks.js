@@ -1,7 +1,17 @@
 import { createHook } from 'poor-man-jsx';
-import { appendSuccess as success } from '../utils/misc';
 import Core from '.';
 import { PROJECT, TASK } from './actions';
+import { appendSuccess as success } from '../utils/misc';
+
+export const useRoot = () => {
+  const [data] = createHook({ projects: Core.main.getProjectDetails() });
+
+  const unsubscribe = Core.event.on(success(PROJECT.ALL), () => {
+    data.projects = Core.main.getProjectDetails();
+  });
+
+  return [data, unsubscribe];
+};
 
 // we rely on changes to original references
 // to be reflected here
