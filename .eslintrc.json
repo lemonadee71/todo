@@ -13,7 +13,7 @@
     "no-underscore-dangle": "off",
     "no-param-reassign": "off",
     "no-alert": "off",
-    "no-use-before-define": "warn",
+    "no-use-before-define": "off",
     "prefer-template": "off",
     "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": [
