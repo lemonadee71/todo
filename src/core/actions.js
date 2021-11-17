@@ -2,12 +2,13 @@ const ADD = 'add';
 const REMOVE = 'remove';
 const UPDATE = 'update';
 const MOVE = 'move';
+const INSERT = 'insert';
 const TRANSFER = 'transfer';
 const SYNC = 'sync';
 const NAVIGATE_TO_PAGE = 'navigate.to.page';
 
 const createActions = (prefix) => {
-  const actions = [ADD, REMOVE, UPDATE, TRANSFER, MOVE];
+  const actions = [ADD, REMOVE, UPDATE, TRANSFER, MOVE, INSERT];
   const final = actions.reduce((obj, action) => {
     obj[action.toUpperCase()] = `${prefix}.${action}`;
 
