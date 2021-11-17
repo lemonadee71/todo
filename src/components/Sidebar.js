@@ -2,28 +2,21 @@ import Sortable from 'sortablejs';
 import { createHook, html } from 'poor-man-jsx';
 import { PROJECT } from '../core/actions';
 import Core from '../core';
+import { appendSuccess as success } from '../utils/misc';
 import ProjectLink from './ProjectLink';
 
 const Sidebar = () => {
-  const [data] = createHook({
-    projects: Core.main.getProjectDetails(),
-  });
+  const [data] = createHook({ projects: Core.main.getProjectDetails() });
 
-  const unsubscribe = Core.event.on(
-    PROJECT.ALL,
-    () => {
-      data.projects = Core.main.getProjectDetails();
-    },
-    { order: 'last' }
-  );
+  const unsubscribe = Core.event.on(success(PROJECT.ALL), () => {
+    data.projects = Core.main.getProjectDetails();
+  });
 
   const createNewProject = (e) => {
     e.preventDefault();
     const input = e.target.elements['new-project'];
 
-    Core.event.emit(PROJECT.ADD, {
-      data: { name: input.value },
-    });
+    Core.event.emit(PROJECT.ADD, { data: { name: input.value } });
 
     input.value = '';
   };
