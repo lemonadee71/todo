@@ -60,6 +60,9 @@ const Core = (() => {
   event.on(PROJECT.MOVE, ({ project: id, data: { position } }) =>
     main.moveProject(id, position)
   );
+  event.on(PROJECT.INSERT, ({ data: { item, position } }) =>
+    main.insertProject(item, position)
+  );
 
   event.on(PROJECT.LISTS.ADD, ({ project, data: { name } }) =>
     main.addList(project, name)
@@ -72,6 +75,9 @@ const Core = (() => {
   );
   event.on(PROJECT.LISTS.MOVE, ({ project, list: id, data: { position } }) =>
     main.moveList(project, id, position)
+  );
+  event.on(PROJECT.LISTS.INSERT, ({ project, data: { item, position } }) =>
+    main.insertList(project, item, position)
   );
 
   event.on(PROJECT.LABELS.ADD, ({ project, data }) =>
@@ -92,6 +98,9 @@ const Core = (() => {
   );
   event.on(TASK.MOVE, ({ project, list, task: id, data: { position } }) =>
     main.moveTask(project, list, id, position)
+  );
+  event.on(TASK.INSERT, ({ project, list, data: { item, position } }) =>
+    main.insertTask(project, list, item, position)
   );
   event.on(TASK.UPDATE, ({ project, list, task: id, data }) =>
     main.updateTask(project, list, id, data)
@@ -164,6 +173,11 @@ const Core = (() => {
     TASK.SUBTASKS.MOVE,
     ({ project, list, task, subtask, data: { position } }) =>
       main.moveSubtask(project, list, task, subtask, position)
+  );
+  event.on(
+    TASK.SUBTASKS.INSERT,
+    ({ project, list, task, data: { item, position } }) =>
+      main.insertSubtask(project, list, task, item, position)
   );
   event.on(
     TASK.SUBTASKS.TRANSFER,
