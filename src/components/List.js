@@ -23,9 +23,7 @@ const List = (data) => {
     Core.event.emit(TASK.ADD, {
       project: data.project,
       list: data.id,
-      data: {
-        title: input.value,
-      },
+      data: { title: input.value },
     });
 
     input.value = '';
@@ -71,7 +69,7 @@ const List = (data) => {
 
   // ?TODO: Add animation when task is moved to completed
   return html`
-    <div class="task-list" id="${data.id}">
+    <div ignore="style" class="task-list" id="${data.id}">
       <p class="task-list__title">{% ${data.name} %}</p>
       <div class="task-list__body">
         <div
