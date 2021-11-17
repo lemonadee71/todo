@@ -11,7 +11,7 @@ export const useUndo =
         // we're assuming that there's only one listener
         // and that it is our main function
         // this will fail otherwise
-        extracted = result;
+        extracted = extracted || result;
       },
     });
 
