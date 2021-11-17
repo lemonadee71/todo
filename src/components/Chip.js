@@ -8,6 +8,7 @@ const Chip = (data) => {
 
   return html`
     <div
+      is-text
       key="${data.id}"
       style="background-color: ${data.color};"
       ${{
