@@ -1,42 +1,44 @@
-import { addMonths, format } from 'date-fns';
+import { format, parseISO, subMinutes } from 'date-fns';
 import { html } from 'poor-man-jsx';
 import ToastUICalendar from 'tui-calendar';
 import { $ } from '../utils/query';
+import Core from '../core';
 
 const Calendar = () => {
   let instance;
 
+  /**
+   * Taskbar
+   */
   const renderMonthName = () => {
     const currentDate = instance.getDate().toDate();
     $.data('name', 'month-name').textContent = format(currentDate, 'MMMM');
   };
 
-  const renderDate = () => {
-    let text;
-    const viewName = instance.getViewName();
-    const start = instance.getDateRangeStart().toDate();
-    const end = instance.getDateRangeEnd().toDate();
+  const selectView = (e) => {
+    instance.changeView(e.target.value, true);
+    renderMonthName();
+  };
 
-    switch (viewName) {
-      case 'day':
-        text = format(start, 'yyyy.MM.dd');
-        break;
-      case 'month':
-        // month number is minus 1
-        text = format(addMonths(start, 1), 'yyyy.MM');
-        break;
-      default:
-        text = `${format(start, 'yyyy.MM.dd')} ~ ${format(end, 'MM.dd')}`;
-    }
+  const goToToday = () => {
+    instance.today();
+    renderMonthName();
+  };
 
-    $.data('name', 'date-range').textContent = text;
+  const previous = () => {
+    instance.prev();
+    renderMonthName();
+  };
+
+  const next = () => {
+    instance.next();
     renderMonthName();
   };
 
   const init = function () {
     instance = new ToastUICalendar(this, {
       defaultView: 'month',
-      // taskView: true,
+      taskView: false,
       // scheduleView: true,
       // disableClick: true,
       usageStatistics: false,
@@ -46,26 +48,6 @@ const Calendar = () => {
   };
 
   const destroy = () => instance.destroy();
-
-  const selectView = (e) => {
-    instance.changeView(e.target.value, true);
-    renderDate();
-  };
-
-  const goToToday = () => {
-    instance.today();
-    renderDate();
-  };
-
-  const previous = () => {
-    instance.prev();
-    renderDate();
-  };
-
-  const next = () => {
-    instance.next();
-    renderDate();
-  };
 
   return html`
     <div data-name="taskbar">
@@ -77,7 +59,6 @@ const Calendar = () => {
       <button name="today" ${{ onClick: goToToday }}>Today</button>
       <button name="previous" ${{ onClick: previous }}><</button>
       <button name="next" ${{ onClick: next }}>></button>
-      <p data-name="date-range" ${{ onMount: renderDate }}></p>
     </div>
     <div data-name="calendar">
       <h1 data-name="month-name" ${{ onMount: renderMonthName }}></h1>
