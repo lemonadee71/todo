@@ -4,6 +4,7 @@ import ToastUICalendar from 'tui-calendar';
 import Core from '../core';
 import { TZ_DATE_FORMAT } from '../core/constants';
 import Taskbar from '../components/Calendar/Taskbar';
+import Sidebar from '../components/Calendar/Sidebar';
 
 const Calendar = () => {
   const calendar = {};
@@ -48,7 +49,7 @@ const Calendar = () => {
   const destroy = () => calendar.self.destroy();
 
   return html`
-    ${Taskbar(calendar)}
+    ${Taskbar(calendar)} ${Sidebar(calendar)}
     <div data-name="calendar">
       <div ${{ onCreate: init, onDestroy: destroy }}></div>
     </div>
