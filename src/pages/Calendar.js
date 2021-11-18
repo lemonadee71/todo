@@ -3,6 +3,7 @@ import { html } from 'poor-man-jsx';
 import ToastUICalendar from 'tui-calendar';
 import { $ } from '../utils/query';
 import Core from '../core';
+import { TZ_DATE_FORMAT } from '../core/constants';
 
 const Calendar = () => {
   let instance;
@@ -35,6 +36,35 @@ const Calendar = () => {
     renderMonthName();
   };
 
+  /**
+   * Schedules
+   */
+  const showTasks = () => {
+    const allTasks = Core.main.getAllTasks();
+    const schedules = allTasks
+      .filter((task) => task.dueDate)
+      .map((task) => {
+        const dueDate = parseISO(task.dueDate);
+        const start = format(subMinutes(dueDate, '5'), TZ_DATE_FORMAT);
+        const end = format(dueDate, TZ_DATE_FORMAT);
+
+        return {
+          start,
+          end,
+          id: task.id,
+          calendarId: task.project,
+          category: 'time',
+          title: task.title,
+          body: task.notes,
+        };
+      });
+
+    instance.createSchedules(schedules);
+  };
+
+  /**
+   * Instance
+   */
   const init = function () {
     instance = new ToastUICalendar(this, {
       defaultView: 'month',
@@ -45,6 +75,8 @@ const Calendar = () => {
       useCreationPopup: true,
       useDetailPopup: true,
     });
+
+    showTasks();
   };
 
   const destroy = () => instance.destroy();

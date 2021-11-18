@@ -26,3 +26,4 @@ export const DEFAULT_COLORS = [
 ];
 export const SHOW_EVENTS = ['mouseenter', 'focus'];
 export const HIDE_EVENTS = ['mouseleave', 'blur'];
+export const TZ_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssxxxxx";
