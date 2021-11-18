@@ -1,4 +1,3 @@
-import Core from '../core';
 import { TASK } from '../core/actions';
 import BaseTask from './BaseTask';
 
@@ -18,12 +17,7 @@ export default class Subtask extends BaseTask {
 
   render(isParentComplete = false) {
     this.extraProps = {
-      main: {
-        'data-parent': this.data.parent,
-        display: Core.state.undo.includes(`[data-id="${this.id}"]`)
-          ? 'none'
-          : 'block',
-      },
+      main: { 'data-parent': this.data.parent },
       checkbox: { disabled: isParentComplete },
     };
 

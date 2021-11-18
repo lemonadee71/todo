@@ -16,7 +16,6 @@ const Core = (() => {
     currentOpenedTask: null,
     expandLabels: false,
     toasts: [],
-    undo: [],
   });
   const event = new EventEmitter();
   const router = Router;
