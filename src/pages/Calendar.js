@@ -1,10 +1,14 @@
+import { createPopper } from '@popperjs/core';
 import { format, parseISO, subMinutes } from 'date-fns';
-import { html } from 'poor-man-jsx';
+import { html, render } from 'poor-man-jsx';
 import ToastUICalendar from 'tui-calendar';
 import Core from '../core';
-import { TZ_DATE_FORMAT } from '../core/constants';
+import { POPPER_CONFIG, TZ_DATE_FORMAT } from '../core/constants';
 import Taskbar from '../components/Calendar/Taskbar';
 import Sidebar from '../components/Calendar/Sidebar';
+import CreationPopup from '../components/Calendar/CreationPopup';
+import { $ } from '../utils/query';
+import { dispatchCustomEvent } from '../utils/dispatch';
 
 const Calendar = () => {
   const calendar = {};
@@ -39,8 +43,29 @@ const Calendar = () => {
       // scheduleView: true,
       // disableClick: true,
       usageStatistics: false,
-      useCreationPopup: true,
+      // useCreationPopup: true,
       useDetailPopup: true,
+    });
+
+    calendar.self.on({
+      beforeCreateSchedule: (e) => {
+        // make sure to close previous popup first
+        const prevPopup = $('#creation-popup');
+        if (prevPopup) dispatchCustomEvent(prevPopup, 'popupclose');
+
+        // then create a new one
+        const popup = render(CreationPopup(calendar, e)).firstElementChild;
+        this.after(popup);
+
+        const ref = e.guide.guideElement
+          ? e.guide.guideElement
+          : Object.values(e.guide.guideElements)[0];
+        const instance = createPopper(ref, popup, POPPER_CONFIG);
+
+        popup.addEventListener('@destroy', () => {
+          instance.destroy();
+        });
+      },
     });
 
     showTasks();
