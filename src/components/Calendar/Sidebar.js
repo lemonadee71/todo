@@ -30,12 +30,13 @@ const Sidebar = (calendar) => {
         View all
       </label>
       <ul
+        is-list
         data-name="user-projects"
         ${{
           $children: data.$projects.map(
             (project) =>
               html`
-                <li>
+                <li key="${project.id}">
                   <label>
                     <input
                       type="checkbox"
