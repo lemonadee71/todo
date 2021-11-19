@@ -1,4 +1,5 @@
 import { createPopper } from '@popperjs/core';
+import { POPPER_CONFIG } from '../core/constants';
 import { $ } from './query';
 
 let currentInstance;
@@ -11,16 +12,7 @@ export const useTooltip = (el) => {
     (e) => {
       callback?.(e);
 
-      currentInstance = createPopper(el, tooltip, {
-        modifiers: [
-          {
-            name: 'offset',
-            options: {
-              offset: [0, 8],
-            },
-          },
-        ],
-      });
+      currentInstance = createPopper(el, tooltip, POPPER_CONFIG);
 
       tooltip.firstElementChild.textContent =
         e.target.dataset.tooltipText || 'This is a tooltip';

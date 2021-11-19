@@ -26,4 +26,15 @@ export const DEFAULT_COLORS = [
 ];
 export const SHOW_EVENTS = ['mouseenter', 'focus'];
 export const HIDE_EVENTS = ['mouseleave', 'blur'];
+export const POPPER_CONFIG = {
+  modifiers: [
+    {
+      name: 'offset',
+      options: {
+        offset: [0, 8],
+      },
+    },
+  ],
+};
 export const TZ_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssxxxxx";
+export const FLATPICKR_DATE_FORMAT = 'yyyy-MM-dd HH:mm';

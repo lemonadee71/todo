@@ -2,6 +2,7 @@ import flatpickr from 'flatpickr';
 import { createHook, html, render } from 'poor-man-jsx';
 import Core from '../core';
 import { TASK } from '../core/actions';
+import { POPPER_CONFIG } from '../core/constants';
 import { useTask } from '../core/hooks';
 import { debounce } from '../utils/delay';
 import { dispatchCustomEvent } from '../utils/dispatch';
@@ -94,15 +95,8 @@ export default class BaseTaskModal {
     node.after(popover);
 
     const [, onShow, onHide] = usePopper(node, popover, {
+      ...POPPER_CONFIG,
       placement: 'right-start',
-      modifiers: [
-        {
-          name: 'offset',
-          options: {
-            offset: [0, 8],
-          },
-        },
-      ],
     });
 
     node.addEventListener(
