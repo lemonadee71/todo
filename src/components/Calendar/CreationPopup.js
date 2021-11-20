@@ -1,23 +1,25 @@
-import { format, parseISO, subMinutes } from 'date-fns';
+import { parseISO, subMinutes } from 'date-fns';
 import flatpickr from 'flatpickr';
 import { createHook, html } from 'poor-man-jsx';
 import Core from '../../core';
 import { TASK } from '../../core/actions';
-import { FLATPICKR_DATE_FORMAT, TZ_DATE_FORMAT } from '../../core/constants';
 import { useRoot } from '../../core/hooks';
 import { debounce } from '../../utils/delay';
 import { $ } from '../../utils/query';
 import logger from '../../utils/logger';
+import { formatToDateTime, formatToTZDate } from '../../utils/date';
 
 const CreationPopup = (evt, createSchedule) => {
-  const [root, revoke] = useRoot();
-  const [state] = createHook({ selectedProject: '', dueDate: '' });
+  const [root, unsubscribe] = useRoot();
+  const [state, revoke] = createHook({ selectedProject: '', dueDate: '' });
 
   const renderOptions = (item) =>
     html`<option value="${item.id}">${item.name}</option>`;
 
   const closePopup = () => {
     evt.guide.clearGuideElement();
+    unsubscribe();
+    revoke();
     $('#creation-popup').remove();
   };
 
@@ -33,15 +35,13 @@ const CreationPopup = (evt, createSchedule) => {
       { project, list, data: { title, dueDate: state.dueDate } },
       {
         onSuccess: (task) => {
-          const start = format(
-            subMinutes(parseISO(state.dueDate), '5'),
-            TZ_DATE_FORMAT
+          const start = formatToTZDate(
+            subMinutes(parseISO(state.dueDate), '5')
           );
-          const end = format(parseISO(state.dueDate), TZ_DATE_FORMAT);
+          const end = formatToTZDate(parseISO(state.dueDate));
 
           createSchedule(task, start, end);
 
-          e.target.reset();
           state.selectedProject = '';
           closePopup();
         },
@@ -86,7 +86,7 @@ const CreationPopup = (evt, createSchedule) => {
   };
 
   return html`
-    <div id="creation-popup" ${{ onPopupClose: closePopup, onDestroy: revoke }}>
+    <div id="creation-popup" ${{ onPopupClose: closePopup }}>
       <span ${{ onClick: closePopup }}>&times;</span>
       <form
         ${{ onSubmit: createTask, onMount: initListOptions }}
@@ -107,7 +107,7 @@ const CreationPopup = (evt, createSchedule) => {
         <input
           type="text"
           name="dueDate"
-          value="${format(evt.start.toDate(), FLATPICKR_DATE_FORMAT)}"
+          value="${formatToDateTime(evt.start.toDate())}"
           ${{ onMount: initDatePicker }}
         />
         <button type="submit">Submit</button>

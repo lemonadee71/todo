@@ -37,4 +37,4 @@ export const POPPER_CONFIG = {
   ],
 };
 export const TZ_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssxxxxx";
-export const FLATPICKR_DATE_FORMAT = 'yyyy-MM-dd HH:mm';
+export const DATE_TIME_FORMAT = 'yyyy-MM-dd HH:mm';

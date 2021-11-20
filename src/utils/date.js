@@ -10,6 +10,7 @@ import {
   isThisMonth,
   isFuture,
 } from 'date-fns';
+import { DATE_TIME_FORMAT, TZ_DATE_FORMAT } from '../core/constants';
 
 const isDueToday = (date) => isToday(date);
 const isDueTomorrow = (date) => isTomorrow(date);
@@ -44,6 +45,10 @@ const formatDate = (dirtyDate) => {
   return `Due ${format(date, 'MMM dd')}`;
 };
 
+const formatToDateTime = (date) => format(date, DATE_TIME_FORMAT);
+
+const formatToTZDate = (date) => format(date, TZ_DATE_FORMAT);
+
 export {
   isDueToday,
   isDueTomorrow,
@@ -51,5 +56,7 @@ export {
   isUpcoming,
   formatDate,
   formatDateToNow,
+  formatToDateTime,
+  formatToTZDate,
   parse,
 };
