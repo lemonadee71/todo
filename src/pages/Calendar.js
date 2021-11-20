@@ -1,14 +1,15 @@
 import { createPopper } from '@popperjs/core';
-import { format, parseISO, subMinutes } from 'date-fns';
+import { parseISO, subMinutes } from 'date-fns';
 import { html, render } from 'poor-man-jsx';
 import ToastUICalendar from 'tui-calendar';
 import Core from '../core';
-import { POPPER_CONFIG, TZ_DATE_FORMAT } from '../core/constants';
+import { POPPER_CONFIG } from '../core/constants';
+import { $ } from '../utils/query';
+import { dispatchCustomEvent } from '../utils/dispatch';
+import { formatToTZDate } from '../utils/date';
 import Taskbar from '../components/Calendar/Taskbar';
 import Sidebar from '../components/Calendar/Sidebar';
 import CreationPopup from '../components/Calendar/CreationPopup';
-import { $ } from '../utils/query';
-import { dispatchCustomEvent } from '../utils/dispatch';
 
 const Calendar = () => {
   const calendar = {};
@@ -37,8 +38,8 @@ const Calendar = () => {
       .filter((task) => task.dueDate)
       .forEach((task) => {
         const dueDate = parseISO(task.dueDate);
-        const start = format(subMinutes(dueDate, '5'), TZ_DATE_FORMAT);
-        const end = format(dueDate, TZ_DATE_FORMAT);
+        const start = formatToTZDate(subMinutes(dueDate, '5'));
+        const end = formatToTZDate(dueDate);
 
         createSchedule(task, start, end);
       });
@@ -49,9 +50,7 @@ const Calendar = () => {
       defaultView: 'month',
       taskView: false,
       // scheduleView: true,
-      // disableClick: true,
       usageStatistics: false,
-      // useCreationPopup: true,
       useDetailPopup: true,
     });
 
