@@ -17,7 +17,7 @@ const Project = ({ data: { id } }) => {
   // so catch errors here for now
   const unsubscribe = [
     Core.event.on(
-      error([PROJECT.ADD, PROJECT.LISTS.ADD, PROJECT.LABELS.ADD]),
+      error([PROJECT.LISTS.ADD, PROJECT.LABELS.ADD]),
       wrap(logger.warning)
     ),
     Core.event.on(

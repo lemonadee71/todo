@@ -3,10 +3,17 @@ import { html } from 'poor-man-jsx';
 import { PROJECT } from '../core/actions';
 import { useRoot } from '../core/hooks';
 import Core from '../core';
+import { wrap } from '../utils/misc';
+import logger from '../utils/logger';
 import ProjectLink from './ProjectLink';
 
 const Sidebar = () => {
   const [data, revoke] = useRoot();
+
+  const unsubscribe = Core.event.on(
+    PROJECT.ADD + '.error',
+    wrap(logger.warning)
+  );
 
   const createNewProject = (e) => {
     e.preventDefault();
@@ -32,7 +39,7 @@ const Sidebar = () => {
   };
 
   return html`
-    <nav class="quick-links">
+    <nav class="quick-links" ${{ onDestroy: unsubscribe }}>
       <ul>
         <li><a href="#">User</a></li>
         <li><a href="#">Quick Find</a></li>
