@@ -13,27 +13,31 @@ import { dispatchCustomEvent } from '../utils/dispatch';
 const Calendar = () => {
   const calendar = {};
 
+  const createSchedule = (data, start, end) => {
+    const schedule = {
+      start,
+      end,
+      id: data.id,
+      calendarId: data.project,
+      category: 'time',
+      title: data.title,
+      body: data.notes,
+    };
+
+    calendar.self.createSchedules([schedule]);
+  };
+
   const showTasks = () => {
-    const allTasks = Core.main.getAllTasks();
-    const schedules = allTasks
+    Core.main
+      .getAllTasks()
       .filter((task) => task.dueDate)
-      .map((task) => {
+      .forEach((task) => {
         const dueDate = parseISO(task.dueDate);
         const start = format(subMinutes(dueDate, '5'), TZ_DATE_FORMAT);
         const end = format(dueDate, TZ_DATE_FORMAT);
 
-        return {
-          start,
-          end,
-          id: task.id,
-          calendarId: task.project,
-          category: 'time',
-          title: task.title,
-          body: task.notes,
-        };
+        createSchedule(task, start, end);
       });
-
-    calendar.self.createSchedules(schedules);
   };
 
   const init = function () {
@@ -54,7 +58,9 @@ const Calendar = () => {
         if (prevPopup) dispatchCustomEvent(prevPopup, 'popupclose');
 
         // then create a new one
-        const popup = render(CreationPopup(calendar, e)).firstElementChild;
+        const popup = render(
+          CreationPopup(e, createSchedule)
+        ).firstElementChild;
         this.after(popup);
 
         const ref = e.guide.guideElement

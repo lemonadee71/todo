@@ -9,18 +9,17 @@ import { debounce } from '../../utils/delay';
 import { $ } from '../../utils/query';
 import logger from '../../utils/logger';
 
-const CreationPopup = (calendar, evt) => {
+const CreationPopup = (evt, createSchedule) => {
   const [root, revoke] = useRoot();
-  const [state] = createHook({ selectedProject: '' });
-  let dueDate = '';
+  const [state] = createHook({ selectedProject: '', dueDate: '' });
+
+  const renderOptions = (item) =>
+    html`<option value="${item.id}">${item.name}</option>`;
 
   const closePopup = () => {
     evt.guide.clearGuideElement();
     $('#creation-popup').remove();
   };
-
-  const renderOptions = (item) =>
-    html`<option value="${item.id}">${item.name}</option>`;
 
   const createTask = (e) => {
     e.preventDefault();
@@ -31,26 +30,16 @@ const CreationPopup = (calendar, evt) => {
 
     Core.event.emit(
       TASK.ADD,
-      { project, list, data: { title, dueDate } },
+      { project, list, data: { title, dueDate: state.dueDate } },
       {
         onSuccess: (task) => {
           const start = format(
-            subMinutes(parseISO(dueDate), '5'),
+            subMinutes(parseISO(state.dueDate), '5'),
             TZ_DATE_FORMAT
           );
-          const end = format(parseISO(dueDate), TZ_DATE_FORMAT);
+          const end = format(parseISO(state.dueDate), TZ_DATE_FORMAT);
 
-          calendar.self.createSchedules([
-            {
-              start,
-              end,
-              id: task.id,
-              calendarId: task.project,
-              category: 'time',
-              title: task.title,
-              body: task.notes,
-            },
-          ]);
+          createSchedule(task, start, end);
 
           e.target.reset();
           state.selectedProject = '';
@@ -77,10 +66,10 @@ const CreationPopup = (calendar, evt) => {
 
   const initDatePicker = (e) => {
     // init date
-    dueDate = e.target.value;
+    state.dueDate = e.target.value;
 
     const editDate = debounce(() => {
-      dueDate = e.target.value;
+      state.dueDate = e.target.value;
     }, 100);
 
     const instance = flatpickr(e.target, {
