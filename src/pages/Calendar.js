@@ -27,6 +27,10 @@ const Calendar = () => {
     calendar.self.createSchedules([schedule]);
   };
 
+  const toggleSchedule = (calendarId, toHide) => {
+    calendar.self.toggleSchedules(calendarId, toHide);
+  };
+
   const showTasks = () => {
     Core.main
       .getAllTasks()
@@ -80,7 +84,7 @@ const Calendar = () => {
   const destroy = () => calendar.self.destroy();
 
   return html`
-    ${Taskbar(calendar)} ${Sidebar(calendar)}
+    ${Taskbar(calendar)} ${Sidebar(toggleSchedule)}
     <div data-name="calendar">
       <div ${{ onCreate: init, onDestroy: destroy }}></div>
     </div>

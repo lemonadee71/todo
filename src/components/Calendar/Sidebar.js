@@ -2,11 +2,11 @@ import { html } from 'poor-man-jsx';
 import { useRoot } from '../../core/hooks';
 import { $, $$ } from '../../utils/query';
 
-const Sidebar = (calendar) => {
-  const [data] = useRoot();
+const Sidebar = (toggleSchedule) => {
+  const [data, unsubscribe] = useRoot();
 
   const toggleProject = (e) => {
-    calendar.self.toggleSchedules(e.target.value, !e.target.checked);
+    toggleSchedule(e.target.value, !e.target.checked);
 
     if (!e.target.checked) $.attr('name', 'view-all').checked = false;
   };
@@ -19,7 +19,7 @@ const Sidebar = (calendar) => {
   };
 
   return html`
-    <div data-name="sidebar">
+    <div data-name="sidebar" ${{ onDestroy: unsubscribe }}>
       <label>
         <input
           name="view-all"
