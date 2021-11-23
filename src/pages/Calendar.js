@@ -8,6 +8,7 @@ import { POPPER_CONFIG } from '../core/constants';
 import { $ } from '../utils/query';
 import { dispatchCustomEvent } from '../utils/dispatch';
 import { formatToDateTime, getDueDateRange } from '../utils/date';
+import { useUndo } from '../utils/undo';
 import { appendSuccess as success } from '../utils/misc';
 import Taskbar from '../components/Calendar/Taskbar';
 import Sidebar from '../components/Calendar/Sidebar';
@@ -119,7 +120,7 @@ const Calendar = () => {
         }
       },
       beforeDeleteSchedule: ({ schedule }) => {
-        Core.event.emit(TASK.REMOVE, { ...schedule.raw });
+        useUndo({ type: TASK, text: 'Task removed', payload: schedule.raw })();
         deleteSchedule(schedule.id, schedule.calendarId);
       },
     });
