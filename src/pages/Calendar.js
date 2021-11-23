@@ -6,7 +6,7 @@ import { TASK } from '../core/actions';
 import { POPPER_CONFIG } from '../core/constants';
 import { $ } from '../utils/query';
 import { dispatchCustomEvent } from '../utils/dispatch';
-import { getDueDateRange } from '../utils/date';
+import { formatToDateTime, getDueDateRange } from '../utils/date';
 import { appendSuccess as success } from '../utils/misc';
 import Taskbar from '../components/Calendar/Taskbar';
 import Sidebar from '../components/Calendar/Sidebar';
@@ -31,6 +31,11 @@ const Calendar = () => {
       category: 'time',
       title: data.title,
       body: data.notes,
+      raw: {
+        project: data.project,
+        list: data.list,
+        task: data.id,
+      },
     };
 
     calendar.self.createSchedules([schedule]);
@@ -76,6 +81,17 @@ const Calendar = () => {
         popup.addEventListener('@destroy', () => {
           instance.destroy();
         });
+      },
+      beforeUpdateSchedule: (e) => {
+        const { schedule, changes } = e;
+        const location = schedule.raw;
+
+        Core.event.emit(TASK.UPDATE, {
+          ...location,
+          data: { dueDate: formatToDateTime(changes.end.toDate()) },
+        });
+
+        calendar.self.updateSchedule(schedule.id, schedule.calendarId, changes);
       },
     });
 
