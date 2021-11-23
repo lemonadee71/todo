@@ -87,16 +87,18 @@ const Calendar = () => {
           instance.destroy();
         });
       },
-      beforeUpdateSchedule: (e) => {
-        const { schedule, changes } = e;
-        const location = schedule.raw;
-
+      beforeUpdateSchedule: ({ schedule, changes }) => {
         Core.event.emit(TASK.UPDATE, {
-          ...location,
+          ...schedule.raw,
           data: { dueDate: formatToDateTime(changes.end.toDate()) },
         });
 
         calendar.self.updateSchedule(schedule.id, schedule.calendarId, changes);
+      },
+      beforeDeleteSchedule: ({ schedule }) => {
+        Core.event.emit(TASK.REMOVE, { ...schedule.raw });
+
+        calendar.self.deleteSchedule(schedule.id, schedule.calendarId);
       },
     });
 
