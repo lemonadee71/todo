@@ -6,9 +6,9 @@ import { useRoot } from '../../core/hooks';
 import { debounce } from '../../utils/delay';
 import { $ } from '../../utils/query';
 import logger from '../../utils/logger';
-import { formatToDateTime, getDueDateRange } from '../../utils/date';
+import { formatToDateTime } from '../../utils/date';
 
-const CreationPopup = (evt, createSchedule) => {
+const CreationPopup = (evt) => {
   const [root, unsubscribe] = useRoot();
   const [state, revoke] = createHook({ selectedProject: '', dueDate: '' });
 
@@ -33,12 +33,7 @@ const CreationPopup = (evt, createSchedule) => {
       TASK.ADD,
       { project, list, data: { title, dueDate: state.dueDate } },
       {
-        onSuccess: (task) => {
-          const [start, end] = getDueDateRange(state.dueDate);
-
-          createSchedule(task, start, end);
-          closePopup();
-        },
+        onSuccess: closePopup,
         onError: logger.error,
       }
     );

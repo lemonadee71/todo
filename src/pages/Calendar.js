@@ -2,16 +2,25 @@ import { createPopper } from '@popperjs/core';
 import { html, render } from 'poor-man-jsx';
 import ToastUICalendar from 'tui-calendar';
 import Core from '../core';
+import { TASK } from '../core/actions';
 import { POPPER_CONFIG } from '../core/constants';
 import { $ } from '../utils/query';
 import { dispatchCustomEvent } from '../utils/dispatch';
 import { getDueDateRange } from '../utils/date';
+import { appendSuccess as success } from '../utils/misc';
 import Taskbar from '../components/Calendar/Taskbar';
 import Sidebar from '../components/Calendar/Sidebar';
 import CreationPopup from '../components/Calendar/CreationPopup';
 
 const Calendar = () => {
   const calendar = {};
+
+  const unsubscribe = Core.event.on(
+    success([TASK.ADD, TASK.INSERT]),
+    (data) => {
+      if (data.dueDate) createSchedule(data, ...getDueDateRange(data.dueDate));
+    }
+  );
 
   const createSchedule = (data, start, end) => {
     const schedule = {
@@ -36,9 +45,7 @@ const Calendar = () => {
       .getAllTasks()
       .filter((task) => task.dueDate)
       .forEach((task) => {
-        const [start, end] = getDueDateRange(task.dueDate);
-
-        createSchedule(task, start, end);
+        createSchedule(task, ...getDueDateRange(task.dueDate));
       });
   };
 
@@ -58,9 +65,7 @@ const Calendar = () => {
         if (prevPopup) dispatchCustomEvent(prevPopup, 'popupclose');
 
         // then create a new one
-        const popup = render(
-          CreationPopup(e, createSchedule)
-        ).firstElementChild;
+        const popup = render(CreationPopup(e)).firstElementChild;
         this.after(popup);
 
         const ref = e.guide.guideElement
@@ -77,7 +82,10 @@ const Calendar = () => {
     showTasks();
   };
 
-  const destroy = () => calendar.self.destroy();
+  const destroy = () => {
+    unsubscribe();
+    calendar.self.destroy();
+  };
 
   return html`
     ${Taskbar(calendar)} ${Sidebar(toggleSchedule)}
