@@ -292,8 +292,10 @@ export const updateTask = (projectId, listId, taskId, data) => {
 export const moveTask = (projectId, listId, taskId, position) =>
   getList(projectId, listId).move(taskId, position);
 
-export const insertTask = (projectId, listId, task, position) =>
+export const insertTask = (projectId, listId, task, position) => {
   getList(projectId, listId).insert(task, position);
+  return task.data;
+};
 
 export const deleteTask = (projectId, listId, taskId) =>
   getList(projectId, listId).extract(taskId);
@@ -337,8 +339,10 @@ export const addSubtask = (projectId, listId, taskId, data) => {
   return subtask;
 };
 
-export const insertSubtask = (projectId, listId, taskId, subtask, position) =>
+export const insertSubtask = (projectId, listId, taskId, subtask, position) => {
   getTask(projectId, listId, taskId).insertSubtask(subtask, position);
+  return subtask.data;
+};
 
 export const deleteSubtask = (projectId, listId, taskId, subtaskId) =>
   getTask(projectId, listId, taskId).extractSubtask(subtaskId);
