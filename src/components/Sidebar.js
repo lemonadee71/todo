@@ -5,15 +5,31 @@ import { useRoot } from '../core/hooks';
 import Core from '../core';
 import { wrap } from '../utils/misc';
 import logger from '../utils/logger';
+import { $ } from '../utils/query';
 import ProjectLink from './ProjectLink';
+import TaskModal from './TaskModal';
+import SubtaskModal from './SubtaskModal';
 
 const Sidebar = () => {
   const [data, revoke] = useRoot();
 
-  const unsubscribe = Core.event.on(
-    PROJECT.ADD + '.error',
-    wrap(logger.warning)
-  );
+  const unsubscribe = [
+    Core.event.on(PROJECT.ADD + '.error', wrap(logger.warning)),
+    // we put this here to avoid dependency cycle
+    // idk if this should be here
+    Core.event.on('task.modal.open', (task) => {
+      $('#main-modal').changeContent(
+        new TaskModal(task).render(),
+        'task-modal'
+      );
+    }),
+    Core.event.on('subtask.modal.open', (subtask) => {
+      $('#main-modal').changeContent(
+        new SubtaskModal(subtask).render(),
+        'task-modal'
+      );
+    }),
+  ];
 
   const createNewProject = (e) => {
     e.preventDefault();
@@ -39,7 +55,10 @@ const Sidebar = () => {
   };
 
   return html`
-    <nav class="quick-links" ${{ onDestroy: unsubscribe }}>
+    <nav
+      class="quick-links"
+      ${{ onDestroy: () => unsubscribe.forEach((cb) => cb()) }}
+    >
       <ul>
         <li><a href="#">User</a></li>
         <li><a href="#">Quick Find</a></li>

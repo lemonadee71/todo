@@ -4,10 +4,7 @@ import { PROJECT, TASK } from '../core/actions';
 import { useProject } from '../core/hooks';
 import Core from '../core';
 import logger from '../utils/logger';
-import { $ } from '../utils/query';
 import { appendError as error, wrap } from '../utils/misc';
-import TaskModal from '../components/TaskModal';
-import SubtaskModal from '../components/SubtaskModal';
 import List from '../components/List';
 
 const Project = ({ data: { id } }) => {
@@ -30,19 +27,6 @@ const Project = ({ data: { id } }) => {
       ]),
       wrap(logger.error)
     ),
-    // we put this here to avoid dependency cycle
-    Core.event.on('task.modal.open', (data) => {
-      $('#main-modal').changeContent(
-        new TaskModal(data).render(),
-        'task-modal'
-      );
-    }),
-    Core.event.on('subtask.modal.open', (data) => {
-      $('#main-modal').changeContent(
-        new SubtaskModal(data).render(),
-        'task-modal'
-      );
-    }),
   ];
 
   const createNewList = (e) => {
