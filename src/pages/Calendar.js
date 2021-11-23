@@ -1,12 +1,11 @@
 import { createPopper } from '@popperjs/core';
-import { parseISO, subMinutes } from 'date-fns';
 import { html, render } from 'poor-man-jsx';
 import ToastUICalendar from 'tui-calendar';
 import Core from '../core';
 import { POPPER_CONFIG } from '../core/constants';
 import { $ } from '../utils/query';
 import { dispatchCustomEvent } from '../utils/dispatch';
-import { formatToTZDate } from '../utils/date';
+import { getDueDateRange } from '../utils/date';
 import Taskbar from '../components/Calendar/Taskbar';
 import Sidebar from '../components/Calendar/Sidebar';
 import CreationPopup from '../components/Calendar/CreationPopup';
@@ -37,9 +36,7 @@ const Calendar = () => {
       .getAllTasks()
       .filter((task) => task.dueDate)
       .forEach((task) => {
-        const dueDate = parseISO(task.dueDate);
-        const start = formatToTZDate(subMinutes(dueDate, '5'));
-        const end = formatToTZDate(dueDate);
+        const [start, end] = getDueDateRange(task.dueDate);
 
         createSchedule(task, start, end);
       });

@@ -9,6 +9,7 @@ import {
   parseISO,
   isThisMonth,
   isFuture,
+  subMinutes,
 } from 'date-fns';
 import { DATE_TIME_FORMAT, TZ_DATE_FORMAT } from '../core/constants';
 
@@ -49,6 +50,14 @@ const formatToDateTime = (date) => format(date, DATE_TIME_FORMAT);
 
 const formatToTZDate = (date) => format(date, TZ_DATE_FORMAT);
 
+const getDueDateRange = (dueDate, range = '5', formatter = formatToTZDate) => {
+  const date = parse(dueDate);
+  const start = formatter(subMinutes(date, range));
+  const end = formatter(date);
+
+  return [start, end];
+};
+
 export {
   isDueToday,
   isDueTomorrow,
@@ -58,5 +67,6 @@ export {
   formatDateToNow,
   formatToDateTime,
   formatToTZDate,
+  getDueDateRange,
   parse,
 };
