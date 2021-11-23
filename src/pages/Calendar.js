@@ -16,6 +16,7 @@ import CreationPopup from '../components/Calendar/CreationPopup';
 const Calendar = () => {
   const calendar = {};
 
+  // listeners
   const unsubscribe = [
     Core.event.on(success([TASK.ADD, TASK.INSERT]), (data) => {
       if (data.dueDate) createSchedule(data, ...getDueDateRange(data.dueDate));
@@ -75,12 +76,17 @@ const Calendar = () => {
       });
   };
 
+  const closeCreationPopup = () => {
+    const prevPopup = $('#creation-popup');
+    if (prevPopup) dispatchCustomEvent(prevPopup, 'popupclose');
+  };
+
   const initListeners = (el) => {
     calendar.self.on({
+      clickSchedule: closeCreationPopup,
       beforeCreateSchedule: (e) => {
         // make sure to close previous popup first
-        const prevPopup = $('#creation-popup');
-        if (prevPopup) dispatchCustomEvent(prevPopup, 'popupclose');
+        closeCreationPopup();
 
         // then create a new one
         const popup = render(CreationPopup(e)).firstElementChild;
@@ -96,6 +102,8 @@ const Calendar = () => {
         });
       },
       beforeUpdateSchedule: ({ schedule, changes }) => {
+        closeCreationPopup();
+
         const location = schedule.raw;
 
         if (changes) {
