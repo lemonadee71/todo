@@ -55,19 +55,7 @@ const Calendar = () => {
       });
   };
 
-  const init = function () {
-    calendar.self = new ToastUICalendar(this, {
-      defaultView: 'month',
-      taskView: false,
-      // scheduleView: true,
-      usageStatistics: false,
-      useDetailPopup: true,
-      template: {
-        popupDetailDate: (...args) =>
-          format(args[2].toDate(), 'MMMM d, yyyy hh:mm a'),
-      },
-    });
-
+  const initListeners = (el) => {
     calendar.self.on({
       beforeCreateSchedule: (e) => {
         // make sure to close previous popup first
@@ -76,7 +64,7 @@ const Calendar = () => {
 
         // then create a new one
         const popup = render(CreationPopup(e)).firstElementChild;
-        this.after(popup);
+        el.after(popup);
 
         const ref = e.guide.guideElement
           ? e.guide.guideElement
@@ -101,7 +89,22 @@ const Calendar = () => {
         calendar.self.deleteSchedule(schedule.id, schedule.calendarId);
       },
     });
+  };
 
+  const init = function () {
+    calendar.self = new ToastUICalendar(this, {
+      defaultView: 'month',
+      taskView: false,
+      // scheduleView: true,
+      usageStatistics: false,
+      useDetailPopup: true,
+      template: {
+        popupDetailDate: (...args) =>
+          format(args[2].toDate(), 'MMMM d, yyyy hh:mm a'),
+      },
+    });
+
+    initListeners(this);
     showTasks();
   };
 
