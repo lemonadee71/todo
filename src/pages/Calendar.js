@@ -16,12 +16,24 @@ import CreationPopup from '../components/Calendar/CreationPopup';
 const Calendar = () => {
   const calendar = {};
 
-  const unsubscribe = Core.event.on(
-    success([TASK.ADD, TASK.INSERT]),
-    (data) => {
+  const unsubscribe = [
+    Core.event.on(success([TASK.ADD, TASK.INSERT]), (data) => {
       if (data.dueDate) createSchedule(data, ...getDueDateRange(data.dueDate));
-    }
-  );
+    }),
+    Core.event.on(success(TASK.UPDATE), (data) => {
+      // check if there's an existing schedule
+      const schedule = calendar.self.getSchedule(data.id, data.project);
+
+      if (data.dueDate) {
+        const [start, end] = getDueDateRange(data.dueDate);
+
+        if (schedule) updateSchedule(data.id, data.project, start, end);
+        else createSchedule(data, start, end);
+      } else {
+        deleteSchedule(data.id, data.project);
+      }
+    }),
+  ];
 
   const createSchedule = (data, start, end) => {
     const schedule = {
@@ -40,6 +52,14 @@ const Calendar = () => {
     };
 
     calendar.self.createSchedules([schedule]);
+  };
+
+  const updateSchedule = (id, calendarId, start, end) => {
+    calendar.self.updateSchedule(id, calendarId, { start, end });
+  };
+
+  const deleteSchedule = (id, calendarId) => {
+    calendar.self.deleteSchedule(id, calendarId);
   };
 
   const toggleSchedule = (calendarId, toHide) => {
@@ -76,17 +96,23 @@ const Calendar = () => {
         });
       },
       beforeUpdateSchedule: ({ schedule, changes }) => {
-        Core.event.emit(TASK.UPDATE, {
-          ...schedule.raw,
-          data: { dueDate: formatToDateTime(changes.end.toDate()) },
-        });
+        const location = schedule.raw;
 
-        calendar.self.updateSchedule(schedule.id, schedule.calendarId, changes);
+        if (changes) {
+          Core.event.emit(TASK.UPDATE, {
+            ...location,
+            data: { dueDate: formatToDateTime(changes.end.toDate()) },
+          });
+        } else {
+          Core.event.emit(
+            'task.modal.open',
+            Core.main.getTask(location.project, location.list, location.task)
+          );
+        }
       },
       beforeDeleteSchedule: ({ schedule }) => {
         Core.event.emit(TASK.REMOVE, { ...schedule.raw });
-
-        calendar.self.deleteSchedule(schedule.id, schedule.calendarId);
+        deleteSchedule(schedule.id, schedule.calendarId);
       },
     });
   };
@@ -109,7 +135,7 @@ const Calendar = () => {
   };
 
   const destroy = () => {
-    unsubscribe();
+    unsubscribe.forEach((cb) => cb());
     calendar.self.destroy();
   };
 
