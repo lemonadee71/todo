@@ -8,11 +8,6 @@ const Taskbar = (calendar) => {
     $.data('name', 'month-name').textContent = format(currentDate, 'MMMM yyyy');
   };
 
-  const selectView = (e) => {
-    calendar.self.changeView(e.target.value, true);
-    renderMonthName();
-  };
-
   const goToToday = () => {
     calendar.self.today();
     renderMonthName();
@@ -30,11 +25,6 @@ const Taskbar = (calendar) => {
 
   return html`
     <div data-name="taskbar">
-      <select name="calendar-view" ${{ onChange: selectView }}>
-        <option value="day">Daily</option>
-        <option value="week">Weekly</option>
-        <option value="month" selected>Month</option>
-      </select>
       <button name="today" ${{ onClick: goToToday }}>Today</button>
       <button name="previous" ${{ onClick: previous }}><</button>
       <button name="next" ${{ onClick: next }}>></button>
