@@ -1,3 +1,4 @@
+import format from 'date-fns/format';
 import { createPopper } from '@popperjs/core';
 import { html, render } from 'poor-man-jsx';
 import ToastUICalendar from 'tui-calendar';
@@ -61,6 +62,10 @@ const Calendar = () => {
       // scheduleView: true,
       usageStatistics: false,
       useDetailPopup: true,
+      template: {
+        popupDetailDate: (...args) =>
+          format(args[2].toDate(), 'MMMM d, yyyy hh:mm a'),
+      },
     });
 
     calendar.self.on({
