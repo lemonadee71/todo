@@ -14,7 +14,7 @@ const Sidebar = () => {
   const [data, revoke] = useRoot();
 
   const unsubscribe = [
-    Core.event.on(PROJECT.ADD + '.error', wrap(logger.warning)),
+    Core.event.onError(PROJECT.ADD, wrap(logger.warning)),
     // we put this here to avoid dependency cycle
     // idk if this should be here
     Core.event.on('task.modal.open', (task) => {

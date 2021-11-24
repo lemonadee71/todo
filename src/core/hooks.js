@@ -1,12 +1,11 @@
 import { createHook } from 'poor-man-jsx';
 import Core from '.';
 import { PROJECT, TASK } from './actions';
-import { appendSuccess as success } from '../utils/misc';
 
 export const useRoot = () => {
   const [data] = createHook({ projects: Core.main.getProjectDetails() });
 
-  const unsubscribe = Core.event.on(success(PROJECT.ALL), () => {
+  const unsubscribe = Core.event.onSuccess(PROJECT.ALL, () => {
     data.projects = Core.main.getProjectDetails();
   });
 
@@ -26,20 +25,20 @@ export const useProject = (projectId) => {
   });
 
   const unsubscribe = [
-    Core.event.on(
-      success([
+    Core.event.onSuccess(
+      [
         ...PROJECT.LISTS.ALL,
         ...PROJECT.LABELS.ALL,
         ...TASK.ALL,
         ...TASK.LABELS.ALL,
         ...TASK.SUBTASKS.ALL,
-      ]),
+      ],
       () => {
         project.lists = projectRef.lists.items;
         project.labels = projectRef.labels.items;
       }
     ),
-    Core.event.on(PROJECT.UPDATE, () => {
+    Core.event.onSuccess(PROJECT.UPDATE, () => {
       project.name = projectRef.name;
     }),
   ];
@@ -58,22 +57,18 @@ export const useTask = (projectId, listId, taskId, subtaskId = null) => {
   const action = subtaskId ? TASK.SUBTASKS : TASK;
 
   const unsubscribe = [
-    Core.event.on(action.UPDATE + '.success', (newData) => {
+    Core.event.onSuccess(action.UPDATE, (newData) => {
       Object.assign(task, newData);
     }),
-    Core.event.on(success([...TASK.LABELS.ALL, ...PROJECT.LABELS.ALL]), () => {
+    Core.event.onSuccess([...TASK.LABELS.ALL, ...PROJECT.LABELS.ALL], () => {
       task.labels = taskRef.data.labels;
     }),
   ];
 
   if (!subtaskId) {
     unsubscribe.push(
-      Core.event.on(
-        success([
-          ...TASK.SUBTASKS.ALL,
-          ...TASK.LABELS.ALL,
-          ...PROJECT.LABELS.ALL,
-        ]),
+      Core.event.onSuccess(
+        [...TASK.SUBTASKS.ALL, ...TASK.LABELS.ALL, ...PROJECT.LABELS.ALL],
         () => {
           task.subtasks = taskRef.subtasks.items;
         }

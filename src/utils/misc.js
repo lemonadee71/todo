@@ -5,10 +5,6 @@ export const wrap =
   (...args) =>
     fn(...args);
 
-export const appendSuccess = (str) => [str].flat().map((s) => s + '.success');
-
-export const appendError = (str) => [str].flat().map((s) => s + '.error');
-
 export const memoize = (fn) => {
   const cache = new Map();
 

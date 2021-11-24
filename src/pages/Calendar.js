@@ -9,7 +9,6 @@ import { $ } from '../utils/query';
 import { dispatchCustomEvent } from '../utils/dispatch';
 import { formatToDateTime, getDueDateRange } from '../utils/date';
 import { useUndo } from '../utils/undo';
-import { appendSuccess as success } from '../utils/misc';
 import Taskbar from '../components/Calendar/Taskbar';
 import Sidebar from '../components/Calendar/Sidebar';
 import CreationPopup from '../components/Calendar/CreationPopup';
@@ -19,10 +18,10 @@ const Calendar = () => {
 
   // listeners
   const unsubscribe = [
-    Core.event.on(success([TASK.ADD, TASK.INSERT]), (data) => {
+    Core.event.onSuccess([TASK.ADD, TASK.INSERT], (data) => {
       if (data.dueDate) createSchedule(data, ...getDueDateRange(data.dueDate));
     }),
-    Core.event.on(success(TASK.UPDATE), (data) => {
+    Core.event.onSuccess(TASK.UPDATE, (data) => {
       // check if there's an existing schedule
       const schedule = calendar.self.getSchedule(data.id, data.project);
 

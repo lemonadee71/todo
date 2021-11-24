@@ -4,7 +4,7 @@ import { PROJECT, TASK } from '../core/actions';
 import { useProject } from '../core/hooks';
 import Core from '../core';
 import logger from '../utils/logger';
-import { appendError as error, wrap } from '../utils/misc';
+import { wrap } from '../utils/misc';
 import List from '../components/List';
 
 const Project = ({ data: { id } }) => {
@@ -13,18 +13,18 @@ const Project = ({ data: { id } }) => {
   // this is like the root of app
   // so catch errors here for now
   const unsubscribe = [
-    Core.event.on(
-      error([PROJECT.LISTS.ADD, PROJECT.LABELS.ADD]),
+    Core.event.onError(
+      [PROJECT.LISTS.ADD, PROJECT.LABELS.ADD],
       wrap(logger.warning)
     ),
-    Core.event.on(
-      error([
+    Core.event.onError(
+      [
         PROJECT.UPDATE,
         PROJECT.LABELS.UPDATE,
         PROJECT.LISTS.UPDATE,
         TASK.UPDATE,
         TASK.SUBTASKS.UPDATE,
-      ]),
+      ],
       wrap(logger.error)
     ),
   ];

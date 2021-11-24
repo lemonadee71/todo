@@ -6,7 +6,6 @@ import { Storage, LocalStorage } from './storage';
 import { TASK, PROJECT, NAVIGATE_TO_PAGE } from './actions';
 import { LAST_OPENED_PAGE, LOCAL_USER } from './constants';
 import { debounce } from '../utils/delay';
-import { appendSuccess as success } from '../utils/misc';
 
 const Core = (() => {
   const [state] = createHook({
@@ -204,15 +203,15 @@ const Core = (() => {
   );
 
   // only update local storage half a second after all updates
-  event.on(
-    success([
+  event.onSuccess(
+    [
       ...TASK.ALL,
       ...TASK.LABELS.ALL,
       ...TASK.SUBTASKS.ALL,
       ...PROJECT.ALL,
       ...PROJECT.LABELS.ALL,
       ...PROJECT.LISTS.ALL,
-    ]),
+    ],
     debounce(main.syncLocalStorage, 500)
   );
 

@@ -24,18 +24,30 @@ class EventEmitter {
   }
 
   on(topic, fn, options = {}) {
-    const topicNames = [topic].flat(); // support for arrays
+    const topics = [topic].flat(); // support for arrays
 
-    topicNames.forEach((name) => {
+    topics.forEach((name) => {
       const handlers = this.events.get(name) || [];
       this.events.set(name, [...handlers, { fn, options }]);
     });
 
-    return () => topicNames.forEach((name) => this.off(name, fn));
+    return () => topics.forEach((name) => this.off(name, fn));
+  }
+
+  onSuccess(topic, fn, options = {}) {
+    const topics = [topic].flat().map((str) => `${str}.success`);
+
+    return this.on(topics, fn, options);
+  }
+
+  onError(topic, fn, options = {}) {
+    const topics = [topic].flat().map((str) => `${str}.error`);
+
+    return this.on(topics, fn, options);
   }
 
   once(topic, fn, options = {}) {
-    this.on(topic, fn, { ...options, once: true });
+    return this.on(topic, fn, { ...options, once: true });
   }
 
   off(topic, fn) {
