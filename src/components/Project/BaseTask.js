@@ -1,5 +1,6 @@
 import { html } from 'poor-man-jsx';
 import Core from '../../core';
+import { EDIT_SUBTASK, EDIT_TASK } from '../../core/actions';
 import { DEFAULT_COLORS, HIDE_EVENTS, SHOW_EVENTS } from '../../core/constants';
 import {
   formatDate,
@@ -61,7 +62,7 @@ export default class BaseTask {
   }
 
   editTask() {
-    Core.event.emit(`${this.type}.modal.open`, this.data);
+    Core.event.emit(this.type === 'task' ? EDIT_TASK : EDIT_SUBTASK, this.data);
   }
 
   deleteTask() {

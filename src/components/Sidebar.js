@@ -1,6 +1,6 @@
 import Sortable from 'sortablejs';
 import { html } from 'poor-man-jsx';
-import { PROJECT } from '../core/actions';
+import { EDIT_SUBTASK, EDIT_TASK, PROJECT } from '../core/actions';
 import { useRoot } from '../core/hooks';
 import Core from '../core';
 import { wrap } from '../utils/misc';
@@ -17,13 +17,13 @@ const Sidebar = () => {
     Core.event.onError(PROJECT.ADD, wrap(logger.warning)),
     // we put this here to avoid dependency cycle
     // idk if this should be here
-    Core.event.on('task.modal.open', (task) => {
+    Core.event.on(EDIT_TASK, (task) => {
       $('#main-modal').changeContent(
         new TaskModal(task).render(),
         'task-modal'
       );
     }),
-    Core.event.on('subtask.modal.open', (subtask) => {
+    Core.event.on(EDIT_SUBTASK, (subtask) => {
       $('#main-modal').changeContent(
         new SubtaskModal(subtask).render(),
         'task-modal'

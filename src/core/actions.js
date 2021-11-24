@@ -6,6 +6,8 @@ const INSERT = 'insert';
 const TRANSFER = 'transfer';
 const SYNC = 'sync';
 const NAVIGATE_TO_PAGE = 'navigate.to.page';
+const EDIT_TASK = 'task.modal.open';
+const EDIT_SUBTASK = 'subtask.modal.open';
 
 const createActions = (prefix) => {
   const actions = [ADD, REMOVE, UPDATE, TRANSFER, MOVE, INSERT];
@@ -29,4 +31,4 @@ PROJECT.LISTS = createActions('project.lists');
 
 PROJECT.SELECT = 'app.project.select';
 
-export { TASK, PROJECT, SYNC, NAVIGATE_TO_PAGE };
+export { TASK, PROJECT, SYNC, NAVIGATE_TO_PAGE, EDIT_TASK, EDIT_SUBTASK };

@@ -3,7 +3,7 @@ import { createPopper } from '@popperjs/core';
 import { html, render } from 'poor-man-jsx';
 import ToastUICalendar from 'tui-calendar';
 import Core from '../core';
-import { TASK } from '../core/actions';
+import { EDIT_TASK, TASK } from '../core/actions';
 import { POPPER_CONFIG } from '../core/constants';
 import { $ } from '../utils/query';
 import { dispatchCustomEvent } from '../utils/dispatch';
@@ -113,7 +113,7 @@ const Calendar = () => {
           });
         } else {
           Core.event.emit(
-            'task.modal.open',
+            EDIT_TASK,
             Core.main.getTask(location.project, location.list, location.task)
           );
         }
