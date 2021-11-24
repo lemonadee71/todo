@@ -64,16 +64,12 @@ export default class BaseTaskModal {
     this.state.isEditingNotes = !this.state.isEditingNotes;
   };
 
-  initDatePicker = (evt) => {
-    const input = $('input', evt.target);
-
-    const editDate = debounce(() => {
-      this.editTask({ target: input });
+  initDatePicker = (e) => {
+    const editDate = debounce((_, date) => {
+      this.editTask({ target: { name: 'dueDate', value: date } });
     }, 100);
 
-    const instance = flatpickr(evt.target, {
-      // TODO: Enable this once calendar view is available
-      // mode: 'range',
+    const instance = flatpickr(e.target, {
       wrap: true,
       enableTime: true,
       altInput: true,
@@ -82,7 +78,7 @@ export default class BaseTaskModal {
       onValueUpdate: editDate,
     });
 
-    input.addEventListener('@destroy', () => instance.destroy());
+    $('input', e.target).addEventListener('@destroy', () => instance.destroy());
   };
 
   initPopover = (evt) => {

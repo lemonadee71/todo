@@ -57,8 +57,8 @@ const CreationPopup = (evt) => {
     // init date
     state.dueDate = e.target.value;
 
-    const editDate = debounce(() => {
-      state.dueDate = e.target.value;
+    const editDate = debounce((_, date) => {
+      state.dueDate = date;
     }, 100);
 
     const instance = flatpickr(e.target, {
@@ -97,6 +97,7 @@ const CreationPopup = (evt) => {
           type="text"
           name="dueDate"
           value="${formatToDateTime(evt.start.toDate())}"
+          readonly
           ${{ onMount: initDatePicker }}
         />
         <button type="submit">Submit</button>
