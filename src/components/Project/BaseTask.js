@@ -1,9 +1,14 @@
 import { html } from 'poor-man-jsx';
-import Core from '../core';
-import { DEFAULT_COLORS, HIDE_EVENTS, SHOW_EVENTS } from '../core/constants';
-import { formatDate, formatDateToNow, isDueToday, parse } from '../utils/date';
-import { useUndo } from '../utils/undo';
-import { useTooltip } from '../utils/useTooltip';
+import Core from '../../core';
+import { DEFAULT_COLORS, HIDE_EVENTS, SHOW_EVENTS } from '../../core/constants';
+import {
+  formatDate,
+  formatDateToNow,
+  isDueToday,
+  parse,
+} from '../../utils/date';
+import { useUndo } from '../../utils/undo';
+import { useTooltip } from '../../utils/useTooltip';
 import Chip from './Chip';
 
 // data here points to the Task stored in main

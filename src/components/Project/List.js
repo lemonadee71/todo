@@ -1,9 +1,9 @@
 import Sortable from 'sortablejs';
 import { html } from 'poor-man-jsx';
-import { PROJECT, TASK } from '../core/actions';
-import Core from '../core';
+import { PROJECT, TASK } from '../../core/actions';
+import Core from '../../core';
+import { useUndo } from '../../utils/undo';
 import Task from './Task';
-import { useUndo } from '../utils/undo';
 
 const List = (data) => {
   const deleteList = useUndo({

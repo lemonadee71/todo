@@ -6,9 +6,9 @@ import Core from '../core';
 import { wrap } from '../utils/misc';
 import logger from '../utils/logger';
 import { $ } from '../utils/query';
+import TaskModal from './Project/TaskModal';
+import SubtaskModal from './Project/SubtaskModal';
 import ProjectLink from './ProjectLink';
-import TaskModal from './TaskModal';
-import SubtaskModal from './SubtaskModal';
 
 const Sidebar = () => {
   const [data, revoke] = useRoot();

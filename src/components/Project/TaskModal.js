@@ -1,6 +1,6 @@
 import { html } from 'poor-man-jsx';
-import { TASK } from '../core/actions';
-import Core from '../core';
+import { TASK } from '../../core/actions';
+import Core from '../../core';
 import BaseTaskModal from './BaseTaskModal';
 import Subtask from './Subtask';
 

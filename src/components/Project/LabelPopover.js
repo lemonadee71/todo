@@ -1,11 +1,11 @@
 import { html, createHook } from 'poor-man-jsx';
-import Core from '../core';
-import { PROJECT } from '../core/actions';
-import { DEFAULT_COLORS } from '../core/constants';
-import { useProject } from '../core/hooks';
-import { dispatchCustomEvent } from '../utils/dispatch';
-import uuid from '../utils/id';
-import { $ } from '../utils/query';
+import Core from '../../core';
+import { PROJECT } from '../../core/actions';
+import { DEFAULT_COLORS } from '../../core/constants';
+import { useProject } from '../../core/hooks';
+import { dispatchCustomEvent } from '../../utils/dispatch';
+import uuid from '../../utils/id';
+import { $ } from '../../utils/query';
 import Label from './Label';
 
 const LabelPopover = (data, action) => {

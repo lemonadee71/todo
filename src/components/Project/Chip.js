@@ -1,5 +1,5 @@
 import { html } from 'poor-man-jsx';
-import Core from '../core';
+import Core from '../../core';
 
 const Chip = (data) => {
   const onClick = () => {

@@ -1,7 +1,7 @@
 import { createHook, html } from 'poor-man-jsx';
-import Core from '../core';
-import { PROJECT } from '../core/actions';
-import { debounce } from '../utils/delay';
+import Core from '../../core';
+import { PROJECT } from '../../core/actions';
+import { debounce } from '../../utils/delay';
 
 const Label = (data, action, isSelected) => {
   const [state] = createHook({ isNotEditing: true });

@@ -5,7 +5,7 @@ import { useProject } from '../core/hooks';
 import Core from '../core';
 import logger from '../utils/logger';
 import { wrap } from '../utils/misc';
-import List from '../components/List';
+import List from '../components/Project/List';
 
 const Project = ({ data: { id } }) => {
   const [project, revoke] = useProject(`project-${id}`);

@@ -1,14 +1,14 @@
 import flatpickr from 'flatpickr';
 import { createHook, html, render } from 'poor-man-jsx';
-import Core from '../core';
-import { TASK } from '../core/actions';
-import { POPPER_CONFIG } from '../core/constants';
-import { useTask } from '../core/hooks';
-import { debounce } from '../utils/delay';
-import { dispatchCustomEvent } from '../utils/dispatch';
-import { usePopper } from '../utils/popper';
-import { $ } from '../utils/query';
-import convertToMarkdown from '../utils/showdown';
+import Core from '../../core';
+import { TASK } from '../../core/actions';
+import { POPPER_CONFIG } from '../../core/constants';
+import { useTask } from '../../core/hooks';
+import { debounce } from '../../utils/delay';
+import { dispatchCustomEvent } from '../../utils/dispatch';
+import { usePopper } from '../../utils/popper';
+import { $ } from '../../utils/query';
+import convertToMarkdown from '../../utils/showdown';
 import LabelPopover from './LabelPopover';
 
 export default class BaseTaskModal {
