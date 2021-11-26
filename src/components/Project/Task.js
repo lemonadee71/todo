@@ -76,7 +76,7 @@ export default class Task extends BaseTask {
         : '',
     ];
 
-    this.extraProps = {
+    this.props = {
       // this causes a bug; there's an early revoke which causes the proxy to not work
       // main: { onDestroy: this._revoke() },
       badges: {

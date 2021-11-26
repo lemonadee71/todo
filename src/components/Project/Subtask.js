@@ -16,7 +16,7 @@ export default class Subtask extends BaseTask {
   }
 
   render(isParentComplete = false) {
-    this.extraProps = {
+    this.props = {
       main: { 'data-parent': this.data.parent },
       checkbox: { disabled: isParentComplete },
     };

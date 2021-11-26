@@ -25,7 +25,7 @@ export default class BaseTask {
     // so to allow for conversion, prefix key with actual type instead
     this.key = `${this.type}-${this.data.id.split('-')[1]}`;
 
-    this.extraProps = { main: '', checkbox: '' };
+    this.props = { main: '', checkbox: '' };
     this.extraContent = '';
 
     this.badges = [
@@ -105,7 +105,7 @@ export default class BaseTask {
         data-id="${this.id}"
         data-project="${this.data.project}"
         data-list="${this.data.list}"
-        ${this.extraProps.main}
+        ${this.props.main}
       >
         <div class="task__main">
           <label class="task__checkbox">
@@ -117,7 +117,7 @@ export default class BaseTask {
                 checked: this.data.completed,
                 onClick: this.toggleComplete.bind(this),
               }}
-              ${this.extraProps.checkbox}
+              ${this.props.checkbox}
             />
             <div class="checkbox__box">
               <div
@@ -128,11 +128,11 @@ export default class BaseTask {
           </label>
 
           <div class="task__body">
-            <div is-list class="task__labels" ${this.extraProps.labels}>
+            <div is-list class="task__labels" ${this.props.labels}>
               ${this.data.labels.items.map((label) => Chip(label))}
             </div>
 
-            <div class="task__title" ${this.extraProps.title}>
+            <div class="task__title" ${this.props.title}>
               <p class="task__name">${this.data.title}</p>
               <span class="task__number">#${this.data.numId}</span>
             </div>
@@ -141,7 +141,7 @@ export default class BaseTask {
               is-list
               class="task__badges"
               ${{ onCreate: this.initBadges.bind(this) }}
-              ${this.extraProps.badges}
+              ${this.props.badges}
             >
               ${this.badges}
             </div>
