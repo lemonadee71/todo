@@ -22,7 +22,7 @@ export default class BaseTaskModal {
     [this.task, this._revoke] = useTask(...Object.values(this.location));
     [this.state] = createHook({ isEditingTitle: false, isEditingNotes: false });
 
-    this.extraContent = '';
+    this.template = [];
   }
 
   get location() {
@@ -81,8 +81,8 @@ export default class BaseTaskModal {
     $('input', e.target).addEventListener('@destroy', () => instance.destroy());
   };
 
-  initPopover = (evt) => {
-    const node = evt.target;
+  initPopover = (e) => {
+    const node = e.target;
 
     // append popover
     const popover = render(
@@ -104,15 +104,27 @@ export default class BaseTaskModal {
     popover.addEventListener('popover:hide', onHide());
   };
 
+  init = (e) => {
+    this.template.forEach((content) => {
+      const { template, target: selector, method } = content;
+      const target = selector
+        ? $.data('name', `task__${selector}`, e.target)
+        : e.target;
+
+      target[method || 'append'](render(template));
+    });
+  };
+
   render() {
     // TODO: Fix issue with title input where keyboard inputs are not going in even if focused
     // TODO: Fix data attr and classes here
     return html`
-      <div ${{ onDestroy: this._revoke }}>
+      <div ${{ onCreate: this.init, onDestroy: this._revoke }}>
         <input
           class="task-modal__title"
           type="text"
           name="title"
+          data-name="task__title"
           value="${this.data.title}"
           required
           ${{
@@ -191,8 +203,6 @@ export default class BaseTaskModal {
             }}
           ></div>
         </div>
-
-        ${this.extraContent}
       </div>
     `;
   }
