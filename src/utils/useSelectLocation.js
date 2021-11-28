@@ -13,7 +13,14 @@ export const useSelectLocation = (project = {}, list = {}) => {
     const defaultValue = isProject ? state.selectedProject : state.selectedList;
 
     return html`
-      <option hidden disabled value ${{ selected: !defaultValue }}></option>
+      ${isProject
+        ? html`<option
+            hidden
+            disabled
+            value
+            ${{ selected: !defaultValue }}
+          ></option>`
+        : ''}
       ${itemList.map(
         (item) =>
           html`
