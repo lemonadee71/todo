@@ -49,7 +49,7 @@ const renderSidebar = (match) => {
   return [];
 };
 
-const Website = () =>
+const App = () =>
   html`
     ${Router([{ path: '*', component: renderSidebar }], 'aside', {
       class: 'sidebar',
@@ -63,5 +63,5 @@ const Website = () =>
   `;
 
 defineCustomElements();
-render(Website(), document.body);
+render(App(), document.body);
 Core.router.navigate('/app'); // for testing purposes
