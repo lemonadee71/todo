@@ -2,22 +2,18 @@ import flatpickr from 'flatpickr';
 import { createHook, html } from 'poor-man-jsx';
 import Core from '../../core';
 import { TASK } from '../../core/actions';
-import { useRoot } from '../../core/hooks';
 import { debounce } from '../../utils/delay';
 import { $ } from '../../utils/query';
 import logger from '../../utils/logger';
 import { formatToDateTime } from '../../utils/date';
+import { useSelectLocation } from '../../utils/useSelectLocation';
 
 const CreationPopup = (evt) => {
-  const [root, unsubscribe] = useRoot();
-  const [state, revoke] = createHook({ selectedProject: '', dueDate: '' });
-
-  const renderOptions = (item) =>
-    html`<option value="${item.id}">${item.name}</option>`;
+  const [SelectLocation] = useSelectLocation();
+  const [state, revoke] = createHook({ dueDate: '' });
 
   const closePopup = () => {
     evt.guide.clearGuideElement();
-    unsubscribe();
     revoke();
     $('#creation-popup').remove();
   };
@@ -37,20 +33,6 @@ const CreationPopup = (evt) => {
         onError: logger.error,
       }
     );
-  };
-
-  const selectProject = (e) => {
-    state.selectedProject = e.target.value;
-  };
-
-  const showLists = (projectId) => {
-    if (!projectId) return [];
-
-    return Core.main.getLists(projectId).map(renderOptions);
-  };
-
-  const initListOptions = (e) => {
-    selectProject({ target: e.target.elements.project });
   };
 
   const initDatePicker = (e) => {
@@ -78,21 +60,11 @@ const CreationPopup = (evt) => {
     <div id="creation-popup" ${{ onPopupClose: closePopup }}>
       <span ${{ onClick: closePopup }}>&times;</span>
       <form
-        ${{ onSubmit: createTask, onMount: initListOptions }}
+        ${{ onSubmit: createTask }}
         style="display: flex; flex-direction: column;"
       >
         <input type="text" name="title" placeholder="Unnamed Task" />
-        <select
-          name="project"
-          ${{
-            onChange: selectProject,
-            $children: root.$projects.map(renderOptions),
-          }}
-        ></select>
-        <select
-          name="list"
-          ${{ $children: state.$selectedProject(showLists) }}
-        ></select>
+        ${SelectLocation}
         <input
           type="text"
           name="dueDate"
