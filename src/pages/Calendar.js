@@ -21,6 +21,15 @@ const Calendar = () => {
     Core.event.onSuccess([TASK.ADD, TASK.INSERT], (data) => {
       if (data.dueDate) createSchedule(data, ...getDueDateRange(data.dueDate));
     }),
+    Core.event.onSuccess(TASK.TRANSFER, (data) => {
+      const prevCalendarId =
+        data.changes.type === 'project' ? data.changes.prevValue : data.project;
+
+      updateSchedule(data.id, prevCalendarId, {
+        calendarId: data.project,
+        raw: { project: data.project, list: data.list, task: data.id },
+      });
+    }),
     Core.event.onSuccess(TASK.UPDATE, (data) => {
       // check if there's an existing schedule
       const schedule = calendar.self.getSchedule(data.id, data.project);
@@ -28,7 +37,7 @@ const Calendar = () => {
       if (data.dueDate) {
         const [start, end] = getDueDateRange(data.dueDate);
 
-        if (schedule) updateSchedule(data.id, data.project, start, end);
+        if (schedule) updateSchedule(data.id, data.project, { start, end });
         else createSchedule(data, start, end);
       } else {
         deleteSchedule(data.id, data.project);
@@ -55,8 +64,8 @@ const Calendar = () => {
     calendar.self.createSchedules([schedule]);
   };
 
-  const updateSchedule = (id, calendarId, start, end) => {
-    calendar.self.updateSchedule(id, calendarId, { start, end });
+  const updateSchedule = (id, calendarId, changes) => {
+    calendar.self.updateSchedule(id, calendarId, changes);
   };
 
   const deleteSchedule = (id, calendarId) => {
