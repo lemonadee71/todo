@@ -293,8 +293,14 @@ export const moveTask = (projectId, listId, taskId, position) =>
   getList(projectId, listId).move(taskId, position);
 
 export const insertTask = (projectId, listId, task, position) => {
+  const { project, list } = task;
+  const type = project === projectId ? 'list' : 'project';
   getList(projectId, listId).insert(task, position);
-  return task.data;
+
+  return {
+    ...task.data,
+    changes: { type, prevValue: type === 'list' ? list : project },
+  };
 };
 
 export const deleteTask = (projectId, listId, taskId) =>
