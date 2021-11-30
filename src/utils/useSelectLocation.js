@@ -35,14 +35,15 @@ export const useSelectLocation = (project = {}, list = {}) => {
     `;
   };
 
-  const selectProject = (e) => {
-    state.selectedProject = e.target.value;
-    project.onChange?.(e);
-  };
-
   const selectList = (e) => {
     state.selectedList = e.target.value;
     list.onChange?.(e);
+  };
+
+  const selectProject = (e) => {
+    state.selectedProject = e.target.value;
+    state.selectedList = e.target.nextElementSibling.value;
+    project.onChange?.(e);
   };
 
   const showListOptions = (projectId) => {
