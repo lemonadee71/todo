@@ -300,11 +300,11 @@ export const insertTask = (projectId, listId, task, position) => {
 export const deleteTask = (projectId, listId, taskId) =>
   getList(projectId, listId).extract(taskId);
 
-export const transferTaskToProject = (project, listId, taskId, position) =>
+export const transferTaskToProject = (project, list, taskId, position) =>
   insertTask(
     project.to,
-    'default',
-    deleteTask(project.from, listId, taskId),
+    list.to,
+    deleteTask(project.from, list.from, taskId),
     position
   );
 
