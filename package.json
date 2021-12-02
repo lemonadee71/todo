@@ -51,6 +51,7 @@
   "dependencies": {
     "@popperjs/core": "^2.10.2",
     "date-fns": "^2.16.1",
+    "firebase": "^9.5.0",
     "flatpickr": "^4.6.9",
     "github-markdown-css": "^4.0.0",
     "hamburgers": "^1.1.3",
