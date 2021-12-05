@@ -2,7 +2,7 @@ import { createHook } from 'poor-man-jsx';
 import EventEmitter from './classes/Emitter';
 import * as main from './main';
 import Router from './router';
-import { Storage, LocalStorage } from './storage';
+import { LocalStorage } from './storage';
 import { TASK, PROJECT, NAVIGATE_TO_PAGE } from './actions';
 import { LAST_OPENED_PAGE, LOCAL_USER } from './constants';
 import { debounce } from '../utils/delay';
@@ -34,16 +34,16 @@ const Core = (() => {
 
     main.init();
 
-    const cached = Storage.root.get(LAST_OPENED_PAGE);
+    const cached = LocalStorage.get(LAST_OPENED_PAGE);
     state.currentPage = cached?.href || state.currentPage;
 
-    router.navigate(state.currentPage);
+    router.navigate(state.currentPage, { historyAPIMethod: 'replaceState' });
     if (cached?.title) document.title = cached.title;
   };
 
   event.on(NAVIGATE_TO_PAGE, (data) => {
     state.currentPage = data.href;
-    Storage.root.store(LAST_OPENED_PAGE, data);
+    LocalStorage.store(LAST_OPENED_PAGE, data);
   });
 
   /**

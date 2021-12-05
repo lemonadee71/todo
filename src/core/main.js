@@ -5,7 +5,7 @@ import OrderedIdList from './classes/OrderedIdList';
 import Label from './classes/Label';
 import Project from './classes/Project';
 import { LocalStorage } from './storage';
-import { LAST_UPDATE } from './constants';
+import { LAST_OPENED_PAGE, LAST_UPDATE } from './constants';
 import defaultData from '../defaultData.json';
 // import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../utils/date';
 // import { defaultProjects } from './defaults';
@@ -36,7 +36,9 @@ const loadDefaultData = () => {
 
 const recoverData = () => {
   const data = [];
-  const stored = LocalStorage.filter((key) => key !== LAST_UPDATE);
+  const stored = LocalStorage.filter(
+    (key) => ![LAST_UPDATE, LAST_OPENED_PAGE].includes(key)
+  );
   const cache = Object.entries(stored).reduce((acc, [key, value]) => {
     const [projectId, type] = key.split('__');
 
