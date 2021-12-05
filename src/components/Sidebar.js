@@ -32,39 +32,43 @@ const Sidebar = () => {
   };
 
   return html`
-    <nav class="quick-links">
-      <ul>
-        <li><a href="#">User</a></li>
-        <li><a href="#">Quick Find</a></li>
-        <li>
-          <a is="navigo-link" href="/app">Overview</a>
-        </li>
-        <li>
-          <a is="navigo-link" href="/app/calendar" title="Calendar">Calendar</a>
-        </li>
-      </ul>
-    </nav>
-    <nav class="projects">
-      <ul
-        is-list
-        keystring="data-id"
-        ${{
-          onCreate: init,
-          onUnmount: revoke,
-          $children: data.$projects.map((project) => ProjectLink(project)),
-        }}
-      ></ul>
-    </nav>
-    <form class="create-project" ${{ onSubmit: createNewProject }}>
-      <input
-        type="text"
-        name="new-project"
-        id="new-project"
-        placeholder="Create new project"
-        class="form__input"
-      />
-      <button class="form__btn">+</button>
-    </form>
+    <div class="sidebar">
+      <nav class="quick-links">
+        <ul>
+          <li><a href="#">User</a></li>
+          <li><a href="#">Quick Find</a></li>
+          <li>
+            <a is="navigo-link" href="/app">Overview</a>
+          </li>
+          <li>
+            <a is="navigo-link" href="/app/calendar" title="Calendar"
+              >Calendar</a
+            >
+          </li>
+        </ul>
+      </nav>
+      <nav class="projects">
+        <ul
+          is-list
+          keystring="data-id"
+          ${{
+            onCreate: init,
+            onUnmount: revoke,
+            $children: data.$projects.map((project) => ProjectLink(project)),
+          }}
+        ></ul>
+      </nav>
+      <form class="create-project" ${{ onSubmit: createNewProject }}>
+        <input
+          type="text"
+          name="new-project"
+          id="new-project"
+          placeholder="Create new project"
+          class="form__input"
+        />
+        <button class="form__btn">+</button>
+      </form>
+    </div>
   `;
 };
 
