@@ -29,6 +29,9 @@ const routes = [
 ];
 
 const App = () => {
+  // initialize data
+  Core.init();
+
   // listeners
   const unsubscribe = [
     Core.event.onError(
@@ -61,13 +64,7 @@ const App = () => {
   ];
 
   return html`
-    <div
-      id="app"
-      ${{
-        onCreate: Core.init,
-        onDestroy: () => unsubscribe.forEach((cb) => cb()),
-      }}
-    >
+    <div id="app" ${{ onDestroy: () => unsubscribe.forEach((cb) => cb()) }}>
       ${Sidebar()}${Router({ routes, props: { id: 'main-content' } })}
     </div>
     <div id="tooltip" class="tooltip">
