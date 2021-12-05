@@ -17,10 +17,8 @@ const Router = ({ routes, tag = 'div', props }) => {
       if (route.nested) {
         Core.router.on(route.path, null, {
           before: (done, match) => {
-            // BUG: Current location and newURL is the same when we navigate through browser
-            // so I think navigo resolves differently (resolving urls before calling hooks)
             // only run handler for nested routes on first match
-            if (!Core.router.matchLocation(route.path)) {
+            if (!Core.router.matchLocation(route.path, state.url)) {
               handler(match);
             }
 
