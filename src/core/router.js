@@ -2,18 +2,14 @@ import Navigo from 'navigo';
 // import { GH_PATH } from './constants';
 
 const Router = (() => {
-  const routes = new Map([['notFound', []]]);
+  const routes = new Map();
   const navigo = new Navigo('/', { strategy: 'ALL' });
 
   const _getHandlers = (path) => Array.from(routes.get(path).keys());
 
-  // add not found handler
-  navigo.notFound((match) => {
-    _getHandlers('notFound').forEach((handler) => handler(match));
-  });
-
   const on = (path, handler, hooks = {}) => {
     if (!routes.get(path)) {
+      // init path
       navigo.on(path, (match) => {
         _getHandlers(path).forEach((cb) => cb(match));
       });
@@ -47,17 +43,11 @@ const Router = (() => {
     navigo.off(path);
   };
 
-  const notFound = (handler) => {
-    const handlers = routes.get('notFound');
-    routes.set('notFound', handler ? [...handlers, handler] : handlers);
-  };
-
   return {
     ...navigo,
     on,
     off,
     remove,
-    notFound,
     register,
   };
 })();
