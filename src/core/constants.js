@@ -7,7 +7,6 @@ export const PATHS = {
   home: '/',
   login: 'login',
   app: 'app',
-  allApp: /app(.*)?/,
   calendar: 'app/calendar',
   project: 'app/p/:id',
   task: 'app/t/:id',

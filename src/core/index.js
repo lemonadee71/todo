@@ -29,7 +29,7 @@ const Core = (() => {
   // * This should be evoked when user navigated to /app
   // * Run before any renders
   const init = (user) => {
-    state.currentUser = user || LOCAL_USER;
+    state.currentUser = user || state.currentUser || LOCAL_USER;
     LocalStorage.prefix = `${state.currentUser}__`;
 
     main.init();

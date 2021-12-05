@@ -2,24 +2,8 @@ import { html, render } from 'poor-man-jsx';
 import { PATHS } from './core/constants';
 import defineCustomElements from './components/custom';
 import Router from './components/Router';
-import Sidebar from './components/Sidebar';
 import * as pages from './pages';
-import Core from './core';
 import './styles/main.scss';
-
-Core.router.on(PATHS.allApp, null, {
-  before: (done, match) => {
-    const newURL = match.url;
-    const isNavigatingToApp =
-      !Core.router.matchLocation(PATHS.allApp) && newURL.startsWith(PATHS.app);
-
-    if (isNavigatingToApp) Core.init();
-
-    // This causes unnecessary renders for app
-    // by always rerendering even if still on the same path
-    done();
-  },
-});
 
 const routes = [
   {
@@ -31,37 +15,13 @@ const routes = [
     component: pages.Login,
   },
   {
-    path: PATHS.app,
-    component: pages.Overview,
-  },
-  {
-    path: PATHS.calendar,
-    component: pages.Calendar,
-  },
-  {
-    path: PATHS.project,
-    component: pages.Project,
+    path: '/app*',
+    component: pages.App,
+    nested: true,
   },
 ];
 
-const renderSidebar = (match) => {
-  if (Core.router.matchLocation('/app*', match?.url)) return Sidebar();
-  return [];
-};
-
-const App = () =>
-  html`
-    ${Router([{ path: '*', component: renderSidebar }], 'aside', {
-      class: 'sidebar',
-    })}
-    ${Router(routes, 'main', { class: 'app' })}
-    <div id="tooltip" class="tooltip">
-      <span></span>
-      <div class="arrow" data-popper-arrow></div>
-    </div>
-    <my-modal id="main-modal" close-btn-class="modal__close-btn"></my-modal>
-  `;
+const Website = html`${Router({ routes, tag: 'main', props: { id: 'main' } })}`;
 
 defineCustomElements();
-render(App(), document.body);
-Core.router.navigate('/app'); // for testing purposes
+render(Website, document.body);

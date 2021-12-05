@@ -1,24 +1,36 @@
 import { createHook, html } from 'poor-man-jsx';
 import Core from '../core';
-// import createRouter from '../utils/createRouter';
 
-const Router = (routes, tagName = 'div', props = '') => {
-  const [current] = createHook({
+const Router = ({ routes, tag = 'div', props }) => {
+  const [state] = createHook({
     url: window.location.pathname,
     match: null,
   });
 
   const handler = (match) => {
-    current.match = match;
-    current.url = match.url;
+    state.match = match;
+    state.url = match.url;
   };
 
   const init = () => {
     routes.forEach((route) => {
-      Core.router.on(route.path, handler);
-    });
+      if (route.nested) {
+        Core.router.on(route.path, null, {
+          before: (done, match) => {
+            // BUG: Current location and newURL is the same when we navigate through browser
+            // so I think navigo resolves differently (resolving urls before calling hooks)
+            // only run handler for nested routes on first match
+            if (!Core.router.matchLocation(route.path)) {
+              handler(match);
+            }
 
-    Core.router.notFound(handler);
+            done();
+          },
+        });
+      } else {
+        Core.router.on(route.path, handler);
+      }
+    });
   };
 
   const destroy = () => {
@@ -30,19 +42,18 @@ const Router = (routes, tagName = 'div', props = '') => {
   const changeContent = (url) => {
     const route = routes.find((r) => Core.router.matchLocation(r.path, url));
 
-    if (route) return route.component(current.match);
-    return [];
+    return route?.component?.(state.match) || [];
   };
 
   return html`
-    <${tagName}
+    <${tag}
       ${props}
       ${{
-        $children: current.$url(changeContent),
         onCreate: init,
         onDestroy: destroy,
+        $children: state.$url(changeContent),
       }}
-    ></${tagName}>
+    ></${tag}>
   `;
 };
 
