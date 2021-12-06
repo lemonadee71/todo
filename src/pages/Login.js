@@ -9,13 +9,11 @@ import { signIn } from '../utils/auth';
 
 const Login = () => {
   async function signInWithGoogle() {
-    const response = await signInWithPopup(getAuth(), new GoogleAuthProvider());
-    signIn(response.user.uid);
+    await signInWithPopup(getAuth(), new GoogleAuthProvider());
   }
 
   async function signInWithGithub() {
-    const response = await signInWithPopup(getAuth(), new GithubAuthProvider());
-    signIn(response.user.uid);
+    await signInWithPopup(getAuth(), new GithubAuthProvider());
   }
 
   return html`
