@@ -32,7 +32,7 @@ const Sidebar = () => {
   };
 
   return html`
-    <div class="sidebar">
+    <div class="sidebar" ${{ onDestroy: revoke }}>
       <nav class="quick-links">
         <ul>
           <li><a href="#">User</a></li>
@@ -53,7 +53,6 @@ const Sidebar = () => {
           keystring="data-id"
           ${{
             onCreate: init,
-            onUnmount: revoke,
             $children: data.$projects.map((project) => ProjectLink(project)),
           }}
         ></ul>
