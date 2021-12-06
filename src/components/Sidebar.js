@@ -32,7 +32,7 @@ const Sidebar = () => {
   };
 
   return html`
-    <div class="sidebar" ${{ onDestroy: revoke }}>
+    <aside id="sidebar" ${{ onDestroy: revoke }}>
       <nav class="quick-links">
         <ul>
           <li><a href="#">User</a></li>
@@ -67,7 +67,7 @@ const Sidebar = () => {
         />
         <button class="form__btn">+</button>
       </form>
-    </div>
+    </aside>
   `;
 };
 
