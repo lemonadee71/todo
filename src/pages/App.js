@@ -1,4 +1,3 @@
-import { signOut, getAuth } from 'firebase/auth';
 import { html } from 'poor-man-jsx';
 import Core from '../core';
 import { PATHS } from '../core/constants';
@@ -6,6 +5,7 @@ import { EDIT_SUBTASK, EDIT_TASK, PROJECT, TASK } from '../core/actions';
 import { wrap } from '../utils/misc';
 import { $ } from '../utils/query';
 import logger from '../utils/logger';
+import { signOut } from '../utils/auth';
 import Overview from './Overview';
 import Calendar from './Calendar';
 import Project from './Project';
@@ -64,16 +64,9 @@ const App = () => {
     }),
   ];
 
-  const signOutUser = () => {
-    // Sign out of Firebase.
-    signOut(getAuth());
-    Core.state.currentUser = null;
-    Core.router.navigate(PATHS.home, { historyAPIMethod: 'replaceState' });
-  };
-
   return html`
     <div id="app" ${{ onDestroy: () => unsubscribe.forEach((cb) => cb()) }}>
-      <button ${{ onClick: signOutUser }}>Logout</button>
+      <button ${{ onClick: signOut }}>Logout</button>
       ${Sidebar()}${Router({ routes, props: { id: 'main-content' } })}
     </div>
     <div id="tooltip" class="tooltip">

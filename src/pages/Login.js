@@ -5,15 +5,9 @@ import {
   GithubAuthProvider,
   signInWithPopup,
 } from 'firebase/auth';
-import Core from '../core';
-import { PATHS } from '../core/constants';
+import { signIn } from '../utils/auth';
 
 const Login = () => {
-  const signIn = (id) => {
-    Core.state.currentUser = id;
-    Core.router.navigate(PATHS.app, { historyAPIMethod: 'replaceState' });
-  };
-
   async function signInWithGoogle() {
     const response = await signInWithPopup(getAuth(), new GoogleAuthProvider());
     signIn(response.user.uid);
@@ -24,14 +18,11 @@ const Login = () => {
     signIn(response.user.uid);
   }
 
-  const signInAsGuest = () =>
-    Core.router.navigate(PATHS.app, { historyAPIMethod: 'replaceState' });
-
   return html`
     <div>
       <button ${{ onClick: signInWithGoogle }}>Sign in with Google</button>
       <button ${{ onClick: signInWithGithub }}>Sign in with Github</button>
-      <button ${{ onClick: signInAsGuest }}>Sign in as Guest</button>
+      <button ${{ onClick: () => signIn() }}>Sign in as Guest</button>
     </div>
   `;
 };
