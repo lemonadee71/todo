@@ -4,7 +4,7 @@ import * as main from './main';
 import Router from './router';
 import { LocalStorage } from './storage';
 import { TASK, PROJECT, NAVIGATE_TO_PAGE } from './actions';
-import { LAST_OPENED_PAGE, LOCAL_USER } from './constants';
+import { LAST_OPENED_PAGE } from './constants';
 import { debounce } from '../utils/delay';
 
 const Core = (() => {
@@ -28,8 +28,7 @@ const Core = (() => {
 
   // * This should be evoked when user navigated to /app
   // * Run before any renders
-  const init = (user) => {
-    state.currentUser = user || state.currentUser || LOCAL_USER;
+  const init = () => {
     LocalStorage.prefix = `${state.currentUser}__`;
 
     main.init();
