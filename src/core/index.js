@@ -46,6 +46,10 @@ const Core = (() => {
     LocalStorage.store(LAST_OPENED_PAGE, data);
   });
 
+  router.on('/app*', (match) => {
+    event.emit(NAVIGATE_TO_PAGE, { href: match.url });
+  });
+
   /**
    * wrappers for core functions
    * just so multiple components can listen to an event
