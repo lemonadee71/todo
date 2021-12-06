@@ -43,12 +43,17 @@ const Router = (() => {
     navigo.off(path);
   };
 
+  const matchLocation = (...args) => navigo.matchLocation(...args);
+
+  const navigate = (...args) => navigo.navigate(...args);
+
   return {
-    ...navigo,
     on,
     off,
     remove,
     register,
+    matchLocation,
+    navigate,
   };
 })();
 
