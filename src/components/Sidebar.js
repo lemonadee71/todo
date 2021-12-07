@@ -41,9 +41,7 @@ const Sidebar = () => {
             <a is="navigo-link" href="/app">Overview</a>
           </li>
           <li>
-            <a is="navigo-link" href="/app/calendar" title="Calendar"
-              >Calendar</a
-            >
+            <a is="navigo-link" href="/app/calendar">Calendar</a>
           </li>
         </ul>
       </nav>

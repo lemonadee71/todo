@@ -6,7 +6,7 @@ class Link extends HTMLAnchorElement {
     this.addEventListener('click', (e) => {
       e.preventDefault();
       const href = this.getAttribute('href');
-      const title = this.getAttribute('title') || '';
+      const title = this.getAttribute('title') || this.textContent.trim();
       const store = this.getAttribute('store') ?? 'true';
 
       // do not navigate if href matchesthe previous path
