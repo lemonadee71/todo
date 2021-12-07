@@ -36,8 +36,7 @@ const Core = (() => {
     const cached = LocalStorage.get(LAST_OPENED_PAGE);
     state.currentPage = cached?.href || state.currentPage;
 
-    router.navigate(state.currentPage, { historyAPIMethod: 'replaceState' });
-    if (cached?.title) document.title = cached.title;
+    router.navigate(state.currentPage, { title: cached?.title, replace: true });
   };
 
   event.on(NAVIGATE_TO_PAGE, (data) => {

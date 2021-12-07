@@ -6,11 +6,11 @@ export const getUser = () => getAuth().currentUser;
 
 export const signIn = (id = LOCAL_USER) => {
   Core.state.currentUser = id;
-  Core.router.navigate(PATHS.app, { historyAPIMethod: 'replaceState' });
+  Core.router.navigate(PATHS.app, { title: 'Overview', replace: true });
 };
 
 export const signOut = () => {
   signOutUser(getAuth());
   Core.state.currentUser = null;
-  Core.router.navigate(PATHS.home, { historyAPIMethod: 'replaceState' });
+  Core.router.navigate(PATHS.home, { title: 'To Do List', replace: true });
 };

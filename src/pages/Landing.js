@@ -3,7 +3,11 @@ import Core from '../core';
 import { PATHS } from '../core/constants';
 
 const Landing = () => html`
-  <button ${{ onClick: () => Core.router.navigate(PATHS.login) }}>Login</button>
+  <button
+    ${{ onClick: () => Core.router.navigate(PATHS.login, { title: 'Login' }) }}
+  >
+    Login
+  </button>
   <h1>This is my landing page</h1>
 `;
 

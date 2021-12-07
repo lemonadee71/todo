@@ -9,10 +9,8 @@ class Link extends HTMLAnchorElement {
       const title = this.getAttribute('title') || this.textContent.trim();
       const store = this.getAttribute('store') ?? 'true';
 
-      // do not navigate if href matchesthe previous path
+      // do not navigate if href matches the previous path
       if (Core.router.matchLocation(href)) return;
-
-      if (title) document.title = title;
       if (store === 'true') Core.event.emit(NAVIGATE_TO_PAGE, { title, href });
 
       Core.router.navigate(href, { title });

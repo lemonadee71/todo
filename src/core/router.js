@@ -45,7 +45,20 @@ const Router = (() => {
 
   const matchLocation = (...args) => navigo.matchLocation(...args);
 
-  const navigate = (...args) => navigo.navigate(...args);
+  const navigate = (path, options) => {
+    const opts = { ...options };
+
+    if (options.replace) {
+      delete opts.replace;
+      opts.historyAPIMethod = 'replaceState';
+    }
+
+    if (options.title) {
+      document.title = options.title;
+    }
+
+    navigo.navigate(path, opts);
+  };
 
   return {
     on,
