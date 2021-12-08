@@ -6,14 +6,23 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 import { signIn } from '../utils/auth';
+import logger from '../utils/logger';
 
 const Login = () => {
+  async function signInFirebase(provider) {
+    try {
+      await signInWithPopup(getAuth(), provider);
+    } catch (e) {
+      logger.error(e.message);
+    }
+  }
+
   async function signInWithGoogle() {
-    await signInWithPopup(getAuth(), new GoogleAuthProvider());
+    signInFirebase(new GoogleAuthProvider());
   }
 
   async function signInWithGithub() {
-    await signInWithPopup(getAuth(), new GithubAuthProvider());
+    signInFirebase(new GithubAuthProvider());
   }
 
   return html`
