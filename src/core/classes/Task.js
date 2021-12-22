@@ -22,6 +22,14 @@ export default class Task extends BaseTask {
     );
   }
 
+  toFirestore() {
+    return {
+      ...this,
+      labels: this.labels.items.map((label) => label.id),
+      subtasks: this.subtasks.items.map((subtask) => subtask.id),
+    };
+  }
+
   toggleComplete() {
     if (this.hasIncompleteRequiredSubtask) {
       throw new Error('Complete all required subtasks');

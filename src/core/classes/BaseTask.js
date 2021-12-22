@@ -42,6 +42,13 @@ class BaseTask {
     };
   }
 
+  toFirestore() {
+    return {
+      ...this,
+      labels: this.labels.items.map((label) => label.id),
+    };
+  }
+
   toggleComplete() {
     this.completed = !this.completed;
 

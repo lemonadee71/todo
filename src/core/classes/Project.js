@@ -9,33 +9,44 @@ export default class Project {
   constructor({ name, id, totalTasks, labels, lists, position }) {
     this.name = name;
     this.id = id || `project-${uuid(8)}`;
-    this.labels = new IdList(
-      labels || [
-        // default labels
-        new Label({
-          name: 'Urgent',
-          color: DEFAULT_COLORS[2],
-          project: this.id,
-        }),
-        new Label({
-          name: 'Important',
-          color: DEFAULT_COLORS[3],
-          project: this.id,
-        }),
-      ]
-    );
-    this.lists = new OrderedIdList(
-      lists || [
-        new TaskList({ name: 'Default', id: 'default', project: this.id }),
-      ]
-    );
+    this.position = position;
+
+    const defaultLabels = [
+      new Label({
+        name: 'Urgent',
+        color: DEFAULT_COLORS[2],
+        project: this.id,
+      }),
+      new Label({
+        name: 'Important',
+        color: DEFAULT_COLORS[3],
+        project: this.id,
+      }),
+    ];
+    const defaultLists = [
+      new TaskList({
+        name: 'Default',
+        id: 'default',
+        project: this.id,
+      }),
+    ];
+
+    this.labels = new IdList(labels || defaultLabels);
+    this.lists = new OrderedIdList(lists || defaultLists);
     this.totalTasks =
       totalTasks || this.lists.items.flatMap((list) => list.items).length || 0;
-    this.position = position;
   }
 
   get link() {
     return `p/${this.id.split('-')[1]}`;
+  }
+
+  toFirestore() {
+    return {
+      ...this,
+      labels: this.labels.map((label) => label.id),
+      lists: this.lists.map((list) => list.id),
+    };
   }
 
   getLabel(labelFilter) {

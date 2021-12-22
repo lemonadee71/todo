@@ -8,6 +8,10 @@ class Label {
     this.id = id || `label-${uuid(5)}`;
     this.project = project;
   }
+
+  toFirestore() {
+    return { ...this };
+  }
 }
 
 export default Label;

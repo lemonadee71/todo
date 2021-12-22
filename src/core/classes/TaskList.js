@@ -11,6 +11,10 @@ class TaskList extends OrderedIdList {
     this.position = position;
   }
 
+  toFirestore() {
+    return { ...this };
+  }
+
   add(task) {
     const tasks = [task].flat().map((item) => {
       item.project = this.project;
