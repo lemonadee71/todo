@@ -12,7 +12,7 @@ class TaskList extends OrderedIdList {
   }
 
   toFirestore() {
-    return { ...this, items: this.items.map((item) => item.id) };
+    return { ...this };
   }
 
   add(task) {
