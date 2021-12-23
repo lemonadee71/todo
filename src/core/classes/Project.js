@@ -4,6 +4,7 @@ import TaskList from './TaskList';
 import OrderedIdList from './OrderedIdList';
 import Label from './Label';
 import { DEFAULT_COLORS } from '../constants';
+import { copyObject } from '../../utils/misc';
 
 export default class Project {
   constructor({ name, id, totalTasks, labels, lists, position }) {
@@ -42,11 +43,7 @@ export default class Project {
   }
 
   toFirestore() {
-    return {
-      ...this,
-      labels: this.labels.map((label) => label.id),
-      lists: this.lists.map((list) => list.id),
-    };
+    return copyObject(this, ['labels', 'lists']);
   }
 
   getLabel(labelFilter) {
