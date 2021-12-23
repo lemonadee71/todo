@@ -1,10 +1,7 @@
 import { collection, getDocs, getFirestore } from 'firebase/firestore';
 import Core from '../core';
 
-export const path = (type, ...segments) =>
-  `${Core.state.currentUser}/${type}/items` + segments.length
-    ? `/${segments.join('/')}`
-    : '';
+export const path = (type) => `${Core.state.currentUser}/${type}/items`;
 
 export const converter = (base, resolver) => ({
   toFirestore: (data) => data.toFirestore(),
@@ -14,9 +11,9 @@ export const converter = (base, resolver) => ({
   },
 });
 
-export const normalizeData = (doc) => doc.data();
+export const getData = (doc) => doc.data();
 
-export const getDocuments = async (ref) => getDocs(ref).docs.map(normalizeData);
+export const getDocuments = async (ref) => getDocs(ref).docs.map(getData);
 
-export const getCollection = (pathStr, converterFn) =>
-  collection(getFirestore(), pathStr).withConverter(converterFn);
+export const getCollection = (type, converterFn) =>
+  collection(getFirestore(), path(type)).withConverter(converterFn);
