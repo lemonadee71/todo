@@ -29,3 +29,6 @@ export const curry = (fn) =>
 
     return (...rest) => curried(...args.concat(rest));
   };
+
+export const fetchFromIds = (ids, source) =>
+  ids.map((id) => source.find((item) => item.id === id));
