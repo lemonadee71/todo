@@ -32,3 +32,10 @@ export const curry = (fn) =>
 
 export const fetchFromIds = (ids, source) =>
   ids.map((id) => source.find((item) => item.id === id));
+
+export const copyObject = (target, toExclude = []) => {
+  const copy = { ...target };
+  toExclude.forEach((prop) => delete copy[prop]);
+
+  return copy;
+};
