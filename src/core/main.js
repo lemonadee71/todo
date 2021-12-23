@@ -7,8 +7,7 @@ import Project from './classes/Project';
 import { LocalStorage } from './storage';
 import { LAST_OPENED_PAGE, LAST_UPDATE } from './constants';
 import defaultData from '../defaultData.json';
-// import { isDueToday, isDueThisWeek, isUpcoming, parse } from '../utils/date';
-// import { defaultProjects } from './defaults';
+import { fetchFromIds } from '../utils/misc';
 
 const loadDefaultData = () => {
   const data = [];
@@ -34,7 +33,7 @@ const loadDefaultData = () => {
   return data;
 };
 
-const recoverData = () => {
+const recoverDataFromLocal = () => {
   const data = [];
   const stored = LocalStorage.filter(
     (key) => ![LAST_UPDATE, LAST_OPENED_PAGE].includes(key)
@@ -59,22 +58,21 @@ const recoverData = () => {
       const tasks = list._items.map((task) => {
         let { labels, subtasks } = task;
 
-        labels = labels._items.map((taskLabel) =>
-          projectLabels.find((label) => label.id === taskLabel.id)
+        labels = fetchFromIds(
+          labels._items.map((label) => label.id),
+          projectLabels
         );
+
         subtasks = subtasks._items.map((subtask) => {
-          const subtaskLabels = subtask.labels._items.map((subtaskLabel) =>
-            projectLabels.find((label) => label.id === subtaskLabel.id)
+          const subtaskLabels = fetchFromIds(
+            subtask.labels._items.map((label) => label.id),
+            projectLabels
           );
 
           return new Subtask({ ...subtask, labels: subtaskLabels });
         });
 
-        return new Task({
-          ...task,
-          labels,
-          subtasks,
-        });
+        return new Task({ ...task, labels, subtasks });
       });
 
       return new TaskList({ ...list, defaultItems: tasks });
@@ -92,7 +90,7 @@ const recoverData = () => {
   return data;
 };
 
-const storeData = function (data) {
+const storeDataToLocal = function (data) {
   // remove deleted projects
   LocalStorage.keys.forEach((key) => {
     const [projectId] = key.split('__');
@@ -121,23 +119,14 @@ const storeData = function (data) {
 let Root;
 
 export const init = () => {
-  const recoveredData = recoverData();
+  const recoveredData = recoverDataFromLocal();
   const initData = recoveredData.length ? recoveredData : loadDefaultData();
 
   Root = new OrderedIdList(initData);
-  LocalStorage.store(LAST_UPDATE, Root, storeData);
+  LocalStorage.store(LAST_UPDATE, Root, storeDataToLocal);
 };
 
 export const syncLocalStorage = () => LocalStorage.sync(LAST_UPDATE, Root);
-
-// const getDueThisWeek = () =>
-//   getAllTasks().filter((task) => isDueThisWeek(parse(task.dueDate)));
-
-// const getUpcoming = () =>
-//   getAllTasks().filter((task) => isUpcoming(parse(task.dueDate)));
-
-// const getDueToday = () =>
-//   getAllTasks().filter((task) => isDueToday(parse(task.dueDate)));
 
 // =====================================================================================
 // Projects
