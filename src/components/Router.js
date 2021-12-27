@@ -1,15 +1,33 @@
 import { createHook, html } from 'poor-man-jsx';
 import Core from '../core';
+import Loading from './Loading';
 
 const Router = ({ routes, tag = 'div', props }) => {
   const [state] = createHook({
     url: window.location.pathname,
     match: null,
+    component: [],
   });
 
   const handler = (match) => {
     state.match = match;
     state.url = match.url;
+
+    // show loading component
+    state.component = Loading();
+
+    const route = routes.find((r) =>
+      Core.router.matchLocation(r.path, state.url)
+    );
+
+    // then show the actual component
+    (async () => {
+      const dummy = (c, m) => c?.(m);
+      const resolver = route?.resolver || dummy;
+      state.component = route?.component
+        ? await resolver(route.component, state.match)
+        : [];
+    })();
   };
 
   const init = () => {
@@ -37,19 +55,14 @@ const Router = ({ routes, tag = 'div', props }) => {
     });
   };
 
-  const changeContent = (url) => {
-    const route = routes.find((r) => Core.router.matchLocation(r.path, url));
-
-    return route?.component?.(state.match) || [];
-  };
-
   return html`
     <${tag}
       ${props}
       ${{
         onCreate: init,
         onDestroy: destroy,
-        $children: state.$url(changeContent),
+        onMount: () => Core.router.resolve(window.location.pathname),
+        $children: state.$component,
       }}
     ></${tag}>
   `;
