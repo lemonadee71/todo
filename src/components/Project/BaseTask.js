@@ -23,7 +23,7 @@ export default class BaseTask {
     this.id = this.data.id;
     // both task and subtask ids start with `task`
     // so to allow for conversion, prefix key with actual type instead
-    this.key = `${this.type}-${this.data.id.split('-')[1]}`;
+    this.key = `${this.type}-${this.data.id}`;
 
     this.props = { main: '', checkbox: '' };
     this.extraContent = '';
