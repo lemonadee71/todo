@@ -6,7 +6,7 @@ import Core from '../core';
 import List from '../components/Project/List';
 
 const Project = ({ data: { id } }) => {
-  const [project, revoke] = useProject(`project-${id}`);
+  const [project, revoke] = useProject(id);
 
   const createNewList = (e) => {
     e.preventDefault();
