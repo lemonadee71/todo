@@ -1,13 +1,28 @@
+import { onSnapshot } from 'firebase/firestore';
 import { createHook } from 'poor-man-jsx';
 import Core from '.';
+import { isGuest } from '../utils/auth';
+import { converter, getCollection, getData } from '../utils/firestore';
 import { PROJECT, TASK } from './actions';
+import Project from './classes/Project';
 
 export const useRoot = () => {
-  const [data] = createHook({ projects: Core.main.getProjectDetails() });
+  const [data] = createHook({ projects: [] });
+  let unsubscribe;
 
-  const unsubscribe = Core.event.onSuccess(PROJECT.ALL, () => {
+  if (isGuest()) {
     data.projects = Core.main.getProjectDetails();
-  });
+
+    unsubscribe = Core.event.onSuccess(PROJECT.ALL, () => {
+      data.projects = Core.main.getProjectDetails();
+    });
+  } else {
+    const ref = getCollection('Projects', converter(Project));
+
+    unsubscribe = onSnapshot(ref, (snapshot) => {
+      data.projects = snapshot.docs.map(getData);
+    });
+  }
 
   return [data, unsubscribe];
 };
