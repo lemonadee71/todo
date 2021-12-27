@@ -5,7 +5,7 @@ class TaskList extends OrderedIdList {
   constructor({ name, id, project, position, defaultItems }) {
     super(defaultItems);
 
-    this.id = id || `list-${uuid(8)}`;
+    this.id = id || uuid();
     this.name = name || 'Unnamed List';
     this.project = project;
     this.position = position;

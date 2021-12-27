@@ -18,7 +18,7 @@ class BaseTask {
     // meta
     this.type = 'task';
     this.numId = numId;
-    this.id = id || `task-${uuid(8)}`;
+    this.id = id || uuid();
     this.createdDate = createdDate ?? Date.now();
 
     // props

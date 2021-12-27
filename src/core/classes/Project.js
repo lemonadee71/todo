@@ -9,7 +9,7 @@ import { copyObject } from '../../utils/misc';
 export default class Project {
   constructor({ name, id, totalTasks, labels, lists, position }) {
     this.name = name;
-    this.id = id || `project-${uuid(8)}`;
+    this.id = id || uuid();
     this.position = position;
 
     const defaultLabels = [
@@ -39,7 +39,7 @@ export default class Project {
   }
 
   get link() {
-    return `p/${this.id.split('-')[1]}`;
+    return `p/${this.id}`;
   }
 
   toFirestore() {

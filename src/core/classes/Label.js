@@ -5,7 +5,7 @@ class Label {
   constructor({ name, color, project, id = null }) {
     this.name = name;
     this.color = color || DEFAULT_COLORS[0];
-    this.id = id || `label-${uuid(5)}`;
+    this.id = id || uuid();
     this.project = project;
   }
 
