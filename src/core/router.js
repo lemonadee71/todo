@@ -45,6 +45,8 @@ const Router = (() => {
 
   const matchLocation = (...args) => navigo.matchLocation(...args);
 
+  const resolve = (...args) => navigo.resolve(...args);
+
   const navigate = (path, options) => {
     const opts = { ...options };
 
@@ -64,6 +66,7 @@ const Router = (() => {
     on,
     off,
     remove,
+    resolve,
     register,
     matchLocation,
     navigate,
