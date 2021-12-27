@@ -116,14 +116,18 @@ const storeDataToLocal = function (data) {
   return Date.now();
 };
 
-let Root;
+let Root = new OrderedIdList();
 
-export const init = () => {
-  const recoveredData = recoverDataFromLocal();
-  const initData = recoveredData.length ? recoveredData : loadDefaultData();
-
-  Root = new OrderedIdList(initData);
+export const init = (data) => {
+  Root = new OrderedIdList(data);
   LocalStorage.store(LAST_UPDATE, Root, storeDataToLocal);
+};
+
+export const getLocalData = () => {
+  const recoveredData = recoverDataFromLocal();
+  const data = recoveredData.length ? recoveredData : loadDefaultData();
+
+  return data;
 };
 
 export const syncLocalStorage = () => LocalStorage.sync(LAST_UPDATE, Root);

@@ -2,10 +2,11 @@ import { html } from 'poor-man-jsx';
 import Core from '../core';
 import { PATHS } from '../core/constants';
 import { EDIT_SUBTASK, EDIT_TASK, PROJECT, TASK } from '../core/actions';
+import { fetchProject } from '../core/firestore';
 import { wrap } from '../utils/misc';
 import { $ } from '../utils/query';
 import logger from '../utils/logger';
-import { signOut } from '../utils/auth';
+import { isGuest, signOut } from '../utils/auth';
 import Overview from './Overview';
 import Calendar from './Calendar';
 import Project from './Project';
@@ -26,12 +27,18 @@ const routes = [
   {
     path: PATHS.project,
     component: Project,
+    resolver: async (component, match) => {
+      if (!isGuest()) Core.init([await fetchProject(match.data.id)]);
+
+      return component(match);
+    },
   },
 ];
 
 const App = () => {
   // initialize data
-  Core.init();
+  Core.login();
+  if (isGuest()) Core.init(Core.main.getLocalData());
 
   // listeners
   const unsubscribe = [
