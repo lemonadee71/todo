@@ -9,7 +9,6 @@ import { $ } from '../utils/query';
 import { dispatchCustomEvent } from '../utils/dispatch';
 import { formatToDateTime, getDueDateRange } from '../utils/date';
 import { useUndo } from '../utils/undo';
-import Taskbar from '../components/Calendar/Taskbar';
 import Sidebar from '../components/Calendar/Sidebar';
 import CreationPopup from '../components/Calendar/CreationPopup';
 
@@ -85,6 +84,26 @@ const Calendar = () => {
       });
   };
 
+  const renderMonthName = () => {
+    const currentDate = calendar.self.getDate().toDate();
+    $.data('name', 'month-name').textContent = format(currentDate, 'MMMM yyyy');
+  };
+
+  const goToToday = () => {
+    calendar.self.today();
+    renderMonthName();
+  };
+
+  const previous = () => {
+    calendar.self.prev();
+    renderMonthName();
+  };
+
+  const next = () => {
+    calendar.self.next();
+    renderMonthName();
+  };
+
   const closeCreationPopup = () => {
     const prevPopup = $('#creation-popup');
     if (prevPopup) dispatchCustomEvent(prevPopup, 'popupclose');
@@ -101,14 +120,11 @@ const Calendar = () => {
         const popup = render(CreationPopup(e)).firstElementChild;
         el.after(popup);
 
-        const ref = e.guide.guideElement
-          ? e.guide.guideElement
-          : Object.values(e.guide.guideElements)[0];
+        const ref =
+          e.guide.guideElement ?? Object.values(e.guide.guideElements)[0];
         const instance = createPopper(ref, popup, POPPER_CONFIG);
 
-        popup.addEventListener('@destroy', () => {
-          instance.destroy();
-        });
+        popup.addEventListener('@destroy', () => instance.destroy());
       },
       beforeUpdateSchedule: ({ schedule, changes }) => {
         closeCreationPopup();
@@ -157,7 +173,13 @@ const Calendar = () => {
   };
 
   return html`
-    ${Taskbar(calendar)} ${Sidebar(toggleSchedule)}
+    ${Sidebar(toggleSchedule)}
+    <div data-name="taskbar">
+      <button name="today" ${{ onClick: goToToday }}>Today</button>
+      <button name="previous" ${{ onClick: previous }}><</button>
+      <button name="next" ${{ onClick: next }}>></button>
+      <h1 data-name="month-name" ${{ onMount: renderMonthName }}></h1>
+    </div>
     <div data-name="calendar">
       <div ${{ onCreate: init, onDestroy: destroy }}></div>
     </div>
