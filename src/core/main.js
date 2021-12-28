@@ -1,3 +1,4 @@
+import { isWithinInterval } from 'date-fns';
 import Task from './classes/Task';
 import Subtask from './classes/Subtask';
 import TaskList from './classes/TaskList';
@@ -8,6 +9,7 @@ import { LocalStorage } from './storage';
 import { LAST_OPENED_PAGE, LAST_UPDATE } from './constants';
 import defaultData from '../defaultData.json';
 import { fetchFromIds } from '../utils/misc';
+import { parse } from '../utils/date';
 
 const loadDefaultData = () => {
   const data = [];
@@ -251,6 +253,11 @@ export const getTaskFromRoot = (taskId) =>
 
 export const getTasksFromProject = (projectId) =>
   getLists(projectId).flatMap((list) => list.items);
+
+export const getTasksByInterval = (interval) =>
+  getAllTasks().filter((task) =>
+    isWithinInterval(parse(task.dueDate), interval)
+  );
 
 export const getTasks = (projectId, listId) => getList(projectId, listId).items;
 

@@ -1,6 +1,6 @@
 import format from 'date-fns/format';
 import { createPopper } from '@popperjs/core';
-import { html, render } from 'poor-man-jsx';
+import { createHook, html, render } from 'poor-man-jsx';
 import ToastUICalendar from 'tui-calendar';
 import Core from '../core';
 import { EDIT_TASK, TASK } from '../core/actions';
@@ -13,6 +13,7 @@ import Sidebar from '../components/Calendar/Sidebar';
 import CreationPopup from '../components/Calendar/CreationPopup';
 
 const Calendar = () => {
+  const [state] = createHook({ date: new Date() });
   const calendar = {};
 
   // listeners
@@ -76,32 +77,36 @@ const Calendar = () => {
   };
 
   const showTasks = () => {
-    Core.main
-      .getAllTasks()
-      .filter((task) => task.dueDate)
-      .forEach((task) => {
-        createSchedule(task, ...getDueDateRange(task.dueDate));
-      });
+    calendar.self.clear();
+
+    const start = calendar.self.getDateRangeStart().toDate();
+    const end = calendar.self.getDateRangeEnd().toDate();
+
+    Core.main.getTasksByInterval({ start, end }).forEach((task) => {
+      createSchedule(task, ...getDueDateRange(task.dueDate));
+    });
   };
 
-  const renderMonthName = () => {
-    const currentDate = calendar.self.getDate().toDate();
-    $.data('name', 'month-name').textContent = format(currentDate, 'MMMM yyyy');
+  const setDate = () => {
+    state.date = calendar.self.getDate().toDate();
   };
 
   const goToToday = () => {
     calendar.self.today();
-    renderMonthName();
+    setDate();
+    showTasks();
   };
 
   const previous = () => {
     calendar.self.prev();
-    renderMonthName();
+    setDate();
+    showTasks();
   };
 
   const next = () => {
     calendar.self.next();
-    renderMonthName();
+    setDate();
+    showTasks();
   };
 
   const closeCreationPopup = () => {
@@ -154,7 +159,6 @@ const Calendar = () => {
     calendar.self = new ToastUICalendar(this, {
       defaultView: 'month',
       taskView: false,
-      // scheduleView: true,
       usageStatistics: false,
       useDetailPopup: true,
       template: {
@@ -178,7 +182,9 @@ const Calendar = () => {
       <button name="today" ${{ onClick: goToToday }}>Today</button>
       <button name="previous" ${{ onClick: previous }}><</button>
       <button name="next" ${{ onClick: next }}>></button>
-      <h1 data-name="month-name" ${{ onMount: renderMonthName }}></h1>
+      <h1
+        ${{ $textContent: state.$date((date) => format(date, 'MMMM yyyy')) }}
+      ></h1>
     </div>
     <div data-name="calendar">
       <div ${{ onCreate: init, onDestroy: destroy }}></div>
