@@ -1,12 +1,10 @@
+import { getDocs, query, where } from 'firebase/firestore';
 import {
-  doc,
-  getDoc,
-  getDocs,
-  getFirestore,
-  query,
-  where,
-} from 'firebase/firestore';
-import { converter, getCollection, getData, path } from '../utils/firestore';
+  converter,
+  getCollection,
+  getData,
+  getDocuments,
+} from '../utils/firestore';
 import { fetchFromIds } from '../utils/misc';
 import Label from './classes/Label';
 import Project from './classes/Project';
@@ -14,24 +12,24 @@ import Subtask from './classes/Subtask';
 import Task from './classes/Task';
 import TaskList from './classes/TaskList';
 
-export const fetchProject = async (projectId) => {
+export const fetchData = async (conditions) => {
   const temp = {};
 
   // refs
-  const projectRef = doc(
-    getFirestore(),
-    path('Projects'),
-    projectId
-  ).withConverter(
-    converter(Project, (data) => ({
-      ...data,
-      labels: temp.labels?.filter((label) => label.project === data.id),
-      lists: temp.lists?.filter((list) => list.project === data.id),
-    }))
+  const projectsRef = query(
+    getCollection(
+      'Projects',
+      converter(Project, (data) => ({
+        ...data,
+        labels: temp.labels?.filter((label) => label.project === data.id),
+        lists: temp.lists?.filter((list) => list.project === data.id),
+      }))
+    ),
+    ...(conditions.projects || [])
   );
   const labelsRef = query(
     getCollection('Labels', converter(Label)),
-    where('project', '==', projectId)
+    ...(conditions.labels || [])
   );
   const listsRef = query(
     getCollection(
@@ -41,7 +39,7 @@ export const fetchProject = async (projectId) => {
         defaultItems: temp.tasks?.filter((task) => task.list === data.id),
       }))
     ),
-    where('project', '==', projectId)
+    ...(conditions.lists || [])
   );
   const tasksRef = query(
     getCollection(
@@ -54,7 +52,7 @@ export const fetchProject = async (projectId) => {
         ),
       }))
     ),
-    where('project', '==', projectId)
+    ...(conditions.tasks || [])
   );
   const subtasksRef = query(
     getCollection(
@@ -64,23 +62,34 @@ export const fetchProject = async (projectId) => {
         labels: fetchFromIds(data.labels || [], temp.labels || []),
       }))
     ),
-    where('project', '==', projectId)
+    ...(conditions.subtasks || [])
   );
 
-  (async () => {
-    // do an initial fetch to build the data
-    const result = await Promise.all([
-      getDocs(labelsRef),
-      getDocs(subtasksRef),
-      getDocs(tasksRef),
-      getDocs(listsRef),
-    ]);
+  // do an initial fetch to build the data
+  const result = await Promise.all([
+    getDocs(labelsRef),
+    getDocs(subtasksRef),
+    getDocs(tasksRef),
+    getDocs(listsRef),
+  ]);
 
-    temp.labels = result[0].docs?.map(getData);
-    temp.subtasks = result[1].docs?.map(getData);
-    temp.tasks = result[2].docs?.map(getData);
-    temp.lists = result[3].docs?.map(getData);
-  })();
+  temp.labels = result[0].docs?.map(getData);
+  temp.subtasks = result[1].docs?.map(getData);
+  temp.tasks = result[2].docs?.map(getData);
+  temp.lists = result[3].docs?.map(getData);
 
-  return (await getDoc(projectRef)).data();
+  return getDocuments(projectsRef);
+};
+
+export const fetchProject = async (projectId) => {
+  const condition = [where('project', '==', projectId)];
+  const data = await fetchData({
+    projects: [where('id', '==', projectId)],
+    labels: condition,
+    lists: condition,
+    tasks: condition,
+    subtasks: condition,
+  });
+
+  return data[0];
 };
