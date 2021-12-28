@@ -13,7 +13,10 @@ export const converter = (base, resolver) => ({
 
 export const getData = (doc) => doc.data();
 
-export const getDocuments = async (ref) => getDocs(ref).docs.map(getData);
+export const getDocuments = async (ref) => {
+  const docs = await getDocs(ref);
+  return docs?.docs?.map(getData);
+};
 
 export const getCollection = (type, converterFn) =>
   collection(getFirestore(), path(type)).withConverter(converterFn);
