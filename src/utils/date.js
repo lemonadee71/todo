@@ -58,6 +58,8 @@ const getDueDateRange = (dueDate, range = '5', formatter = formatToTZDate) => {
   return [start, end];
 };
 
+const toTimestamp = (date) => parse(date).getTime();
+
 export {
   isDueToday,
   isDueTomorrow,
@@ -69,4 +71,5 @@ export {
   formatToTZDate,
   getDueDateRange,
   parse,
+  toTimestamp,
 };

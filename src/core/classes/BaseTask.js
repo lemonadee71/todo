@@ -1,3 +1,4 @@
+import { toTimestamp } from '../../utils/date';
 import uuid from '../../utils/id';
 import IdList from './IdList';
 
@@ -45,6 +46,7 @@ class BaseTask {
   toFirestore() {
     return {
       ...this,
+      dueDate: toTimestamp(this.dueDate),
       labels: this.labels.items.map((label) => label.id),
     };
   }

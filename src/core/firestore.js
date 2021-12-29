@@ -1,4 +1,5 @@
 import { getDocs, query, where } from 'firebase/firestore';
+import { formatToDateTime } from '../utils/date';
 import {
   converter,
   getCollection,
@@ -46,6 +47,7 @@ export const fetchData = async (conditions) => {
       'Tasks',
       converter(Task, (data) => ({
         ...data,
+        dueDate: formatToDateTime(new Date(data.dueDate)),
         labels: fetchFromIds(data.labels || [], temp.labels || []),
         subtasks: temp.subtasks?.filter(
           (subtask) => subtask.parent === data.id
@@ -59,6 +61,7 @@ export const fetchData = async (conditions) => {
       'Subtasks',
       converter(Subtask, (data) => ({
         ...data,
+        dueDate: formatToDateTime(new Date(data.dueDate)),
         labels: fetchFromIds(data.labels || [], temp.labels || []),
       }))
     ),

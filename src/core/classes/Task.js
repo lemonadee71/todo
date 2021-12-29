@@ -1,3 +1,4 @@
+import { toTimestamp } from '../../utils/date';
 import BaseTask from './BaseTask';
 import OrderedIdList from './OrderedIdList';
 
@@ -25,6 +26,7 @@ export default class Task extends BaseTask {
   toFirestore() {
     return {
       ...this,
+      dueDate: toTimestamp(this.dueDate),
       labels: this.labels.items.map((label) => label.id),
       subtasks: this.subtasks.items.map((subtask) => subtask.id),
     };
