@@ -1,3 +1,4 @@
+import { converter } from '../../utils/firestore';
 import uuid from '../../utils/id';
 import { DEFAULT_COLORS } from '../constants';
 
@@ -7,6 +8,10 @@ class Label {
     this.color = color || DEFAULT_COLORS[0];
     this.id = id || uuid();
     this.project = project;
+  }
+
+  static converter() {
+    return converter(Label);
   }
 
   toFirestore() {

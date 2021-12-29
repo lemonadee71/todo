@@ -1,4 +1,6 @@
-import { toTimestamp } from '../../utils/date';
+import { formatToDateTime, toTimestamp } from '../../utils/date';
+import { converter } from '../../utils/firestore';
+import { fetchFromIds } from '../../utils/misc';
 import BaseTask from './BaseTask';
 import OrderedIdList from './OrderedIdList';
 
@@ -7,6 +9,26 @@ export default class Task extends BaseTask {
     super(props);
 
     this.subtasks = new OrderedIdList(props.subtasks);
+  }
+
+  static converter(source) {
+    return converter(Task, (data) => ({
+      ...data,
+      dueDate: data.dueDate ? formatToDateTime(new Date(data.dueDate)) : '',
+      labels: fetchFromIds(data.labels || [], source.labels || []),
+      subtasks: source.subtasks?.filter(
+        (subtask) => subtask.parent === data.id
+      ),
+    }));
+  }
+
+  toFirestore() {
+    return {
+      ...this,
+      dueDate: toTimestamp(this.dueDate),
+      labels: this.labels.items.map((label) => label.id),
+      subtasks: this.subtasks.items.map((subtask) => subtask.id),
+    };
   }
 
   get data() {
@@ -21,15 +43,6 @@ export default class Task extends BaseTask {
     return this.data.subtasks.some(
       (subtask) => subtask.required && !subtask.completed
     );
-  }
-
-  toFirestore() {
-    return {
-      ...this,
-      dueDate: toTimestamp(this.dueDate),
-      labels: this.labels.items.map((label) => label.id),
-      subtasks: this.subtasks.items.map((subtask) => subtask.id),
-    };
   }
 
   toggleComplete() {
