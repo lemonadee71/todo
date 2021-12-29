@@ -1,7 +1,7 @@
+import { getAuth } from 'firebase/auth';
 import { collection, getDocs, getFirestore } from 'firebase/firestore';
-import Core from '../core';
 
-export const path = (type) => `${Core.state.currentUser}/${type}/items`;
+const path = (type) => `${getAuth().currentUser.uid}/${type}/items`;
 
 export const converter = (base, resolver) => ({
   toFirestore: (data) => data.toFirestore(),
