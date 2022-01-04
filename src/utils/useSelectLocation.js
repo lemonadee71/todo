@@ -49,7 +49,7 @@ export const useSelectLocation = (project = {}, list = {}) => {
   const showListOptions = (projectId) => {
     if (!projectId) return [];
 
-    return renderOptions(Core.main.getLists(projectId), false);
+    return renderOptions(Core.main.getListDetails(projectId), false);
   };
 
   const component = html`
