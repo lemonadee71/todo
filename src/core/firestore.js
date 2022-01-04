@@ -6,28 +6,28 @@ import Subtask from './classes/Subtask';
 import Task from './classes/Task';
 import TaskList from './classes/TaskList';
 
-export const fetchData = async (conditions) => {
+export const fetchData = async (conditions = {}, converters = {}) => {
   const data = {};
 
   // refs
   const projectsRef = query(
-    getCollection('Projects', Project.converter(data)),
+    getCollection('Projects', converters.projects || Project.converter(data)),
     ...(conditions.projects || [])
   );
   const labelsRef = query(
-    getCollection('Labels', Label.converter()),
+    getCollection('Labels', converters.labels || Label.converter()),
     ...(conditions.labels || [])
   );
   const listsRef = query(
-    getCollection('Lists', TaskList.converter(data)),
+    getCollection('Lists', converters.lists || TaskList.converter(data)),
     ...(conditions.lists || [])
   );
   const tasksRef = query(
-    getCollection('Tasks', Task.converter(data)),
+    getCollection('Tasks', converters.tasks || Task.converter(data)),
     ...(conditions.tasks || [])
   );
   const subtasksRef = query(
-    getCollection('Subtasks', Subtask.converter(data)),
+    getCollection('Subtasks', converters.subtasks || Subtask.converter(data)),
     ...(conditions.subtasks || [])
   );
 
