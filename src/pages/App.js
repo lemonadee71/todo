@@ -32,7 +32,7 @@ const routes = [
 
 const App = () => {
   // initialize data
-  Core.login();
+  Core.setup();
   if (isGuest()) Core.init(Core.main.getLocalData());
 
   // listeners

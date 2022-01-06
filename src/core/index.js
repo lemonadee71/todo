@@ -29,7 +29,7 @@ const Core = (() => {
 
   // * This should be evoked when user navigated to /app
   // * Run before any renders
-  const login = () => {
+  const setup = () => {
     LocalStorage.prefix = `${state.currentUser}__`;
 
     const cached = LocalStorage.get(LAST_OPENED_PAGE);
@@ -232,7 +232,7 @@ const Core = (() => {
     event,
     router,
     state,
-    login,
+    setup,
     init: main.init,
   };
 })();
