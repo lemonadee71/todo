@@ -6,6 +6,7 @@ import { LocalStorage } from './storage';
 import { TASK, PROJECT, NAVIGATE_TO_PAGE } from './actions';
 import { LAST_OPENED_PAGE } from './constants';
 import { debounce } from '../utils/delay';
+import { copyObject } from '../utils/misc';
 
 const Core = (() => {
   const [state] = createHook({
@@ -104,22 +105,33 @@ const Core = (() => {
   event.on(TASK.UPDATE, ({ project, list, task: id, data }) =>
     main.updateTask(project, list, id, data)
   );
-  event.on(
-    TASK.TRANSFER,
-    ({ type, project, list, task, data: { position } }) => {
-      switch (type) {
-        case 'project':
-          return main.transferTaskToProject(project, list, task, position);
-        case 'list':
-          return main.transferTaskToList(project, list, task, position);
-        // transfer from list to task
-        case 'task':
-          return main.convertTaskToSubtask(project, list, task, position);
-        default:
-          throw new Error('Type must be either project, list, or task');
-      }
+  event.on(TASK.TRANSFER, (args) => {
+    const {
+      type,
+      project,
+      list,
+      task,
+      data: { position },
+    } = args;
+    let result;
+
+    switch (type) {
+      case 'project':
+        result = main.transferTaskToProject(project, list, task, position);
+        break;
+      case 'list':
+        result = main.transferTaskToList(project, list, task, position);
+        break;
+      // transfer from list to task
+      case 'task':
+        result = main.convertTaskToSubtask(project, list, task, position);
+        break;
+      default:
+        throw new Error('Type must be either project, list, or task');
     }
-  );
+
+    return { type, result, changes: copyObject(args, ['type']) };
+  });
 
   // Task and subtask share the same label callback
   // So subtasks should emit TASK.LABELS instead
