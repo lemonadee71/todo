@@ -2,15 +2,15 @@ import { createHook, html } from 'poor-man-jsx';
 import Core from '../core';
 import { useRoot } from '../core/hooks';
 
-export const useSelectLocation = (project = {}, list = {}) => {
+export const useSelectLocation = (onChange, data = {}) => {
   const [root, unsubscribe] = useRoot();
   const [state] = createHook({
-    selectedProject: project.id,
-    selectedList: list.id,
+    project: data.project,
+    list: data.list,
   });
 
-  const renderOptions = (itemList, isProject = true) => {
-    const defaultValue = isProject ? state.selectedProject : state.selectedList;
+  const renderOptions = (items, isProject = true) => {
+    const defaultValue = isProject ? state.project : state.list;
 
     return html`
       ${isProject
@@ -21,7 +21,7 @@ export const useSelectLocation = (project = {}, list = {}) => {
             ${{ selected: !defaultValue }}
           ></option>`
         : ''}
-      ${itemList.map(
+      ${items.map(
         (item) =>
           html`
             <option
@@ -36,20 +36,20 @@ export const useSelectLocation = (project = {}, list = {}) => {
   };
 
   const selectList = (e) => {
-    state.selectedList = e.target.value;
-    list.onChange?.(e);
+    state.list = e.target.value;
+    onChange?.(e, { ...state });
   };
 
   const selectProject = (e) => {
-    state.selectedProject = e.target.value;
-    state.selectedList = e.target.nextElementSibling.value;
-    project.onChange?.(e);
+    state.project = e.target.value;
+    state.list = e.target.nextElementSibling.value;
+    onChange?.(e, { ...state });
   };
 
   const showListOptions = (projectId) => {
     if (!projectId) return [];
 
-    return renderOptions(Core.main.getListDetails(projectId), false);
+    return renderOptions(Core.main.getLists(projectId), false);
   };
 
   const component = html`
@@ -65,7 +65,7 @@ export const useSelectLocation = (project = {}, list = {}) => {
       name="list"
       ${{
         onChange: selectList,
-        $children: state.$selectedProject(showListOptions),
+        $children: state.$project(showListOptions),
       }}
     ></select>
   `;

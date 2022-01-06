@@ -9,19 +9,16 @@ export default class TaskModal extends BaseTaskModal {
   constructor(data) {
     super(data, TASK);
 
-    [this._SelectLocation, this._state] = useSelectLocation(
-      { id: this.data.project, onChange: this.transferTask },
-      { id: this.data.list, onChange: this.transferTask }
-    );
+    [this.SelectLocation] = useSelectLocation(this.transferTask, this.data);
   }
 
-  transferTask = (e) => {
+  transferTask = (e, selected) => {
     const type = e.target.name;
-    const list = { to: this._state.selectedList, from: this.data.list };
+    const list = { to: selected.list, from: this.data.list };
     const project =
       type === 'list'
         ? this.data.project
-        : { to: this._state.selectedProject, from: this.data.project };
+        : { to: selected.project, from: this.data.project };
 
     Core.event.emit(TASK.TRANSFER, {
       project,
@@ -47,7 +44,7 @@ export default class TaskModal extends BaseTaskModal {
   render() {
     this.template.push(
       {
-        template: this._SelectLocation,
+        template: this.SelectLocation,
         target: 'title',
         method: 'after',
       },
