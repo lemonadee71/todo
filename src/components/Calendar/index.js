@@ -2,55 +2,28 @@ import format from 'date-fns/format';
 import { createPopper } from '@popperjs/core';
 import { createHook, html, render } from 'poor-man-jsx';
 import ToastUICalendar from 'tui-calendar';
-import Core from '../core';
-import { EDIT_TASK, TASK } from '../core/actions';
-import { POPPER_CONFIG } from '../core/constants';
-import { $ } from '../utils/query';
-import { dispatchCustomEvent } from '../utils/dispatch';
-import { formatToDateTime, getDueDateRange } from '../utils/date';
-import { useUndo } from '../utils/undo';
-import Sidebar from '../components/Calendar/Sidebar';
-import CreationPopup from '../components/Calendar/CreationPopup';
+import Core from '../../core';
+import { EDIT_TASK, TASK } from '../../core/actions';
+import { POPPER_CONFIG } from '../../core/constants';
+import { $ } from '../../utils/query';
+import { dispatchCustomEvent } from '../../utils/dispatch';
+import { formatToDateTime, getDueDateRange } from '../../utils/date';
+import { useUndo } from '../../utils/undo';
+import Sidebar from './Sidebar';
+import CreationPopup from './CreationPopup';
+import { template } from './template';
 
-const Calendar = () => {
+const Calendar = (projectId) => {
   const [state] = createHook({ date: new Date() });
-  const calendar = {};
+  let calendar;
 
-  // listeners
-  const unsubscribe = [
-    Core.event.onSuccess([TASK.ADD, TASK.INSERT], (data) => {
-      if (data.dueDate) createSchedule(data, ...getDueDateRange(data.dueDate));
-    }),
-    Core.event.onSuccess(TASK.TRANSFER, (data) => {
-      const prevCalendarId =
-        data.changes.type === 'project' ? data.changes.prevValue : data.project;
-
-      updateSchedule(data.id, prevCalendarId, {
-        calendarId: data.project,
-        raw: { project: data.project, list: data.list, task: data.id },
-      });
-    }),
-    Core.event.onSuccess(TASK.UPDATE, (data) => {
-      // check if there's an existing schedule
-      const schedule = calendar.self.getSchedule(data.id, data.project);
-
-      if (data.dueDate) {
-        const [start, end] = getDueDateRange(data.dueDate);
-
-        if (schedule) updateSchedule(data.id, data.project, { start, end });
-        else createSchedule(data, start, end);
-      } else {
-        deleteSchedule(data.id, data.project);
-      }
-    }),
-  ];
-
+  /** wrappers */
   const createSchedule = (data, start, end) => {
     const schedule = {
       start,
       end,
       id: data.id,
-      calendarId: data.project,
+      calendarId: data.list,
       category: 'time',
       title: data.title,
       body: data.notes,
@@ -61,69 +34,65 @@ const Calendar = () => {
       },
     };
 
-    calendar.self.createSchedules([schedule]);
+    calendar.createSchedules([schedule]);
   };
 
   const updateSchedule = (id, calendarId, changes) => {
-    calendar.self.updateSchedule(id, calendarId, changes);
+    calendar.updateSchedule(id, calendarId, changes);
   };
 
   const deleteSchedule = (id, calendarId) => {
-    calendar.self.deleteSchedule(id, calendarId);
+    calendar.deleteSchedule(id, calendarId);
   };
 
   const toggleSchedule = (calendarId, toHide) => {
-    calendar.self.toggleSchedules(calendarId, toHide);
+    calendar.toggleSchedules(calendarId, toHide);
   };
 
   const showTasks = () => {
-    calendar.self.clear();
-
-    const start = calendar.self.getDateRangeStart().toDate();
-    const end = calendar.self.getDateRangeEnd().toDate();
-
-    Core.main.getTasksByInterval({ start, end }).forEach((task) => {
-      createSchedule(task, ...getDueDateRange(task.dueDate));
-    });
+    Core.main
+      .getTasksFromProject(projectId)
+      .filter((task) => task.dueDate)
+      .forEach((task) => {
+        createSchedule(task, ...getDueDateRange(task.dueDate));
+      });
   };
 
   const setDate = () => {
-    state.date = calendar.self.getDate().toDate();
+    state.date = calendar.getDate().toDate();
   };
 
   const goToToday = () => {
-    calendar.self.today();
+    calendar.today();
     setDate();
-    showTasks();
   };
 
   const previous = () => {
-    calendar.self.prev();
+    calendar.prev();
     setDate();
-    showTasks();
   };
 
   const next = () => {
-    calendar.self.next();
+    calendar.next();
     setDate();
-    showTasks();
   };
 
+  /** core */
   const closeCreationPopup = () => {
     const prevPopup = $('#creation-popup');
     if (prevPopup) dispatchCustomEvent(prevPopup, 'popupclose');
   };
 
-  const initListeners = (el) => {
-    calendar.self.on({
+  const initListeners = () => {
+    calendar.on({
       clickSchedule: closeCreationPopup,
       beforeCreateSchedule: (e) => {
         // make sure to close previous popup first
         closeCreationPopup();
 
         // then create a new one
-        const popup = render(CreationPopup(e)).firstElementChild;
-        el.after(popup);
+        const popup = render(CreationPopup(projectId, e)).firstElementChild;
+        document.body.append(popup);
 
         const ref =
           e.guide.guideElement ?? Object.values(e.guide.guideElements)[0];
@@ -156,28 +125,70 @@ const Calendar = () => {
   };
 
   const init = function () {
-    calendar.self = new ToastUICalendar(this, {
+    calendar = new ToastUICalendar(this, {
+      template,
       defaultView: 'month',
       taskView: false,
       usageStatistics: false,
       useDetailPopup: true,
-      template: {
-        popupDetailDate: (...args) =>
-          format(args[2].toDate(), 'MMMM d, yyyy hh:mm a'),
-      },
     });
 
-    initListeners(this);
+    initListeners();
     showTasks();
   };
 
   const destroy = () => {
     unsubscribe.forEach((cb) => cb());
-    calendar.self.destroy();
+    calendar.destroy();
   };
 
+  /** listeners */
+  const unsubscribe = [
+    Core.event.onSuccess([TASK.ADD, TASK.INSERT], (data) => {
+      if (data.dueDate) createSchedule(data, ...getDueDateRange(data.dueDate));
+    }),
+    Core.event.onSuccess(TASK.TRANSFER, ({ type, changes, result }) => {
+      switch (type) {
+        case 'project':
+          if (changes.project.to === projectId && result.dueDate) {
+            createSchedule(result, ...getDueDateRange(result.dueDate));
+          } else {
+            deleteSchedule(result.id, changes.list.from);
+          }
+
+          break;
+        case 'list':
+          updateSchedule(result.id, changes.list.from, {
+            calendarId: changes.list.to,
+            raw: {
+              project: result.project,
+              list: result.list,
+              task: result.id,
+            },
+          });
+          break;
+
+        default:
+          throw new Error('Type must be either project, list, or task');
+      }
+    }),
+    Core.event.onSuccess(TASK.UPDATE, (data) => {
+      // check if there's an existing schedule
+      const schedule = calendar.getSchedule(data.id, data.list);
+
+      if (data.dueDate) {
+        const [start, end] = getDueDateRange(data.dueDate);
+
+        if (schedule) updateSchedule(data.id, data.list, { start, end });
+        else createSchedule(data, start, end);
+      } else {
+        deleteSchedule(data.id, data.list);
+      }
+    }),
+  ];
+
   return html`
-    ${Sidebar(toggleSchedule)}
+    ${Sidebar(projectId, toggleSchedule)}
     <div data-name="taskbar">
       <button name="today" ${{ onClick: goToToday }}>Today</button>
       <button name="previous" ${{ onClick: previous }}><</button>

@@ -11,8 +11,10 @@
   }
 
   &__body {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
+    .list-view {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+    }
   }
 }

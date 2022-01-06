@@ -37,12 +37,7 @@ const Sidebar = () => {
         <ul>
           <li><a href="#">User</a></li>
           <li><a href="#">Quick Find</a></li>
-          <li>
-            <a is="navigo-link" href="/app">Overview</a>
-          </li>
-          <li>
-            <a is="navigo-link" href="/app/calendar">Calendar</a>
-          </li>
+          <li><a is="navigo-link" href="/app">Overview</a></li>
         </ul>
       </nav>
       <nav class="projects">

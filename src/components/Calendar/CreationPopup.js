@@ -8,8 +8,8 @@ import logger from '../../utils/logger';
 import { formatToDateTime } from '../../utils/date';
 import { useSelectLocation } from '../../utils/useSelectLocation';
 
-const CreationPopup = (evt) => {
-  const [SelectLocation] = useSelectLocation();
+const CreationPopup = (projectId, evt) => {
+  const [SelectLocation] = useSelectLocation(null, { project: projectId });
   const [state, revoke] = createHook({ dueDate: '' });
 
   const closePopup = () => {
@@ -56,8 +56,12 @@ const CreationPopup = (evt) => {
     e.target.addEventListener('@destroy', () => instance.destroy());
   };
 
+  const init = function () {
+    this.querySelector('[name="project"]').setAttribute('disabled', '');
+  };
+
   return html`
-    <div id="creation-popup" ${{ onPopupClose: closePopup }}>
+    <div id="creation-popup" ${{ onMount: init, onPopupClose: closePopup }}>
       <span ${{ onClick: closePopup }}>&times;</span>
       <form
         ${{ onSubmit: createTask }}

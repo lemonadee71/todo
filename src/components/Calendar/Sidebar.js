@@ -1,20 +1,20 @@
 import { html } from 'poor-man-jsx';
-import { useRoot } from '../../core/hooks';
+import { useProject } from '../../core/hooks';
 import { $, $$ } from '../../utils/query';
 
-const Sidebar = (toggleSchedule) => {
-  const [data, unsubscribe] = useRoot();
+const Sidebar = (projectId, toggleSchedule) => {
+  const [data, unsubscribe] = useProject(projectId);
 
-  const toggleProject = (e) => {
+  const toggleList = (e) => {
     toggleSchedule(e.target.value, !e.target.checked);
 
     if (!e.target.checked) $.attr('name', 'view-all').checked = false;
   };
 
   const toggleAll = (e) => {
-    $$('input', $.data('name', 'user-projects')).forEach((input) => {
+    $$('input', $.data('name', 'project-lists')).forEach((input) => {
       input.checked = e.target.checked;
-      toggleProject({ target: input });
+      toggleList({ target: input });
     });
   };
 
@@ -31,20 +31,20 @@ const Sidebar = (toggleSchedule) => {
       </label>
       <ul
         is-list
-        data-name="user-projects"
+        data-name="project-lists"
         ${{
-          $children: data.$projects.map(
-            (project) =>
+          $children: data.$lists.map(
+            (list) =>
               html`
-                <li key="${project.id}">
+                <li key="${list.id}">
                   <label>
                     <input
                       type="checkbox"
-                      value="${project.id}"
+                      value="${list.id}"
                       checked
-                      ${{ onChange: toggleProject }}
+                      ${{ onChange: toggleList }}
                     />
-                    ${project.name}
+                    ${list.name}
                   </label>
                 </li>
               `

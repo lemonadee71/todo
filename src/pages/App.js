@@ -8,7 +8,6 @@ import { $ } from '../utils/query';
 import logger from '../utils/logger';
 import { isGuest, signOut } from '../utils/auth';
 import Overview from './Overview';
-import Calendar from './Calendar';
 import Project from './Project';
 import Sidebar from '../components/Sidebar';
 import Router from '../components/Router';
@@ -19,10 +18,6 @@ const routes = [
   {
     path: PATHS.app,
     component: Overview,
-  },
-  {
-    path: PATHS.calendar,
-    component: Calendar,
   },
   {
     path: PATHS.project,
