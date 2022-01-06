@@ -53,7 +53,7 @@ class List {
   insert(item, idx) {
     this._items.splice(idx, 0, item);
 
-    return this;
+    return item;
   }
 
   /**

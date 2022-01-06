@@ -288,21 +288,15 @@ export const updateTask = (projectId, listId, taskId, data) => {
     task[prop] = value;
   }
 
-  return task.data;
+  return task;
 };
 
 export const moveTask = (projectId, listId, taskId, position) =>
   getList(projectId, listId).move(taskId, position);
 
 export const insertTask = (projectId, listId, task, position) => {
-  const { project, list } = task;
-  const type = project === projectId ? 'list' : 'project';
   getList(projectId, listId).insert(task, position);
-
-  return {
-    ...task.data,
-    changes: { type, prevValue: type === 'list' ? list : project },
-  };
+  return task;
 };
 
 export const deleteTask = (projectId, listId, taskId) =>
@@ -326,9 +320,13 @@ export const transferTaskToList = (projectId, list, taskId, position) =>
 
 export const convertTaskToSubtask = (projectId, list, task, position) => {
   const item = deleteTask(projectId, list.from, task.from);
-  insertSubtask(projectId, list.to, task.to, new Subtask(item.data), position);
-
-  return item;
+  return insertSubtask(
+    projectId,
+    list.to,
+    task.to,
+    new Subtask(item.data),
+    position
+  );
 };
 
 // =====================================================================================
@@ -349,7 +347,7 @@ export const addSubtask = (projectId, listId, taskId, data) => {
 
 export const insertSubtask = (projectId, listId, taskId, subtask, position) => {
   getTask(projectId, listId, taskId).insertSubtask(subtask, position);
-  return subtask.data;
+  return subtask;
 };
 
 export const deleteSubtask = (projectId, listId, taskId, subtaskId) =>
@@ -367,7 +365,7 @@ export const updateSubtask = (projectId, listId, taskId, subtaskId, data) => {
     subtask[prop] = value;
   }
 
-  return subtask.data;
+  return subtask;
 };
 
 export const moveSubtask = (projectId, listId, taskId, subtaskId, position) =>
@@ -381,16 +379,12 @@ export const convertSubtaskToTask = (
   position
 ) => {
   const subtask = deleteSubtask(projectId, list.from, taskId, subtaskId);
-  insertTask(projectId, list.to, new Task(subtask.data), position);
-
-  return subtask;
+  return insertTask(projectId, list.to, new Task(subtask.data), position);
 };
 
 export const transferSubtask = (projectId, list, task, subtaskId, position) => {
   const subtask = deleteSubtask(projectId, list.from, task.from, subtaskId);
-  insertSubtask(projectId, list.to, task.to, subtask, position);
-
-  return subtask;
+  return insertSubtask(projectId, list.to, task.to, subtask, position);
 };
 
 // =====================================================================================
@@ -419,8 +413,8 @@ export const addLabel = (projectId, name, color) => {
 };
 
 export const deleteLabel = (projectId, labelId) => {
-  getProject(projectId).labels.delete(labelId);
   getTasksFromProject(projectId).forEach((task) => task.removeLabel(labelId));
+  return getProject(projectId).labels.extract(labelId);
 };
 
 export const editLabel = (projectId, labelId, prop, value) => {
