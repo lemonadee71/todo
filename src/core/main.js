@@ -132,6 +132,8 @@ export const getLocalData = () => {
   return data;
 };
 
+export const initLocal = () => init(getLocalData());
+
 export const syncLocalStorage = () => LocalStorage.sync(LAST_UPDATE, Root);
 
 // =====================================================================================

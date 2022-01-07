@@ -7,6 +7,7 @@ import { TASK, PROJECT, NAVIGATE_TO_PAGE } from './actions';
 import { LAST_OPENED_PAGE } from './constants';
 import { debounce } from '../utils/delay';
 import { copyObject } from '../utils/misc';
+import OrderedIdList from './classes/OrderedIdList';
 
 const Core = (() => {
   const [state] = createHook({
@@ -16,11 +17,12 @@ const Core = (() => {
     currentOpenedTask: null,
     expandLabels: false,
     toasts: [],
+    root: new OrderedIdList(),
   });
   const event = new EventEmitter();
   const router = Router;
   const getters = Object.entries(main).reduce((obj, [key, fn]) => {
-    if (key.startsWith('get')) {
+    if (key.startsWith('get') || key.startsWith('init')) {
       obj[key] = fn;
     }
 
@@ -29,7 +31,7 @@ const Core = (() => {
 
   // * This should be evoked when user navigated to /app
   // * Run before any renders
-  const setup = () => {
+  const init = () => {
     LocalStorage.prefix = `${state.currentUser}__`;
 
     const cached = LocalStorage.get(LAST_OPENED_PAGE);
@@ -232,8 +234,7 @@ const Core = (() => {
     event,
     router,
     state,
-    setup,
-    init: main.init,
+    init,
   };
 })();
 

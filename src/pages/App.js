@@ -23,7 +23,13 @@ const routes = [
     path: PATHS.project,
     component: Project,
     resolver: async (component, match) => {
-      if (!isGuest()) Core.init([await fetchProject(match.data.id)]);
+      if (!isGuest()) {
+        // only fetch if not cached
+        if (!Core.state.root.has(match.data.id)) {
+          Core.state.root.add(await fetchProject(match.data.id));
+        }
+        Core.main.init(Core.state.root.items);
+      }
 
       return component(match);
     },
@@ -32,8 +38,8 @@ const routes = [
 
 const App = () => {
   // initialize data
-  Core.setup();
-  if (isGuest()) Core.init(Core.main.getLocalData());
+  Core.init();
+  if (isGuest()) Core.main.initLocal();
 
   // listeners
   const unsubscribe = [
