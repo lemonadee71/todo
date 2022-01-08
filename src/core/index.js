@@ -3,7 +3,7 @@ import EventEmitter from './classes/Emitter';
 import * as main from './main';
 import Router from './router';
 import { LocalStorage } from './storage';
-import { TASK, PROJECT, NAVIGATE_TO_PAGE } from './actions';
+import { TASK, PROJECT } from './actions';
 import { LAST_OPENED_PAGE } from './constants';
 import { debounce } from '../utils/delay';
 import { copyObject } from '../utils/misc';
@@ -13,7 +13,8 @@ const Core = (() => {
   const [state] = createHook({
     darkTheme: false,
     currentUser: null,
-    currentPage: '/app',
+    currentUserCredential: null,
+    currentPage: '/',
     currentOpenedTask: null,
     expandLabels: false,
     toasts: [],
@@ -35,18 +36,22 @@ const Core = (() => {
     LocalStorage.prefix = `${state.currentUser}__`;
 
     const cached = LocalStorage.get(LAST_OPENED_PAGE);
-    state.currentPage = cached?.href || state.currentPage;
 
-    router.navigate(state.currentPage, { title: cached?.title, replace: true });
+    router.navigate(cached?.url || '/app', {
+      title: cached?.title,
+      replace: true,
+    });
   };
 
-  event.on(NAVIGATE_TO_PAGE, (data) => {
-    state.currentPage = data.href;
-    LocalStorage.store(LAST_OPENED_PAGE, data);
-  });
+  router.on('*', (match) => {
+    state.currentPage = match.url;
 
-  router.on('/app*', (match) => {
-    event.emit(NAVIGATE_TO_PAGE, { href: match.url });
+    if (match?.url?.startsWith('app')) {
+      LocalStorage.store(LAST_OPENED_PAGE, {
+        title: document.title,
+        url: match.url,
+      });
+    }
   });
 
   /**
