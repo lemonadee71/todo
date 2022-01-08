@@ -31,7 +31,7 @@ initializeApp(firebaseConfig);
 defineCustomElements();
 render(Website, document.body);
 
-onAuthStateChanged(getAuth(), (user) => {
-  // sign in if user did not logged out
-  if (user) signIn(user.uid);
+onAuthStateChanged(getAuth(), async (user) => {
+  // sign in user if did not logged
+  if (user) await signIn(user.uid);
 });

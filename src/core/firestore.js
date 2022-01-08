@@ -1,10 +1,11 @@
-import { getDocs, query, where } from 'firebase/firestore';
+import { addDoc, getDocs, query, where } from 'firebase/firestore';
 import { getCollection, getData, getDocuments } from '../utils/firestore';
 import Label from './classes/Label';
 import Project from './classes/Project';
 import Subtask from './classes/Subtask';
 import Task from './classes/Task';
 import TaskList from './classes/TaskList';
+import { loadDefaultData } from './main';
 
 export const fetchData = async (conditions = {}, converters = {}) => {
   const data = {};
@@ -58,4 +59,28 @@ export const fetchProject = async (projectId) => {
   });
 
   return data[0];
+};
+
+export const initFirestore = async () => {
+  const defaultData = loadDefaultData();
+
+  defaultData.forEach(async (project) => {
+    await addDoc(getCollection('Projects', Project.converter()), project);
+
+    project.labels.items.forEach(async (label) => {
+      await addDoc(getCollection('Labels', Label.converter()), label);
+    });
+
+    project.lists.items.forEach(async (list) => {
+      await addDoc(getCollection('Lists', TaskList.converter()), list);
+
+      list.items.forEach(async (task) => {
+        await addDoc(getCollection('Tasks', Task.converter()), task);
+
+        task.data.subtasks.forEach(async (subtask) => {
+          await addDoc(getCollection('Subtasks', Subtask.converter(), subtask));
+        });
+      });
+    });
+  });
 };
