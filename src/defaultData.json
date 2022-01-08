@@ -9,57 +9,6 @@
             {
               "title": "To Do",
               "position": 0
-            },
-            {
-              "title": "To Do",
-              "position": 1
-            },
-            {
-              "title": "To Do",
-              "position": 2
-            },
-            {
-              "title": "To Do",
-              "position": 3
-            }
-          ]
-        },
-        {
-          "name": "Tutorials",
-          "items": [
-            {
-              "title": "To Do",
-              "position": 0
-            },
-            {
-              "title": "To Do",
-              "position": 1
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "To Do",
-      "lists": [
-        {
-          "name": "Chores",
-          "items": [
-            {
-              "title": "To Do",
-              "position": 0
-            },
-            {
-              "title": "To Do",
-              "position": 1
-            },
-            {
-              "title": "To Do",
-              "position": 2
-            },
-            {
-              "title": "To Do",
-              "position": 3
             }
           ]
         }
