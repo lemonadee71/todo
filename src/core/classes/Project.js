@@ -39,7 +39,7 @@ export default class Project {
       totalTasks || this.lists.items.flatMap((list) => list.items).length || 0;
   }
 
-  static converter(source) {
+  static converter(source = {}) {
     return converter(Project, (data) => ({
       ...data,
       labels: source.labels?.filter((label) => label.project === data.id),

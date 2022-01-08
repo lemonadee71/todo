@@ -11,7 +11,7 @@ export default class Task extends BaseTask {
     this.subtasks = new OrderedIdList(props.subtasks);
   }
 
-  static converter(source) {
+  static converter(source = {}) {
     return converter(Task, (data) => ({
       ...data,
       dueDate: data.dueDate ? formatToDateTime(new Date(data.dueDate)) : '',
@@ -27,7 +27,6 @@ export default class Task extends BaseTask {
       ...this,
       dueDate: toTimestamp(this.dueDate),
       labels: this.labels.items.map((label) => label.id),
-      subtasks: this.subtasks.items.map((subtask) => subtask.id),
     };
   }
 

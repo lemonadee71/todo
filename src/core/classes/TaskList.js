@@ -12,7 +12,7 @@ class TaskList extends OrderedIdList {
     this.position = position;
   }
 
-  static converter(source) {
+  static converter(source = {}) {
     return converter(TaskList, (data) => ({
       ...data,
       defaultItems: source.tasks?.filter((task) => task.list === data.id),

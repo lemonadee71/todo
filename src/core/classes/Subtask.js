@@ -13,7 +13,7 @@ export default class Subtask extends BaseTask {
     this.required = props.required;
   }
 
-  static converter(source) {
+  static converter(source = {}) {
     return converter(Subtask, (data) => ({
       ...data,
       dueDate: data.dueDate ? formatToDateTime(new Date(data.dueDate)) : '',
