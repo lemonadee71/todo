@@ -39,7 +39,10 @@ const routes = [
 const App = () => {
   // initialize data
   Core.init();
-  if (isGuest()) Core.main.initLocal();
+  if (isGuest()) {
+    Core.state.root.add(Core.main.getLocalData());
+    Core.main.initLocal();
+  }
 
   // listeners
   const unsubscribe = [
