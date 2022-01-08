@@ -11,7 +11,7 @@ import defaultData from '../defaultData.json';
 import { fetchFromIds } from '../utils/misc';
 import { parse } from '../utils/date';
 
-const loadDefaultData = () => {
+export const loadDefaultData = () => {
   const data = [];
 
   defaultData.projects.forEach((p, i) => {
@@ -97,7 +97,10 @@ const storeDataToLocal = function (data) {
   LocalStorage.keys.forEach((key) => {
     const [projectId] = key.split('__');
 
-    if (!data.has(projectId)) {
+    if (
+      !data.has(projectId) &&
+      ![LAST_UPDATE, LAST_OPENED_PAGE].includes(key)
+    ) {
       LocalStorage.remove(key);
     }
   });
