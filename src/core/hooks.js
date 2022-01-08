@@ -73,7 +73,7 @@ export const useTask = (projectId, listId, taskId, subtaskId = null) => {
 
   const unsubscribe = [
     Core.event.onSuccess(action.UPDATE, (newData) => {
-      Object.assign(task, newData);
+      Object.assign(task, newData.data);
     }),
     Core.event.onSuccess([...TASK.LABELS.ALL, ...PROJECT.LABELS.ALL], () => {
       task.labels = taskRef.data.labels;
