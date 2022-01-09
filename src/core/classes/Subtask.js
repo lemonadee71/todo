@@ -16,7 +16,7 @@ export default class Subtask extends BaseTask {
   static converter(source = {}) {
     return converter(Subtask, (data) => ({
       ...data,
-      dueDate: data.dueDate ? formatToDateTime(new Date(data.dueDate)) : '',
+      dueDate: data.dueDate && formatToDateTime(new Date(data.dueDate)),
       labels: fetchFromIds(data.labels || [], source.labels || []),
     }));
   }

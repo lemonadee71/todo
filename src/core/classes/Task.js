@@ -14,7 +14,7 @@ export default class Task extends BaseTask {
   static converter(source = {}) {
     return converter(Task, (data) => ({
       ...data,
-      dueDate: data.dueDate ? formatToDateTime(new Date(data.dueDate)) : '',
+      dueDate: data.dueDate && formatToDateTime(new Date(data.dueDate)),
       labels: fetchFromIds(data.labels || [], source.labels || []),
       subtasks: source.subtasks?.filter(
         (subtask) => subtask.parent === data.id
@@ -23,14 +23,11 @@ export default class Task extends BaseTask {
   }
 
   toFirestore() {
-    return copyObject(
-      {
-        ...this,
-        dueDate: toTimestamp(this.dueDate),
-        labels: this.labels.items.map((label) => label.id),
-      },
-      ['subtasks']
-    );
+    return {
+      ...copyObject(this, ['subtasks']),
+      dueDate: this.dueDate && toTimestamp(this.dueDate),
+      labels: this.labels.items.map((label) => label.id),
+    };
   }
 
   get data() {

@@ -46,7 +46,7 @@ class BaseTask {
   toFirestore() {
     return {
       ...this,
-      dueDate: toTimestamp(this.dueDate),
+      dueDate: this.dueDate && toTimestamp(this.dueDate),
       labels: this.labels.items.map((label) => label.id),
     };
   }
