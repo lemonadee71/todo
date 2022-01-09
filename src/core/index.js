@@ -197,29 +197,40 @@ const Core = (() => {
     ({ project, list, task, data: { item, position } }) =>
       main.insertSubtask(project, list, task, item, position)
   );
-  event.on(
-    TASK.SUBTASKS.TRANSFER,
-    ({ type, project, list, task, subtask, data: { position } }) => {
-      switch (type) {
-        // transfer from task to list
-        // list should be in the form of { to, from }
-        case 'list':
-          return main.convertSubtaskToTask(
-            project,
-            list,
-            task,
-            subtask,
-            position
-          );
-        // transfer from task to task
-        // list and task should be { to, from }
-        case 'task':
-          return main.transferSubtask(project, list, task, subtask, position);
-        default:
-          throw new Error('Type must either be "list" or "task"');
-      }
+  event.on(TASK.SUBTASKS.TRANSFER, (args) => {
+    const {
+      type,
+      project,
+      list,
+      task,
+      subtask,
+      data: { position },
+    } = args;
+    let result;
+
+    switch (type) {
+      // transfer from task to list
+      // list should be in the form of { to, from }
+      case 'list':
+        result = main.convertSubtaskToTask(
+          project,
+          list,
+          task,
+          subtask,
+          position
+        );
+        break;
+      // transfer from task to task
+      // list and task should be { to, from }
+      case 'task':
+        result = main.transferSubtask(project, list, task, subtask, position);
+        break;
+      default:
+        throw new Error('Type must either be "list" or "task"');
     }
-  );
+
+    return { type, result, changes: copyObject(args, ['type']) };
+  });
 
   // only update local storage half a second after all updates
   event.onSuccess(
