@@ -5,6 +5,7 @@ import Core from '../core';
 export const useUndo =
   ({ type, payload, text, onCancel, delay = 3000 }) =>
   () => {
+    let isCancelled = false;
     let extracted;
     Core.event.emit(type.REMOVE, payload, {
       onSuccess: (result) => {
@@ -19,6 +20,11 @@ export const useUndo =
       delay,
       className: 'custom-toast',
       close: true,
+      callback: () => {
+        // send a message that delete is not cancelled
+        // this is to avoid multiple writes/deletes to firestore
+        if (!isCancelled) Core.event.emit(`${type.REMOVE}:timeout`, extracted);
+      },
       node: Toast(text, {
         text: 'Undo',
         callback: () => {
@@ -28,6 +34,7 @@ export const useUndo =
             data: { item: extracted, position: extracted.position },
           });
 
+          isCancelled = true;
           onCancel?.();
           toast.hideToast();
         },
