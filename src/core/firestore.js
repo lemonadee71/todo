@@ -1,5 +1,10 @@
-import { addDoc, getDocs, query, where } from 'firebase/firestore';
-import { getCollection, getData, getDocuments } from '../utils/firestore';
+import { getDocs, query, setDoc, where } from 'firebase/firestore';
+import {
+  getCollection,
+  getData,
+  getDocument,
+  getDocuments,
+} from '../utils/firestore';
 import Label from './classes/Label';
 import Project from './classes/Project';
 import Subtask from './classes/Subtask';
@@ -65,20 +70,25 @@ export const initFirestore = async () => {
   const defaultData = loadDefaultData();
 
   defaultData.forEach(async (project) => {
-    await addDoc(getCollection('Projects', Project.converter()), project);
+    await setDoc(
+      getDocument('Projects', project.id, Project.converter()),
+      project
+    );
 
     project.labels.items.forEach(async (label) => {
-      await addDoc(getCollection('Labels', Label.converter()), label);
+      await setDoc(getDocument('Labels', label.id, Label.converter()), label);
     });
 
     project.lists.items.forEach(async (list) => {
-      await addDoc(getCollection('Lists', TaskList.converter()), list);
+      await setDoc(getDocument('Lists', list.id, TaskList.converter()), list);
 
       list.items.forEach(async (task) => {
-        await addDoc(getCollection('Tasks', Task.converter()), task);
+        await setDoc(getDocument('Tasks', task.id, Task.converter()), task);
 
         task.data.subtasks.forEach(async (subtask) => {
-          await addDoc(getCollection('Subtasks', Subtask.converter(), subtask));
+          await setDoc(
+            getDocument('Subtasks', subtask.id, Subtask.converter(), subtask)
+          );
         });
       });
     });

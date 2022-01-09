@@ -1,5 +1,5 @@
 import { getAuth } from 'firebase/auth';
-import { collection, getDocs, getFirestore } from 'firebase/firestore';
+import { collection, doc, getDocs, getFirestore } from 'firebase/firestore';
 
 const path = (type) => `${getAuth().currentUser.uid}/${type}/items`;
 
@@ -11,12 +11,15 @@ export const converter = (base, resolver) => ({
   },
 });
 
-export const getData = (doc) => doc.data();
+export const getData = (document) => document.data();
 
 export const getDocuments = async (ref) => {
   const docs = await getDocs(ref);
   return docs?.docs?.map(getData);
 };
+
+export const getDocument = (type, id, converterFn) =>
+  doc(getFirestore(), path(type), id).withConverter(converterFn);
 
 export const getCollection = (type, converterFn) =>
   collection(getFirestore(), path(type)).withConverter(converterFn);
