@@ -2,7 +2,7 @@ import { onSnapshot } from 'firebase/firestore';
 import { createHook } from 'poor-man-jsx';
 import Core from '.';
 import { isGuest } from '../utils/auth';
-import { converter, getCollection, getData } from '../utils/firestore';
+import { converter, getCollectionRef, getData } from '../utils/firestore';
 import { PROJECT, TASK } from './actions';
 import Project from './classes/Project';
 
@@ -17,7 +17,7 @@ export const useRoot = () => {
       data.projects = Core.main.getProjectDetails();
     });
   } else {
-    const ref = getCollection('Projects', converter(Project));
+    const ref = getCollectionRef('Projects', converter(Project));
 
     unsubscribe = onSnapshot(ref, (snapshot) => {
       data.projects = snapshot.docs.map(getData);

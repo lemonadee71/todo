@@ -1,8 +1,8 @@
 import { getDocs, query, setDoc, where } from 'firebase/firestore';
 import {
-  getCollection,
+  getCollectionRef,
   getData,
-  getDocument,
+  getDocumentRef,
   getDocuments,
 } from '../utils/firestore';
 import Label from './classes/Label';
@@ -17,23 +17,29 @@ export const fetchData = async (conditions = {}, converters = {}) => {
 
   // refs
   const projectsRef = query(
-    getCollection('Projects', converters.projects || Project.converter(data)),
+    getCollectionRef(
+      'Projects',
+      converters.projects || Project.converter(data)
+    ),
     ...(conditions.projects || [])
   );
   const labelsRef = query(
-    getCollection('Labels', converters.labels || Label.converter()),
+    getCollectionRef('Labels', converters.labels || Label.converter()),
     ...(conditions.labels || [])
   );
   const listsRef = query(
-    getCollection('Lists', converters.lists || TaskList.converter(data)),
+    getCollectionRef('Lists', converters.lists || TaskList.converter(data)),
     ...(conditions.lists || [])
   );
   const tasksRef = query(
-    getCollection('Tasks', converters.tasks || Task.converter(data)),
+    getCollectionRef('Tasks', converters.tasks || Task.converter(data)),
     ...(conditions.tasks || [])
   );
   const subtasksRef = query(
-    getCollection('Subtasks', converters.subtasks || Subtask.converter(data)),
+    getCollectionRef(
+      'Subtasks',
+      converters.subtasks || Subtask.converter(data)
+    ),
     ...(conditions.subtasks || [])
   );
 
@@ -71,23 +77,29 @@ export const initFirestore = async () => {
 
   defaultData.forEach(async (project) => {
     await setDoc(
-      getDocument('Projects', project.id, Project.converter()),
+      getDocumentRef('Projects', project.id, Project.converter()),
       project
     );
 
     project.labels.items.forEach(async (label) => {
-      await setDoc(getDocument('Labels', label.id, Label.converter()), label);
+      await setDoc(
+        getDocumentRef('Labels', label.id, Label.converter()),
+        label
+      );
     });
 
     project.lists.items.forEach(async (list) => {
-      await setDoc(getDocument('Lists', list.id, TaskList.converter()), list);
+      await setDoc(
+        getDocumentRef('Lists', list.id, TaskList.converter()),
+        list
+      );
 
       list.items.forEach(async (task) => {
-        await setDoc(getDocument('Tasks', task.id, Task.converter()), task);
+        await setDoc(getDocumentRef('Tasks', task.id, Task.converter()), task);
 
         task.data.subtasks.forEach(async (subtask) => {
           await setDoc(
-            getDocument('Subtasks', subtask.id, Subtask.converter(), subtask)
+            getDocumentRef('Subtasks', subtask.id, Subtask.converter(), subtask)
           );
         });
       });

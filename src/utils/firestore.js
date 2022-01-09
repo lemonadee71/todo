@@ -18,8 +18,8 @@ export const getDocuments = async (ref) => {
   return docs?.docs?.map(getData);
 };
 
-export const getDocument = (type, id, converterFn) =>
+export const getDocumentRef = (type, id, converterFn) =>
   doc(getFirestore(), path(type), id).withConverter(converterFn);
 
-export const getCollection = (type, converterFn) =>
+export const getCollectionRef = (type, converterFn) =>
   collection(getFirestore(), path(type)).withConverter(converterFn);
