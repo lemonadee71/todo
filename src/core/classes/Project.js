@@ -28,7 +28,6 @@ export default class Project {
     const defaultLists = [
       new TaskList({
         name: 'Default',
-        id: 'default',
         project: this.id,
       }),
     ];
