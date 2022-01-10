@@ -25,6 +25,8 @@ const routes = [
     component: pages.App,
     nested: true,
     resolver: (component, match) => {
+      // setup core listeners
+      Core.setupListeners();
       // initialize data
       Core.init();
 
@@ -32,6 +34,7 @@ const routes = [
         Core.state.root.add(Core.main.getLocalData());
         Core.main.initLocal();
       } else {
+        // setup firestore listeners
         setupListeners();
       }
 

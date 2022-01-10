@@ -66,6 +66,7 @@ const App = () => {
         'task-modal'
       );
     }),
+    () => Core.event.clear(),
   ];
 
   return html`

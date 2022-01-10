@@ -53,7 +53,7 @@ class EventEmitter {
   off(topic, fn) {
     this.events.set(
       topic,
-      this.events.get(topic).filter((handler) => handler.fn !== fn)
+      this.events.get(topic)?.filter((handler) => handler.fn !== fn)
     );
 
     return this;
