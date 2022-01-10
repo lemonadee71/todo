@@ -31,7 +31,7 @@ const routes = [
       Core.init();
 
       if (isGuest()) {
-        Core.state.root.add(Core.main.getLocalData());
+        Core.data.root.add(Core.main.getLocalData());
         Core.main.initLocal();
       } else {
         // setup firestore listeners

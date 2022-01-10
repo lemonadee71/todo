@@ -8,7 +8,7 @@ export const showToast = (options) => {
     position: 'left',
     stopOnFocus: false,
   });
-  const currentToasts = [...Core.state.toasts];
+  const currentToasts = [...Core.data.toasts];
 
   // show only 4 toasts at a time
   // ignores the set duration
@@ -16,7 +16,7 @@ export const showToast = (options) => {
 
   toast.showToast();
   currentToasts.push(toast);
-  Core.state.toasts = currentToasts;
+  Core.data.toasts = currentToasts;
 
   return toast;
 };

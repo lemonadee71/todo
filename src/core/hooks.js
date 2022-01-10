@@ -7,24 +7,23 @@ import { PROJECT, TASK } from './actions';
 import Project from './classes/Project';
 
 export const useRoot = () => {
-  const [data] = createHook({ projects: [] });
   let unsubscribe;
 
   if (isGuest()) {
-    data.projects = Core.main.getProjectDetails();
+    Core.data.projects = Core.main.getProjectDetails();
 
     unsubscribe = Core.event.onSuccess(PROJECT.ALL, () => {
-      data.projects = Core.main.getProjectDetails();
+      Core.data.projects = Core.main.getProjectDetails();
     });
   } else {
     const ref = getCollectionRef('Projects', converter(Project));
 
     unsubscribe = onSnapshot(ref, (snapshot) => {
-      data.projects = snapshot.docs.map(getData);
+      Core.data.projects = snapshot.docs.map(getData);
     });
   }
 
-  return [data, unsubscribe];
+  return [Core.data, unsubscribe];
 };
 
 // we rely on changes to original references

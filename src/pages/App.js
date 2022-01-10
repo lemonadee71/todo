@@ -25,10 +25,10 @@ const routes = [
     resolver: async (component, match) => {
       if (!isGuest()) {
         // only fetch if not cached
-        if (!Core.state.root.has(match.data.id)) {
-          Core.state.root.add(await fetchProject(match.data.id));
+        if (!Core.data.root.has(match.data.id)) {
+          Core.data.root.add(await fetchProject(match.data.id));
         }
-        Core.main.init(Core.state.root.items);
+        Core.main.init(Core.data.root.items);
       }
 
       return component(match);

@@ -17,8 +17,11 @@ const Core = (() => {
     currentPage: '/',
     currentOpenedTask: null,
     expandLabels: false,
-    toasts: [],
+  });
+  const [hook] = createHook({
     root: new OrderedIdList(),
+    projects: [],
+    toasts: [],
   });
   const event = new EventEmitter();
   const router = Router;
@@ -251,6 +254,7 @@ const Core = (() => {
     event,
     router,
     state,
+    data: hook,
     init,
     setupListeners,
   };

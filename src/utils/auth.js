@@ -30,6 +30,6 @@ export const signIn = async (id = LOCAL_USER) => {
 export const signOut = () => {
   signOutUser(getAuth());
   Core.state.currentUser = null;
-  Core.state.root.clear();
+  Core.data.root.clear();
   Core.router.navigate(PATHS.home, { title: 'To Do List', replace: true });
 };
