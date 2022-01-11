@@ -4,7 +4,7 @@ import * as main from './main';
 import Router from './router';
 import { LocalStorage } from './storage';
 import { TASK, PROJECT } from './actions';
-import { LAST_OPENED_PAGE } from './constants';
+// import { LAST_OPENED_PAGE } from './constants';
 import { debounce } from '../utils/delay';
 import { copyObject } from '../utils/misc';
 import OrderedIdList from './classes/OrderedIdList';
@@ -38,24 +38,24 @@ const Core = (() => {
   const init = () => {
     LocalStorage.prefix = `${state.currentUser}__`;
 
-    const cached = LocalStorage.get(LAST_OPENED_PAGE);
+    // const cached = LocalStorage.get(LAST_OPENED_PAGE);
 
-    router.navigate(cached?.url || '/app', {
-      title: cached?.title,
-      replace: true,
-    });
+    // router.navigate(cached?.url || '/app', {
+    //   title: cached?.title,
+    //   replace: true,
+    // });
   };
 
-  router.on('*', (match) => {
-    state.currentPage = match.url;
+  // router.on('*', (match) => {
+  //   state.currentPage = match.url;
 
-    if (match?.url?.startsWith('app')) {
-      LocalStorage.store(LAST_OPENED_PAGE, {
-        title: document.title,
-        url: match.url,
-      });
-    }
-  });
+  //   if (match?.url?.startsWith('app')) {
+  //     LocalStorage.store(LAST_OPENED_PAGE, {
+  //       title: document.title,
+  //       url: match.url,
+  //     });
+  //   }
+  // });
 
   const setupListeners = () => {
     /**
