@@ -1,7 +1,13 @@
 import { html } from 'poor-man-jsx';
 import Core from '../core';
 import { PATHS } from '../core/constants';
-import { EDIT_SUBTASK, EDIT_TASK, PROJECT, TASK } from '../core/actions';
+import {
+  EDIT_SUBTASK,
+  EDIT_TASK,
+  FIREBASE,
+  PROJECT,
+  TASK,
+} from '../core/actions';
 import { fetchProject } from '../core/firestore';
 import { wrap } from '../utils/misc';
 import { $ } from '../utils/query';
@@ -40,7 +46,12 @@ const App = () => {
   // listeners
   const unsubscribe = [
     Core.event.onError(
-      [PROJECT.LISTS.ADD, PROJECT.LABELS.ADD],
+      [
+        PROJECT.ADD,
+        FIREBASE.PROJECT.ADD,
+        PROJECT.LISTS.ADD,
+        PROJECT.LABELS.ADD,
+      ],
       wrap(logger.warning)
     ),
     Core.event.onError(
@@ -53,7 +64,6 @@ const App = () => {
       ],
       wrap(logger.error)
     ),
-    Core.event.onError(PROJECT.ADD, wrap(logger.warning)),
     Core.event.on(EDIT_TASK, (task) => {
       $('#main-modal').changeContent(
         new TaskModal(task).render(),

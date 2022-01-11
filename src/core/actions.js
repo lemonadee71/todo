@@ -31,4 +31,14 @@ PROJECT.LISTS = createActions('project.lists');
 
 PROJECT.SELECT = 'app.project.select';
 
-export { TASK, PROJECT, SYNC, NAVIGATE_TO_PAGE, EDIT_TASK, EDIT_SUBTASK };
+const FIREBASE = { PROJECT: createActions('firebase.project') };
+
+export {
+  TASK,
+  PROJECT,
+  FIREBASE,
+  SYNC,
+  NAVIGATE_TO_PAGE,
+  EDIT_TASK,
+  EDIT_SUBTASK,
+};

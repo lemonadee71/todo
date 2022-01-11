@@ -1,32 +1,46 @@
 import Sortable from 'sortablejs';
 import { html } from 'poor-man-jsx';
-import { PROJECT } from '../core/actions';
+import { FIREBASE, PROJECT } from '../core/actions';
 import { useRoot } from '../core/hooks';
 import Core from '../core';
 import ProjectLink from './ProjectLink';
+import { isGuest } from '../utils/auth';
 
 const Sidebar = () => {
+  let sortable;
   const [data, revoke] = useRoot();
+  const base = isGuest() ? PROJECT : FIREBASE.PROJECT;
 
   const createNewProject = (e) => {
     e.preventDefault();
     const input = e.target.elements['new-project'];
 
-    Core.event.emit(PROJECT.ADD, { data: { name: input.value } });
+    Core.event.emit(base.ADD, {
+      data: { name: input.value, order: sortable.toArray() },
+    });
 
     input.value = '';
   };
 
   const init = function () {
-    Sortable.create(this, {
+    sortable = Sortable.create(this, {
       animation: 150,
       delay: 10,
       draggable: 'li',
       onUpdate: (e) => {
-        Core.event.emit(PROJECT.MOVE, {
-          project: e.item.dataset.id,
-          data: { position: e.newIndex },
-        });
+        if (base === PROJECT) {
+          Core.event.emit(base.MOVE, {
+            project: e.item.dataset.id,
+            data: { position: e.newIndex },
+          });
+        }
+      },
+      store: {
+        set: (instance) => {
+          if (base === FIREBASE.PROJECT) {
+            Core.event.emit(base.MOVE, { order: instance.toArray() });
+          }
+        },
       },
     });
   };

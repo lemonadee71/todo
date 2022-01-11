@@ -1,8 +1,9 @@
-import { onSnapshot } from 'firebase/firestore';
+import { doc, getFirestore, onSnapshot } from 'firebase/firestore';
 import { createHook } from 'poor-man-jsx';
 import Core from '.';
 import { isGuest } from '../utils/auth';
-import { converter, getCollectionRef, getData } from '../utils/firestore';
+import { getCollectionRef, getDocuments } from '../utils/firestore';
+import { orderByIds } from '../utils/misc';
 import { PROJECT, TASK } from './actions';
 import Project from './classes/Project';
 
@@ -16,10 +17,14 @@ export const useRoot = () => {
       Core.data.projects = Core.main.getProjectDetails();
     });
   } else {
-    const ref = getCollectionRef('Projects', converter(Project));
+    const projectsRef = getCollectionRef('Projects', Project.converter());
+    const orderRef = doc(getFirestore(), `${Core.state.currentUser}/Projects`);
 
-    unsubscribe = onSnapshot(ref, (snapshot) => {
-      Core.data.projects = snapshot.docs.map(getData);
+    // only add, delete, and move will be captured here
+    // since change in "name" will not change "order"
+    unsubscribe = onSnapshot(orderRef, async (snapshot) => {
+      const projects = await getDocuments(projectsRef);
+      Core.data.projects = orderByIds(snapshot.data().order, projects);
     });
   }
 
