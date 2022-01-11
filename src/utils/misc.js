@@ -33,6 +33,15 @@ export const curry = (fn) =>
 export const fetchFromIds = (ids, source) =>
   ids.map((id) => source.find((item) => item.id === id));
 
+export const orderByIds = (ids, source) => {
+  const sorted = [];
+  ids.forEach((id) => {
+    const item = source.find((i) => i.id === id);
+    if (item) sorted.push(item);
+  });
+  return sorted;
+};
+
 export const copyObject = (target, toExclude = []) => {
   const copy = { ...target };
   toExclude.forEach((prop) => delete copy[prop]);
