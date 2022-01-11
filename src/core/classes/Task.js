@@ -1,6 +1,6 @@
 import { formatToDateTime, toTimestamp } from '../../utils/date';
 import { converter } from '../../utils/firestore';
-import { copyObject, fetchFromIds } from '../../utils/misc';
+import { copyObject, fetchFromIds, orderByIds } from '../../utils/misc';
 import BaseTask from './BaseTask';
 import OrderedIdList from './OrderedIdList';
 
@@ -16,8 +16,9 @@ export default class Task extends BaseTask {
       ...data,
       dueDate: data.dueDate && formatToDateTime(new Date(data.dueDate)),
       labels: fetchFromIds(data.labels || [], source.labels || []),
-      subtasks: source.subtasks?.filter(
-        (subtask) => subtask.parent === data.id
+      subtasks: orderByIds(
+        data.subtasks || [],
+        (source.subtasks || []).filter((subtask) => subtask.parent === data.id)
       ),
     }));
   }
@@ -27,6 +28,7 @@ export default class Task extends BaseTask {
       ...copyObject(this, ['subtasks']),
       dueDate: this.dueDate && toTimestamp(this.dueDate),
       labels: this.labels.items.map((label) => label.id),
+      subtasks: this.subtasks.orderOfItems,
     };
   }
 

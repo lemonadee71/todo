@@ -4,7 +4,7 @@ import OrderedIdList from './OrderedIdList';
 import Label from './Label';
 import { DEFAULT_COLORS } from '../constants';
 import uuid from '../../utils/id';
-import { copyObject } from '../../utils/misc';
+import { copyObject, orderByIds } from '../../utils/misc';
 import { converter } from '../../utils/firestore';
 
 export default class Project {
@@ -42,12 +42,18 @@ export default class Project {
     return converter(Project, (data) => ({
       ...data,
       labels: source.labels?.filter((label) => label.project === data.id),
-      lists: source.lists?.filter((list) => list.project === data.id),
+      lists: orderByIds(
+        data.lists || [],
+        (source.lists || []).filter((list) => list.project === data.id)
+      ),
     }));
   }
 
   toFirestore() {
-    return copyObject(this, ['labels', 'lists']);
+    return {
+      ...copyObject(this, ['labels', 'lists']),
+      lists: this.lists.orderOfItems,
+    };
   }
 
   get link() {

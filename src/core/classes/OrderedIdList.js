@@ -10,6 +10,10 @@ class OrderedIdList extends IdList {
     this.updatePosition();
   }
 
+  get orderOfItems() {
+    return this.items.map((item) => item.id);
+  }
+
   updatePosition() {
     // update items position based on their index
     this._items.forEach((item, i) => {
