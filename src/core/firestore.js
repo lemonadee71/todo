@@ -170,11 +170,19 @@ export const setupListeners = () => {
 
   /** Lists */
   Core.event.onSuccess(
-    [PROJECT.LISTS.ADD, PROJECT.LISTS.MOVE, PROJECT.LISTS.UPDATE],
+    [PROJECT.LISTS.ADD, PROJECT.LISTS.UPDATE],
     async (data) => setDoc(getDocumentRef('Lists', data.id), data.toFirestore())
   );
   Core.event.on(`${PROJECT.LISTS.REMOVE}:timeout`, async (data) =>
     deleteDoc(getDocumentRef('Lists', data.id))
+  );
+  Core.event.onSuccess(
+    [PROJECT.LISTS.ADD, PROJECT.LISTS.REMOVE, PROJECT.LISTS.MOVE],
+    async (data) => {
+      const proj = Core.main.getProject(data.project);
+      console.log(proj.toFirestore());
+      await setDoc(getDocumentRef('Projects', proj.id), proj.toFirestore());
+    }
   );
 
   /** Labels */
@@ -189,46 +197,123 @@ export const setupListeners = () => {
 
   /** Tasks */
   Core.event.onSuccess(
-    [TASK.ADD, TASK.MOVE, TASK.UPDATE, TASK.LABELS.ADD, TASK.LABELS.REMOVE],
+    [TASK.ADD, TASK.UPDATE, TASK.LABELS.ADD, TASK.LABELS.REMOVE],
     // task and subtask share TASK.LABELS.*
     async (data) => setDoc(getDocumentRef('Tasks', data.id), data.toFirestore())
   );
   // transfer has a different return value for TASK
   Core.event.onSuccess(TASK.TRANSFER, async (data) => {
-    const { result, type } = data;
+    const { result, type, changes } = data;
 
-    if (type === 'task') {
-      // delete original document
-      await deleteDoc(getDocumentRef('Tasks', result.id));
-      // create new one in a different collection
-      await setDoc(getDocumentRef('Subtasks', result.id), result.toFirestore());
-    } else {
-      await setDoc(getDocumentRef('Tasks', result.id), result.toFirestore());
+    if (type === 'list') {
+      changes.project = { to: changes.project, from: changes.project };
+    }
+
+    switch (type) {
+      case 'list':
+      case 'project':
+        await setDoc(getDocumentRef('Tasks', result.id), result.toFirestore());
+
+        await setDoc(
+          getDocumentRef('Lists', changes.list.from),
+          Core.main
+            .getList(changes.project.from, changes.list.from)
+            .toFirestore()
+        );
+
+        await setDoc(
+          getDocumentRef('Lists', changes.list.to),
+          Core.main.getList(changes.project.to, changes.list.to).toFirestore()
+        );
+
+        break;
+
+      case 'task':
+        // delete original document
+        await deleteDoc(getDocumentRef('Tasks', result.id));
+        // create new one in a different collection
+        await setDoc(
+          getDocumentRef('Subtasks', result.id),
+          result.toFirestore()
+        );
+
+        // update order in old and new location
+        await setDoc(
+          getDocumentRef('Lists', changes.list.from),
+          Core.main.getList(changes.project, changes.list.from).toFirestore()
+        );
+        await setDoc(
+          getDocumentRef('Tasks', changes.task.to),
+          Core.main
+            .getTask(changes.project, changes.list.to, changes.task.to)
+            .toFirestore()
+        );
+
+        break;
+      default:
+        throw new Error('Type must be either project, list, or task');
     }
   });
   Core.event.on(`${TASK.REMOVE}:timeout`, async (data) =>
     deleteDoc(getDocumentRef('Tasks', data.id))
   );
+  Core.event.onSuccess([TASK.ADD, TASK.REMOVE, TASK.MOVE], async (data) => {
+    const list = Core.main.getList(data.project, data.list);
+    await setDoc(getDocumentRef('Lists', list.id), list.toFirestore());
+  });
 
   /** Subtasks */
   Core.event.onSuccess(
-    [TASK.SUBTASKS.ADD, TASK.SUBTASKS.MOVE, TASK.SUBTASKS.UPDATE],
+    [TASK.SUBTASKS.ADD, TASK.SUBTASKS.UPDATE],
     async (data) =>
       setDoc(getDocumentRef('Subtasks', data.id), data.toFirestore())
   );
   Core.event.onSuccess(TASK.SUBTASKS.TRANSFER, async (data) => {
-    const { result, type } = data;
+    const { result, type, changes } = data;
 
     if (type === 'list') {
       // delete original document
       await deleteDoc(getDocumentRef('Subtasks', result.id));
+
       // create new one in a different collection
       await setDoc(getDocumentRef('Tasks', result.id), result.toFirestore());
+
+      // update order in old and new location
+      await setDoc(
+        getDocumentRef('Tasks', changes.task),
+        Core.main
+          .getTask(changes.project, changes.list.from, changes.task)
+          .toFirestore()
+      );
+      await setDoc(
+        getDocumentRef('Lists', changes.list.to),
+        Core.main.getList(changes.project, changes.list.to).toFirestore()
+      );
     } else {
       await setDoc(getDocumentRef('Subtasks', result.id), result.toFirestore());
+      // update order in old and new location
+      await setDoc(
+        getDocumentRef('Tasks', changes.task.from),
+        Core.main
+          .getTask(changes.project, changes.list.from, changes.task.from)
+          .toFirestore()
+      );
+      await setDoc(
+        getDocumentRef('Tasks', changes.task.to),
+        Core.main
+          .getTask(changes.project, changes.list.to, changes.task.to)
+          .toFirestore()
+      );
     }
   });
   Core.event.on(`${TASK.SUBTASKS.REMOVE}:timeout`, async (data) =>
     deleteDoc(getDocumentRef('Subtasks', data.id))
+  );
+  Core.event.onSuccess(
+    [TASK.SUBTASKS.ADD, TASK.SUBTASKS.REMOVE, TASK.SUBTASKS.MOVE],
+    async (data) => {
+      const task = Core.main.getTask(data.project, data.list, data.parent);
+      await setDoc(getDocumentRef('Tasks', task.id), task.toFirestore());
+    }
   );
 };
