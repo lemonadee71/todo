@@ -18,7 +18,7 @@ export const signIn = async (id = LOCAL_USER) => {
   Core.state.currentUser = id;
 
   // populate firestore if first time user
-  if (await isNewUser(id)) await initFirestore();
+  if (!isGuest() && (await isNewUser(id))) await initFirestore();
 
   Core.router.navigate(PATHS.app, { title: 'Overview', replace: true });
 };
