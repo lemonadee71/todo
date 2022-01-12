@@ -42,7 +42,7 @@ const ProjectLink = (data) => {
     });
   };
 
-  const deleteProject = isGuest() ? firestoreDelete : localDelete;
+  const deleteProject = isGuest() ? localDelete : firestoreDelete;
 
   return html`
     <li ignore="style" data-id="${data.id}">
