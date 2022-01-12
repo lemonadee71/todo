@@ -2,7 +2,7 @@ import { isWithinInterval } from 'date-fns';
 import Task from './classes/Task';
 import Subtask from './classes/Subtask';
 import TaskList from './classes/TaskList';
-import OrderedIdList from './classes/OrderedIdList';
+import IdList from './classes/IdList';
 import Label from './classes/Label';
 import Project from './classes/Project';
 import { LocalStorage } from './storage';
@@ -111,7 +111,6 @@ const storeDataToLocal = function (data) {
       id: project.id,
       name: project.name,
       totalTasks: project.totalTasks,
-      position: project.position,
     });
     LocalStorage.set(`${project.id}__labels`, project.labels.items);
     LocalStorage.set(`${project.id}__lists`, project.lists.items);
@@ -121,10 +120,10 @@ const storeDataToLocal = function (data) {
   return Date.now();
 };
 
-let Root = new OrderedIdList();
+let Root = new IdList();
 
 export const init = (data) => {
-  Root = new OrderedIdList(data);
+  Root = new IdList(data);
   LocalStorage.store(LAST_UPDATE, Root, storeDataToLocal);
 };
 

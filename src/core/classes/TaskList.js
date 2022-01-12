@@ -1,16 +1,15 @@
-import OrderedIdList from './OrderedIdList';
+import IdList from './IdList';
 import uuid from '../../utils/id';
 import { converter } from '../../utils/firestore';
 import { orderByIds } from '../../utils/misc';
 
-class TaskList extends OrderedIdList {
-  constructor({ name, id, project, position, defaultItems }) {
+class TaskList extends IdList {
+  constructor({ name, id, project, defaultItems }) {
     super(defaultItems);
 
     this.id = id || uuid();
     this.name = name || 'Unnamed List';
     this.project = project;
-    this.position = position;
   }
 
   static converter(source = {}) {
@@ -28,8 +27,7 @@ class TaskList extends OrderedIdList {
       id: this.id,
       name: this.name,
       project: this.project,
-      position: this.position,
-      tasks: this.orderOfItems,
+      tasks: this.items.map((item) => item.id),
     };
   }
 

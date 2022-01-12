@@ -1,6 +1,5 @@
 import IdList from './IdList';
 import TaskList from './TaskList';
-import OrderedIdList from './OrderedIdList';
 import Label from './Label';
 import { DEFAULT_COLORS } from '../constants';
 import uuid from '../../utils/id';
@@ -8,10 +7,9 @@ import { copyObject, orderByIds } from '../../utils/misc';
 import { converter } from '../../utils/firestore';
 
 export default class Project {
-  constructor({ name, id, totalTasks, labels, lists, position }) {
+  constructor({ name, id, totalTasks, labels, lists }) {
     this.name = name;
     this.id = id || uuid();
-    this.position = position;
 
     const defaultLabels = [
       new Label({
@@ -33,7 +31,7 @@ export default class Project {
     ];
 
     this.labels = new IdList(labels || defaultLabels);
-    this.lists = new OrderedIdList(lists || defaultLists);
+    this.lists = new IdList(lists || defaultLists);
     this.totalTasks =
       totalTasks || this.lists.items.flatMap((list) => list.items).length || 0;
   }
@@ -52,7 +50,7 @@ export default class Project {
   toFirestore() {
     return {
       ...copyObject(this, ['labels', 'lists']),
-      lists: this.lists.orderOfItems,
+      lists: this.lists.items.map((item) => item.id),
     };
   }
 

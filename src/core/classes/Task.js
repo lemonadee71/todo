@@ -2,13 +2,13 @@ import { formatToDateTime, toTimestamp } from '../../utils/date';
 import { converter } from '../../utils/firestore';
 import { copyObject, fetchFromIds, orderByIds } from '../../utils/misc';
 import BaseTask from './BaseTask';
-import OrderedIdList from './OrderedIdList';
+import IdList from './IdList';
 
 export default class Task extends BaseTask {
   constructor(props) {
     super(props);
 
-    this.subtasks = new OrderedIdList(props.subtasks);
+    this.subtasks = new IdList(props.subtasks);
   }
 
   static converter(source = {}) {
@@ -28,7 +28,7 @@ export default class Task extends BaseTask {
       ...copyObject(this, ['subtasks']),
       dueDate: this.dueDate && toTimestamp(this.dueDate),
       labels: this.labels.items.map((label) => label.id),
-      subtasks: this.subtasks.orderOfItems,
+      subtasks: this.subtasks.items.map((item) => item.id),
     };
   }
 

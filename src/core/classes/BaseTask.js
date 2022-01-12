@@ -13,7 +13,6 @@ class BaseTask {
     createdDate,
     list,
     project,
-    position = null,
     labels = [],
   }) {
     // meta
@@ -31,7 +30,6 @@ class BaseTask {
     // location data
     this.project = project;
     this.list = list;
-    this.position = position;
 
     this.labels = new IdList(labels);
   }

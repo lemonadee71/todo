@@ -7,7 +7,7 @@ import { TASK, PROJECT } from './actions';
 // import { LAST_OPENED_PAGE } from './constants';
 import { debounce } from '../utils/delay';
 import { copyObject } from '../utils/misc';
-import OrderedIdList from './classes/OrderedIdList';
+import IdList from './classes/IdList';
 
 const Core = (() => {
   const [state] = createHook({
@@ -19,7 +19,7 @@ const Core = (() => {
     expandLabels: false,
   });
   const [hook] = createHook({
-    root: new OrderedIdList(),
+    root: new IdList(),
     projects: [],
     toasts: [],
   });
