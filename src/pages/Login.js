@@ -7,16 +7,11 @@ import {
 } from 'firebase/auth';
 import { signIn } from '../utils/auth';
 import logger from '../utils/logger';
-import Core from '../core';
 
 const Login = () => {
   async function signInFirebase(provider) {
     try {
-      const credential = await signInWithPopup(getAuth(), provider);
-      // store crendential to check if first time user
-      Core.state.currentUserCredential = credential;
-
-      await signIn(credential.user.uid);
+      await signInWithPopup(getAuth(), provider);
     } catch (e) {
       logger.error(e.message);
     }

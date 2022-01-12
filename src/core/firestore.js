@@ -83,12 +83,13 @@ export const fetchProject = async (projectId) => {
 };
 
 export const initFirestore = async () => {
-  const defaultData = loadDefaultData();
-
-  // store order of projects
-  await setDoc(doc(getFirestore(), `${Core.state.currentUser}/Projects`), {
-    order: defaultData.map((project) => project.id),
+  // initialize user
+  await setDoc(doc(getFirestore(), Core.state.currentUser, 'data'), {
+    created: Date.now(),
   });
+
+  // initialize data
+  const defaultData = loadDefaultData();
 
   defaultData.forEach(async (project) => {
     await setDoc(
@@ -119,6 +120,11 @@ export const initFirestore = async () => {
         });
       });
     });
+  });
+
+  // store order of projects
+  await setDoc(doc(getFirestore(), `${Core.state.currentUser}/Projects`), {
+    order: defaultData.map((project) => project.id),
   });
 };
 
