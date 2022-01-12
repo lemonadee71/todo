@@ -81,13 +81,16 @@ class EventEmitter {
 
         return aValue - bValue;
       })
-      .forEach((handler) => {
+      .forEach(async (handler) => {
         const { emitSuccess, emitError, rethrow } = this.globalOptions;
         const isPlain =
           !topic.endsWith('.success') && !topic.endsWith('.error');
 
         try {
-          const result = handler.fn.call(handler.options.context, payload);
+          const result = await handler.fn.call(
+            handler.options.context,
+            payload
+          );
 
           options.onSuccess?.(result, payload);
 
