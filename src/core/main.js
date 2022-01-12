@@ -53,41 +53,43 @@ const recoverDataFromLocal = () => {
   }, {});
 
   // reinitialize data
-  Object.values(cache).forEach((project) => {
-    const projectLabels = project.labels.map((label) => new Label(label));
+  Object.values(cache)
+    .sort((a, b) => a.metadata.position - b.metadata.position)
+    .forEach((project) => {
+      const projectLabels = project.labels.map((label) => new Label(label));
 
-    const projectLists = project.lists.map((list) => {
-      const tasks = list._items.map((task) => {
-        let { labels, subtasks } = task;
+      const projectLists = project.lists.map((list) => {
+        const tasks = list._items.map((task) => {
+          let { labels, subtasks } = task;
 
-        labels = fetchFromIds(
-          labels._items.map((label) => label.id),
-          projectLabels
-        );
-
-        subtasks = subtasks._items.map((subtask) => {
-          const subtaskLabels = fetchFromIds(
-            subtask.labels._items.map((label) => label.id),
+          labels = fetchFromIds(
+            labels._items.map((label) => label.id),
             projectLabels
           );
 
-          return new Subtask({ ...subtask, labels: subtaskLabels });
+          subtasks = subtasks._items.map((subtask) => {
+            const subtaskLabels = fetchFromIds(
+              subtask.labels._items.map((label) => label.id),
+              projectLabels
+            );
+
+            return new Subtask({ ...subtask, labels: subtaskLabels });
+          });
+
+          return new Task({ ...task, labels, subtasks });
         });
 
-        return new Task({ ...task, labels, subtasks });
+        return new TaskList({ ...list, defaultItems: tasks });
       });
 
-      return new TaskList({ ...list, defaultItems: tasks });
+      data.push(
+        new Project({
+          ...project.metadata,
+          labels: projectLabels,
+          lists: projectLists,
+        })
+      );
     });
-
-    data.push(
-      new Project({
-        ...project.metadata,
-        labels: projectLabels,
-        lists: projectLists,
-      })
-    );
-  });
 
   return data;
 };
@@ -106,10 +108,11 @@ const storeDataToLocal = function (data) {
   });
 
   // sync new and existing ones
-  data.items.forEach((project) => {
+  data.items.forEach((project, i) => {
     LocalStorage.set(`${project.id}__metadata`, {
       id: project.id,
       name: project.name,
+      position: i,
       totalTasks: project.totalTasks,
     });
     LocalStorage.set(`${project.id}__labels`, project.labels.items);
