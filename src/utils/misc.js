@@ -1,3 +1,5 @@
+import IdList from '../core/classes/IdList';
+
 // we get a bug when we don't wrap some functions
 // in an anonymous callback so we create this util
 export const wrap =
@@ -35,11 +37,14 @@ export const fetchFromIds = (ids, source) =>
 
 export const orderByIds = (ids, source) => {
   const sorted = [];
+  const list = new IdList(source);
+
   ids.forEach((id) => {
-    const item = source.find((i) => i.id === id);
+    const item = list.extract(id);
     if (item) sorted.push(item);
   });
-  return sorted;
+
+  return [...sorted, ...list.items];
 };
 
 export const copyObject = (target, toExclude = []) => {
