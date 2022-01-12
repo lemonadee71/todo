@@ -139,10 +139,7 @@ export const setupListeners = () => {
 
     if (!name.trim()) throw new Error('Project must have a name');
 
-    const project = new Project({
-      name,
-      position: Core.data.projects.length,
-    });
+    const project = new Project({ name });
 
     await setDoc(getDocumentRef('Projects', project.id), project.toFirestore());
 
