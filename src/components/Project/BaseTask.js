@@ -134,7 +134,6 @@ export default class BaseTask {
 
             <div class="task__title" ${this.props.title}>
               <p class="task__name">${this.data.title}</p>
-              <span class="task__number">#${this.data.numId}</span>
             </div>
 
             <div

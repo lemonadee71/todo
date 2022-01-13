@@ -9,7 +9,6 @@ class BaseTask {
     dueDate,
     completed,
     id,
-    numId,
     createdDate,
     completionDate,
     list,
@@ -18,7 +17,6 @@ class BaseTask {
   }) {
     // meta
     this.type = 'task';
-    this.numId = numId;
     this.id = id || uuid();
     this.createdDate = createdDate ?? Date.now();
     this.completionDate = completionDate || 0;

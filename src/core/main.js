@@ -19,9 +19,7 @@ export const loadDefaultData = () => {
 
     const lists = p.lists.map((l) => {
       const list = new TaskList({ name: l.name, project: project.id });
-      const tasks = l.items.map(
-        (task) => new Task({ ...task, numId: ++project.totalTasks })
-      );
+      const tasks = l.items.map((task) => new Task(task));
       list.add(tasks);
 
       return list;
@@ -113,7 +111,6 @@ const storeDataToLocal = function (data) {
       id: project.id,
       name: project.name,
       position: i,
-      totalTasks: project.totalTasks,
     });
     LocalStorage.set(`${project.id}__labels`, project.labels.items);
     LocalStorage.set(`${project.id}__lists`, project.lists.items);
@@ -273,10 +270,7 @@ export const getTask = (projectId, listId, taskId) =>
 
 export const addTask = (projectId, listId, data) => {
   const project = getProject(projectId);
-  const task = new Task({
-    ...data,
-    numId: ++project.totalTasks,
-  });
+  const task = new Task(data);
   project.getList(listId).add(task);
 
   return task;
@@ -344,9 +338,8 @@ export const getSubtask = (projectId, listId, taskId, subtaskId) =>
   getTask(projectId, listId, taskId).getSubtask(subtaskId);
 
 export const addSubtask = (projectId, listId, taskId, data) => {
-  const project = getProject(projectId);
   const task = getTask(projectId, listId, taskId);
-  const subtask = new Subtask({ ...data, numId: ++project.totalTasks });
+  const subtask = new Subtask(data);
   task.addSubtask(subtask);
 
   return subtask;

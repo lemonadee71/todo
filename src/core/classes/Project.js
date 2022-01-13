@@ -7,7 +7,7 @@ import { copyObject, orderByIds } from '../../utils/misc';
 import { converter } from '../../utils/firestore';
 
 export default class Project {
-  constructor({ name, id, totalTasks, labels, lists }) {
+  constructor({ name, id, labels, lists }) {
     this.name = name;
     this.id = id || uuid();
 
@@ -32,8 +32,6 @@ export default class Project {
 
     this.labels = new IdList(labels || defaultLabels);
     this.lists = new IdList(lists || defaultLists);
-    this.totalTasks =
-      totalTasks || this.lists.items.flatMap((list) => list.items).length || 0;
   }
 
   static converter(source = {}) {
