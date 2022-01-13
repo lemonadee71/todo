@@ -27,7 +27,9 @@ class TaskList extends IdList {
       id: this.id,
       name: this.name,
       project: this.project,
-      tasks: this.items.map((item) => item.id),
+      tasks: this.items
+        .filter((item) => !item.completed)
+        .map((item) => item.id),
     };
   }
 
