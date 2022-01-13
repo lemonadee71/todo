@@ -3,14 +3,14 @@ import { createHook, html } from 'poor-man-jsx';
 import { FIREBASE, PROJECT, TASK } from '../../core/actions';
 import Core from '../../core';
 import { useUndo } from '../../utils/undo';
+import { isGuest } from '../../utils/auth';
 import Task from './Task';
 
 const List = (data) => {
-  const [state] = createHook({ showCompleted: false, alreadyToggled: false });
+  const [state] = createHook({ showCompleted: false });
 
   const toggleCompletedTasks = () => {
-    if (!state.alreadyToggled) {
-      state.alreadyToggled = true;
+    if (!isGuest()) {
       Core.event.emit(FIREBASE.TASKS.FETCH_COMPLETED, {
         project: data.project,
         list: data.id,
