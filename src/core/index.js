@@ -22,6 +22,7 @@ const Core = (() => {
     root: new IdList(),
     projects: [],
     toasts: [],
+    fetchedLists: [],
   });
   const event = new EventEmitter();
   const router = Router;
@@ -56,6 +57,13 @@ const Core = (() => {
   //     });
   //   }
   // });
+
+  const clearData = () => {
+    state.currentUser = null;
+    hook.root.clear();
+    hook.fetchedLists = [];
+    hook.projects = [];
+  };
 
   const setupListeners = () => {
     /**
@@ -256,6 +264,7 @@ const Core = (() => {
     state,
     data: hook,
     init,
+    clearData,
     setupListeners,
   };
 })();
