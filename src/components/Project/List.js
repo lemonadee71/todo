@@ -116,6 +116,7 @@ const List = (data) => {
         >
           ${data.items
             .filter((task) => task.completed)
+            .sort((a, b) => b.completionDate - a.completionDate)
             .map((task) => new Task(task).render())}
         </div>
       </div>

@@ -11,6 +11,7 @@ class BaseTask {
     id,
     numId,
     createdDate,
+    completionDate,
     list,
     project,
     labels = [],
@@ -20,6 +21,7 @@ class BaseTask {
     this.numId = numId;
     this.id = id || uuid();
     this.createdDate = createdDate ?? Date.now();
+    this.completionDate = completionDate || 0;
 
     // props
     this.title = title || 'Unnamed Task';
@@ -51,6 +53,7 @@ class BaseTask {
 
   toggleComplete() {
     this.completed = !this.completed;
+    this.completionDate = this.completed ? Date.now() : 0;
 
     return this.completed;
   }
