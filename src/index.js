@@ -3,8 +3,8 @@ import { initializeApp } from 'firebase/app';
 import { html, render } from 'poor-man-jsx';
 import Core from './core';
 import { PATHS } from './core/constants';
-import { setupListeners } from './core/firestore';
-import { isGuest, signIn } from './utils/auth';
+import { initFirestore, setupListeners } from './core/firestore';
+import { isGuest, isNewUser, signIn } from './utils/auth';
 import defineCustomElements from './components/custom';
 import Router from './components/Router';
 import * as pages from './pages';
@@ -24,7 +24,7 @@ const routes = [
     path: '/app*',
     component: pages.App,
     nested: true,
-    resolver: (component, match) => {
+    resolver: async (component, match) => {
       // setup core listeners
       Core.setupListeners();
       // initialize data
@@ -34,6 +34,8 @@ const routes = [
         Core.data.root.add(Core.main.getLocalData());
         Core.main.initLocal();
       } else {
+        // populate firestore first if first time user
+        if (await isNewUser(Core.state.currentUser)) await initFirestore();
         // setup firestore listeners
         setupListeners();
       }
@@ -49,7 +51,7 @@ initializeApp(firebaseConfig);
 defineCustomElements();
 render(Website, document.body);
 
-onAuthStateChanged(getAuth(), async (user) => {
-  // sign in user if did not logged
-  if (user) await signIn(user.uid);
+onAuthStateChanged(getAuth(), (user) => {
+  // sign in user if did not logged out
+  if (user) signIn(user.uid);
 });
