@@ -3,6 +3,7 @@ import {
   doc,
   getDocs,
   getFirestore,
+  limit,
   query,
   setDoc,
   where,
@@ -75,7 +76,7 @@ export const fetchProject = async (projectId) => {
     projects: [where('id', '==', projectId)],
     labels: condition,
     lists: condition,
-    tasks: condition,
+    tasks: [...condition, where('completed', '==', false)],
     subtasks: condition,
   });
 
@@ -313,4 +314,23 @@ export const setupListeners = () => {
       await setDoc(getDocumentRef('Tasks', task.id), task.toFirestore());
     }
   );
+
+  /** Others */
+  Core.event.on(FIREBASE.TASKS.FETCH_COMPLETED, async (data) => {
+    // only fetch for the first time
+    if (Core.data.fetchedLists.includes(data.list)) return;
+
+    const completedTasks = await getDocuments(
+      query(
+        getCollectionRef('Tasks', Task.converter()),
+        where('project', '==', data.project),
+        where('list', '==', data.list),
+        where('completed', '==', true),
+        limit(25)
+      )
+    );
+
+    Core.main.getList(data.project, data.list).add(completedTasks || []);
+    Core.data.fetchedLists.push(data.list);
+  });
 };

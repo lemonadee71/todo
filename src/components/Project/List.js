@@ -1,11 +1,25 @@
 import Sortable from 'sortablejs';
-import { html } from 'poor-man-jsx';
-import { PROJECT, TASK } from '../../core/actions';
+import { createHook, html } from 'poor-man-jsx';
+import { FIREBASE, PROJECT, TASK } from '../../core/actions';
 import Core from '../../core';
 import { useUndo } from '../../utils/undo';
 import Task from './Task';
 
 const List = (data) => {
+  const [state] = createHook({ showCompleted: false, alreadyToggled: false });
+
+  const toggleCompletedTasks = () => {
+    if (!state.alreadyToggled) {
+      state.alreadyToggled = true;
+      Core.event.emit(FIREBASE.TASKS.FETCH_COMPLETED, {
+        project: data.project,
+        list: data.id,
+      });
+    }
+
+    state.showCompleted = !state.showCompleted;
+  };
+
   const deleteList = useUndo({
     type: PROJECT.LISTS,
     text: 'List removed',
@@ -67,8 +81,17 @@ const List = (data) => {
   };
 
   // ?TODO: Add animation when task is moved to completed
+  // TODO: "Show completed tasks" should be a button in a meatball menu
   return html`
-    <div ignore="style" class="task-list" id="${data.id}">
+    <div class="task-list" id="${data.id}">
+      <label>
+        <input
+          type="checkbox"
+          name="show-completed"
+          ${{ onChange: toggleCompletedTasks }}
+        />
+        Show completed tasks
+      </label>
       <p class="task-list__title">{% ${data.name} %}</p>
       <div class="task-list__body">
         <div
@@ -81,7 +104,16 @@ const List = (data) => {
             .filter((task) => !task.completed)
             .map((task) => new Task(task).render())}
         </div>
-        <div is-list data-name="completed-tasks">
+        <div
+          is-list
+          ignore="style"
+          data-name="completed-tasks"
+          ${{
+            $display: state.$showCompleted((value) =>
+              value ? 'block' : 'none'
+            ),
+          }}
+        >
           ${data.items
             .filter((task) => task.completed)
             .map((task) => new Task(task).render())}

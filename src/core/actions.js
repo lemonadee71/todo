@@ -31,7 +31,10 @@ PROJECT.LISTS = createActions('project.lists');
 
 PROJECT.SELECT = 'app.project.select';
 
-const FIREBASE = { PROJECT: createActions('firebase.project') };
+const FIREBASE = {
+  PROJECT: createActions('firebase.project'),
+  TASKS: { FETCH_COMPLETED: 'firebase.tasks.completed' },
+};
 
 export {
   TASK,

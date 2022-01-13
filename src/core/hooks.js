@@ -4,7 +4,7 @@ import Core from '.';
 import { isGuest } from '../utils/auth';
 import { getCollectionRef, getDocuments } from '../utils/firestore';
 import { orderByIds } from '../utils/misc';
-import { PROJECT, TASK } from './actions';
+import { FIREBASE, PROJECT, TASK } from './actions';
 import Project from './classes/Project';
 
 export const useRoot = () => {
@@ -51,6 +51,7 @@ export const useProject = (projectId) => {
         ...TASK.ALL,
         ...TASK.LABELS.ALL,
         ...TASK.SUBTASKS.ALL,
+        FIREBASE.TASKS.FETCH_COMPLETED,
       ],
       () => {
         project.lists = projectRef.lists.items;
