@@ -1,11 +1,13 @@
 import { createHook } from 'poor-man-jsx';
 import EventEmitter from './classes/Emitter';
-import IdList from './classes/IdList';
 import * as main from './main';
 import Router from './router';
+import { LocalStorage } from './storage';
 import { TASK, PROJECT } from './actions';
+// import { LAST_OPENED_PAGE } from './constants';
 import { debounce } from '../utils/delay';
 import { copyObject } from '../utils/misc';
+import IdList from './classes/IdList';
 
 const Core = (() => {
   const [state] = createHook({
@@ -31,6 +33,30 @@ const Core = (() => {
 
     return obj;
   }, {});
+
+  // * This should be evoked when user navigated to /app
+  // * Run before any renders
+  const init = () => {
+    LocalStorage.prefix = `${state.currentUser}__`;
+
+    // const cached = LocalStorage.get(LAST_OPENED_PAGE);
+
+    // router.navigate(cached?.url || '/app', {
+    //   title: cached?.title,
+    //   replace: true,
+    // });
+  };
+
+  // router.on('*', (match) => {
+  //   state.currentPage = match.url;
+
+  //   if (match?.url?.startsWith('app')) {
+  //     LocalStorage.store(LAST_OPENED_PAGE, {
+  //       title: document.title,
+  //       url: match.url,
+  //     });
+  //   }
+  // });
 
   const clearData = () => {
     state.currentUser = null;
@@ -237,6 +263,7 @@ const Core = (() => {
     router,
     state,
     data: hook,
+    init,
     clearData,
     setupListeners,
   };

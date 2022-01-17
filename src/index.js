@@ -27,6 +27,8 @@ const routes = [
     resolver: async (component, match) => {
       // setup core listeners
       Core.setupListeners();
+      // initialize data
+      Core.init();
 
       if (isGuest()) {
         Core.data.root.add(Core.main.getLocalData());
