@@ -6,7 +6,7 @@ import IdList from './classes/IdList';
 import Label from './classes/Label';
 import Project from './classes/Project';
 import { LocalStorage } from './storage';
-import { LAST_OPENED_PAGE, LAST_UPDATE } from './constants';
+import { LAST_OPENED_PAGE, LAST_UPDATE, LOCAL_USER } from './constants';
 import defaultData from '../defaultData.json';
 import { fetchFromIds } from '../utils/misc';
 import { parse } from '../utils/date';
@@ -134,7 +134,11 @@ export const getLocalData = () => {
   return data;
 };
 
-export const initLocal = () => init(getLocalData());
+export const initLocal = () => {
+  // namespace local storage
+  LocalStorage.prefix = `${LOCAL_USER}__`;
+  init(getLocalData());
+};
 
 export const syncLocalStorage = () => LocalStorage.sync(LAST_UPDATE, Root);
 
