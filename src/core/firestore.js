@@ -320,6 +320,7 @@ export const setupListeners = () => {
     // only fetch for the first time
     if (Core.data.fetchedLists.includes(data.list)) return;
 
+    // recently marked completed tasks are also fetched
     const completedTasks = await getDocuments(
       query(
         getCollectionRef('Tasks', Task.converter()),
@@ -330,7 +331,8 @@ export const setupListeners = () => {
       )
     );
 
-    Core.main.getList(data.project, data.list).add(completedTasks || []);
+    const list = Core.main.getList(data.project, data.list);
+    list.add((completedTasks || []).filter((task) => !list.has(task.id)));
     Core.data.fetchedLists.push(data.list);
   });
 };
