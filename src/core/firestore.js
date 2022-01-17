@@ -33,64 +33,44 @@ const fetchSubtasksForTask = async (task, data) => {
   task.subtasks.add(subtasks || []);
 };
 
-export const fetchData = async (conditions = {}, converters = {}) => {
+export const fetchProject = async (projectId) => {
   const data = {};
 
   // refs
   const projectsRef = query(
-    getCollectionRef(
-      'Projects',
-      converters.projects || Project.converter(data)
-    ),
-    ...(conditions.projects || [])
+    getCollectionRef('Projects', Project.converter(data)),
+    where('id', '==', projectId)
   );
   const labelsRef = query(
-    getCollectionRef('Labels', converters.labels || Label.converter()),
-    ...(conditions.labels || [])
+    getCollectionRef('Labels', Label.converter()),
+    where('project', '==', projectId)
   );
   const listsRef = query(
-    getCollectionRef('Lists', converters.lists || TaskList.converter(data)),
-    ...(conditions.lists || [])
+    getCollectionRef('Lists', TaskList.converter(data)),
+    where('project', '==', projectId)
   );
   const tasksRef = query(
-    getCollectionRef('Tasks', converters.tasks || Task.converter(data)),
-    ...(conditions.tasks || [])
-  );
-  const subtasksRef = query(
-    getCollectionRef(
-      'Subtasks',
-      converters.subtasks || Subtask.converter(data)
-    ),
-    ...(conditions.subtasks || [])
+    getCollectionRef('Tasks', Task.converter(data)),
+    where('project', '==', projectId),
+    where('completed', '==', false)
   );
 
   // do an initial fetch to build the data
   const result = await Promise.all([
     getDocs(labelsRef),
-    getDocs(subtasksRef),
     getDocs(tasksRef),
     getDocs(listsRef),
   ]);
 
   data.labels = result[0].docs?.map(getData);
-  data.subtasks = result[1].docs?.map(getData);
-  data.tasks = result[2].docs?.map(getData);
-  data.lists = result[3].docs?.map(getData);
+  data.tasks = result[1].docs?.map(getData);
+  data.lists = result[2].docs?.map(getData);
 
-  return getDocuments(projectsRef);
-};
+  // this is to only fetch substasks for uncompleted tasks
+  // to avoid unnecessary reads
+  data.tasks.forEach(async (task) => fetchSubtasksForTask(task, data));
 
-export const fetchProject = async (projectId) => {
-  const condition = [where('project', '==', projectId)];
-  const data = await fetchData({
-    projects: [where('id', '==', projectId)],
-    labels: condition,
-    lists: condition,
-    tasks: [...condition, where('completed', '==', false)],
-    subtasks: condition,
-  });
-
-  return data[0];
+  return (await getDocuments(projectsRef))[0];
 };
 
 export const initFirestore = async () => {
@@ -188,7 +168,6 @@ export const setupListeners = () => {
     [PROJECT.LISTS.ADD, PROJECT.LISTS.REMOVE, PROJECT.LISTS.MOVE],
     async (data) => {
       const proj = Core.main.getProject(data.project);
-      console.log(proj.toFirestore());
       await setDoc(getDocumentRef('Projects', proj.id), proj.toFirestore());
     }
   );
