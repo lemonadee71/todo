@@ -23,6 +23,16 @@ import { loadDefaultData } from './main';
 import Core from '.';
 import { FIREBASE, PROJECT, TASK } from './actions';
 
+const fetchSubtasksForTask = async (task, data) => {
+  const subtasks = await getDocuments(
+    query(
+      getCollectionRef('Subtasks', Subtask.converter(data)),
+      where('parent', '==', task.id)
+    )
+  );
+  task.subtasks.add(subtasks || []);
+};
+
 export const fetchData = async (conditions = {}, converters = {}) => {
   const data = {};
 
@@ -330,6 +340,9 @@ export const setupListeners = () => {
         limit(25)
       )
     );
+
+    // fetch subtasks
+    completedTasks.forEach(async (task) => fetchSubtasksForTask(task));
 
     const list = Core.main.getList(data.project, data.list);
     list.add((completedTasks || []).filter((task) => !list.has(task.id)));
