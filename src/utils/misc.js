@@ -32,8 +32,16 @@ export const curry = (fn) =>
     return (...rest) => curried(...args.concat(rest));
   };
 
-export const fetchFromIds = (ids, source) =>
-  ids.map((id) => source.find((item) => item.id === id));
+export const fetchFromIds = (ids, source) => {
+  const arr = [];
+
+  ids.forEach((id) => {
+    const item = source.find((i) => i.id === id);
+    if (item) arr.push(item);
+  });
+
+  return arr;
+};
 
 export const orderByIds = (ids, source) => {
   const sorted = [];
