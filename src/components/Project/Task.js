@@ -97,7 +97,7 @@ export default class Task extends BaseTask {
         }}
       >
         ${this.data.subtasks.items.map((subtask) =>
-          new Subtask(subtask).render(this.data.completed)
+          new Subtask(subtask).render()
         )}
       </div>
     `;

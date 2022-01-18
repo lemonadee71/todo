@@ -15,12 +15,8 @@ export default class Subtask extends BaseTask {
     };
   }
 
-  render(isParentComplete = false) {
-    this.props = {
-      main: { 'data-parent': this.data.parent },
-      checkbox: { disabled: isParentComplete },
-    };
-
+  render() {
+    this.props = { main: { 'data-parent': this.data.parent } };
     return super.render();
   }
 }
