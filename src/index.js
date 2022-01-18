@@ -1,3 +1,4 @@
+import { doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import { html, render } from 'poor-man-jsx';
@@ -44,14 +45,33 @@ const routes = [
       return component(match);
     },
     hooks: {
-      already: (match) => {
-        LocalStorage.store(LAST_OPENED_PAGE, {
+      already: async (match) => {
+        const data = {
           title: document.title,
           url: match.url,
-        });
+        };
+
+        if (isGuest()) {
+          LocalStorage.store(LAST_OPENED_PAGE, data);
+        } else {
+          await setDoc(
+            doc(getFirestore(), Core.state.currentUser, 'data'),
+            { [LAST_OPENED_PAGE]: data },
+            { merge: true }
+          );
+        }
       },
-      after: () => {
-        const cached = LocalStorage.get(LAST_OPENED_PAGE);
+      after: async () => {
+        let cached;
+        if (isGuest()) {
+          cached = LocalStorage.get(LAST_OPENED_PAGE);
+        } else {
+          const document = await getDoc(
+            doc(getFirestore(), Core.state.currentUser, 'data')
+          );
+
+          cached = document.data()?.[LAST_OPENED_PAGE];
+        }
 
         Core.router.navigate(cached?.url || '/app', {
           title: cached?.title,
