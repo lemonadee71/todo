@@ -2,7 +2,8 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import { html, render } from 'poor-man-jsx';
 import Core from './core';
-import { PATHS } from './core/constants';
+import { LocalStorage } from './core/storage';
+import { LAST_OPENED_PAGE, PATHS } from './core/constants';
 import { initFirestore, setupListeners } from './core/firestore';
 import { isGuest, isNewUser, signIn } from './utils/auth';
 import defineCustomElements from './components/custom';
@@ -27,8 +28,8 @@ const routes = [
     resolver: async (component, match) => {
       // setup core listeners
       Core.setupListeners();
-      // initialize data
-      Core.init();
+      // setup local storage
+      LocalStorage.prefix = `${Core.state.currentUser}__`;
 
       if (isGuest()) {
         Core.data.root.add(Core.main.getLocalData());
@@ -41,6 +42,22 @@ const routes = [
       }
 
       return component(match);
+    },
+    hooks: {
+      already: (match) => {
+        LocalStorage.store(LAST_OPENED_PAGE, {
+          title: document.title,
+          url: match.url,
+        });
+      },
+      after: () => {
+        const cached = LocalStorage.get(LAST_OPENED_PAGE);
+
+        Core.router.navigate(cached?.url || '/app', {
+          title: cached?.title,
+          replace: true,
+        });
+      },
     },
   },
 ];
