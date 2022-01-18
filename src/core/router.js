@@ -8,6 +8,8 @@ const Router = (() => {
   const _getHandlers = (path) => Array.from(routes.get(path).keys());
 
   const on = (path, handler, hooks = {}) => {
+    const cleanup = [];
+
     if (!routes.get(path)) {
       // init path
       navigo.on(path, (match) => {
@@ -24,8 +26,16 @@ const Router = (() => {
       const type = key[0].toUpperCase() + key.slice(1).toLowerCase();
       const action = `add${type}Hook`;
 
-      if (hook) navigo[action](path.toString(), hook);
+      // store cleanup fn
+      if (hook) cleanup.push(navigo[action](path.toString(), hook));
     });
+
+    const unsubscribe = () => {
+      off(path, handler);
+      cleanup.forEach((cb) => cb());
+    };
+
+    return unsubscribe;
   };
 
   const register = (arr) => {
