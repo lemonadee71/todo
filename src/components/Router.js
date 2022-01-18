@@ -43,10 +43,10 @@ const Router = ({ routes, tag = 'div', props }) => {
 
               // after hook is run after our own handler
               route.hooks?.after?.(match);
+            } else {
+              // run already hook for consecutive matches
+              route.hooks?.already?.(match);
             }
-
-            // run already hook for consecutive matches
-            route.hooks?.already?.(match);
 
             if (route.hooks?.before) route.hooks.before(done, match);
             else done();
