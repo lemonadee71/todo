@@ -20,8 +20,8 @@ import Subtask from './classes/Subtask';
 import Task from './classes/Task';
 import TaskList from './classes/TaskList';
 import { loadDefaultData } from './main';
-import Core from '.';
 import { FIREBASE, PROJECT, TASK } from './actions';
+import Core from '.';
 
 const fetchSubtasksForTask = async (task, data) => {
   const subtasks = await getDocuments(
@@ -309,22 +309,25 @@ export const setupListeners = () => {
     // only fetch for the first time
     if (Core.data.fetchedLists.includes(data.list)) return;
 
-    // recently marked completed tasks are also fetched
+    const project = Core.main.getProject(data.project);
+    const list = project.getList(data.list);
+
     const completedTasks = await getDocuments(
       query(
         getCollectionRef('Tasks', Task.converter()),
         where('project', '==', data.project),
         where('list', '==', data.list),
         where('completed', '==', true),
+        // do not fetch recently marked completed tasks
+        where('completionDate', '<=', project.lastFetched),
         limit(25)
       )
     );
 
     // fetch subtasks
     completedTasks.forEach(async (task) => fetchSubtasksForTask(task));
+    list.add(completedTasks || []);
 
-    const list = Core.main.getList(data.project, data.list);
-    list.add((completedTasks || []).filter((task) => !list.has(task.id)));
     Core.data.fetchedLists.push(data.list);
   });
 };

@@ -7,9 +7,10 @@ import { copyObject, orderByIds } from '../../utils/misc';
 import { converter } from '../../utils/firestore';
 
 export default class Project {
-  constructor({ name, id, labels, lists }) {
+  constructor({ name, id, lastFetched, labels, lists }) {
     this.name = name;
     this.id = id || uuid();
+    this.lastFetched = lastFetched || Date.now();
 
     const defaultLabels = [
       new Label({
@@ -47,7 +48,7 @@ export default class Project {
 
   toFirestore() {
     return {
-      ...copyObject(this, ['labels', 'lists']),
+      ...copyObject(this, ['lastFetched', 'labels', 'lists']),
       lists: this.lists.items.map((item) => item.id),
     };
   }
