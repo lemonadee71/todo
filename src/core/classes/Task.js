@@ -40,20 +40,6 @@ export default class Task extends BaseTask {
     };
   }
 
-  get hasIncompleteRequiredSubtask() {
-    return this.data.subtasks.some(
-      (subtask) => subtask.required && !subtask.completed
-    );
-  }
-
-  toggleComplete() {
-    if (this.hasIncompleteRequiredSubtask) {
-      throw new Error('Complete all required subtasks');
-    }
-
-    return super.toggleComplete();
-  }
-
   getSubtask(id) {
     return this.subtasks.get(id);
   }

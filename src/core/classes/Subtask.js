@@ -8,9 +8,7 @@ export default class Subtask extends BaseTask {
     super(props);
 
     this.type = 'subtask';
-
     this.parent = props.parent;
-    this.required = props.required;
   }
 
   static converter(source = {}) {
