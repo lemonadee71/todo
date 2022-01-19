@@ -6,6 +6,7 @@ import {
   EDIT_TASK,
   FIREBASE,
   PROJECT,
+  REDIRECT,
   TASK,
 } from '../core/actions';
 import { fetchProject } from '../core/firestore';
@@ -45,6 +46,11 @@ const routes = [
 const App = () => {
   // listeners
   const unsubscribe = [
+    Core.event.on(REDIRECT, (data) => {
+      if (Core.state.currentPage === `app/${data.link}`) {
+        Core.router.navigate(PATHS.app, { title: 'Overview', replace: true });
+      }
+    }),
     Core.event.onError(
       [
         PROJECT.ADD,
