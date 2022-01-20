@@ -118,7 +118,11 @@ const Calendar = (projectId) => {
         }
       },
       beforeDeleteSchedule: ({ schedule }) => {
-        useUndo({ type: TASK, text: 'Task removed', payload: schedule.raw })();
+        useUndo({
+          type: TASK,
+          text: 'Task removed',
+          payload: { ...schedule.raw, id: schedule.id },
+        })();
         deleteSchedule(schedule.id, schedule.calendarId);
       },
     });

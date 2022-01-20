@@ -60,7 +60,7 @@ const Sidebar = () => {
           keystring="data-id"
           ${{
             onCreate: init,
-            $children: data.$projects.map((project) => ProjectLink(project)),
+            $children: data.$projects.map(ProjectLink),
           }}
         ></ul>
       </nav>

@@ -65,8 +65,8 @@ export default class TaskModal extends BaseTaskModal {
             <ul
               is-list
               ${{
-                $children: this.task.$subtasks.map((subtask) =>
-                  new Subtask(subtask).render(this.data.completed)
+                $children: this.task.$subtasks.map((subtask, i) =>
+                  new Subtask(subtask).render(i)
                 ),
               }}
             ></ul>
