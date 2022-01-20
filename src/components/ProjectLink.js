@@ -1,6 +1,6 @@
 import { html } from 'poor-man-jsx';
 import Core from '../core';
-import { FIREBASE, PROJECT } from '../core/actions';
+import { FIREBASE, PROJECT, REDIRECT } from '../core/actions';
 import { isGuest } from '../utils/auth';
 import { showToast } from '../utils/showToast';
 import { useUndo } from '../utils/undo';
@@ -19,6 +19,8 @@ const ProjectLink = (data) => {
   const firestoreDelete = (e) => {
     const parent = e.target.parentElement;
     parent.style.display = 'none';
+
+    Core.event.emit(REDIRECT, data);
 
     const toast = showToast({
       delay: 3000,

@@ -5,6 +5,7 @@ const MOVE = 'move';
 const INSERT = 'insert';
 const TRANSFER = 'transfer';
 const SYNC = 'sync';
+const REDIRECT = 'redirect';
 const NAVIGATE_TO_PAGE = 'navigate.to.page';
 const EDIT_TASK = 'task.modal.open';
 const EDIT_SUBTASK = 'subtask.modal.open';
@@ -41,6 +42,7 @@ export {
   PROJECT,
   FIREBASE,
   SYNC,
+  REDIRECT,
   NAVIGATE_TO_PAGE,
   EDIT_TASK,
   EDIT_SUBTASK,

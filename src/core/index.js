@@ -12,7 +12,7 @@ const Core = (() => {
     darkTheme: false,
     currentUser: null,
     currentUserCredential: null,
-    currentPage: '/',
+    currentPage: '',
     currentOpenedTask: null,
     expandLabels: false,
   });
@@ -31,6 +31,11 @@ const Core = (() => {
 
     return obj;
   }, {});
+
+  // track current opened page
+  router.on('*', (match) => {
+    state.currentPage = match.url;
+  });
 
   const clearData = () => {
     state.currentUser = null;
