@@ -144,11 +144,14 @@ export const setupListeners = () => {
     await setDoc(orderRef, { order: [...order, project.id] });
   });
   // we rely on the actual positions of elements here
-  // just update the order; the hook will handle the "projects" update
   Core.event.on(FIREBASE.PROJECT.MOVE, async (data) => setDoc(orderRef, data));
   // update order too after delete
   Core.event.on(FIREBASE.PROJECT.REMOVE, async (data) => {
+    // delete from cache
+    Core.data.root.delete(data.id);
+
     await deleteDoc(getDocumentRef('Projects', data.id));
+    // just update the order; the hook will handle the "projects" update
     await setDoc(orderRef, {
       order: Core.data.projects
         .map((project) => project.id)
