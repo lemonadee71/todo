@@ -72,9 +72,13 @@ const Router = (() => {
     navigo.navigate(path, opts);
   };
 
+  const redirect = (path, options = {}) =>
+    navigate(path, { ...options, replace: true });
+
   return {
     on,
     off,
+    redirect,
     remove,
     resolve,
     register,

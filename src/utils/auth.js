@@ -15,11 +15,11 @@ export const isNewUser = async (id) => {
 
 export const signIn = (id = LOCAL_USER) => {
   Core.state.currentUser = id;
-  Core.router.navigate(PATHS.app, { title: 'Overview', replace: true });
+  Core.router.redirect(PATHS.app, { title: 'Overview' });
 };
 
 export const signOut = () => {
   signOutUser(getAuth());
   Core.clearData();
-  Core.router.navigate(PATHS.home, { title: 'To Do List', replace: true });
+  Core.router.redirect(PATHS.home, { title: 'To Do List' });
 };
