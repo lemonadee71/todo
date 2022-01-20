@@ -69,7 +69,7 @@ export default class BaseTask {
     useUndo({
       type: this.action,
       text: 'Task removed',
-      payload: this.location,
+      payload: { ...this.location, id: this.id },
     })();
   }
 
@@ -97,7 +97,7 @@ export default class BaseTask {
     });
   }
 
-  render() {
+  render(position) {
     return html`
       <div
         key="${this.key}"
@@ -105,6 +105,7 @@ export default class BaseTask {
         data-id="${this.id}"
         data-project="${this.data.project}"
         data-list="${this.data.list}"
+        data-position="${position}"
         ${this.props.main}
       >
         <div class="task__main">

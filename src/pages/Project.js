@@ -73,7 +73,7 @@ const Project = ({ data: { id } }) => {
                     keystring="id"
                     class="list-view"
                     ${{ onCreate: init }}
-                    ${{ $children: project.$lists.map((list) => List(list)) }}
+                    ${{ $children: project.$lists.map(List) }}
                   ></div>
                 `
               : Calendar(id)

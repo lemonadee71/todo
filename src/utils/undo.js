@@ -2,12 +2,16 @@ import Toast from '../components/Toast';
 import { showToast } from './showToast';
 import Core from '../core';
 import { REDIRECT } from '../core/actions';
+import { $ } from './query';
 
 export const useUndo =
   ({ type, payload, text, onCancel, delay = 3000 }) =>
   () => {
     let isCancelled = false;
     let extracted;
+    // store since position is stored in the node itself
+    let node = $.data('id', payload.id);
+
     Core.event.emit(type.REMOVE, payload, {
       onSuccess: (result) => {
         // we're assuming that there's only one listener
@@ -28,6 +32,8 @@ export const useUndo =
         // send a message that delete is not cancelled
         // this is to avoid multiple writes/deletes to firestore
         if (!isCancelled) Core.event.emit(`${type.REMOVE}:timeout`, extracted);
+
+        node = null;
       },
       node: Toast(text, {
         text: 'Undo',
@@ -35,7 +41,7 @@ export const useUndo =
           // insert the deleted item
           Core.event.emit(type.INSERT, {
             ...payload,
-            data: { item: extracted, position: extracted.position },
+            data: { item: extracted, position: node.dataset.position },
           });
 
           isCancelled = true;

@@ -60,7 +60,7 @@ export default class Task extends BaseTask {
     });
   };
 
-  render() {
+  render(position) {
     this.badges = [
       ...this.badges,
       this.totalSubtasks
@@ -96,12 +96,12 @@ export default class Task extends BaseTask {
           onCreate: this.initSubtasks,
         }}
       >
-        ${this.data.subtasks.items.map((subtask) =>
-          new Subtask(subtask).render()
+        ${this.data.subtasks.items.map((subtask, i) =>
+          new Subtask(subtask).render(i)
         )}
       </div>
     `;
 
-    return super.render();
+    return super.render(position);
   }
 }

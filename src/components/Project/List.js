@@ -6,7 +6,7 @@ import { useUndo } from '../../utils/undo';
 import { isGuest } from '../../utils/auth';
 import Task from './Task';
 
-const List = (data) => {
+const List = (data, pos) => {
   const [state] = createHook({ showCompleted: false });
 
   const toggleCompletedTasks = () => {
@@ -24,6 +24,7 @@ const List = (data) => {
     type: PROJECT.LISTS,
     text: 'List removed',
     payload: {
+      id: data.id,
       project: data.project,
       list: data.id,
     },
@@ -83,7 +84,12 @@ const List = (data) => {
   // ?TODO: Add animation when task is moved to completed
   // TODO: "Show completed tasks" should be a button in a meatball menu
   return html`
-    <div class="task-list" id="${data.id}">
+    <div
+      class="task-list"
+      id="${data.id}"
+      data-id="${data.id}"
+      data-position="${pos}"
+    >
       <label>
         <input
           type="checkbox"
@@ -102,7 +108,7 @@ const List = (data) => {
         >
           ${data.items
             .filter((task) => !task.completed)
-            .map((task) => new Task(task).render())}
+            .map((task, i) => new Task(task).render(i))}
         </div>
         <div
           is-list
@@ -117,7 +123,7 @@ const List = (data) => {
           ${data.items
             .filter((task) => task.completed)
             .sort((a, b) => b.completionDate - a.completionDate)
-            .map((task) => new Task(task).render())}
+            .map((task, i) => new Task(task).render(i))}
         </div>
       </div>
       <button ${{ onClick: deleteList }}>Delete</button>

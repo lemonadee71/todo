@@ -6,13 +6,13 @@ import { showToast } from '../utils/showToast';
 import { useUndo } from '../utils/undo';
 import Toast from './Toast';
 
-const ProjectLink = (data) => {
+const ProjectLink = (data, i) => {
   let isCancelled = false;
 
   const localDelete = useUndo({
     type: PROJECT,
     text: 'Project removed',
-    payload: { project: data.id },
+    payload: { id: data.id, project: data.id },
   });
 
   // custom undo to work with firestore
@@ -47,7 +47,7 @@ const ProjectLink = (data) => {
   const deleteProject = isGuest() ? localDelete : firestoreDelete;
 
   return html`
-    <li ignore="style" data-id="${data.id}">
+    <li ignore="style" data-id="${data.id}" data-position="${i}">
       <a is="navigo-link" href="${`/app/${data.link}`}">{% ${data.name} %}</a>
       <button ${{ onClick: deleteProject }}>Delete</button>
     </li>
