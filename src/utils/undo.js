@@ -1,7 +1,7 @@
 import Toast from '../components/Toast';
-import { showToast } from './showToast';
 import Core from '../core';
 import { REDIRECT } from '../core/actions';
+import { showToast } from './showToast';
 import { $ } from './query';
 
 export const useUndo =
@@ -19,7 +19,8 @@ export const useUndo =
         // this will fail otherwise
         extracted = extracted || result;
 
-        // redirect on delete
+        // redirect on delete; this runs on all types
+        // but should only run for project delete
         Core.event.emit(REDIRECT, result);
       },
     });
@@ -41,7 +42,7 @@ export const useUndo =
           // insert the deleted item
           Core.event.emit(type.INSERT, {
             ...payload,
-            data: { item: extracted, position: node.dataset.position },
+            data: { item: extracted, position: node?.dataset?.position },
           });
 
           isCancelled = true;
