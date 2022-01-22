@@ -90,10 +90,6 @@ const App = () => {
       <button ${{ onClick: signOut }}>Logout</button>
       ${Sidebar()}${Router({ routes, props: { id: 'main-content' } })}
     </div>
-    <div id="tooltip" class="tooltip">
-      <span></span>
-      <div class="arrow" data-popper-arrow></div>
-    </div>
     <my-modal id="main-modal" close-btn-class="modal__close-btn"></my-modal>
   `;
 };

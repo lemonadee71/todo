@@ -1,12 +1,18 @@
 import { doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
-import { html, render } from 'poor-man-jsx';
+import PoorManJSX, { html, render } from 'poor-man-jsx';
 import Core from './core';
 import { LocalStorage } from './core/storage';
-import { LAST_OPENED_PAGE, PATHS } from './core/constants';
+import {
+  HIDE_EVENTS,
+  LAST_OPENED_PAGE,
+  PATHS,
+  SHOW_EVENTS,
+} from './core/constants';
 import { initFirestore, setupListeners } from './core/firestore';
 import { isGuest, isNewUser, signIn } from './utils/auth';
+import { useTooltip } from './utils/useTooltip';
 import defineCustomElements from './components/custom';
 import Router from './components/Router';
 import * as pages from './pages';
@@ -82,7 +88,52 @@ const routes = [
   },
 ];
 
-const Website = html`${Router({ routes, tag: 'main', props: { id: 'main' } })}`;
+const Website = html`
+  ${Router({ routes, tag: 'main', props: { id: 'main' } })}
+  <div id="tooltip" class="tooltip">
+    <span></span>
+    <div class="arrow" data-popper-arrow></div>
+  </div>
+`;
+
+// add tooltips to elements with data-show-tooltip attr
+PoorManJSX.addPreprocessor((str) => {
+  const isTooltipRegex = /data-show-tooltip(?!="\d*")/;
+  const handlers = [];
+
+  let newString = str;
+  let match = newString.match(isTooltipRegex);
+  let count = -1;
+
+  while (match) {
+    newString = newString.replace(match[0], `tooltip-no="${++count}"`);
+    match = newString.slice(match.index).match(isTooltipRegex);
+  }
+
+  for (let i = 0; i <= count; i++) {
+    handlers.push({
+      type: 'lifecycle',
+      selector: `[tooltip-no="${i}"]`,
+      attr: `tooltip-no`,
+      remove: true,
+      data: {
+        name: 'mount',
+        value: (e) => {
+          const [onShow, onHide] = useTooltip(e.target);
+
+          SHOW_EVENTS.forEach((name) =>
+            e.target.addEventListener(name, onShow())
+          );
+          HIDE_EVENTS.forEach((name) =>
+            e.target.addEventListener(name, onHide())
+          );
+        },
+      },
+    });
+  }
+
+  return [newString, handlers];
+});
 
 initializeApp(firebaseConfig);
 defineCustomElements();
