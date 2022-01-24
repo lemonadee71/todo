@@ -1,13 +1,8 @@
 import { html } from 'poor-man-jsx';
 import Core from '../../core';
 import { EDIT_SUBTASK, EDIT_TASK } from '../../core/actions';
-import { DEFAULT_COLORS } from '../../core/constants';
-import {
-  formatDate,
-  formatDateToNow,
-  isDueToday,
-  parse,
-} from '../../utils/date';
+import { formatDate, formatDateToNow } from '../../utils/date';
+import { getDateColor } from '../../utils/misc';
 import { useUndo } from '../../utils/undo';
 import Chip from './Chip';
 
@@ -35,9 +30,7 @@ export default class BaseTask {
           key="date"
           ignore="data-interval-id"
           class="badge"
-          style="background-color: ${isDueToday(parse(this.data.dueDate))
-            ? DEFAULT_COLORS[3]
-            : DEFAULT_COLORS[0]};"
+          style="background-color: ${getDateColor(this.data.dueDate)};"
           data-show-tooltip
           data-tooltip-text="Due ${formatDateToNow(this.data.dueDate)}"
           ${{
@@ -45,11 +38,9 @@ export default class BaseTask {
               // change status of badge every x minute(s)
               const id = setInterval(() => {
                 e.target.textContent = formatDate(this.data.dueDate);
-                e.target.style.backgroundColor = isDueToday(
-                  parse(this.data.dueDate)
-                )
-                  ? DEFAULT_COLORS[3]
-                  : DEFAULT_COLORS[0];
+                e.target.style.backgroundColor = getDateColor(
+                  this.data.dueDate
+                );
                 e.target.dataset.tooltipText = `Due ${formatDateToNow(
                   this.data.dueDate
                 )}`;
