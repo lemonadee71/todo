@@ -33,14 +33,9 @@ const Sidebar = () => {
             project: e.item.dataset.id,
             data: { position: e.newIndex },
           });
+        } else {
+          Core.event.emit(base.MOVE, { order: sortable.toArray() });
         }
-      },
-      store: {
-        set: (instance) => {
-          if (base === FIREBASE.PROJECT) {
-            Core.event.emit(base.MOVE, { order: instance.toArray() });
-          }
-        },
       },
     });
   };
