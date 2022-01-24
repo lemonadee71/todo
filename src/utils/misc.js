@@ -1,4 +1,7 @@
+import { isPast, isWithinInterval, subHours } from 'date-fns';
 import IdList from '../core/classes/IdList';
+import { DEFAULT_COLORS } from '../core/constants';
+import { isDueToday, parse } from './date';
 
 // we get a bug when we don't wrap some functions
 // in an anonymous callback so we create this util
@@ -60,4 +63,19 @@ export const copyObject = (target, toExclude = []) => {
   toExclude.forEach((prop) => delete copy[prop]);
 
   return copy;
+};
+
+export const getDateColor = (dueDate) => {
+  const date = parse(dueDate);
+  const upperLimit = subHours(date, 3);
+
+  if (
+    isWithinInterval(new Date(), { start: upperLimit, end: date }) ||
+    isPast(date)
+  )
+    return DEFAULT_COLORS[3];
+
+  if (isDueToday(date)) return DEFAULT_COLORS[2];
+
+  return DEFAULT_COLORS[0];
 };
