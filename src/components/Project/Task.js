@@ -11,6 +11,7 @@ export default class Task extends BaseTask {
     super(data, TASK);
 
     [this.state, this._revoke] = createHook({ showSubtasks: false });
+    this.unsubscribe.push(this._revoke.bind(this));
   }
 
   get totalSubtasks() {
@@ -68,23 +69,19 @@ export default class Task extends BaseTask {
             is-text
             key="subtasks"
             class="badge"
+            data-show-tooltip
             data-tooltip-text="This task has subtasks"
-            ${{ backgroundColor: DEFAULT_COLORS[9] }}
+            ${{
+              backgroundColor: DEFAULT_COLORS[9],
+              onClick: () => {
+                this.state.showSubtasks = !this.state.showSubtasks;
+              },
+            }}
           >
             ${this.currentSubtasks} / ${this.totalSubtasks}
           </div>`
         : '',
     ];
-
-    this.props = {
-      // this causes a bug; there's an early revoke which causes the proxy to not work
-      // main: { onDestroy: this._revoke() },
-      badges: {
-        onClick: () => {
-          this.state.showSubtasks = !this.state.showSubtasks;
-        },
-      },
-    };
 
     this.extraContent = html`
       <div

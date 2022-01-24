@@ -1,7 +1,7 @@
 import { html } from 'poor-man-jsx';
 import Core from '../../core';
 import { EDIT_SUBTASK, EDIT_TASK } from '../../core/actions';
-import { DEFAULT_COLORS, HIDE_EVENTS, SHOW_EVENTS } from '../../core/constants';
+import { DEFAULT_COLORS } from '../../core/constants';
 import {
   formatDate,
   formatDateToNow,
@@ -9,7 +9,6 @@ import {
   parse,
 } from '../../utils/date';
 import { useUndo } from '../../utils/undo';
-import { useTooltip } from '../../utils/useTooltip';
 import Chip from './Chip';
 
 // data here points to the Task stored in main
@@ -25,6 +24,7 @@ export default class BaseTask {
     // so to allow for conversion, prefix key with actual type instead
     this.key = `${this.type}-${this.data.id}`;
 
+    this.unsubscribe = [];
     this.props = { main: '', checkbox: '' };
     this.extraContent = '';
 
@@ -33,11 +33,32 @@ export default class BaseTask {
         html`<div
           is-text
           key="date"
+          ignore="data-interval-id"
           class="badge"
           style="background-color: ${isDueToday(parse(this.data.dueDate))
             ? DEFAULT_COLORS[3]
             : DEFAULT_COLORS[0]};"
+          data-show-tooltip
           data-tooltip-text="Due ${formatDateToNow(this.data.dueDate)}"
+          ${{
+            onMount: (e) => {
+              // change status of badge every x minute(s)
+              const id = setInterval(() => {
+                e.target.textContent = formatDate(this.data.dueDate);
+                e.target.style.backgroundColor = isDueToday(
+                  parse(this.data.dueDate)
+                )
+                  ? DEFAULT_COLORS[3]
+                  : DEFAULT_COLORS[0];
+                e.target.dataset.tooltipText = `Due ${formatDateToNow(
+                  this.data.dueDate
+                )}`;
+              }, 3 * 60 * 1000);
+
+              e.target.dataset.intervalId = id;
+            },
+            onUnmount: (e) => clearInterval(e.target.dataset.intervalId),
+          }}
         >
           ${formatDate(this.data.dueDate)}
         </div>`,
@@ -73,30 +94,6 @@ export default class BaseTask {
     })();
   }
 
-  // enable tooltips for badges
-  initBadges(e) {
-    const badges = [...e.target.children];
-    badges.forEach((badge) => {
-      const [onShow, onHide] = useTooltip(badge);
-
-      SHOW_EVENTS.forEach((event) =>
-        badge.addEventListener(
-          event,
-          onShow(() => {
-            if (badge.getAttribute('key') !== 'date') return;
-
-            // show latest on hover
-            // this is to avoid using setInterval
-            badge.dataset.tooltipText = `Due ${formatDateToNow(
-              this.data.dueDate
-            )}`;
-          })
-        )
-      );
-      HIDE_EVENTS.forEach((event) => badge.addEventListener(event, onHide()));
-    });
-  }
-
   render(position) {
     return html`
       <div
@@ -106,6 +103,7 @@ export default class BaseTask {
         data-project="${this.data.project}"
         data-list="${this.data.list}"
         data-position="${position}"
+        ${{ onDestroy: () => this.unsubscribe.forEach((cb) => cb()) }}
         ${this.props.main}
       >
         <div class="task__main">
@@ -137,12 +135,7 @@ export default class BaseTask {
               <p class="task__name">${this.data.title}</p>
             </div>
 
-            <div
-              is-list
-              class="task__badges"
-              ${{ onCreate: this.initBadges.bind(this) }}
-              ${this.props.badges}
-            >
+            <div is-list class="task__badges" ${this.props.badges}>
               ${this.badges}
             </div>
           </div>
