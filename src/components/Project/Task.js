@@ -79,7 +79,6 @@ export default class Task extends BaseTask {
             key="subtasks"
             class="badge"
             data-id="subtask-badge"
-            data-show-tooltip
             data-tooltip-text="This task has subtasks"
             style="background-color: ${DEFAULT_COLORS[9]};"
           >

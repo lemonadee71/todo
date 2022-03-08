@@ -99,7 +99,7 @@ const Website = html`
 
 // add tooltips to elements with data-show-tooltip attr
 PoorManJSX.onAfterCreation((element) => {
-  $$.data('show-tooltip', null, element).forEach((item) => {
+  $$.data('tooltip-text', null, element).forEach((item) => {
     const [onShow, onHide] = useTooltip(item);
 
     SHOW_EVENTS.forEach((name) => item.addEventListener(name, onShow()));

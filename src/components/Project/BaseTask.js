@@ -31,7 +31,6 @@ export default class BaseTask {
           ignore="data-interval-id"
           class="badge"
           style="background-color: ${getDateColor(this.data.dueDate)};"
-          data-show-tooltip
           data-tooltip-text="Due ${formatDateToNow(this.data.dueDate)}"
           ${{
             onMount: (e) => {
