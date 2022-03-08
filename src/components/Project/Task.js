@@ -1,5 +1,5 @@
 import Sortable from 'sortablejs';
-import { createHook, html } from 'poor-man-jsx';
+import { createHook, html, render } from 'poor-man-jsx';
 import { DEFAULT_COLORS } from '../../core/constants';
 import { TASK } from '../../core/actions';
 import Core from '../../core';
@@ -65,7 +65,7 @@ export default class Task extends BaseTask {
     this.badges = [
       ...this.badges,
       this.totalSubtasks
-        ? html`<div
+        ? render(html`<div
             is-text
             key="subtasks"
             class="badge"
@@ -79,17 +79,17 @@ export default class Task extends BaseTask {
             }}
           >
             ${this.currentSubtasks} / ${this.totalSubtasks}
-          </div>`
+          </div>`)
         : '',
     ];
 
-    this.extraContent = html`
+    // BUG: Subtask badge does not work if added after first render
+    this.extraContent = render(html`
       <div
         is-list
-        ignore="style"
         class="task__subtasks"
         ${{
-          $display: this.state.$showSubtasks((val) => (val ? 'block' : 'none')),
+          display: this.state.$showSubtasks((val) => (val ? 'block' : 'none')),
           onCreate: this.initSubtasks,
         }}
       >
@@ -97,7 +97,7 @@ export default class Task extends BaseTask {
           new Subtask(subtask).render(i)
         )}
       </div>
-    `;
+    `);
 
     return super.render(position);
   }

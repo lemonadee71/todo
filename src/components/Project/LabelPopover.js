@@ -1,4 +1,4 @@
-import { html, createHook } from 'poor-man-jsx';
+import { html, createHook, render } from 'poor-man-jsx';
 import Core from '../../core';
 import { PROJECT } from '../../core/actions';
 import { DEFAULT_COLORS } from '../../core/constants';
@@ -60,15 +60,13 @@ const LabelPopover = (data, action) => {
         &times;
       </span>
       <p class="popover__title">Labels</p>
-      <div
-        is-list
-        class="popover__body"
-        ${{
-          $children: project.$labels.map((label) =>
+      <div is-list class="popover__body">
+        ${project.$labels
+          .map((label) =>
             Label(label, action, data.getLabels().includes(label.id))
-          ),
-        }}
-      ></div>
+          )
+          .map((item) => render(item))}
+      </div>
       <form ${{ onSubmit: createLabel }}>
         <label for="label-name" class="popover__title">
           Create New Label

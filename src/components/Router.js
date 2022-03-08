@@ -1,4 +1,4 @@
-import { createHook, html } from 'poor-man-jsx';
+import { createHook, html, render } from 'poor-man-jsx';
 import Core from '../core';
 import Loading from './Loading';
 
@@ -63,13 +63,12 @@ const Router = ({ routes, tag = 'div', props }) => {
   return html`
     <${tag}
       ${props}
-      ${{
-        onCreate: init,
-        onDestroy: destroy,
-        onMount: () => Core.router.resolve(window.location.pathname),
-        $children: state.$component,
-      }}
-    ></${tag}>
+      onCreate=${init}
+      onDestroy=${destroy}
+      onMount=${() => Core.router.resolve(window.location.pathname)}
+    >
+      ${state.$component((value) => render(value))}
+    </${tag}>
   `;
 };
 

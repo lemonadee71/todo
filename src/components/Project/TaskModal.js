@@ -1,4 +1,4 @@
-import { html } from 'poor-man-jsx';
+import { html, render } from 'poor-man-jsx';
 import { TASK } from '../../core/actions';
 import Core from '../../core';
 import { useSelectLocation } from '../../utils/useSelectLocation';
@@ -52,7 +52,7 @@ export default class TaskModal extends BaseTaskModal {
         template: html`
           <div data-name="task__subtasks">
             <p class="task-modal__section">Subtasks</p>
-            <form class="create-list" ${{ onSubmit: this.createSubtask }}>
+            <form class="create-list" onSubmit=${this.createSubtask}>
               <input
                 type="text"
                 name="new-subtask"
@@ -62,14 +62,11 @@ export default class TaskModal extends BaseTaskModal {
               />
               <button class="form__btn">+</button>
             </form>
-            <ul
-              is-list
-              ${{
-                $children: this.task.$subtasks.map((subtask, i) =>
-                  new Subtask(subtask).render(i)
-                ),
-              }}
-            ></ul>
+            <ul is-list>
+              ${this.task.$subtasks
+                .map((subtask, i) => new Subtask(subtask).render(i))
+                .map((item) => render(item))}
+            </ul>
           </div>
         `,
       }

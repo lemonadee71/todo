@@ -1,5 +1,5 @@
 import Sortable from 'sortablejs';
-import { html } from 'poor-man-jsx';
+import { html, render } from 'poor-man-jsx';
 import { FIREBASE, PROJECT } from '../core/actions';
 import { useRoot } from '../core/hooks';
 import Core from '../core';
@@ -50,16 +50,11 @@ const Sidebar = () => {
         </ul>
       </nav>
       <nav class="projects">
-        <ul
-          is-list
-          keystring="data-id"
-          ${{
-            onCreate: init,
-            $children: data.$projects.map(ProjectLink),
-          }}
-        ></ul>
+        <ul is-list keystring="data-id" onCreate="${init}">
+          ${data.$projects.map(ProjectLink).map((item) => render(item))}
+        </ul>
       </nav>
-      <form class="create-project" ${{ onSubmit: createNewProject }}>
+      <form class="create-project" onSubmit=${createNewProject}>
         <input
           type="text"
           name="new-project"

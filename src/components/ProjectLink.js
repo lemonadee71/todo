@@ -49,7 +49,7 @@ const ProjectLink = (data, i) => {
   return html`
     <li ignore="style" data-id="${data.id}" data-position="${i}">
       <a is="navigo-link" href="${`/app/${data.link}`}">{% ${data.name} %}</a>
-      <button ${{ onClick: deleteProject }}>Delete</button>
+      <button onClick=${deleteProject}>Delete</button>
     </li>
   `;
 };

@@ -61,10 +61,10 @@ const CreationPopup = (projectId, evt) => {
   };
 
   return html`
-    <div id="creation-popup" ${{ onMount: init, onPopupClose: closePopup }}>
+    <div id="creation-popup" onMount=${init} onPopupClose=${closePopup}>
       <span ${{ onClick: closePopup }}>&times;</span>
       <form
-        ${{ onSubmit: createTask }}
+        onSubmit=${createTask}
         style="display: flex; flex-direction: column;"
       >
         <input type="text" name="title" placeholder="Unnamed Task" />
@@ -74,7 +74,7 @@ const CreationPopup = (projectId, evt) => {
           name="dueDate"
           value="${formatToDateTime(evt.start.toDate())}"
           readonly
-          ${{ onMount: initDatePicker }}
+          onMount=${initDatePicker}
         />
         <button type="submit">Submit</button>
       </form>

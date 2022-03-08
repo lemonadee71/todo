@@ -13,6 +13,7 @@ import {
 import { initFirestore, setupListeners } from './core/firestore';
 import { isGuest, isNewUser, signIn } from './utils/auth';
 import { useTooltip } from './utils/useTooltip';
+import { $$ } from './utils/query';
 import defineCustomElements from './components/custom';
 import Router from './components/Router';
 import * as pages from './pages';
@@ -97,42 +98,13 @@ const Website = html`
 `;
 
 // add tooltips to elements with data-show-tooltip attr
-PoorManJSX.addPreprocessor((str) => {
-  const isTooltipRegex = /data-show-tooltip(?!="\d*")/;
-  const handlers = [];
+PoorManJSX.onAfterCreation((element) => {
+  $$.data('show-tooltip', null, element).forEach((item) => {
+    const [onShow, onHide] = useTooltip(item);
 
-  let newString = str;
-  let match = newString.match(isTooltipRegex);
-  let count = -1;
-
-  while (match) {
-    newString = newString.replace(match[0], `tooltip-no="${++count}"`);
-    match = newString.slice(match.index).match(isTooltipRegex);
-  }
-
-  for (let i = 0; i <= count; i++) {
-    handlers.push({
-      type: 'lifecycle',
-      selector: `[tooltip-no="${i}"]`,
-      attr: `tooltip-no`,
-      remove: true,
-      data: {
-        name: 'mount',
-        value: (e) => {
-          const [onShow, onHide] = useTooltip(e.target);
-
-          SHOW_EVENTS.forEach((name) =>
-            e.target.addEventListener(name, onShow())
-          );
-          HIDE_EVENTS.forEach((name) =>
-            e.target.addEventListener(name, onHide())
-          );
-        },
-      },
-    });
-  }
-
-  return [newString, handlers];
+    SHOW_EVENTS.forEach((name) => item.addEventListener(name, onShow()));
+    HIDE_EVENTS.forEach((name) => item.addEventListener(name, onHide()));
+  });
 });
 
 initializeApp(firebaseConfig);

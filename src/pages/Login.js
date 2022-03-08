@@ -27,9 +27,9 @@ const Login = () => {
 
   return html`
     <div>
-      <button ${{ onClick: signInWithGoogle }}>Sign in with Google</button>
-      <button ${{ onClick: signInWithGithub }}>Sign in with Github</button>
-      <button ${{ onClick: () => signIn() }}>Sign in as Guest</button>
+      <button onClick=${signInWithGoogle}>Sign in with Google</button>
+      <button onClick=${signInWithGithub}>Sign in with Github</button>
+      <button onClick=${() => signIn()}>Sign in as Guest</button>
     </div>
   `;
 };

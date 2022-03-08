@@ -1,4 +1,4 @@
-import { createHook, html } from 'poor-man-jsx';
+import { createHook, html, render } from 'poor-man-jsx';
 import Core from '../core';
 import { useRoot } from '../core/hooks';
 
@@ -12,7 +12,7 @@ export const useSelectLocation = (onChange, data = {}) => {
   const renderOptions = (items, isProject = true) => {
     const defaultValue = isProject ? state.project : state.list;
 
-    return html`
+    return render(html`
       ${isProject
         ? html`<option
             hidden
@@ -32,7 +32,7 @@ export const useSelectLocation = (onChange, data = {}) => {
             </option>
           `
       )}
-    `;
+    `);
   };
 
   const selectList = (e) => {
@@ -53,21 +53,12 @@ export const useSelectLocation = (onChange, data = {}) => {
   };
 
   const component = html`
-    <select
-      name="project"
-      ${{
-        onDestroy: unsubscribe,
-        onChange: selectProject,
-        $children: root.$projects(renderOptions),
-      }}
-    ></select>
-    <select
-      name="list"
-      ${{
-        onChange: selectList,
-        $children: state.$project(showListOptions),
-      }}
-    ></select>
+    <select name="project" onDestroy=${unsubscribe} onChange=${selectProject}>
+      ${root.$projects(renderOptions)}
+    </select>
+    <select name="list" onChange="${selectList},">
+      ${state.$project(showListOptions)}
+    </select>
   `;
 
   return [component, state];

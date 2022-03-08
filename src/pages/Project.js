@@ -1,5 +1,5 @@
 import Sortable from 'sortablejs';
-import { createHook, html } from 'poor-man-jsx';
+import { createHook, html, render } from 'poor-man-jsx';
 import { PROJECT } from '../core/actions';
 import { useProject } from '../core/hooks';
 import Core from '../core';
@@ -42,44 +42,34 @@ const Project = ({ data: { id } }) => {
   };
 
   return html`
-    <div class="project" ${{ onDestroy: unsubscribe }}>
+    <div class="project" onDestroy=${unsubscribe}>
       <header class="project__header">
-        <h1 class="project__title" ${{ $textContent: project.$name }}></h1>
-        <button
-          ${{
-            onClick: switchView,
-            $textContent: state.$isListView((value) =>
-              value ? 'Switch to calendar view' : 'Switch to list view'
-            ),
-          }}
-        ></button>
+        <h1 class="project__title">${project.$name}</h1>
+        <button onClick="${switchView}">
+          ${state.$isListView((value) =>
+            value ? 'Switch to calendar view' : 'Switch to list view'
+          )}
+        </button>
       </header>
-      <div
-        class="project__body"
-        ${{
-          $children: state.$isListView((value) =>
-            value
-              ? html`
-                  <form ${{ onSubmit: createNewList }}>
-                    <input
-                      type="text"
-                      name="new-list"
-                      id="new-list"
-                      placeholder="Create new list"
-                    />
-                  </form>
-                  <div
-                    is-list
-                    keystring="id"
-                    class="list-view"
-                    ${{ onCreate: init }}
-                    ${{ $children: project.$lists.map(List) }}
-                  ></div>
-                `
-              : Calendar(id)
-          ),
-        }}
-      ></div>
+      <div class="project__body">
+        ${state.$isListView((value) =>
+          value
+            ? render(html`
+                <form onSubmit=${createNewList}>
+                  <input
+                    type="text"
+                    name="new-list"
+                    id="new-list"
+                    placeholder="Create new list"
+                  />
+                </form>
+                <div is-list keystring="id" class="list-view" onCreate=${init}>
+                  ${project.$lists.map(List).map((item) => render(item))}
+                </div>
+              `)
+            : render(Calendar(id))
+        )}
+      </div>
     </div>
   `;
 };

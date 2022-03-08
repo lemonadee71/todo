@@ -5,9 +5,7 @@ import { PATHS } from '../core/constants';
 const Landing = () => {
   const loginBtn = html`
     <button
-      ${{
-        onClick: () => Core.router.navigate(PATHS.login, { title: 'Login' }),
-      }}
+      onClick=${() => Core.router.navigate(PATHS.login, { title: 'Login' })}
     >
       Login
     </button>
@@ -15,9 +13,7 @@ const Landing = () => {
 
   const goBackBtn = html`
     <button
-      ${{
-        onClick: () => Core.router.navigate(PATHS.app, { title: 'Overview' }),
-      }}
+      onClick=${() => Core.router.navigate(PATHS.app, { title: 'Overview' })}
     >
       Open app
     </button>

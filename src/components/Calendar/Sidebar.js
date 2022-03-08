@@ -1,4 +1,4 @@
-import { html } from 'poor-man-jsx';
+import { html, render } from 'poor-man-jsx';
 import { useProject } from '../../core/hooks';
 import { $, $$ } from '../../utils/query';
 
@@ -29,11 +29,9 @@ const Sidebar = (projectId, toggleSchedule) => {
         />
         View all
       </label>
-      <ul
-        is-list
-        data-name="project-lists"
-        ${{
-          $children: data.$lists.map(
+      <ul is-list data-name="project-lists">
+        ${data.$lists
+          .map(
             (list) =>
               html`
                 <li key="${list.id}">
@@ -48,9 +46,9 @@ const Sidebar = (projectId, toggleSchedule) => {
                   </label>
                 </li>
               `
-          ),
-        }}
-      ></ul>
+          )
+          .map((item) => render(item))}
+      </ul>
     </div>
   `;
 };

@@ -94,7 +94,7 @@ const List = (data, pos) => {
         <input
           type="checkbox"
           name="show-completed"
-          ${{ onChange: toggleCompletedTasks }}
+          onChange=${toggleCompletedTasks}
         />
         Show completed tasks
       </label>
@@ -104,7 +104,7 @@ const List = (data, pos) => {
           is-list
           data-id="${data.id}"
           data-name="current-tasks"
-          ${{ onCreate: init }}
+          onCreate=${init}
         >
           ${data.items
             .filter((task) => !task.completed)
@@ -114,11 +114,9 @@ const List = (data, pos) => {
           is-list
           ignore="style"
           data-name="completed-tasks"
-          ${{
-            $display: state.$showCompleted((value) =>
-              value ? 'block' : 'none'
-            ),
-          }}
+          style="display: ${state.$showCompleted((value) =>
+            value ? 'block' : 'none'
+          )};"
         >
           ${data.items
             .filter((task) => task.completed)
@@ -126,8 +124,8 @@ const List = (data, pos) => {
             .map((task, i) => new Task(task).render(i))}
         </div>
       </div>
-      <button ${{ onClick: deleteList }}>Delete</button>
-      <form class="create-list" ${{ onSubmit: createTask }}>
+      <button onClick=${deleteList}>Delete</button>
+      <form class="create-list" onSubmit=${createTask}>
         <input
           type="text"
           name="new-task"

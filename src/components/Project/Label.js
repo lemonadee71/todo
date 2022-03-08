@@ -58,13 +58,13 @@ const Label = (data, action, isSelected) => {
       class="label${isSelected ? '--selected' : ''}"
       key="${data.id}"
       style="background-color: ${data.color};"
-      ${{ onClick: clickLabel }}
+      onClick=${clickLabel}
     >
       <label class="label__text">
         <span
-          ${{
-            $display: state.$isNotEditing((val) => (val ? 'inline' : 'none')),
-          }}
+          style="display: ${state.$isNotEditing((val) =>
+            val ? 'inline' : 'none'
+          )};"
         >
           {% ${data.name} %}
         </span>
@@ -72,20 +72,18 @@ const Label = (data, action, isSelected) => {
           type="text"
           value="${data.name}"
           placeholder="Label name"
-          ${{
-            $display: state.$isNotEditing((val) =>
-              val ? 'none' : 'inline-block'
-            ),
-            onBlur: (e) => {
-              editLabel(e);
-              toggleEditing();
-            },
+          style="display: ${state.$isNotEditing((val) =>
+            val ? 'none' : 'inline-block'
+          )};"
+          onBlur=${(e) => {
+            editLabel(e);
+            toggleEditing();
           }}
         />
       </label>
       <div>
-        <button ${{ onClick: toggleEditing }}>Edit</button>
-        <button ${{ onClick: deleteLabel }}>Delete</button>
+        <button onClick=${toggleEditing}>Edit</button>
+        <button onClick=${deleteLabel}>Delete</button>
       </div>
     </div>
   `;

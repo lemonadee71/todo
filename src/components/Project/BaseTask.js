@@ -94,7 +94,7 @@ export default class BaseTask {
         data-project="${this.data.project}"
         data-list="${this.data.list}"
         data-position="${position}"
-        ${{ onDestroy: () => this.unsubscribe.forEach((cb) => cb()) }}
+        onDestroy=${() => this.unsubscribe.forEach((cb) => cb())}
         ${this.props.main}
       >
         <div class="task__main">
@@ -103,10 +103,8 @@ export default class BaseTask {
               class="checkbox__input"
               type="checkbox"
               name="mark-as-done"
-              ${{
-                checked: this.data.completed,
-                onClick: this.toggleComplete.bind(this),
-              }}
+              onClick=${this.toggleComplete.bind(this)}
+              ${this.data.completed ? 'checked' : ''}
               ${this.props.checkbox}
             />
             <div class="checkbox__box">
@@ -119,7 +117,7 @@ export default class BaseTask {
 
           <div class="task__body">
             <div is-list class="task__labels" ${this.props.labels}>
-              ${this.data.labels.items.map((label) => Chip(label))}
+              ${this.data.labels.items.map(Chip)}
             </div>
 
             <div class="task__title" ${this.props.title}>
@@ -131,8 +129,8 @@ export default class BaseTask {
             </div>
           </div>
           <div class="task__menu">
-            <button ${{ onClick: this.editTask.bind(this) }}>Edit</button>
-            <button ${{ onClick: this.deleteTask.bind(this) }}>Delete</button>
+            <button onClick=${this.editTask.bind(this)}>Edit</button>
+            <button onClick=${this.deleteTask.bind(this)}>Delete</button>
           </div>
         </div>
 

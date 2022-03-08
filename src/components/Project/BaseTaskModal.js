@@ -119,7 +119,7 @@ export default class BaseTaskModal {
     // TODO: Fix issue with title input where keyboard inputs are not going in even if focused
     // TODO: Fix data attr and classes here
     return html`
-      <div ${{ onCreate: this.init, onDestroy: this._revoke }}>
+      <div onCreate=${this.init} onDestroy=${this._revoke}>
         <input
           class="task-modal__title"
           type="text"
@@ -127,18 +127,16 @@ export default class BaseTaskModal {
           data-name="task__title"
           value="${this.data.title}"
           required
-          ${{
-            $readonly: this.state.$isEditingTitle,
-            onClick: this.toggleTitleEdit,
-            onBlur: this.toggleTitleEdit,
-            onInput: debounce(this.editTask, 200),
-          }}
+          onClick=${this.toggleTitleEdit}
+          onBlur=${this.toggleTitleEdit}
+          onInput=${debounce(this.editTask, 200)}
+          readonly=${this.state.$isEditingTitle}
         />
 
         <div
           class="flatpickr task-modal__date"
           data-name="task__date"
-          ${{ onCreate: this.initDatePicker }}
+          onCreate=${this.initDatePicker}
         >
           <p class="task-modal__section">Due Date</p>
           <input
@@ -153,11 +151,9 @@ export default class BaseTaskModal {
 
         <div data-name="task__labels">
           <p class="task-modal__section">Labels</p>
-          <div
-            is-list
-            class="task-modal__labels"
-            ${{
-              $children: this.task.$labels.map(
+          <div is-list class="task-modal__labels">
+            ${this.task.$labels
+              .map(
                 (label) => html`
                   <div
                     is-text
@@ -168,40 +164,38 @@ export default class BaseTaskModal {
                     {% ${label.name} %}
                   </div>
                 `
-              ),
-            }}
-          ></div>
-          <button ${{ onMount: this.initPopover }}>Add label</button>
+              )
+              .map((item) => render(item))}
+          </div>
+          <button onMount=${this.initPopover}>Add label</button>
         </div>
 
         <div data-name="task__notes">
           <p class="task-modal__section">Notes</p>
-          <div
-            ${{
-              $children: this.state.$isEditingNotes((val) =>
-                val
-                  ? // prettier-ignore
+          <div>
+            ${this.state.$isEditingNotes((value) =>
+              value
+                ? render(
+                    // prettier-ignore
                     html`
-                      <textarea
-                        class="task-modal__notes"
-                        name="notes"
-                        ${{
-                          onInput: this.editTask,
-                          onBlur: this.toggleNotesEdit,
-                        }}
-                      >${this.data.notes.trim()}</textarea>
-                    `
-                  : html`
-                      <div
-                        class="markdown-body task-modal__notes"
-                        ${{ onClick: this.toggleNotesEdit }}
-                      >
-                        ${convertToMarkdown(this.data.notes)}
-                      </div>
-                    `
-              ),
-            }}
-          ></div>
+                  <textarea
+                    class="task-modal__notes"
+                    name="notes"
+                    onInput="${this.editTask},"
+                    onBlur="${this.toggleNotesEdit},"
+                  >${this.data.notes.trim()}</textarea>
+                `
+                  )
+                : render(html`
+                    <div
+                      class="markdown-body task-modal__notes"
+                      onClick=${this.toggleNotesEdit}
+                    >
+                      ${convertToMarkdown(this.data.notes)}
+                    </div>
+                  `)
+            )}
+          </div>
         </div>
       </div>
     `;

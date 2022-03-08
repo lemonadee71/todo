@@ -86,8 +86,8 @@ const App = () => {
   ];
 
   return html`
-    <div id="app" ${{ onDestroy: () => unsubscribe.forEach((cb) => cb()) }}>
-      <button ${{ onClick: signOut }}>Logout</button>
+    <div id="app" onDestroy=${() => unsubscribe.forEach((cb) => cb())}>
+      <button onClick=${signOut}>Logout</button>
       ${Sidebar()}${Router({ routes, props: { id: 'main-content' } })}
     </div>
     <my-modal id="main-modal" close-btn-class="modal__close-btn"></my-modal>
