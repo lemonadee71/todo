@@ -62,6 +62,15 @@ export default class Task extends BaseTask {
   };
 
   render(position) {
+    this.props.main = {
+      onClick: (e) => {
+        // use event delegation
+        if (e.target.dataset.id === 'subtask-badge') {
+          this.state.showSubtasks = !this.state.showSubtasks;
+        }
+      },
+    };
+
     this.badges = [
       ...this.badges,
       this.totalSubtasks
@@ -69,21 +78,16 @@ export default class Task extends BaseTask {
             is-text
             key="subtasks"
             class="badge"
+            data-id="subtask-badge"
             data-show-tooltip
             data-tooltip-text="This task has subtasks"
-            ${{
-              backgroundColor: DEFAULT_COLORS[9],
-              onClick: () => {
-                this.state.showSubtasks = !this.state.showSubtasks;
-              },
-            }}
+            style="background-color: ${DEFAULT_COLORS[9]};"
           >
             ${this.currentSubtasks} / ${this.totalSubtasks}
           </div>`)
         : '',
     ];
 
-    // BUG: Subtask badge does not work if added after first render
     this.extraContent = render(html`
       <div
         is-list
