@@ -34,7 +34,10 @@ PROJECT.SELECT = 'app.project.select';
 
 const FIREBASE = {
   PROJECT: createActions('firebase.project'),
-  TASKS: { FETCH_COMPLETED: 'firebase.tasks.completed' },
+  TASK: {
+    FETCH_COMPLETED: 'firebase.tasks.completed',
+    TRANSFER: 'firebase.tasks.transfer',
+  },
 };
 
 export {

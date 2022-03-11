@@ -1,4 +1,6 @@
 import {
+  arrayRemove,
+  arrayUnion,
   deleteDoc,
   doc,
   getDocs,
@@ -6,6 +8,7 @@ import {
   limit,
   query,
   setDoc,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import {
@@ -191,6 +194,40 @@ export const setupListeners = () => {
     // task and subtask share TASK.LABELS.*
     async (data) => setDoc(getDocumentRef('Tasks', data.id), data.toFirestore())
   );
+
+  Core.event.on(FIREBASE.TASK.TRANSFER, async (data) => {
+    let { type, project, list, task: id } = data; //eslint-disable-line
+    if (type === 'list') {
+      project = { from: data.project, to: data.project };
+    }
+
+    if (!Core.data.root.has(project.to)) {
+      // remove task from project
+      if (type === 'project' && Core.data.root.has(project.from)) {
+        Core.event.emit(TASK.REMOVE, {
+          project: project.from,
+          list: list.from,
+          task: id,
+        });
+      }
+
+      await updateDoc(getDocumentRef('Tasks', id), {
+        project: project.to,
+        list: list.to,
+      });
+
+      await updateDoc(getDocumentRef('Lists', list.from), {
+        tasks: arrayRemove(id),
+      });
+
+      await updateDoc(getDocumentRef('Lists', list.to), {
+        tasks: arrayUnion(id),
+      });
+    } else {
+      Core.event.emit(TASK.TRANSFER, data);
+    }
+  });
+
   // transfer has a different return value for TASK
   Core.event.onSuccess(TASK.TRANSFER, async (data) => {
     const { result, type, changes } = data;
@@ -308,7 +345,7 @@ export const setupListeners = () => {
   );
 
   /** Others */
-  Core.event.on(FIREBASE.TASKS.FETCH_COMPLETED, async (data) => {
+  Core.event.on(FIREBASE.TASK.FETCH_COMPLETED, async (data) => {
     // only fetch for the first time
     if (Core.data.fetchedLists.includes(data.list)) return;
 
