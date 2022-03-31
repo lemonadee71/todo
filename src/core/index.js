@@ -4,7 +4,7 @@ import * as main from './main';
 import Router from './router';
 import { TASK, PROJECT } from './actions';
 import { debounce } from '../utils/delay';
-import { copyObject } from '../utils/misc';
+import { copy } from '../utils/misc';
 import IdList from './classes/IdList';
 
 const Core = (() => {
@@ -127,7 +127,7 @@ const Core = (() => {
           throw new Error('Type must be either project, list, or task');
       }
 
-      return { type, result, changes: copyObject(args, ['type']) };
+      return { type, result, changes: copy(args, ['type']) };
     });
 
     // Task and subtask share the same label callback
@@ -219,7 +219,7 @@ const Core = (() => {
           throw new Error('Type must either be "list" or "task"');
       }
 
-      return { type, result, changes: copyObject(args, ['type']) };
+      return { type, result, changes: copy(args, ['type']) };
     });
 
     // only update local storage half a second after all updates

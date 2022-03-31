@@ -1,7 +1,7 @@
 import IdList from './IdList';
 import uuid from '../../utils/id';
 import { converter } from '../../utils/firestore';
-import { orderByIds } from '../../utils/misc';
+import { orderById } from '../../utils/misc';
 
 class TaskList extends IdList {
   constructor({ name, id, project, defaultItems }) {
@@ -15,9 +15,9 @@ class TaskList extends IdList {
   static converter(source = {}) {
     return converter(TaskList, (data) => ({
       ...data,
-      defaultItems: orderByIds(
-        data.tasks || [],
-        (source.tasks || []).filter((task) => task.list === data.id)
+      defaultItems: orderById(
+        (source.tasks || []).filter((task) => task.list === data.id),
+        data.tasks || []
       ),
     }));
   }

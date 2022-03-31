@@ -3,7 +3,7 @@ import { createHook } from 'poor-man-jsx';
 import Core from '.';
 import { isGuest } from '../utils/auth';
 import { getCollectionRef, getDocuments } from '../utils/firestore';
-import { orderByIds } from '../utils/misc';
+import { orderById } from '../utils/misc';
 import { FIREBASE, PROJECT, TASK } from './actions';
 import Project from './classes/Project';
 
@@ -24,7 +24,7 @@ export const useRoot = () => {
     // since change in "name" will not change "order"
     unsubscribe = onSnapshot(orderRef, async (snapshot) => {
       const projects = await getDocuments(projectsRef);
-      Core.data.projects = orderByIds(snapshot.data().order, projects);
+      Core.data.projects = orderById(projects, snapshot.data().order);
     });
   }
 

@@ -35,18 +35,10 @@ export const curry = (fn) =>
     return (...rest) => curried(...args.concat(rest));
   };
 
-export const fetchFromIds = (ids, source) => {
-  const arr = [];
+export const filterById = (source, ids) =>
+  source.filter((item) => ids.find((id) => item?.id === id));
 
-  ids.forEach((id) => {
-    const item = source.find((i) => i.id === id);
-    if (item) arr.push(item);
-  });
-
-  return arr;
-};
-
-export const orderByIds = (ids, source) => {
+export const orderById = (source, ids) => {
   const sorted = [];
   const list = new IdList(source);
 
@@ -58,11 +50,11 @@ export const orderByIds = (ids, source) => {
   return [...sorted, ...list.items];
 };
 
-export const copyObject = (target, toExclude = []) => {
-  const copy = { ...target };
-  toExclude.forEach((prop) => delete copy[prop]);
+export const copy = (target, toExclude = []) => {
+  const clone = { ...target };
+  toExclude.forEach((prop) => delete clone[prop]);
 
-  return copy;
+  return clone;
 };
 
 export const getDateColor = (dueDate) => {
@@ -73,9 +65,12 @@ export const getDateColor = (dueDate) => {
     isWithinInterval(new Date(), { start: upperLimit, end: date }) ||
     isPast(date)
   )
+    // show red for urgency
     return DEFAULT_COLORS[3];
 
+  // show orange for warning
   if (isDueToday(date)) return DEFAULT_COLORS[2];
 
+  // show green
   return DEFAULT_COLORS[0];
 };

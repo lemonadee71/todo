@@ -8,7 +8,7 @@ import Project from './classes/Project';
 import { LocalStorage } from './storage';
 import { LAST_OPENED_PAGE, LAST_UPDATE } from './constants';
 import defaultData from '../defaultData.json';
-import { fetchFromIds } from '../utils/misc';
+import { filterById } from '../utils/misc';
 import { parse } from '../utils/date';
 
 export const loadDefaultData = () => {
@@ -60,15 +60,15 @@ const recoverDataFromLocal = () => {
         const tasks = list._items.map((task) => {
           let { labels, subtasks } = task;
 
-          labels = fetchFromIds(
-            labels._items.map((label) => label.id),
-            projectLabels
+          labels = filterById(
+            projectLabels,
+            labels._items.map((label) => label.id)
           );
 
           subtasks = subtasks._items.map((subtask) => {
-            const subtaskLabels = fetchFromIds(
-              subtask.labels._items.map((label) => label.id),
-              projectLabels
+            const subtaskLabels = filterById(
+              projectLabels,
+              subtask.labels._items.map((label) => label.id)
             );
 
             return new Subtask({ ...subtask, labels: subtaskLabels });

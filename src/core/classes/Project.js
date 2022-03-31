@@ -3,7 +3,7 @@ import TaskList from './TaskList';
 import Label from './Label';
 import { DEFAULT_COLORS } from '../constants';
 import uuid from '../../utils/id';
-import { copyObject, orderByIds } from '../../utils/misc';
+import { copy, orderById } from '../../utils/misc';
 import { converter } from '../../utils/firestore';
 
 export default class Project {
@@ -39,16 +39,16 @@ export default class Project {
     return converter(Project, (data) => ({
       ...data,
       labels: source.labels?.filter((label) => label.project === data.id),
-      lists: orderByIds(
-        data.lists || [],
-        (source.lists || []).filter((list) => list.project === data.id)
+      lists: orderById(
+        (source.lists || []).filter((list) => list.project === data.id),
+        data.lists || []
       ),
     }));
   }
 
   toFirestore() {
     return {
-      ...copyObject(this, ['lastFetched', 'labels', 'lists']),
+      ...copy(this, ['lastFetched', 'labels', 'lists']),
       lists: this.lists.items.map((item) => item.id),
     };
   }
