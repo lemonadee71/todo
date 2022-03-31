@@ -21,6 +21,15 @@ class List {
   }
 
   /**
+   * Get the index based on the predicate
+   * @param {function} predicate
+   * @returns {number} - the index of the matching item
+   */
+  getIndex(predicate) {
+    return this._items.findIndex(predicate);
+  }
+
+  /**
    * Check if an item is in the list.
    * @param {function} predicate
    * @returns {boolean}
@@ -86,6 +95,20 @@ class List {
    */
   delete(predicate) {
     this._items = this._items.filter((item) => !predicate(item));
+
+    return this;
+  }
+
+  /**
+   * Replace an item with another one
+   * @param {function} predicate
+   * @param {*} item
+   * @returns {List}
+   */
+  replace(predicate, item) {
+    const idx = this.getIndex(predicate);
+    this.delete(predicate);
+    this.insert(item, idx);
 
     return this;
   }

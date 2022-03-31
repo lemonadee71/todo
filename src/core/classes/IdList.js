@@ -19,6 +19,10 @@ class IdList extends List {
     return super.get(this._createPredicate(predicate));
   }
 
+  getIndex(predicate) {
+    return super.getIndex(this._createPredicate(predicate));
+  }
+
   has(predicate) {
     return super.has(this._createPredicate(predicate));
   }
@@ -29,6 +33,10 @@ class IdList extends List {
 
   delete(predicate) {
     return super.delete(this._createPredicate(predicate));
+  }
+
+  replace(predicate) {
+    return super.replace(this._createPredicate(predicate));
   }
 
   move(predicate, idx) {
