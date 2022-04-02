@@ -1,10 +1,9 @@
-import { getDocs, query, where } from 'firebase/firestore';
+import { query, where } from 'firebase/firestore';
 import { createHook, html, render } from 'poor-man-jsx';
 import Core from '../core';
 import { useRoot } from '../core/hooks';
-import { isGuest } from './auth';
-import { getCollectionRef, getData } from './firestore';
-import { copyObject } from './misc';
+import { getCollectionRef, getDocuments } from './firestore';
+import { copy } from './misc';
 
 export const useSelectLocation = (onChange, data = {}) => {
   const [root, unsubscribe] = useRoot();
@@ -47,20 +46,20 @@ export const useSelectLocation = (onChange, data = {}) => {
   const showListOptions = async (projectId) => {
     if (!projectId) {
       state.listOptions = [];
-    } else if (isGuest()) {
+    } else if (Core.data.fetched.projects.includes(projectId)) {
       state.listOptions = renderListNames(Core.main.getLists(projectId));
     } else {
-      const result = await getDocs(
+      const result = await getDocuments(
         query(getCollectionRef('Lists'), where('project', '==', projectId))
       );
 
-      state.listOptions = renderListNames(result.docs?.map(getData));
+      state.listOptions = renderListNames(result);
     }
   };
 
   const selectList = (e) => {
     state.list = e.target.value;
-    onChange?.(e, copyObject(state, ['listOptions']), 'list');
+    onChange?.(e, copy(state, ['listOptions']), 'list');
   };
 
   const selectProject = (e) => {
@@ -71,7 +70,7 @@ export const useSelectLocation = (onChange, data = {}) => {
       await showListOptions(state.project);
       state.list = e.target.nextElementSibling.value;
 
-      onChange?.(e, copyObject(state, ['listOptions']), 'project');
+      onChange?.(e, copy(state, ['listOptions']), 'project');
     })();
   };
 
