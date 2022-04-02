@@ -1,36 +1,25 @@
 import { createHook } from 'poor-man-jsx';
 import EventEmitter from './classes/Emitter';
+import IdList from './classes/IdList';
 import * as main from './main';
-import Router from './router';
+import router from './router';
 import { TASK, PROJECT } from './actions';
 import { debounce } from '../utils/delay';
 import { copy } from '../utils/misc';
-import IdList from './classes/IdList';
 
 const Core = (() => {
   const [state] = createHook({
     darkTheme: false,
     currentUser: null,
-    currentUserCredential: null,
     currentPage: '',
-    currentOpenedTask: null,
     expandLabels: false,
   });
   const [hook] = createHook({
     root: new IdList(),
-    projects: [],
     toasts: [],
-    fetchedLists: [],
+    fetched: { projects: [], lists: [] },
   });
   const event = new EventEmitter();
-  const router = Router;
-  const getters = Object.entries(main).reduce((obj, [key, fn]) => {
-    if (key.startsWith('get') || key.startsWith('init')) {
-      obj[key] = fn;
-    }
-
-    return obj;
-  }, {});
 
   // track current opened page
   router.on('*', (match) => {
@@ -39,9 +28,9 @@ const Core = (() => {
 
   const clearData = () => {
     state.currentUser = null;
+
     hook.root.clear();
-    hook.fetchedLists = [];
-    hook.projects = [];
+    hook.fetched = { projects: [], lists: [] };
   };
 
   const setupListeners = () => {
@@ -158,7 +147,7 @@ const Core = (() => {
           throw new Error('Type must be add, remove or clear.');
       }
 
-      return task;
+      return { type: subtaskId ? 'subtask' : 'task', result: task };
     };
 
     event.on(TASK.LABELS.ADD, (payload) =>
@@ -237,7 +226,7 @@ const Core = (() => {
   };
 
   return {
-    main: getters,
+    main,
     event,
     router,
     state,
