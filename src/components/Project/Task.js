@@ -91,10 +91,10 @@ export default class Task extends BaseTask {
       <div
         is-list
         class="task__subtasks"
-        ${{
-          display: this.state.$showSubtasks((val) => (val ? 'block' : 'none')),
-          onCreate: this.initSubtasks,
-        }}
+        style_display=${this.state.$showSubtasks((val) =>
+          val ? 'block' : 'none'
+        )}
+        onCreate=${this.initSubtasks}
       >
         ${this.data.subtasks.items.map((subtask, i) =>
           new Subtask(subtask).render(i)

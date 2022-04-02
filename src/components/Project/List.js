@@ -114,9 +114,9 @@ const List = (data, pos) => {
           is-list
           ignore="style"
           data-name="completed-tasks"
-          style="display: ${state.$showCompleted((value) =>
+          style_display=${state.$showCompleted((value) =>
             value ? 'block' : 'none'
-          )};"
+          )}
         >
           ${data.items
             .filter((task) => task.completed)

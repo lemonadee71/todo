@@ -19,7 +19,6 @@ const CreationPopup = (projectId, evt) => {
   };
 
   const createTask = (e) => {
-    e.preventDefault();
     let { title, project, list } = e.target.elements;
     title = title.value;
     project = project.value;
@@ -62,9 +61,9 @@ const CreationPopup = (projectId, evt) => {
 
   return html`
     <div id="creation-popup" onMount=${init} onPopupClose=${closePopup}>
-      <span ${{ onClick: closePopup }}>&times;</span>
+      <span onClick=${closePopup}>&times;</span>
       <form
-        onSubmit=${createTask}
+        onSubmit.prevent=${createTask}
         style="display: flex; flex-direction: column;"
       >
         <input type="text" name="title" placeholder="Unnamed Task" />

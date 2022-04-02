@@ -14,8 +14,6 @@ const LabelPopover = (data, action) => {
   const [state] = createHook({ isVisible: false });
 
   const createLabel = (e) => {
-    e.preventDefault();
-
     const name = e.target.elements['label-name'];
     const color = e.target.elements.color.value;
 
@@ -50,15 +48,11 @@ const LabelPopover = (data, action) => {
     <div
       class="popover"
       data-id="${ref.main}"
-      ${{
-        onCreate: init,
-        onDestroy: revoke,
-        $visibility: state.$isVisible((val) => (val ? 'visible' : 'hidden')),
-      }}
+      visibility=${state.$isVisible((val) => (val ? 'visible' : 'hidden'))}
+      onCreate=${init}
+      onDestroy=${revoke}
     >
-      <span class="popover__close-btn" ${{ onClick: closePopover }}>
-        &times;
-      </span>
+      <span class="popover__close-btn" onClick=${closePopover}>&times;</span>
       <p class="popover__title">Labels</p>
       <div is-list class="popover__body">
         ${project.$labels
@@ -67,7 +61,7 @@ const LabelPopover = (data, action) => {
           )
           .map((item) => render(item))}
       </div>
-      <form ${{ onSubmit: createLabel }}>
+      <form onSubmit.prevent=${createLabel}>
         <label for="label-name" class="popover__title">
           Create New Label
         </label>

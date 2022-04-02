@@ -194,15 +194,13 @@ const Calendar = (projectId) => {
   return html`
     ${Sidebar(projectId, toggleSchedule)}
     <div data-name="taskbar">
-      <button name="today" ${{ onClick: goToToday }}>Today</button>
-      <button name="previous" ${{ onClick: previous }}><</button>
-      <button name="next" ${{ onClick: next }}>></button>
-      <h1
-        ${{ $textContent: state.$date((date) => format(date, 'MMMM yyyy')) }}
-      ></h1>
+      <button name="today" onClick=${goToToday}>Today</button>
+      <button name="previous" onClick=${previous}><</button>
+      <button name="next" onClick=${next}>></button>
+      <h1>${state.$date((date) => format(date, 'MMMM yyyy'))}</h1>
     </div>
     <div data-name="calendar">
-      <div ${{ onCreate: init, onDestroy: destroy }}></div>
+      <div onCreate=${init} onDestroy=${destroy}></div>
     </div>
   `;
 };

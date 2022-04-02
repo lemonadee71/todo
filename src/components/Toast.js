@@ -5,7 +5,7 @@ const Toast = (text, action = null) =>
     <div class="toast__body">
       <p class="toast__text">${text}</p>
       ${action
-        ? html`<button class="toast__btn" ${{ onClick: action.callback }}>
+        ? html`<button class="toast__btn" onClick=${action.callback}>
             ${action.text}
           </button>`
         : ''}

@@ -19,14 +19,9 @@ const Sidebar = (projectId, toggleSchedule) => {
   };
 
   return html`
-    <div data-name="sidebar" ${{ onDestroy: unsubscribe }}>
+    <div data-name="sidebar" onDestroy=${unsubscribe}>
       <label>
-        <input
-          name="view-all"
-          type="checkbox"
-          checked
-          ${{ onChange: toggleAll }}
-        />
+        <input name="view-all" type="checkbox" checked onChange=${toggleAll} />
         View all
       </label>
       <ul is-list data-name="project-lists">
@@ -40,7 +35,7 @@ const Sidebar = (projectId, toggleSchedule) => {
                       type="checkbox"
                       value="${list.id}"
                       checked
-                      ${{ onChange: toggleList }}
+                      onChange=${toggleList}
                     />
                     ${list.name}
                   </label>

@@ -12,7 +12,6 @@ const Sidebar = () => {
   const base = isGuest() ? PROJECT : FIREBASE.PROJECT;
 
   const createNewProject = (e) => {
-    e.preventDefault();
     const input = e.target.elements['new-project'];
 
     Core.event.emit(base.ADD, {
@@ -41,7 +40,7 @@ const Sidebar = () => {
   };
 
   return html`
-    <aside id="sidebar" ${{ onDestroy: revoke }}>
+    <aside id="sidebar" onDestroy=${revoke}>
       <nav class="quick-links">
         <ul>
           <li><a href="#">User</a></li>
@@ -50,11 +49,11 @@ const Sidebar = () => {
         </ul>
       </nav>
       <nav class="projects">
-        <ul is-list keystring="data-id" onCreate="${init}">
+        <ul is-list keystring="data-id" onCreate=${init}>
           ${data.$projects.map(ProjectLink).map((item) => render(item))}
         </ul>
       </nav>
-      <form class="create-project" onSubmit=${createNewProject}>
+      <form class="create-project" onSubmit.prevent=${createNewProject}>
         <input
           type="text"
           name="new-project"

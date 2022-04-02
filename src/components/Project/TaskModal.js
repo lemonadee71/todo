@@ -30,8 +30,6 @@ export default class TaskModal extends BaseTaskModal {
   };
 
   createSubtask = (e) => {
-    e.preventDefault();
-
     const input = e.target.elements['new-subtask'];
     Core.event.emit(TASK.SUBTASKS.ADD, {
       ...this.location,
@@ -52,7 +50,7 @@ export default class TaskModal extends BaseTaskModal {
         template: html`
           <div data-name="task__subtasks">
             <p class="task-modal__section">Subtasks</p>
-            <form class="create-list" onSubmit=${this.createSubtask}>
+            <form class="create-list" onSubmit.prevent=${this.createSubtask}>
               <input
                 type="text"
                 name="new-subtask"

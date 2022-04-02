@@ -102,8 +102,8 @@ export default class BaseTask {
               class="checkbox__input"
               type="checkbox"
               name="mark-as-done"
+              checked="${this.data.completed}"
               onClick=${this.toggleComplete.bind(this)}
-              ${this.data.completed ? 'checked' : ''}
               ${this.props.checkbox}
             />
             <div class="checkbox__box">
