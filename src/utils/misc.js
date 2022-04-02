@@ -3,13 +3,6 @@ import IdList from '../core/classes/IdList';
 import { DEFAULT_COLORS } from '../core/constants';
 import { isDueToday, parse } from './date';
 
-// we get a bug when we don't wrap some functions
-// in an anonymous callback so we create this util
-export const wrap =
-  (fn) =>
-  (...args) =>
-    fn(...args);
-
 export const memoize = (fn) => {
   const cache = new Map();
 
