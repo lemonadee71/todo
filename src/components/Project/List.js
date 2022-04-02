@@ -11,7 +11,7 @@ const List = (data, pos) => {
 
   const toggleCompletedTasks = () => {
     if (!isGuest()) {
-      Core.event.emit(FIREBASE.TASKS.FETCH_COMPLETED, {
+      Core.event.emit(FIREBASE.TASK.FETCH_COMPLETED, {
         project: data.project,
         list: data.id,
       });

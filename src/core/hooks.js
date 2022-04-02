@@ -51,7 +51,7 @@ export const useProject = (projectId) => {
         ...TASK.ALL,
         ...TASK.LABELS.ALL,
         ...TASK.SUBTASKS.ALL,
-        FIREBASE.TASKS.FETCH_COMPLETED,
+        FIREBASE.TASK.FETCH_COMPLETED,
       ],
       () => {
         project.lists = projectRef.lists.items;
