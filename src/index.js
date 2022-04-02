@@ -1,4 +1,4 @@
-import { doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
+import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import PoorManJSX, { html, render } from 'poor-man-jsx';
@@ -10,7 +10,7 @@ import {
   PATHS,
   SHOW_EVENTS,
 } from './core/constants';
-import { initFirestore, setupListeners } from './core/firestore';
+import { fetchProjects, initFirestore, setupListeners } from './core/firestore';
 import { isGuest, isNewUser, signIn } from './utils/auth';
 import { useTooltip } from './utils/useTooltip';
 import { $$ } from './utils/query';
@@ -43,8 +43,14 @@ const routes = [
         Core.data.root.add(Core.main.getLocalData());
         Core.main.initLocal();
       } else {
-        // populate firestore first if first time user
+        // populate firestore first if new user
         if (await isNewUser(Core.state.currentUser)) await initFirestore();
+
+        // then fetch all projects
+        const projects = await fetchProjects();
+        Core.data.root.add(projects);
+        Core.main.init(projects);
+
         // setup firestore listeners
         setupListeners();
       }
@@ -61,11 +67,9 @@ const routes = [
         if (isGuest()) {
           LocalStorage.store(LAST_OPENED_PAGE, data);
         } else {
-          await setDoc(
-            doc(getFirestore(), Core.state.currentUser, 'data'),
-            { [LAST_OPENED_PAGE]: data },
-            { merge: true }
-          );
+          await updateDoc(doc(getFirestore(), Core.state.currentUser, 'data'), {
+            [LAST_OPENED_PAGE]: data,
+          });
         }
       },
       after: async () => {

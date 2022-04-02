@@ -15,8 +15,6 @@ const Project = ({ data: { id } }) => {
   };
 
   const createNewList = (e) => {
-    e.preventDefault();
-
     const input = e.target.elements['new-list'];
     Core.event.emit(PROJECT.LISTS.ADD, {
       project: project.id,
@@ -45,7 +43,7 @@ const Project = ({ data: { id } }) => {
     <div class="project" onDestroy=${unsubscribe}>
       <header class="project__header">
         <h1 class="project__title">${project.$name}</h1>
-        <button onClick="${switchView}">
+        <button onClick=${switchView}>
           ${state.$isListView((value) =>
             value ? 'Switch to calendar view' : 'Switch to list view'
           )}
@@ -55,7 +53,7 @@ const Project = ({ data: { id } }) => {
         ${state.$isListView((value) =>
           value
             ? render(html`
-                <form onSubmit=${createNewList}>
+                <form onSubmit.prevent=${createNewList}>
                   <input
                     type="text"
                     name="new-list"

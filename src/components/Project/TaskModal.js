@@ -1,10 +1,9 @@
 import { html, render } from 'poor-man-jsx';
-import { FIREBASE, TASK } from '../../core/actions';
+import { TASK } from '../../core/actions';
 import Core from '../../core';
 import { useSelectLocation } from '../../utils/useSelectLocation';
 import BaseTaskModal from './BaseTaskModal';
 import Subtask from './Subtask';
-import { isGuest } from '../../utils/auth';
 
 export default class TaskModal extends BaseTaskModal {
   constructor(data) {
@@ -14,14 +13,13 @@ export default class TaskModal extends BaseTaskModal {
   }
 
   transferTask = (_, selected, type) => {
-    const base = isGuest() ? TASK : FIREBASE.TASK;
     const list = { to: selected.list, from: this.data.list };
     const project =
       type === 'list'
         ? selected.project
         : { to: selected.project, from: this.data.project };
 
-    Core.event.emit(base.TRANSFER, {
+    Core.event.emit(TASK.TRANSFER, {
       project,
       list,
       type,

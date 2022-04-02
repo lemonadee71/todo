@@ -1,34 +1,15 @@
-import { doc, getFirestore, onSnapshot } from 'firebase/firestore';
 import { createHook } from 'poor-man-jsx';
 import Core from '.';
-import { isGuest } from '../utils/auth';
-import { getCollectionRef, getDocuments } from '../utils/firestore';
-import { orderById } from '../utils/misc';
 import { FIREBASE, PROJECT, TASK } from './actions';
-import Project from './classes/Project';
 
 export const useRoot = () => {
-  let unsubscribe;
+  const [state] = createHook({ projects: Core.main.getProjectDetails() });
 
-  if (isGuest()) {
-    Core.data.projects = Core.main.getProjectDetails();
+  const unsubscribe = Core.event.onSuccess(PROJECT.ALL, () => {
+    state.projects = Core.main.getProjectDetails();
+  });
 
-    unsubscribe = Core.event.onSuccess(PROJECT.ALL, () => {
-      Core.data.projects = Core.main.getProjectDetails();
-    });
-  } else {
-    const projectsRef = getCollectionRef('Projects', Project.converter());
-    const orderRef = doc(getFirestore(), `${Core.state.currentUser}/Projects`);
-
-    // only add, delete, and move will be captured here
-    // since change in "name" will not change "order"
-    unsubscribe = onSnapshot(orderRef, async (snapshot) => {
-      const projects = await getDocuments(projectsRef);
-      Core.data.projects = orderById(projects, snapshot.data().order);
-    });
-  }
-
-  return [Core.data, unsubscribe];
+  return [state, unsubscribe];
 };
 
 // we rely on changes to original references

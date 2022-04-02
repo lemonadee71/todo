@@ -4,13 +4,11 @@ import { PATHS } from '../core/constants';
 import {
   EDIT_SUBTASK,
   EDIT_TASK,
-  FIREBASE,
   PROJECT,
   REDIRECT,
   TASK,
 } from '../core/actions';
-import { fetchProject } from '../core/firestore';
-import { wrap } from '../utils/misc';
+import { fetchProjectData } from '../core/firestore';
 import { $ } from '../utils/query';
 import logger from '../utils/logger';
 import { isGuest, signOut } from '../utils/auth';
@@ -31,10 +29,21 @@ const routes = [
     component: Project,
     resolver: async (component, match) => {
       if (!isGuest()) {
+        const { id } = match.data;
+
         // only fetch if not cached
-        if (!Core.data.root.has(match.data.id)) {
-          Core.data.root.add(await fetchProject(match.data.id));
+        if (!Core.data.fetched.projects.includes(id)) {
+          const data = await fetchProjectData(id);
+          const project = Core.data.root.get(id);
+
+          project.lastFetched = Date.now();
+          project.labels.clear().add(data.labels);
+          project.lists.clear().add(data.lists);
+
+          // mark project as fetched
+          Core.data.fetched.projects.push(id);
         }
+
         Core.main.init(Core.data.root.items);
       }
 
@@ -52,13 +61,8 @@ const App = () => {
       }
     }),
     Core.event.onError(
-      [
-        PROJECT.ADD,
-        FIREBASE.PROJECT.ADD,
-        PROJECT.LISTS.ADD,
-        PROJECT.LABELS.ADD,
-      ],
-      wrap(logger.warning)
+      [PROJECT.ADD, PROJECT.LISTS.ADD, PROJECT.LABELS.ADD],
+      ({ e }) => logger.warning(e)
     ),
     Core.event.onError(
       [
@@ -68,7 +72,7 @@ const App = () => {
         TASK.UPDATE,
         TASK.SUBTASKS.UPDATE,
       ],
-      wrap(logger.error)
+      ({ e }) => logger.error(e)
     ),
     Core.event.on(EDIT_TASK, (task) => {
       $('#main-modal').changeContent(
