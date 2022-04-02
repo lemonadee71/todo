@@ -96,6 +96,7 @@ class EventEmitter {
 
           if (handler.options.once) this.off(topic, handler.fn);
           if (isPlain && (handler.options.emitSuccess || emitSuccess)) {
+            // TODO: pass payload too
             this.emit(`${topic}.success`, result);
           }
         } catch (e) {
@@ -104,7 +105,7 @@ class EventEmitter {
           options.onError?.(e, payload);
 
           if (isPlain && (handler.options.emitError || emitError)) {
-            this.emit(`${topic}.error`, e);
+            this.emit(`${topic}.error`, { e, payload });
           }
 
           if (handler.options.rethrow || rethrow) throw e;
