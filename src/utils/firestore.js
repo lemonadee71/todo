@@ -1,5 +1,13 @@
 import { getAuth } from 'firebase/auth';
-import { collection, doc, getDocs, getFirestore } from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  getFirestore,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
 
 const path = (type) => `${getAuth().currentUser.uid}/${type}/items`;
 
@@ -23,3 +31,11 @@ export const getDocumentRef = (type, id, converterFn) =>
 
 export const getCollectionRef = (type, converterFn) =>
   collection(getFirestore(), path(type)).withConverter(converterFn);
+
+export const setDocument = (type, id, data, converterFn = null) =>
+  setDoc(getDocumentRef(type, id, converterFn), data);
+
+export const updateDocument = (type, id, data) =>
+  updateDoc(getDocumentRef(type, id), data);
+
+export const deleteDocument = (type, id) => deleteDoc(getDocumentRef(type, id));

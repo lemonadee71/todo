@@ -1,7 +1,6 @@
 import {
   arrayRemove,
   arrayUnion,
-  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -13,10 +12,13 @@ import {
   where,
 } from 'firebase/firestore';
 import {
+  deleteDocument,
   getCollectionRef,
   getData,
   getDocumentRef,
   getDocuments,
+  setDocument,
+  updateDocument,
 } from '../utils/firestore';
 import { orderById } from '../utils/misc';
 import Label from './classes/Label';
@@ -98,31 +100,24 @@ export const initFirestore = async () => {
   const defaultData = loadDefaultData();
 
   defaultData.forEach(async (project) => {
-    await setDoc(
-      getDocumentRef('Projects', project.id, Project.converter()),
-      project
-    );
+    await setDocument('Projects', project.id, project, Project.converter());
 
     project.labels.items.forEach(async (label) => {
-      await setDoc(
-        getDocumentRef('Labels', label.id, Label.converter()),
-        label
-      );
+      await setDocument('Labels', label.id, label, Label.converter());
     });
 
     project.lists.items.forEach(async (list) => {
-      await setDoc(
-        getDocumentRef('Lists', list.id, TaskList.converter()),
-        list
-      );
+      await setDocument('Lists', list.id, list, TaskList.converter());
 
       list.items.forEach(async (task) => {
-        await setDoc(getDocumentRef('Tasks', task.id, Task.converter()), task);
+        await setDocument('Tasks', task.id, task, Task.converter());
 
         task.data.subtasks.forEach(async (subtask) => {
-          await setDoc(
-            getDocumentRef('Subtasks', subtask.id, Subtask.converter()),
-            subtask
+          await setDocument(
+            'Subtasks',
+            subtask.id,
+            subtask,
+            Subtask.converter()
           );
         });
       });
@@ -149,10 +144,10 @@ export const setupListeners = () => {
     await updateDoc(projectRef, { order: arrayUnion(data.id) });
 
     data.labels.items.forEach(async (label) => {
-      await setDoc(getDocumentRef('Labels', label.id), label.toFirestore());
+      await setDocument('Labels', label.id, label.toFirestore());
     });
     data.lists.items.forEach(async (list) => {
-      await setDoc(getDocumentRef('Lists', list.id), list.toFirestore());
+      await setDocument('Lists', list.id, list.toFirestore());
     });
   });
 
@@ -160,7 +155,7 @@ export const setupListeners = () => {
     // delete from cache
     Core.data.root.delete(data.id);
 
-    await deleteDoc(getDocumentRef('Projects', data.id));
+    await deleteDocument('Projects', data.id);
     await updateDoc(projectRef, { order: arrayRemove(data.id) });
   });
 
@@ -175,23 +170,19 @@ export const setupListeners = () => {
   // =====================================================================================
   Core.event.onSuccess(
     [PROJECT.LISTS.ADD, PROJECT.LISTS.UPDATE],
-    async (data) => setDoc(getDocumentRef('Lists', data.id), data.toFirestore())
+    async (data) => setDocument('Lists', data.id, data.toFirestore())
   );
 
   Core.event.on(`${PROJECT.LISTS.REMOVE}:timeout`, async (data) =>
-    deleteDoc(getDocumentRef('Lists', data.id))
+    deleteDocument('Lists', data.id)
   );
 
   Core.event.onSuccess(
     [PROJECT.LISTS.ADD, PROJECT.LISTS.REMOVE, PROJECT.LISTS.MOVE],
     async (data) => {
       const project = Core.main.getProject(data.project);
-
       // update order
-      await updateDoc(
-        getDocumentRef('Projects', project.id),
-        project.toFirestore()
-      );
+      await updateDocument('Projects', project.id, project.toFirestore());
     }
   );
 
@@ -201,19 +192,19 @@ export const setupListeners = () => {
   Core.event.onSuccess(
     [PROJECT.LABELS.ADD, PROJECT.LABELS.UPDATE],
     async (data) => {
-      setDoc(getDocumentRef('Labels', data.id), data.toFirestore());
+      setDocument('Labels', data.id, data.toFirestore());
     }
   );
 
   Core.event.onSuccess(PROJECT.LABELS.REMOVE, async (data) =>
-    deleteDoc(getDocumentRef('Labels', data.id))
+    deleteDocument('Labels', data.id)
   );
 
   // =====================================================================================
   // Tasks
   // =====================================================================================
   Core.event.onSuccess([TASK.ADD, TASK.UPDATE], async (data) =>
-    setDoc(getDocumentRef('Tasks', data.id), data.toFirestore())
+    setDocument('Tasks', data.id, data.toFirestore())
   );
 
   // transfer has a different return value for TASK
@@ -225,20 +216,18 @@ export const setupListeners = () => {
     }
 
     // remove from old location
-    await updateDoc(getDocumentRef('Lists', changes.list.from), {
+    await updateDocument('Lists', changes.list.from, {
       tasks: arrayRemove(result.id),
     });
 
     switch (type) {
       case 'list':
       case 'project':
-        await updateDoc(
-          getDocumentRef('Tasks', result.id),
-          result.toFirestore()
-        );
+        await updateDocument('Tasks', result.id, result.toFirestore());
 
-        await updateDoc(
-          getDocumentRef('Lists', changes.list.to),
+        await updateDocument(
+          'Lists',
+          changes.list.to,
           Core.main.getList(changes.project.to, changes.list.to).toFirestore()
         );
 
@@ -246,15 +235,13 @@ export const setupListeners = () => {
 
       case 'task':
         // delete original document
-        await deleteDoc(getDocumentRef('Tasks', result.id));
+        await deleteDocument('Tasks', result.id);
         // create new one in a different collection
-        await setDoc(
-          getDocumentRef('Subtasks', result.id),
-          result.toFirestore()
-        );
+        await setDocument('Subtasks', result.id, result.toFirestore());
 
-        await updateDoc(
-          getDocumentRef('Tasks', changes.task.to),
+        await updateDocument(
+          'Tasks',
+          changes.task.to,
           Core.main
             .getTask(changes.project, changes.list.to, changes.task.to)
             .toFirestore()
@@ -285,27 +272,27 @@ export const setupListeners = () => {
       });
     }
 
-    await updateDoc(getDocumentRef('Tasks', id), {
+    await updateDocument('Tasks', id, {
       project: project.to,
       list: list.to,
     });
 
-    await updateDoc(getDocumentRef('Lists', list.from), {
+    await updateDocument('Lists', list.from, {
       tasks: arrayRemove(id),
     });
 
-    await updateDoc(getDocumentRef('Lists', list.to), {
+    await updateDocument('Lists', list.to, {
       tasks: arrayUnion(id),
     });
   });
 
   Core.event.on(`${TASK.REMOVE}:timeout`, async (data) =>
-    deleteDoc(getDocumentRef('Tasks', data.id))
+    deleteDocument('Tasks', data.id)
   );
 
   Core.event.onSuccess([TASK.ADD, TASK.REMOVE, TASK.MOVE], async (data) => {
     const list = Core.main.getList(data.project, data.list);
-    await updateDoc(getDocumentRef('Lists', list.id), list.toFirestore());
+    await updateDocument('Lists', list.id, list.toFirestore());
   });
 
   // task and subtask share TASK.LABELS.*
@@ -315,7 +302,7 @@ export const setupListeners = () => {
       // eslint-disable-next-line
       const name = type[0].toUpperCase() + type.slice(1) + 's';
 
-      setDoc(getDocumentRef(name, result.id), result.toFirestore());
+      setDocument(name, result.id, result.toFirestore());
     }
   );
 
@@ -325,7 +312,7 @@ export const setupListeners = () => {
   Core.event.onSuccess(
     [TASK.SUBTASKS.ADD, TASK.SUBTASKS.UPDATE],
     async (data) => {
-      setDoc(getDocumentRef('Subtasks', data.id), data.toFirestore());
+      setDocument('Subtasks', data.id, data.toFirestore());
     }
   );
 
@@ -334,30 +321,29 @@ export const setupListeners = () => {
 
     if (type === 'list') {
       // delete original document
-      await deleteDoc(getDocumentRef('Subtasks', result.id));
+      await deleteDocument('Subtasks', result.id);
 
       // create new one in a different collection
-      await setDoc(getDocumentRef('Tasks', result.id), result.toFirestore());
+      await setDocument('Tasks', result.id, result.toFirestore());
 
       // update order in old and new location
-      await updateDoc(getDocumentRef('Tasks', changes.task), {
+      await updateDocument('Tasks', changes.task, {
         subtasks: arrayRemove(result.id),
       });
-      await updateDoc(
-        getDocumentRef('Lists', changes.list.to),
+      await updateDocument(
+        'Lists',
+        changes.list.to,
         Core.main.getList(changes.project, changes.list.to).toFirestore()
       );
     } else {
-      await updateDoc(
-        getDocumentRef('Subtasks', result.id),
-        result.toFirestore()
-      );
+      await updateDocument('Subtasks', result.id, result.toFirestore());
       // update order in old and new location
-      await updateDoc(getDocumentRef('Tasks', changes.task.from), {
+      await updateDocument('Tasks', changes.task.from, {
         subtasks: arrayRemove(result.id),
       });
-      await updateDoc(
-        getDocumentRef('Tasks', changes.task.to),
+      await updateDocument(
+        'Tasks',
+        changes.task.to,
         Core.main
           .getTask(changes.project, changes.list.to, changes.task.to)
           .toFirestore()
@@ -366,14 +352,14 @@ export const setupListeners = () => {
   });
 
   Core.event.on(`${TASK.SUBTASKS.REMOVE}:timeout`, async (data) =>
-    deleteDoc(getDocumentRef('Subtasks', data.id))
+    deleteDocument('Subtasks', data.id)
   );
 
   Core.event.onSuccess(
     [TASK.SUBTASKS.ADD, TASK.SUBTASKS.REMOVE, TASK.SUBTASKS.MOVE],
     async (data) => {
       const task = Core.main.getTask(data.project, data.list, data.parent);
-      await updateDoc(getDocumentRef('Tasks', task.id), task.toFirestore());
+      await updateDocument('Tasks', task.id, task.toFirestore());
     }
   );
 
