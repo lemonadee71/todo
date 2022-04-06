@@ -7,13 +7,4 @@ export default class Subtask extends BaseTask {
 
     this.props = { main: { 'data-parent': this.data.parent } };
   }
-
-  get location() {
-    return {
-      project: this.data.project,
-      list: this.data.list,
-      task: this.data.parent,
-      subtask: this.data.id,
-    };
-  }
 }

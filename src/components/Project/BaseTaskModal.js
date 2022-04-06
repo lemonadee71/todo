@@ -26,11 +26,7 @@ export default class BaseTaskModal {
   }
 
   get location() {
-    return {
-      project: this.data.project,
-      list: this.data.list,
-      task: this.data.id,
-    };
+    return this.data.location;
   }
 
   editTask = (e) => {
@@ -124,13 +120,13 @@ export default class BaseTaskModal {
           class="task-modal__title"
           type="text"
           name="title"
-          data-name="task__title"
           value="${this.data.title}"
+          data-name="task__title"
           required
+          readonly=${this.state.$isEditingTitle}
           onClick=${this.toggleTitleEdit}
           onBlur=${this.toggleTitleEdit}
           onInput=${debounce(this.editTask, 200)}
-          readonly=${this.state.$isEditingTitle}
         />
 
         <div

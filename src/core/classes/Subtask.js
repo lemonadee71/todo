@@ -11,6 +11,15 @@ export default class Subtask extends BaseTask {
     this.parent = props.parent;
   }
 
+  get location() {
+    return {
+      project: this.project,
+      list: this.list,
+      task: this.parent,
+      subtask: this.id,
+    };
+  }
+
   static converter(source = {}) {
     return converter(Subtask, (data) => ({
       ...data,

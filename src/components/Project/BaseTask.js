@@ -17,7 +17,7 @@ export default class BaseTask {
     this.id = this.data.id;
     // both task and subtask ids start with `task`
     // so to allow for conversion, prefix key with actual type instead
-    this.key = `${this.type}-${this.data.id}`;
+    this.key = `${this.type}-${this.id}`;
 
     this.unsubscribe = [];
     this.props = { main: '', checkbox: '' };
@@ -56,11 +56,7 @@ export default class BaseTask {
   }
 
   get location() {
-    return {
-      project: this.data.project,
-      list: this.data.list,
-      task: this.data.id,
-    };
+    return this.data.location;
   }
 
   // do not use arrow; use bind instead

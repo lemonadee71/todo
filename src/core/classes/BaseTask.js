@@ -41,6 +41,14 @@ class BaseTask {
     };
   }
 
+  get location() {
+    return {
+      project: this.project,
+      list: this.list,
+      task: this.id,
+    };
+  }
+
   toFirestore() {
     return {
       ...this,

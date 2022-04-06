@@ -40,36 +40,42 @@ export default class Task extends BaseTask {
     };
   }
 
+  get totalSubtasks() {
+    return this.subtasks.length;
+  }
+
+  get incompleteSubtasks() {
+    return this.subtasks.items.filter((subtask) => subtask.completed).length;
+  }
+
+  _adopt(subtask) {
+    subtask.project = this.project;
+    subtask.list = this.list;
+    subtask.parent = this.id;
+  }
+
   getSubtask(id) {
     return this.subtasks.get(id);
   }
 
   updateSubtasks() {
-    this.subtasks.items.forEach((subtask) => {
-      subtask.project = this.project;
-      subtask.list = this.list;
-      subtask.parent = this.id;
-    });
+    this.subtasks.items.forEach(this._adopt.bind(this));
 
     return this;
   }
 
-  addSubtask(task) {
-    task.project = this.project;
-    task.list = this.list;
-    task.parent = this.id;
-    task.required = true;
+  addSubtask(subtask) {
+    this._adopt(subtask);
+    subtask.required = true;
 
-    return this.subtasks.add(task);
+    return this.subtasks.add(subtask);
   }
 
-  insertSubtask(task, idx) {
-    task.project = this.project;
-    task.list = this.list;
-    task.parent = this.id;
-    task.required = true;
+  insertSubtask(subtask, idx) {
+    this._adopt(subtask);
+    subtask.required = true;
 
-    return this.subtasks.insert(task, idx);
+    return this.subtasks.insert(subtask, idx);
   }
 
   moveSubtask(id, idx) {

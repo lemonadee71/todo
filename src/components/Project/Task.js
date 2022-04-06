@@ -14,15 +14,6 @@ export default class Task extends BaseTask {
     this.unsubscribe.push(this._revoke.bind(this));
   }
 
-  get totalSubtasks() {
-    return this.data.subtasks.items.length;
-  }
-
-  get currentSubtasks() {
-    return this.data.subtasks.items.filter((subtask) => subtask.completed)
-      .length;
-  }
-
   transferSubtask = (action, fromTask, fromList, subtaskId, position) => {
     Core.event.emit(action, {
       project: this.data.project,
@@ -73,7 +64,7 @@ export default class Task extends BaseTask {
 
     this.badges = [
       ...this.badges,
-      this.totalSubtasks
+      this.data.totalSubtasks
         ? render(html`<div
             is-text
             key="subtasks"
@@ -82,7 +73,7 @@ export default class Task extends BaseTask {
             data-tooltip-text="This task has subtasks"
             style="background-color: ${DEFAULT_COLORS[9]};"
           >
-            ${this.currentSubtasks} / ${this.totalSubtasks}
+            ${this.data.incompleteSubtasks} / ${this.data.totalSubtasks}
           </div>`)
         : '',
     ];

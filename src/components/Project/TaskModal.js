@@ -59,11 +59,11 @@ export default class TaskModal extends BaseTaskModal {
               />
               <button class="form__btn">+</button>
             </form>
-            <ul is-list>
+            <div is-list>
               ${this.task.$subtasks
                 .map((subtask, i) => new Subtask(subtask).render(i))
                 .map((item) => render(item))}
-            </ul>
+            </div>
           </div>
         `,
       }
