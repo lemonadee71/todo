@@ -90,6 +90,7 @@ export default class Task extends BaseTask {
     this.extraContent = render(html`
       <div
         is-list
+        ignore="style"
         class="task__subtasks"
         style_display=${this.state.$showSubtasks((val) =>
           val ? 'block' : 'none'
