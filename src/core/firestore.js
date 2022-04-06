@@ -28,15 +28,21 @@ import { loadDefaultData } from './main';
 import { FIREBASE, PROJECT, TASK } from './actions';
 import Core from '.';
 
-const fetchSubtasks = async (id, data) => {
-  const subtasks = await getDocuments(
+// If there are a lot of subtasks, this might cause significant delay
+// so consider rerendering after fetching instead
+// like emitting an event
+const fetchSubtasks = async (tasks, data) => {
+  const queries = tasks.map((task) =>
     query(
       getCollectionRef('Subtasks', Subtask.converter(data)),
-      where('parent', '==', id)
+      where('parent', '==', task.id)
     )
   );
 
-  return subtasks || [];
+  const result = await Promise.all(queries.map((q) => getDocs(q)));
+  const subtasks = result.map((item) => item?.docs?.map(getData) || []);
+
+  tasks.forEach((task, i) => task.subtasks.add(subtasks[i]));
 };
 
 export const fetchProjects = async () => {
@@ -77,9 +83,7 @@ export const fetchProjectData = async (id) => {
   data.tasks = result[1].docs?.map(getData);
   data.lists = result[2].docs?.map(getData);
 
-  data.tasks.forEach(async (task) => {
-    task.subtasks.add(await fetchSubtasks(task.id, data));
-  });
+  await fetchSubtasks(data.tasks, data);
 
   return data;
 };
@@ -396,10 +400,7 @@ export const setupListeners = () => {
     );
 
     // fetch subtasks
-    completedTasks.forEach(async (task) => {
-      task.subtasks.add(await fetchSubtasks(task.id, data));
-    });
-
+    await fetchSubtasks(completedTasks, data);
     list.add(completedTasks || []);
 
     Core.data.fetched.lists.push(data.list);
