@@ -42,6 +42,11 @@ const routes = [
       if (isGuest()) {
         Core.data.root.add(Core.main.getLocalData());
         Core.main.initLocal();
+
+        // to make local work with useSelectLocation
+        Core.data.fetched.projects.push(
+          ...Core.data.root.items.map((item) => item.id)
+        );
       } else {
         // populate firestore first if new user
         if (await isNewUser(Core.state.currentUser)) await initFirestore();
