@@ -27,25 +27,7 @@ module.exports = merge(common, {
     rules: [
       {
         test: /\.css$/i,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: '',
-            },
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1,
-              modules: true,
-            },
-          },
-        ],
-        include: /\.module\.css$/i,
-      },
-      {
-        test: /\.css$/i,
+        include: path.resolve(__dirname, 'src'),
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
@@ -54,26 +36,7 @@ module.exports = merge(common, {
             },
           },
           'css-loader',
-        ],
-        exclude: /\.module\.css$/i,
-      },
-      {
-        test: /\.s[ac]ss$/i,
-        exclude: /\.module.s[ac]ss$/i,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
-      },
-      {
-        test: /\.module.s[ac]ss$/i,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1,
-              modules: true,
-            },
-          },
-          'sass-loader',
+          'postcss-loader',
         ],
       },
     ],

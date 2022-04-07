@@ -10,55 +10,15 @@ module.exports = merge(common, {
     clean: true,
   },
   devtool: 'source-map',
+  devServer: {
+    watchContentBase: true,
+  },
   module: {
     rules: [
       {
         test: /\.css$/i,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1,
-              modules: true,
-            },
-          },
-        ],
-        include: /\.module\.css$/i,
-      },
-      {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
-        exclude: /\.module\.css$/i,
-      },
-      {
-        test: /\.s[ac]ss$/i,
-        exclude: /\.module.s[ac]ss$/i,
-        use: [
-          // Creates `style` nodes from JS strings
-          'style-loader',
-          // Translates CSS into CommonJS
-          'css-loader',
-          // Compiles Sass to CSS
-          'sass-loader',
-        ],
-      },
-      {
-        test: /\.module.s[ac]ss$/i,
-        use: [
-          // Creates `style` nodes from JS strings
-          'style-loader',
-          // Translates CSS into CommonJS
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1,
-              modules: true,
-            },
-          },
-          // Compiles Sass to CSS
-          'sass-loader',
-        ],
+        include: path.resolve(__dirname, 'src'),
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
     ],
   },

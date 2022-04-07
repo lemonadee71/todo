@@ -18,7 +18,7 @@ import defineCustomElements from './components/custom';
 import Router from './components/Router';
 import * as pages from './pages';
 import { config as firebaseConfig } from './firebase-config';
-import './styles/main.scss';
+import './styles/style.css';
 
 const routes = [
   {
