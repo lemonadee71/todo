@@ -27,7 +27,6 @@ export const useUndo =
 
     const toast = showToast({
       delay,
-      className: 'custom-toast',
       close: true,
       callback: () => {
         // send a message that delete is not cancelled
@@ -36,18 +35,21 @@ export const useUndo =
 
         node = null;
       },
-      node: Toast(text, {
-        text: 'Undo',
-        callback: () => {
-          // insert the deleted item
-          Core.event.emit(type.INSERT, {
-            ...payload,
-            data: { item: extracted, position: node?.dataset?.position },
-          });
+      node: Toast({
+        text,
+        action: {
+          text: 'Undo',
+          callback: () => {
+            // insert the deleted item
+            Core.event.emit(type.INSERT, {
+              ...payload,
+              data: { item: extracted, position: node?.dataset?.position },
+            });
 
-          isCancelled = true;
-          onCancel?.();
-          toast.hideToast();
+            isCancelled = true;
+            onCancel?.();
+            toast.hideToast();
+          },
         },
       }),
     });

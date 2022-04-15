@@ -23,6 +23,38 @@ export const DEFAULT_COLORS = [
   '#FF78CB', // 8, pink
   '#344563', // 9, black
 ];
+export const TOAST_COLORS = {
+  primary: {
+    background: '#cfe2ff',
+    text: '#084298',
+    border: '#b6d4fe',
+  },
+  secondary: {
+    background: '#353535',
+    text: 'white',
+    border: 'gray',
+  },
+  success: {
+    background: '#d1e7dd',
+    text: '#0f5132',
+    border: '#badbcc',
+  },
+  danger: {
+    background: '#f8d7da',
+    text: '#842029',
+    border: '#f5c2c7',
+  },
+  warning: {
+    background: '#fff3cd',
+    text: '#664d03',
+    border: '#ffecb5',
+  },
+  info: {
+    background: '#cff4fc',
+    text: '#055160',
+    border: '#b6effb',
+  },
+};
 export const SHOW_EVENTS = ['mouseenter', 'focus'];
 export const HIDE_EVENTS = ['mouseleave', 'blur'];
 export const POPPER_CONFIG = {
