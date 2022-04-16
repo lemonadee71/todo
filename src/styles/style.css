@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,4 +10,55 @@
   color: black;
   opacity: 0.6;
   cursor: pointer;
+}
+
+/* taken from https://popper.js.org/docs/v2/tutorial/ */
+#tooltip {
+  display: none;
+  background: #333;
+
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 13px;
+  color: white;
+
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+#tooltip_arrow,
+#tooltip_arrow::before {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+}
+
+#tooltip_arrow {
+  visibility: hidden;
+}
+
+#tooltip_arrow::before {
+  visibility: visible;
+  content: '';
+  transform: rotate(45deg);
+}
+
+#tooltip[data-show] {
+  display: block;
+}
+
+#tooltip[data-popper-placement^='top'] > #tooltip_arrow {
+  bottom: -4px;
+}
+
+#tooltip[data-popper-placement^='bottom'] > #tooltip_arrow {
+  top: -4px;
+}
+
+#tooltip[data-popper-placement^='left'] > #tooltip_arrow {
+  right: -4px;
+}
+
+#tooltip[data-popper-placement^='right'] > #tooltip_arrow {
+  left: -4px;
 }

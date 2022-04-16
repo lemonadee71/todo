@@ -99,10 +99,12 @@ const routes = [
 ];
 
 const Website = html`
+  <!-- The main content -->
   ${Router({ routes, tag: 'main', props: { id: 'main' } })}
-  <div id="tooltip" class="tooltip">
-    <span></span>
-    <div class="arrow" data-popper-arrow></div>
+  <!-- Only one tooltip element for all -->
+  <div id="tooltip" role="tooltip">
+    <span id="tooltip_text"></span>
+    <div id="tooltip_arrow" data-popper-arrow></div>
   </div>
 `;
 
