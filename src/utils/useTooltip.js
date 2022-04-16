@@ -11,11 +11,16 @@ export const useTooltip = (el) => {
     (callback = null) =>
     (e) => {
       callback?.(e);
+      const { tooltipText, tooltipPosition } = e.target.dataset;
 
-      currentInstance = createPopper(el, tooltip, POPPER_CONFIG);
+      currentInstance = createPopper(el, tooltip, {
+        placement: tooltipPosition || 'bottom',
+        ...POPPER_CONFIG,
+      });
 
       tooltip.firstElementChild.textContent =
-        e.target.dataset.tooltipText || 'This is a tooltip';
+        tooltipText || 'This is a tooltip';
+
       tooltip.setAttribute('data-show', '');
     };
 
