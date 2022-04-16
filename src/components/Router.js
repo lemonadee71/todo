@@ -1,9 +1,11 @@
 import { createHook, html, render } from 'poor-man-jsx';
 import Core from '../core';
-import Loading from './Loading';
+import { copy } from '../utils/misc';
 
 const Router = ({ routes, tag = 'div', props }) => {
+  const containerClass = props?.class || '';
   const [state] = createHook({
+    class: containerClass,
     url: window.location.pathname,
     match: null,
     component: [],
@@ -15,7 +17,7 @@ const Router = ({ routes, tag = 'div', props }) => {
     state.url = match.url;
 
     // show loading component
-    state.component = Loading();
+    state.component = props?.loadingComponent?.() || [];
 
     // then show the actual component
     (async () => {
@@ -25,9 +27,11 @@ const Router = ({ routes, tag = 'div', props }) => {
 
       const dummy = (c, m) => c?.(m);
       const resolver = route?.resolver || dummy;
+
       state.component = route?.component
         ? await resolver(route.component, state.match)
         : [];
+      state.class = `${containerClass} ${route?.className || ''}`.trim();
     })();
   };
 
@@ -62,7 +66,8 @@ const Router = ({ routes, tag = 'div', props }) => {
 
   return html`
     <${tag}
-      ${props}
+      ${copy(props, ['class', 'loadingComponent'])}
+      class=${state.$class}
       onCreate=${init}
       onDestroy=${destroy}
       onMount=${() => Core.router.resolve(window.location.pathname)}
