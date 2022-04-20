@@ -5,12 +5,15 @@ import { TASK } from '../../core/actions';
 import Core from '../../core';
 import BaseTask from './BaseTask';
 import Subtask from './Subtask';
+import Badge from './Badge';
 
 export default class Task extends BaseTask {
   constructor(data) {
     super(data, TASK);
 
-    [this.state, this._revoke] = createHook({ showSubtasks: false });
+    [this.state, this._revoke] = createHook({
+      showSubtasks: !this.data.totalSubtasks,
+    });
     this.unsubscribe.push(this._revoke.bind(this));
   }
 
@@ -40,6 +43,7 @@ export default class Task extends BaseTask {
       delay: 10,
       draggable: '.subtask',
       filter: 'input,button',
+      emptyInsertThreshold: 10,
       onUpdate: (e) => this.moveSubtask(e.item.dataset.id, e.newIndex),
       onAdd: (e) => {
         const { id, parent, list } = e.item.dataset;
@@ -53,7 +57,7 @@ export default class Task extends BaseTask {
   };
 
   render(position) {
-    this.props.main = {
+    this.props.badges = {
       onClick: (e) => {
         // use event delegation
         if (e.target.dataset.id === 'subtask-badge') {
@@ -62,29 +66,27 @@ export default class Task extends BaseTask {
       },
     };
 
-    this.badges = [
-      ...this.badges,
-      this.data.totalSubtasks
-        ? render(html`<div
-            is-text
-            key="subtasks"
-            class="badge"
-            data-id="subtask-badge"
-            data-tooltip-text="This task has subtasks"
-            style="background-color: ${DEFAULT_COLORS[9]};"
-          >
-            ${this.data.incompleteSubtasks} / ${this.data.totalSubtasks}
-          </div>`)
-        : '',
-    ];
+    if (this.data.totalSubtasks) {
+      this.badges.push(
+        Badge(
+          `${this.data.incompleteSubtasks} / ${this.data.totalSubtasks}`,
+          DEFAULT_COLORS[9],
+          {
+            key: 'subtasks',
+            'data-id': 'subtask-badge',
+            'data-tooltip-text': 'This task has subtasks',
+          }
+        )
+      );
+    }
 
     this.extraContent = render(html`
       <div
         is-list
         ignore="style"
-        class="task__subtasks"
-        style_display=${this.state.$showSubtasks((val) =>
-          val ? 'block' : 'none'
+        class="space-y-1"
+        style_display=${this.state.$showSubtasks((value) =>
+          value ? 'block' : 'none'
         )}
         onCreate=${this.initSubtasks}
       >

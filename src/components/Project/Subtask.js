@@ -5,6 +5,15 @@ export default class Subtask extends BaseTask {
   constructor(data) {
     super(data, TASK.SUBTASKS);
 
-    this.props = { main: { 'data-parent': this.data.parent } };
+    this.props = {
+      main: {
+        // override class to remove drop-shadow
+        class: `${this.type} box-border flex flex-col w-full py-2 bg-white rounded-md`,
+        'data-parent': this.data.parent,
+      },
+      title: { style: 'font-size: 0.875rem; line-height: 1.25rem;' },
+      checkbox: { style: 'width: 1rem; height: 1rem;' },
+      checkmark: { style: 'width: 0.5rem; height: 0.5rem;' },
+    };
   }
 }
