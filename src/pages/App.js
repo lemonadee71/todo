@@ -30,6 +30,7 @@ const routes = [
   {
     path: PATHS.project,
     component: Project,
+    className: 'sm:ml-60 px-6 py-8 font-sans',
     resolver: async (component, match) => {
       if (!isGuest()) {
         const { id } = match.data;
@@ -98,10 +99,18 @@ const App = () => {
   ];
 
   return html`
-    <div id="app" onDestroy=${() => unsubscribe.forEach((cb) => cb())}>
-      <button onClick=${signOut}>Logout</button>
-      ${Sidebar()}${Router({ routes, props: { id: 'main-content' } })}
-    </div>
+    <!-- empty element just to cancel subscriptions -->
+    <div
+      style="display: none;"
+      tabindex="-1"
+      onDestroy=${() => unsubscribe.forEach((cb) => cb())}
+    ></div>
+    <!-- sidebar -->
+    <button onClick=${signOut}>Logout</button>
+    ${Sidebar()}
+    <!-- main content -->
+    ${Router({ routes, tag: 'section' })}
+
     <my-modal id="main-modal" close-btn-class="modal__close-btn"></my-modal>
   `;
 };
