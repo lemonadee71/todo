@@ -33,6 +33,10 @@ class TaskList extends IdList {
     };
   }
 
+  get completedTasks() {
+    return this.items.filter((task) => task.completed).length;
+  }
+
   add(task) {
     const tasks = [task].flat().map((item) => {
       item.project = this.project;
