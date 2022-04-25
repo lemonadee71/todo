@@ -68,15 +68,15 @@ export default class Task extends BaseTask {
 
     if (this.data.totalSubtasks) {
       this.badges.push(
-        Badge(
-          `${this.data.incompleteSubtasks} / ${this.data.totalSubtasks}`,
-          DEFAULT_COLORS[9],
-          {
+        Badge({
+          content: `${this.data.incompleteSubtasks} / ${this.data.totalSubtasks}`,
+          bgColor: DEFAULT_COLORS[9],
+          props: {
             key: 'subtasks',
             'data-id': 'subtask-badge',
             'data-tooltip-text': 'This task has subtasks',
-          }
-        )
+          },
+        })
       );
     }
 
@@ -84,7 +84,7 @@ export default class Task extends BaseTask {
       <div
         is-list
         ignore="style"
-        class="space-y-1"
+        class="space-y-1 divide-y"
         style_display=${this.state.$showSubtasks((value) =>
           value ? 'block' : 'none'
         )}

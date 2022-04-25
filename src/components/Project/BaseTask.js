@@ -27,23 +27,29 @@ export default class BaseTask {
     if (this.data.dueDate) {
       this.badges.push(
         // date badge
-        Badge(formatDate(this.data.dueDate), getDateColor(this.data.dueDate), {
-          key: 'date',
-          ignore: 'data-interval-id',
-          'data-tooltip-text': `Due ${formatDateToNow(this.data.dueDate)}`,
-          onMount: (e) => {
-            // change status of badge every x minute(s)
-            const id = setInterval(() => {
-              e.target.textContent = formatDate(this.data.dueDate);
-              e.target.style.backgroundColor = getDateColor(this.data.dueDate);
-              e.target.dataset.tooltipText = `Due ${formatDateToNow(
-                this.data.dueDate
-              )}`;
-            }, 3 * 60 * 1000);
+        Badge({
+          content: formatDate(this.data.dueDate),
+          bgColor: getDateColor(this.data.dueDate),
+          props: {
+            key: 'date',
+            ignore: 'data-interval-id',
+            'data-tooltip-text': `Due ${formatDateToNow(this.data.dueDate)}`,
+            onMount: (e) => {
+              // change status of badge every x minute(s)
+              const id = setInterval(() => {
+                e.target.textContent = formatDate(this.data.dueDate);
+                e.target.style.backgroundColor = getDateColor(
+                  this.data.dueDate
+                );
+                e.target.dataset.tooltipText = `Due ${formatDateToNow(
+                  this.data.dueDate
+                )}`;
+              }, 3 * 60 * 1000);
 
-            e.target.dataset.intervalId = id;
+              e.target.dataset.intervalId = id;
+            },
+            onUnmount: (e) => clearInterval(e.target.dataset.intervalId),
           },
-          onUnmount: (e) => clearInterval(e.target.dataset.intervalId),
         })
       );
     }
@@ -168,7 +174,7 @@ export default class BaseTask {
 
             <div
               is-list
-              class="flex flex-wrap space-x-1 space-y-1"
+              class="flex flex-wrap gap-1"
               ${this.props.badges}
             >
               ${this.badges.map((item) => render(item))}
