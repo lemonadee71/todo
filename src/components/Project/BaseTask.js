@@ -159,7 +159,7 @@ export default class BaseTask {
           <div class="flex flex-1 flex-col space-y-1">
             <div
               is-list
-              class="flex flex-wrap space-x-1 space-y-1"
+              class="flex flex-wrap gap-1"
               ${this.props.labels}
             >
               ${this.data.labels.items.map(Chip)}
