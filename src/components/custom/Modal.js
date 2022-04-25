@@ -1,11 +1,10 @@
 import { html, render, createHook } from 'poor-man-jsx';
-import { $ } from '../../utils/query';
 
 class Modal extends HTMLElement {
   constructor() {
     super();
     this.stack = [];
-    [this.state, this._revoke] = createHook({ contentClass: '' });
+    [this.state, this._revoke] = createHook({ content: [], contentClass: '' });
   }
 
   connectedCallback() {
@@ -23,71 +22,76 @@ class Modal extends HTMLElement {
 
     if (!this.classList.length) Object.assign(this.style, defaultBackdropStyle);
 
-    const content = html`
-      <div class=${this.state.$contentClass} style="position: relative;">
-        <div class="modal__content" data-name="modal-content">
-          <span class="modal__close-btn" onClick=${this.close}> &times; </span>
+    render(
+      html`
+        <div class=${this.state.$contentClass}>
+          ${this.state.$content((value) => render(value))}
         </div>
-      </div>
-    `;
-
-    render(content, this);
+      `,
+      this
+    );
   }
 
   disconnectedCallback() {
     this._revoke();
   }
 
-  show = () => {
+  open = () => {
     this.style.display = 'block';
 
     return this;
   };
 
   close = () => {
-    this.clearContent();
-
-    if (!this.stack.length) {
-      this.style.display = 'none';
-    }
+    this.style.display = 'none';
+    this.clear();
 
     return this;
   };
 
-  changeContent = (content, contentClass = '') => {
-    const length = this.stack.push({ content, cls: contentClass });
-    this.state.contentClass = contentClass;
-
-    // hide previous ones
-    $.by('data-modal-id', this.content).forEach((node) => {
-      node.style.display = 'none';
-    });
-
-    // add and show new content
-    $.data('name', 'modal-content', this).append(
-      render(html` <div data-modal-id="${length - 1}">${content}</div> `)
-    );
-
-    this.show();
+  clear = () => {
+    this.stack = [];
+    this.state.content = [];
+    this.state.contentClass = '';
 
     return this;
   };
 
-  clearContent = () => {
-    const prevLength = this.stack.length;
+  /**
+   * Change the modal's content
+   * @param {Function} content - callback that returns a Template
+   * @param {string} className - the class name of the container
+   * @returns
+   */
+  push = (content, className = '') => {
+    this.stack.push({ content, className });
 
+    this.state.contentClass = className;
+    this.state.content = content();
+    this.open();
+
+    return this;
+  };
+
+  /**
+   * Change the modal's content by returning to previously shown content.
+   * If no content remained, the modal will be closed
+   * @returns
+   */
+  pop = () => {
     // remove top of the stack
     this.stack.pop();
-    $.data('modal-id', `${prevLength - 1}`).remove();
 
-    // show new top of the stack
-    const newLength = this.stack.length;
-    const prevContent = this.stack[newLength - 1];
-    if (prevContent) {
-      $.data('modal-id', `${newLength - 1}`).style.display = 'block';
+    if (this.stack.length) {
+      // show new top of stack
+
+      const current = this.stack[this.stack.length - 1];
+      this.state.contentClass = current?.className || '';
+      this.state.content = current?.content?.() ?? [];
+      this.open();
+    } else {
+      this.close();
     }
-
-    this.state.contentClass = prevContent?.cls || '';
 
     return this;
   };

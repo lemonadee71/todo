@@ -84,16 +84,10 @@ const App = () => {
       ({ e }) => logger.error(e)
     ),
     Core.event.on(EDIT_TASK, (task) => {
-      $('#main-modal').changeContent(
-        new TaskModal(task).render(),
-        'task-modal'
-      );
+      $('#modal').push(() => new TaskModal(task).render());
     }),
     Core.event.on(EDIT_SUBTASK, (subtask) => {
-      $('#main-modal').changeContent(
-        new SubtaskModal(subtask).render(),
-        'task-modal'
-      );
+      $('#modal').push(() => new SubtaskModal(subtask).render());
     }),
     () => Core.event.clear(),
   ];
@@ -110,8 +104,8 @@ const App = () => {
     ${Sidebar()}
     <!-- main content -->
     ${Router({ routes, tag: 'section' })}
-
-    <my-modal id="main-modal" close-btn-class="modal__close-btn"></my-modal>
+    <!-- only one modal for all -->
+    <my-modal id="modal"></my-modal>
   `;
 };
 
