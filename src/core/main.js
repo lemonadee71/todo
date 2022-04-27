@@ -417,24 +417,15 @@ export const deleteLabel = (projectId, labelId) => {
   return getProject(projectId).labels.extract(labelId);
 };
 
-export const editLabel = (projectId, labelId, prop, value) => {
+export const editLabel = (projectId, labelId, data) => {
   const { labels } = getProject(projectId);
   const label = labels.get(labelId);
-  const labelAlreadyExists = labels.has(
-    (item) => item.name === value && item.id !== labelId
-  );
 
-  if (prop === 'name' && !value.trim()) {
+  if (!data.name.trim()) {
     throw new Error('Label must have a name');
   }
 
-  if (prop === 'name' && labelAlreadyExists) {
-    throw new Error(
-      `Label with the name "${value}" already exists in this project`
-    );
-  }
-
-  if (label) label[prop] = value;
+  if (label) Object.assign(label, data);
   else throw new Error(`Label with the id ${labelId} does not exists`);
 
   return label;

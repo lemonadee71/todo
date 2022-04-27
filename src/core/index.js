@@ -73,7 +73,7 @@ const Core = (() => {
       main.deleteLabel(project, id)
     );
     event.on(PROJECT.LABELS.UPDATE, ({ project, label: id, data }) =>
-      main.editLabel(project, id, data.prop, data.value)
+      main.editLabel(project, id, data)
     );
 
     event.on(TASK.ADD, ({ project, list, data }) =>
