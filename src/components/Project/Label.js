@@ -1,91 +1,49 @@
-import { createHook, html } from 'poor-man-jsx';
-import Core from '../../core';
-import { PROJECT } from '../../core/actions';
-import { debounce } from '../../utils/delay';
+import { html } from 'poor-man-jsx';
 
-const Label = (data, action, isSelected) => {
-  const [state] = createHook({ isNotEditing: true });
-
+const Label = (data, clickAction, editAction, isSelected) => {
   const clickLabel = (e) => {
-    // label element triggers click twice
-    // so ignore the other one for the input
-    if (
-      !state.isNotEditing ||
-      e.target.matches('input') ||
-      e.target.matches('button')
-    )
-      return;
+    // ignore button click
+    if (e.target.nodeName === 'BUTTON' || e.target.nodeName === 'svg') return;
 
-    const label = e.currentTarget;
-    const [base, modifier] = label.className.split('--');
+    const { selected } = e.currentTarget.dataset;
 
-    if (modifier) label.className = base;
-    else label.className = `${base}--selected`;
-
-    action(label.getAttribute('key'), !modifier);
+    clickAction(data.id, !selected);
   };
 
-  const editLabel = debounce((e) => {
-    Core.event.emit(
-      PROJECT.LABELS.UPDATE,
-      {
-        project: data.project,
-        label: data.id,
-        data: { prop: 'name', value: e.target.value },
-      },
-      {
-        onError: () => {
-          e.target.value = data.name;
-        },
-      }
-    );
-  }, 200);
+  const editLabel = () => editAction(data);
 
-  const deleteLabel = () => {
-    Core.event.emit(PROJECT.LABELS.REMOVE, {
-      project: data.project,
-      label: data.id,
-    });
-  };
-
-  const toggleEditing = () => {
-    state.isNotEditing = !state.isNotEditing;
-  };
-
-  // TODO: Fix styles to accommodate the buttons
   return html`
     <div
-      class="label${isSelected ? '--selected' : ''}"
       key="${data.id}"
+      ${isSelected ? 'data-selected="true"' : ''}
+      class="group w-full space-x-1 rounded px-2 py-1 flex flex-row justify-between items-center cursor-pointer border border-solid ${isSelected
+        ? 'border-white'
+        : 'border-transparent'}"
       style="background-color: ${data.color};"
       onClick=${clickLabel}
     >
-      <label class="label__text">
-        <span
-          style="display: ${state.$isNotEditing((val) =>
-            val ? 'inline' : 'none'
-          )};"
+      <p>{% ${data.name} %}</p>
+
+      <button class="h-full invisible group-hover:visible" onClick=${editLabel}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="stroke-gray-600 hover:stroke-gray-800"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="#000000"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
         >
-          {% ${data.name} %}
-        </span>
-        <input
-          type="text"
-          value="${data.name}"
-          placeholder="Label name"
-          style="display: ${state.$isNotEditing((val) =>
-            val ? 'none' : 'inline-block'
-          )};"
-          onBlur=${(e) => {
-            editLabel(e);
-            toggleEditing();
-          }}
-        />
-      </label>
-      <div>
-        <button onClick=${toggleEditing}>Edit</button>
-        <button onClick=${deleteLabel}>Delete</button>
-      </div>
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+          <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+        </svg>
+      </button>
     </div>
   `;
 };
+
 export default Label;
