@@ -1,4 +1,3 @@
-import autosize from 'autosize';
 import { html, createHook, render } from 'poor-man-jsx';
 import Core from '../../core';
 import { PROJECT } from '../../core/actions';
@@ -117,7 +116,7 @@ const LabelPopover = (data, clickAction) => {
                     name="label-name"
                     placeholder="Label name..."
                     rows="1"
-                    onMount=${(e) => autosize(e.target)}
+                    data-autosize
                   >${state.currentTarget.name}</textarea>
 
                   <p class="text-sm font-medium text-gray-500">

@@ -1,4 +1,3 @@
-import autosize from 'autosize';
 import flatpickr from 'flatpickr';
 import { createHook, html, render } from 'poor-man-jsx';
 import Core from '../../core';
@@ -124,8 +123,8 @@ export default class BaseTaskModal {
             class="text-lg font-semibold w-full h-fit rounded-sm px-1 py-1 bg-transparent placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:bg-white focus:ring resize-none break-words overflow-hidden"
             name="task-title"
             rows="1"
+            data-autosize
             onInput=${debounce(this.editTask, 200)}
-            onMount=${(e) => autosize(e.target) /* resize based on content */}
           >${this.data.title.trim()}</textarea>
         </div>
 

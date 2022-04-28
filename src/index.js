@@ -1,3 +1,4 @@
+import autosize from 'autosize';
 import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
@@ -113,14 +114,16 @@ const Website = html`
   </div>
 `;
 
-// add tooltips to elements with data-show-tooltip attr
 PoorManJSX.onAfterCreation((element) => {
+  // add tooltips to elements with data-show-tooltip attr
   $$.data('tooltip-text', null, element).forEach((item) => {
     const [onShow, onHide] = useTooltip(item);
 
     SHOW_EVENTS.forEach((name) => item.addEventListener(name, onShow()));
     HIDE_EVENTS.forEach((name) => item.addEventListener(name, onHide()));
   });
+
+  $$.data('autosize', null, element).forEach((item) => autosize(item));
 });
 
 initializeApp(firebaseConfig);
