@@ -11,9 +11,18 @@ export default class Subtask extends BaseTask {
         class: `${this.type} box-border flex flex-col w-full py-1 bg-white rounded-md`,
         'data-parent': this.data.parent,
       },
-      title: { style: 'font-size: 0.875rem; line-height: 1.25rem;' },
-      checkbox: { style: 'width: 1rem; height: 1rem;' },
-      checkmark: { style: 'width: 0.5rem; height: 0.5rem;' },
     };
+  }
+
+  render(i, size = 'small') {
+    if (size === 'small') {
+      Object.assign(this.props, {
+        title: { style: 'font-size: 0.875rem; line-height: 1.25rem;' },
+        checkbox: { style: 'width: 1rem; height: 1rem;' },
+        checkmark: { style: 'width: 0.5rem; height: 0.5rem;' },
+      });
+    }
+
+    return super.render(i);
   }
 }
