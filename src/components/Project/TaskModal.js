@@ -9,7 +9,24 @@ export default class TaskModal extends BaseTaskModal {
   constructor(data) {
     super(data, TASK);
 
-    [this.SelectLocation] = useSelectLocation(this.transferTask, this.data);
+    [this.SelectLocation] = useSelectLocation(this.transferTask, this.data, {
+      project: {
+        class:
+          'bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800',
+        onMount: (e) => {
+          e.target.before(
+            render(html`<span class="text-sm text-gray-500">In</span>`)
+          );
+          e.target.after(
+            render(html`<span class="text-sm text-gray-500">, </span>`)
+          );
+        },
+      },
+      list: {
+        class:
+          'bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800',
+      },
+    });
   }
 
   transferTask = (_, selected, type) => {
@@ -43,7 +60,9 @@ export default class TaskModal extends BaseTaskModal {
       {
         template: this.SelectLocation,
         target: 'title',
-        method: 'after',
+        // too lazy to specify margin manually so use default (append) instead
+        // to avoid the sibling selector
+        // method: 'after',
       },
       {
         // ISSUE: Divider not showing

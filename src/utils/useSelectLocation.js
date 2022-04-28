@@ -5,7 +5,11 @@ import { useRoot } from '../core/hooks';
 import { getCollectionRef, getDocuments } from './firestore';
 import { copy } from './misc';
 
-export const useSelectLocation = (onChange, data = {}) => {
+export const useSelectLocation = (
+  onChange,
+  data = {},
+  props = { project: '', list: '' }
+) => {
   const [root, unsubscribe] = useRoot();
   const [state] = createHook({
     project: data.project,
@@ -75,13 +79,19 @@ export const useSelectLocation = (onChange, data = {}) => {
   };
 
   const component = html`
-    <select name="project" onDestroy=${unsubscribe} onChange=${selectProject}>
+    <select
+      name="project"
+      onDestroy=${unsubscribe}
+      onChange=${selectProject}
+      ${props.project}
+    >
       ${root.$projects(renderProjectNames)}
     </select>
     <select
       name="list"
       onChange=${selectList}
       onMount=${async () => showListOptions(state.project)}
+      ${props.list}
     >
       ${state.$listOptions}
     </select>
