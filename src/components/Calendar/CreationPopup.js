@@ -9,8 +9,18 @@ import { formatToDateTime } from '../../utils/date';
 import { useSelectLocation } from '../../utils/useSelectLocation';
 
 const CreationPopup = (projectId, evt) => {
-  const [SelectLocation] = useSelectLocation(null, { project: projectId });
   const [state, revoke] = createHook({ dueDate: '' });
+  const [SelectLocation] = useSelectLocation(
+    null,
+    { project: projectId },
+    {
+      project: {
+        class: 'text-black w-full p-1 rounded mb-2',
+        disabled: true,
+      },
+      list: { class: 'text-black w-full p-1 rounded' },
+    }
+  );
 
   const closePopup = () => {
     evt.guide.clearGuideElement();
@@ -55,27 +65,54 @@ const CreationPopup = (projectId, evt) => {
     e.target.addEventListener('@destroy', () => instance.destroy());
   };
 
-  const init = function () {
-    this.querySelector('[name="project"]').setAttribute('disabled', '');
-  };
-
   return html`
-    <div id="creation-popup" onMount=${init} onPopupClose=${closePopup}>
-      <span onClick=${closePopup}>&times;</span>
+    <div
+      class="relative text-white bg-[#272727] w-56 px-1 pt-5 pb-3 rounded-md text-sm"
+      id="creation-popup"
+      onPopupClose=${closePopup}
+    >
+      <button class="absolute top-0 right-0 mr-3 text-lg" onClick=${closePopup}>
+        &times;
+      </button>
+
       <form
+        class="flex flex-col space-y-2 w-full px-2 tex-"
         onSubmit.prevent=${createTask}
-        style="display: flex; flex-direction: column;"
       >
-        <input type="text" name="title" placeholder="Unnamed Task" />
-        ${SelectLocation}
-        <input
-          type="text"
-          name="dueDate"
-          value="${formatToDateTime(evt.start.toDate())}"
-          readonly
-          onMount=${initDatePicker}
-        />
-        <button type="submit">Submit</button>
+        <p class="text-sm font-medium">Create new task</p>
+        <label>
+          <p class="text-xs font-medium text-gray-500 mb-1">Title</p>
+          <textarea
+            class="text-black w-full p-1 rounded focus:ring resize-none break-words"
+            name="title"
+            placeholder="Task name"
+            rows="1"
+            data-autosize
+          ></textarea>
+        </label>
+
+        <div>
+          <p class="text-xs font-medium text-gray-500 mb-1">Location</p>
+          ${SelectLocation}
+        </div>
+
+        <label>
+          <p class="text-xs font-medium text-gray-500 mb-1">Date</p>
+          <input
+            class="text-black w-full p-1 rounded"
+            type="text"
+            name="dueDate"
+            value="${formatToDateTime(evt.start.toDate())}"
+            readonly
+            onMount=${initDatePicker}
+          />
+        </label>
+        <button
+          class="rounded px-2 py-1 bg-blue-500 hover:bg-blue-700"
+          type="submit"
+        >
+          Submit
+        </button>
       </form>
     </div>
   `;
