@@ -2,15 +2,15 @@ import { html } from 'poor-man-jsx';
 
 const Label = (data, clickAction, editAction, isSelected) => {
   const clickLabel = (e) => {
-    // ignore button click
-    if (e.target.nodeName === 'BUTTON' || e.target.nodeName === 'svg') return;
-
     const { selected } = e.currentTarget.dataset;
 
     clickAction(data.id, !selected);
   };
 
-  const editLabel = () => editAction(data);
+  const editLabel = (e) => {
+    editAction(data);
+    e.stopPropagation();
+  };
 
   return html`
     <div
