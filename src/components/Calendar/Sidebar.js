@@ -1,49 +1,36 @@
 import { html, render } from 'poor-man-jsx';
 import { useProject } from '../../core/hooks';
-import { $, $$ } from '../../utils/query';
 
 const Sidebar = (projectId, toggleSchedule) => {
   const [data, unsubscribe] = useProject(projectId);
 
   const toggleList = (e) => {
     toggleSchedule(e.target.value, !e.target.checked);
-
-    if (!e.target.checked) $.attr('name', 'view-all').checked = false;
-  };
-
-  const toggleAll = (e) => {
-    $$('input', $.data('name', 'project-lists')).forEach((input) => {
-      input.checked = e.target.checked;
-      toggleList({ target: input });
-    });
   };
 
   return html`
-    <div data-name="sidebar" onDestroy=${unsubscribe}>
-      <label>
-        <input name="view-all" type="checkbox" checked onChange=${toggleAll} />
-        View all
-      </label>
-      <ul is-list data-name="project-lists">
-        ${data.$lists
-          .map(
-            (list) =>
-              html`
-                <li key="${list.id}">
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="${list.id}"
-                      checked
-                      onChange=${toggleList}
-                    />
-                    ${list.name}
-                  </label>
-                </li>
-              `
-          )
-          .map((item) => render(item))}
-      </ul>
+    <div
+      is-list
+      class="font-sans text-sm flex flex-col space-y-1"
+      data-name="sidebar"
+      onDestroy=${unsubscribe}
+    >
+      ${data.$lists
+        .map(
+          (list) =>
+            html`
+              <label key="${list.id}">
+                <input
+                  type="checkbox"
+                  value="${list.id}"
+                  checked
+                  onChange=${toggleList}
+                />
+                ${list.name}
+              </label>
+            `
+        )
+        .map((item) => render(item))}
     </div>
   `;
 };
