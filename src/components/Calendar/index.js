@@ -9,7 +9,6 @@ import { $ } from '../../utils/query';
 import { dispatchCustomEvent } from '../../utils/dispatch';
 import { formatToDateTime, getDueDateRange } from '../../utils/date';
 import { useUndo } from '../../utils/undo';
-import Sidebar from './Sidebar';
 import CreationPopup from './CreationPopup';
 import { template } from './template';
 
@@ -32,6 +31,11 @@ const Calendar = (projectId) => {
         list: data.list,
         task: data.id,
       },
+      borderColor: 'rgb(251 191 36)',
+      bgColor: 'rgb(251 191 36)',
+      dragBgColor: 'rgb(94 234 212)',
+      customStyle:
+        'font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem;',
     };
 
     calendar.createSchedules([schedule]);
@@ -45,9 +49,9 @@ const Calendar = (projectId) => {
     calendar.deleteSchedule(id, calendarId);
   };
 
-  const toggleSchedule = (calendarId, toHide) => {
-    calendar.toggleSchedules(calendarId, toHide);
-  };
+  // const toggleSchedule = (calendarId, toHide) => {
+  //   calendar.toggleSchedules(calendarId, toHide);
+  // };
 
   const showTasks = () => {
     Core.main
@@ -200,12 +204,34 @@ const Calendar = (projectId) => {
   ];
 
   return html`
-    ${Sidebar(projectId, toggleSchedule)}
-    <div data-name="taskbar">
-      <button name="today" onClick=${goToToday}>Today</button>
-      <button name="previous" onClick=${previous}><</button>
-      <button name="next" onClick=${next}>></button>
-      <h1>${state.$date((date) => format(date, 'MMMM yyyy'))}</h1>
+    <div class="flex flex-row gap-1 mb-3" data-name="taskbar">
+      <button
+        class="bg-neutral-300 py-1 px-3 rounded-2xl active:ring shadow-sm"
+        name="today"
+        data-tooltip-text="${format(new Date(), 'MMMM dd, yyyy')}"
+        onClick=${goToToday}
+      >
+        Today
+      </button>
+      <button
+        class="bg-neutral-300 py-1 px-3 rounded-full active:ring shadow-sm"
+        name="previous"
+        data-tooltip-text="Previous"
+        onClick=${previous}
+      >
+        <
+      </button>
+      <button
+        class="bg-neutral-300 py-1 px-3 rounded-full active:ring shadow-sm"
+        name="next"
+        data-tooltip-text="Next"
+        onClick=${next}
+      >
+        >
+      </button>
+      <h2 class="font-medium text-lg">
+        ${state.$date((date) => format(date, 'MMMM yyyy'))}
+      </h2>
     </div>
     <div data-name="calendar">
       <div onCreate=${init} onDestroy=${destroy}></div>
