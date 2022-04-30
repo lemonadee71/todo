@@ -1,6 +1,6 @@
 import format from 'date-fns/format';
 import { createPopper } from '@popperjs/core';
-import { createHook, html, render } from 'poor-man-jsx';
+import { createHook, html } from 'poor-man-jsx';
 import ToastUICalendar from 'tui-calendar';
 import Core from '../../core';
 import { EDIT_TASK, TASK } from '../../core/actions';
@@ -78,30 +78,38 @@ const Calendar = (projectId) => {
   };
 
   /** core */
-  const closeCreationPopup = () => {
-    const prevPopup = $('#creation-popup');
-    if (prevPopup) dispatchCustomEvent(prevPopup, 'popupclose');
-  };
-
   const initListeners = () => {
     calendar.on({
-      clickSchedule: closeCreationPopup,
+      clickSchedule: () =>
+        dispatchCustomEvent($('#creation-popup'), 'popup:close'),
       beforeCreateSchedule: (e) => {
+        const popup = $('#creation-popup');
         // make sure to close previous popup first
-        closeCreationPopup();
+        dispatchCustomEvent(popup, 'popup:close');
+        // change initial date
+        dispatchCustomEvent(popup, 'datechange', { date: e.start.toDate() });
+        // show popup
+        dispatchCustomEvent(popup, 'popup:open');
 
-        // then create a new one
-        const popup = render(CreationPopup(projectId, e)).firstElementChild;
-        document.body.append(popup);
-
+        // init popper
         const ref =
           e.guide.guideElement ?? Object.values(e.guide.guideElements)[0];
-        const instance = createPopper(ref, popup, POPPER_CONFIG);
+        const instance = createPopper(ref, popup, {
+          ...POPPER_CONFIG,
+          placement: 'right',
+        });
 
-        popup.addEventListener('@destroy', () => instance.destroy());
+        popup.addEventListener(
+          'popup:close',
+          () => {
+            e.guide.clearGuideElement();
+            instance.destroy();
+          },
+          { once: true }
+        );
       },
       beforeUpdateSchedule: ({ schedule, changes }) => {
-        closeCreationPopup();
+        dispatchCustomEvent($('#creation-popup'), 'popup:close');
 
         const location = schedule.raw;
 
@@ -202,6 +210,7 @@ const Calendar = (projectId) => {
     <div data-name="calendar">
       <div onCreate=${init} onDestroy=${destroy}></div>
     </div>
+    ${CreationPopup(projectId)}
   `;
 };
 

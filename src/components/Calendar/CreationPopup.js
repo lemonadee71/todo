@@ -3,13 +3,16 @@ import { createHook, html } from 'poor-man-jsx';
 import Core from '../../core';
 import { TASK } from '../../core/actions';
 import { debounce } from '../../utils/delay';
-import { $ } from '../../utils/query';
 import logger from '../../utils/logger';
-import { formatToDateTime } from '../../utils/date';
 import { useSelectLocation } from '../../utils/useSelectLocation';
+import { dispatchCustomEvent } from '../../utils/dispatch';
 
-const CreationPopup = (projectId, evt) => {
-  const [state, revoke] = createHook({ dueDate: '' });
+const CreationPopup = (projectId) => {
+  const [state, revoke] = createHook({
+    dueDate: '',
+    isOpen: false,
+    initialDate: new Date(),
+  });
   const [SelectLocation] = useSelectLocation(
     null,
     { project: projectId },
@@ -21,11 +24,15 @@ const CreationPopup = (projectId, evt) => {
       list: { class: 'text-black w-full p-1 rounded' },
     }
   );
+  let flatpickrInstance;
 
-  const closePopup = () => {
-    evt.guide.clearGuideElement();
-    revoke();
-    $('#creation-popup').remove();
+  const togglePopup = (value) => {
+    state.isOpen = value ?? !state.isOpen;
+  };
+
+  const changeInitialDate = (e) => {
+    state.initialDate = e.detail.date;
+    flatpickrInstance.setDate(state.initialDate, true);
   };
 
   const createTask = (e) => {
@@ -38,7 +45,8 @@ const CreationPopup = (projectId, evt) => {
       TASK.ADD,
       { project, list, data: { title, dueDate: state.dueDate } },
       {
-        onSuccess: closePopup,
+        onSuccess: () =>
+          dispatchCustomEvent(e.target.parentElement, 'popup:close'),
         onError: logger.error,
       }
     );
@@ -52,7 +60,7 @@ const CreationPopup = (projectId, evt) => {
       state.dueDate = date;
     }, 100);
 
-    const instance = flatpickr(e.target, {
+    flatpickrInstance = flatpickr(e.target, {
       enableTime: true,
       noCalendar: true,
       altInput: true,
@@ -62,16 +70,27 @@ const CreationPopup = (projectId, evt) => {
       onValueUpdate: editDate,
     });
 
-    e.target.addEventListener('@destroy', () => instance.destroy());
+    e.target.addEventListener('@destroy', () => flatpickrInstance.destroy());
   };
 
   return html`
     <div
       class="relative text-white bg-[#272727] w-56 px-1 pt-5 pb-3 rounded-md text-sm"
       id="creation-popup"
-      onPopupClose=${closePopup}
+      style_visibility=${state.$isOpen((value) =>
+        value ? 'visible' : 'hidden'
+      )}
+      onDateChange=${changeInitialDate}
+      onPopup:toggle=${() => togglePopup()}
+      onPopup:open=${() => togglePopup(true)}
+      onPopup:close=${() => togglePopup(false)}
+      onDestroy=${revoke}
     >
-      <button class="absolute top-0 right-0 mr-3 text-lg" onClick=${closePopup}>
+      <button
+        class="absolute top-0 right-0 mr-3 text-lg"
+        onClick=${(e) =>
+          dispatchCustomEvent(e.target.parentElement, 'popup:close')}
+      >
         &times;
       </button>
 
@@ -102,7 +121,7 @@ const CreationPopup = (projectId, evt) => {
             class="text-black w-full p-1 rounded"
             type="text"
             name="dueDate"
-            value="${formatToDateTime(evt.start.toDate())}"
+            value=${state.initialDate}
             readonly
             onMount=${initDatePicker}
           />
