@@ -1,5 +1,6 @@
 import flatpickr from 'flatpickr';
 import { createHook, html, render } from 'poor-man-jsx';
+import { CalendarIcon, LabelIcon } from '../../assets/icons';
 import Core from '../../core';
 import { TASK } from '../../core/actions';
 import { POPPER_CONFIG } from '../../core/constants';
@@ -131,23 +132,7 @@ export default class BaseTaskModal {
         <!-- Labels -->
         <div data-name="task__labels">
           <div class="flex flex-row space-x-1 items-center mb-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="#000000"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <circle cx="8.5" cy="8.5" r="1" fill="currentColor" />
-              <path
-                d="M4 7v3.859c0 .537 .213 1.052 .593 1.432l8.116 8.116a2.025 2.025 0 0 0 2.864 0l4.834 -4.834a2.025 2.025 0 0 0 0 -2.864l-8.117 -8.116a2.025 2.025 0 0 0 -1.431 -.593h-3.859a3 3 0 0 0 -3 3z"
-              />
-            </svg>
+            ${LabelIcon()}
             <h3 class="text-md font-medium">Labels</h3>
           </div>
 
@@ -236,25 +221,7 @@ export default class BaseTaskModal {
         <!-- Date -->
         <div data-name="task__date">
           <div class="flex flex-row space-x-1 items-center mb-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="#000000"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <rect x="4" y="5" width="16" height="16" rx="2" />
-              <line x1="16" y1="3" x2="16" y2="7" />
-              <line x1="8" y1="3" x2="8" y2="7" />
-              <line x1="4" y1="11" x2="20" y2="11" />
-              <line x1="11" y1="15" x2="12" y2="15" />
-              <line x1="12" y1="15" x2="12" y2="18" />
-            </svg>
+            ${CalendarIcon()}
             <h3 class="text-md font-medium">Due Date</h3>
           </div>
 

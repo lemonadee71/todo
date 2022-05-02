@@ -1,4 +1,5 @@
 import { html, render } from 'poor-man-jsx';
+import { KebabMenuIcon } from '../../assets/icons';
 import Core from '../../core';
 import { EDIT_SUBTASK, EDIT_TASK } from '../../core/actions';
 import { formatDate, formatDateToNow } from '../../utils/date';
@@ -182,23 +183,7 @@ export default class BaseTask {
           </div>
 
           <div onMount=${this.initMenu} ${this.props.menu}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="cursor-pointer stroke-gray-500 hover:stroke-gray-800"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="#000000"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <circle cx="12" cy="12" r="1" />
-              <circle cx="12" cy="19" r="1" />
-              <circle cx="12" cy="5" r="1" />
-            </svg>
+            ${KebabMenuIcon('cursor-pointer stroke-gray-500 hover:stroke-gray-800')}
           </div>
 
           <div
