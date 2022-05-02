@@ -10,7 +10,6 @@ import { dispatchCustomEvent } from '../../utils/dispatch';
 import { formatToDateTime, getDueDateRange } from '../../utils/date';
 import { useUndo } from '../../utils/undo';
 import CreationPopup from './CreationPopup';
-import { template } from './template';
 
 const Calendar = (projectId) => {
   const [state] = createHook({ date: new Date() });
@@ -64,6 +63,8 @@ const Calendar = (projectId) => {
 
   const setDate = () => {
     state.date = calendar.getDate().toDate();
+    // to prevent creation popup from floating (having no ref)
+    dispatchCustomEvent($('#creation-popup'), 'popup:close');
   };
 
   const goToToday = () => {
@@ -238,6 +239,13 @@ const Calendar = (projectId) => {
     </div>
     ${CreationPopup(projectId)}
   `;
+};
+
+export const template = {
+  popupDetailDate: (...args) =>
+    format(args[2].toDate(), 'MMMM d, yyyy hh:mm a'),
+  popupDetailBody: (schedule) =>
+    `<p class="truncate">${schedule.body.trim()}</p>`,
 };
 
 export default Calendar;
