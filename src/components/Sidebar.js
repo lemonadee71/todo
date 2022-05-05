@@ -12,11 +12,19 @@ const Sidebar = () => {
   const createNewProject = (e) => {
     const input = e.target.elements['new-project'];
 
-    Core.event.emit(PROJECT.ADD, {
-      data: { name: input.value },
-    });
-
-    input.value = '';
+    Core.event.emit(
+      PROJECT.ADD,
+      {
+        data: { name: input.value },
+      },
+      {
+        onSuccess: () => {
+          if (e.target.dataset.clear) {
+            input.value = '';
+          }
+        },
+      }
+    );
   };
 
   const init = function () {
@@ -35,7 +43,7 @@ const Sidebar = () => {
 
   return html`
     <aside
-      class="fixed left-0 w-56 h-screen p-5 bg-[#272727] overflow-x-hidden overflow-y-auto transition-all"
+      class="fixed left-0 w-56 h-screen p-5 bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all"
       id="sidebar"
       onDestroy=${revoke}
     >
@@ -61,9 +69,22 @@ const Sidebar = () => {
             </li>
           </ul>
 
-          <h2 class="font-bold text-sm text-neutral-400 tracking-wide mb-1">
-            PROJECTS
-          </h2>
+          <div class="flex flex-row justify-between">
+            <h2 class="font-bold text-sm text-neutral-400 tracking-wide mb-1">
+              PROJECTS
+            </h2>
+            <!-- Quick add -->
+            <form onSubmit.prevent=${createNewProject}>
+              <button
+                class="rounded border border-solid border-neutral-400 hover:bg-neutral-700"
+                data-tooltip-text="Add new project"
+                type="submit"
+              >
+                ${AddIcon('stroke-neutral-400', 16, 1.25)}
+              </button>
+              <input type="hidden" name="new-project" value="Unnamed project" />
+            </form>
+          </div>
           <ul
             is-list
             keystring="data-id"
@@ -75,7 +96,11 @@ const Sidebar = () => {
         </nav>
 
         <div class="absolute bottom-6 w-full">
-          <form class="flex flex-row" onSubmit.prevent=${createNewProject}>
+          <form
+            class="flex flex-row"
+            data-clear="success"
+            onSubmit.prevent=${createNewProject}
+          >
             <button type="submit">${AddIcon('stroke-gray-400')}</button>
             <input
               type="text"
