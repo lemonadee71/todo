@@ -1,6 +1,7 @@
 import { html } from 'poor-man-jsx';
 import { PROJECT } from '../core/actions';
 import { useUndo } from '../utils/undo';
+import { DeleteIcon } from '../assets/icons';
 
 const ProjectLink = (data, i) => {
   const deleteProject = useUndo({
@@ -10,9 +11,25 @@ const ProjectLink = (data, i) => {
   });
 
   return html`
-    <li ignore="style" data-id="${data.id}" data-position="${i}">
-      <a is="navigo-link" href="${`/app/${data.link}`}">{% ${data.name} %}</a>
-      <button onClick=${deleteProject}>Delete</button>
+    <li
+      ignore="style"
+      class="group flex justify-between items-center"
+      data-id="${data.id}"
+      data-position="${i}"
+    >
+      <a
+        is="navigo-link"
+        class="no-underline hover:underline text-sm text-white truncate"
+        href="/app/${data.link}"
+      >
+        {% ${data.name} %}
+      </a>
+      <button onClick=${deleteProject}>
+        ${DeleteIcon(
+          'invisible stroke-red-500 group-hover:visible hover:stroke-red-700',
+          18
+        )}
+      </button>
     </li>
   `;
 };
