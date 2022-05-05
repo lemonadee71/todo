@@ -159,10 +159,6 @@ export const getProject = (projectId) => {
 };
 
 export const addProject = (name) => {
-  if (Root.has((project) => project.name === name)) {
-    throw new Error(`Project with the name "${name}" already exists`);
-  }
-
   if (!name.trim()) throw new Error('Project must have a name');
 
   const project = new Project({ name });
@@ -172,10 +168,6 @@ export const addProject = (name) => {
 };
 
 export const updateProjectName = (projectId, name) => {
-  if (Root.has((proj) => proj.name === name && proj.id !== projectId)) {
-    throw new Error(`Project with the name "${name}" already exists`);
-  }
-
   if (!name.trim()) throw new Error('Project must have a name');
 
   const project = getProject(projectId);
