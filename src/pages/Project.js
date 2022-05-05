@@ -6,6 +6,7 @@ import Core from '../core';
 import Calendar from '../components/Calendar';
 import List from '../components/Project/List';
 import { AddIcon, CalendarIcon, CloseIcon, ListIcon } from '../assets/icons';
+import { debounce } from '../utils/delay';
 
 const Project = ({ data: { id } }) => {
   const [project, unsubscribe] = useProject(id);
@@ -17,6 +18,13 @@ const Project = ({ data: { id } }) => {
 
   const toggleListFormVisibility = () => {
     state.openForm = !state.openForm;
+  };
+
+  const editProject = (e) => {
+    Core.event.emit(PROJECT.UPDATE, {
+      project: id,
+      data: { name: e.target.value },
+    });
   };
 
   const createNewList = (e) => {
@@ -99,13 +107,23 @@ const Project = ({ data: { id } }) => {
     </div>
   `;
 
+  // TODO: Project header should be fixed while body is free to extend
   return html`
     <header
       data-name="project__name"
-      class="w-full flex justify-between items-center"
+      class="flex justify-between items-center mt-4 mb-6"
       onDestroy=${unsubscribe}
     >
-      <h1 class="text-3xl font-extrabold mt-8 mb-6">${project.$name}</h1>
+      <h1 class="sr-only">${project.$name}</h1>
+      <!-- prettier-ignore -->
+      <textarea
+        class="text-2xl font-extrabold w-3/4 h-fit rounded-sm px-1 py-1 bg-transparent placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:bg-white focus:ring resize-none break-words overflow-hidden"
+        name="project-name"
+        rows="1"
+        data-autosize
+        onInput=${debounce(editProject, 200)}
+      >${project.name}</textarea>
+
       <button
         class="px-3 py-2 rounded active:ring"
         data-tooltip-text="Switch to ${state.$isListView((value) =>
@@ -128,7 +146,7 @@ const Project = ({ data: { id } }) => {
               <div
                 is-list
                 keystring="id"
-                class="flex flex-row items-start space-x-6"
+                class="w-fit flex flex-row items-start space-x-6"
                 onCreate=${init}
               >
                 ${project.$lists((projects) =>

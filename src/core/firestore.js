@@ -15,7 +15,6 @@ import {
   deleteDocument,
   getCollectionRef,
   getData,
-  getDocumentRef,
   getDocuments,
   setDocument,
   updateDocument,
@@ -140,7 +139,7 @@ export const setupListeners = () => {
   const projectRef = doc(getFirestore(), `${Core.state.currentUser}/Projects`);
 
   Core.event.onSuccess(PROJECT.ADD, async (data) => {
-    await setDoc(getDocumentRef('Projects', data.id), data.toFirestore());
+    await setDocument('Projects', data.id, data.toFirestore());
     await updateDoc(projectRef, { order: arrayUnion(data.id) });
 
     data.labels.items.forEach(async (label) => {
@@ -159,11 +158,15 @@ export const setupListeners = () => {
     await updateDoc(projectRef, { order: arrayRemove(data.id) });
   });
 
-  Core.event.onSuccess(PROJECT.MOVE, async () => {
-    await updateDoc(projectRef, {
+  Core.event.onSuccess(PROJECT.MOVE, async () =>
+    updateDoc(projectRef, {
       order: Core.main.getAllProjects().map((item) => item.id),
-    });
-  });
+    })
+  );
+
+  Core.event.onSuccess(PROJECT.UPDATE, async (data) =>
+    updateDocument('Projects', data.id, data.toFirestore())
+  );
 
   // =====================================================================================
   // Lists
