@@ -123,7 +123,11 @@ PoorManJSX.onAfterCreation((element) => {
     HIDE_EVENTS.forEach((name) => item.addEventListener(name, onHide()));
   });
 
-  $$.data('autosize', null, element).forEach((item) => autosize(item));
+  $$.data('autosize', null, element).forEach((item) => {
+    autosize(item);
+    // to get the correct size on render
+    item.addEventListener('@mount', () => autosize.update(item));
+  });
 });
 
 initializeApp(firebaseConfig);
