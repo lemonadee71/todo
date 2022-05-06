@@ -43,7 +43,7 @@ const Sidebar = () => {
 
   return html`
     <aside
-      class="fixed left-0 w-56 h-screen p-5 bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all"
+      class="invisible sm:visible fixed left-0 w-56 h-screen p-5 bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all"
       id="sidebar"
       onDestroy=${revoke}
     >
@@ -77,7 +77,7 @@ const Sidebar = () => {
             <form onSubmit.prevent=${createNewProject}>
               <button
                 class="rounded border border-solid border-neutral-400 hover:bg-neutral-700"
-                data-tooltip-text="Add new project"
+                data-tooltip="Add new project"
                 type="submit"
               >
                 ${AddIcon('stroke-neutral-400', 16, 1.25)}

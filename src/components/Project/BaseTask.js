@@ -34,7 +34,7 @@ export default class BaseTask {
           props: {
             key: 'date',
             ignore: 'data-interval-id',
-            'data-tooltip-text': `Due ${formatDateToNow(this.data.dueDate)}`,
+            'data-tooltip': `Due ${formatDateToNow(this.data.dueDate)}`,
             onMount: (e) => {
               // change status of badge every x minute(s)
               const id = setInterval(() => {

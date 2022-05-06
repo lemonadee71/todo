@@ -148,7 +148,7 @@ export default class BaseTaskModal {
                   onMount: this.initPopover,
                   key: 'add-label',
                   'ignore-all': '',
-                  'data-tooltip-text': 'Add label',
+                  'data-tooltip': 'Add label',
                   'data-tooltip-position': 'top',
                 },
               });

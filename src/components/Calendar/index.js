@@ -209,7 +209,7 @@ const Calendar = (projectId) => {
       <button
         class="bg-neutral-300 py-1 px-3 rounded-2xl active:ring shadow-sm"
         name="today"
-        data-tooltip-text="${format(new Date(), 'MMMM dd, yyyy')}"
+        data-tooltip="${format(new Date(), 'MMMM dd, yyyy')}"
         onClick=${goToToday}
       >
         Today
@@ -217,7 +217,7 @@ const Calendar = (projectId) => {
       <button
         class="bg-neutral-300 py-1 px-3 rounded-full active:ring shadow-sm"
         name="previous"
-        data-tooltip-text="Previous"
+        data-tooltip="Previous"
         onClick=${previous}
       >
         <
@@ -225,7 +225,7 @@ const Calendar = (projectId) => {
       <button
         class="bg-neutral-300 py-1 px-3 rounded-full active:ring shadow-sm"
         name="next"
-        data-tooltip-text="Next"
+        data-tooltip="Next"
         onClick=${next}
       >
         >

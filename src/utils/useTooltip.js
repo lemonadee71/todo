@@ -11,7 +11,7 @@ export const useTooltip = (el) => {
     (callback = null) =>
     (e) => {
       callback?.(e);
-      const { tooltipText, tooltipPosition } = e.target.dataset;
+      const { tooltip: tooltipText, tooltipPosition } = e.target.dataset;
 
       currentInstance = createPopper(el, tooltip, {
         placement: tooltipPosition || 'bottom',

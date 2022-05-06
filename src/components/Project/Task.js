@@ -74,7 +74,7 @@ export default class Task extends BaseTask {
           props: {
             key: 'subtasks',
             'data-id': 'subtask-badge',
-            'data-tooltip-text': 'This task has subtasks',
+            'data-tooltip': 'This task has subtasks',
           },
         })
       );
