@@ -85,7 +85,7 @@ const Project = ({ data: { id } }) => {
                   </button>
                   <button
                     type="reset"
-                    data-tooltip-text="Cancel"
+                    data-tooltip="Cancel"
                     data-tooltip-position="right"
                     onClick=${toggleFormVisibility}
                   >
@@ -110,7 +110,7 @@ const Project = ({ data: { id } }) => {
   return html`
     <div
       data-name="project__name"
-      class="flex justify-between items-center mt-4 mb-6"
+      class="flex justify-between items-center mt-14 mb-5"
       onDestroy=${unsubscribe}
     >
       <h1 class="sr-only">${project.$name}</h1>
@@ -125,7 +125,7 @@ const Project = ({ data: { id } }) => {
 
       <button
         class="px-3 py-2 rounded active:ring"
-        data-tooltip-text="Switch to ${state.$isListView((value) =>
+        data-tooltip="Switch to ${state.$isListView((value) =>
           value ? 'calendar' : 'list'
         )} view"
         onClick=${switchView}

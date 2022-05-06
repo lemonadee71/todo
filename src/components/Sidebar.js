@@ -43,7 +43,7 @@ const Sidebar = () => {
 
   return html`
     <aside
-      class="invisible sm:visible fixed left-0 w-56 h-screen p-5 bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all"
+      class="invisible sm:visible fixed top-0 left-0 w-56 h-screen p-5 bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all"
       id="sidebar"
       onDestroy=${revoke}
     >
