@@ -90,36 +90,38 @@ const List = (data, pos) => {
   // ?TODO: Add animation when task is moved to completed
   return html`
     <div
-      class="tasklist w-72 px-3 py-4 rounded-lg bg-[#dedede] space-y-2"
+      class="tasklist w-72 pt-3 pb-4 space-y-2 rounded-lg bg-[#dedede] sm:relative"
       id="${data.id}"
       data-id="${data.id}"
       data-position="${pos}"
     >
       <!-- List header -->
-      <div class="flex justify-between items-center">
-        <h2 class="font-medium text-lg">{% ${data.name} %}</h2>
-        <button class="h-full" onClick=${deleteList}>
-          ${DeleteIcon('stroke-red-500 hover:stroke-red-700')}
-        </button>
-      </div>
+      <div class="sm:sticky sm:top-0 px-3 py-2 space-y-1 bg-[#dedede] z-10">
+        <div class="flex justify-between items-center ">
+          <h2 class="font-medium text-lg">{% ${data.name} %}</h2>
+          <button class="h-full" onClick=${deleteList}>
+            ${DeleteIcon('stroke-red-500 hover:stroke-red-700')}
+          </button>
+        </div>
 
-      <!-- New task form -->
-      <form class="flex flex-row" onSubmit.prevent=${createTask}>
-        <button type="submit">
-          ${AddIcon('stroke-blue-600 hover:stroke-blue-800')}
-        </button>
-        <input
-          type="text"
-          name="new-task"
-          placeholder="Add task"
-          class="w-full text-sm rounded-sm px-1 py-1 bg-transparent placeholder:text-slate-600 focus:bg-white focus:placeholder:text-slate-400 focus:ring "
-        />
-      </form>
+        <!-- New task form -->
+        <form class="flex flex-row" onSubmit.prevent=${createTask}>
+          <button type="submit">
+            ${AddIcon('stroke-blue-600 hover:stroke-blue-800')}
+          </button>
+          <input
+            type="text"
+            name="new-task"
+            placeholder="Add task"
+            class="w-full text-sm rounded-sm px-1 py-1 bg-transparent placeholder:text-slate-600 focus:bg-white focus:placeholder:text-slate-400 focus:ring "
+          />
+        </form>
+      </div>
 
       <!-- Current tasks -->
       <div
         is-list
-        class="space-y-2"
+        class="space-y-2 px-3"
         data-id="${data.id}"
         data-name="current-tasks"
         onCreate=${init}
@@ -130,7 +132,7 @@ const List = (data, pos) => {
       </div>
 
       <!-- Completed tasks -->
-      <div class="flex justify-between items-center group">
+      <div class="flex justify-between items-center group px-3">
         <p class="text-neutral-500 group-hover:text-neutral-700 text-sm">
           Completed ${data.completedTasks ? `(${data.completedTasks})` : ''}
         </p>
@@ -161,7 +163,7 @@ const List = (data, pos) => {
       <div
         is-list
         ignore="style"
-        class="space-y-2 transition-all"
+        class="space-y-2 px-3 transition-all"
         data-name="completed-tasks"
         style_display=${state.$showCompleted((value) =>
           value ? 'block' : 'none'
