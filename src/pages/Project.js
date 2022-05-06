@@ -16,7 +16,7 @@ const Project = ({ data: { id } }) => {
     state.isListView = !state.isListView;
   };
 
-  const toggleListFormVisibility = () => {
+  const toggleFormVisibility = () => {
     state.openForm = !state.openForm;
   };
 
@@ -39,7 +39,7 @@ const Project = ({ data: { id } }) => {
       {
         onSuccess: () => {
           input.value = '';
-          toggleListFormVisibility();
+          toggleFormVisibility();
         },
       }
     );
@@ -87,7 +87,7 @@ const Project = ({ data: { id } }) => {
                     type="reset"
                     data-tooltip-text="Cancel"
                     data-tooltip-position="right"
-                    onClick=${toggleListFormVisibility}
+                    onClick=${toggleFormVisibility}
                   >
                     ${CloseIcon('stroke-black hover:stroke-red-600', 24)}
                   </button>
@@ -97,7 +97,7 @@ const Project = ({ data: { id } }) => {
           : render(html`
               <button
                 class="w-full p-1 bg-transparent font-sans text-black text-sm hover:text-gray-800 group flex flex-row items-center space-x-3"
-                onClick=${toggleListFormVisibility}
+                onClick=${toggleFormVisibility}
               >
                 ${AddIcon('stroke-black group-hover:stroke-gray-800')}
                 <span>Add another list</span>
@@ -107,9 +107,8 @@ const Project = ({ data: { id } }) => {
     </div>
   `;
 
-  // TODO: Project header should be fixed while body is free to extend
   return html`
-    <header
+    <div
       data-name="project__name"
       class="flex justify-between items-center mt-4 mb-6"
       onDestroy=${unsubscribe}
@@ -137,9 +136,9 @@ const Project = ({ data: { id } }) => {
             : render(ListIcon('stroke-gray-800', 24, 1.75))
         )}
       </button>
-    </header>
+    </div>
 
-    <div data-name="project__content">
+    <div class="flex-1 overflow-x-auto scrollbar" data-name="project__content">
       ${state.$isListView((value) =>
         value
           ? render(html`

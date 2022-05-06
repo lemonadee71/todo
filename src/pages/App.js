@@ -30,7 +30,7 @@ const routes = [
   {
     path: PATHS.project,
     component: Project,
-    className: 'sm:ml-56 px-6 py-8 font-sans',
+    className: 'sm:ml-56 pl-6 pr-2 py-8 font-sans flex flex-col h-screen',
     resolver: async (component, match) => {
       if (!isGuest()) {
         const { id } = match.data;
