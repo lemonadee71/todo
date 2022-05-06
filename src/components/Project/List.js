@@ -90,13 +90,13 @@ const List = (data, pos) => {
   // ?TODO: Add animation when task is moved to completed
   return html`
     <div
-      class="tasklist w-72 pt-3 pb-4 space-y-2 rounded-lg bg-[#dedede] sm:relative"
+      class="tasklist w-72 pt-3 pb-4 space-y-2 rounded-lg bg-[#dedede] sm:relative z-0"
       id="${data.id}"
       data-id="${data.id}"
       data-position="${pos}"
     >
       <!-- List header -->
-      <div class="sm:sticky sm:top-0 px-3 py-2 space-y-1 bg-[#dedede] z-10">
+      <div class="sm:sticky sm:top-0 px-3 py-2 space-y-1 bg-[#dedede] z-[1]">
         <div class="flex justify-between items-center ">
           <h2 class="font-medium text-lg">{% ${data.name} %}</h2>
           <button class="h-full" onClick=${deleteList}>
