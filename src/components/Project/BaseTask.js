@@ -4,7 +4,6 @@ import Core from '../../core';
 import { EDIT_SUBTASK, EDIT_TASK } from '../../core/actions';
 import { formatDate, formatDateToNow } from '../../utils/date';
 import { getDateColor } from '../../utils/misc';
-import { usePopper } from '../../utils/popper';
 import { useUndo } from '../../utils/undo';
 import Badge from './Badge';
 import Chip from './Chip';
@@ -81,53 +80,12 @@ export default class BaseTask {
     })();
   }
 
-  initMenu = (e) => {
-    let isOpen = false;
-    const btn = e.target;
-    const menu = e.target.nextElementSibling;
-
-    const [, onShow, onHide] = usePopper(btn, menu, {
-      placement: 'right',
-      modifiers: [{ name: 'offset', options: [6, 0] }],
-    });
-
-    const openMenu = onShow(() => {
-      menu.style.display = 'flex';
-      menu.dataset.open = 'true';
-    });
-
-    const closeMenu = onHide(() => {
-      menu.style.display = 'none';
-      menu.dataset.open = 'false';
-    });
-
-    btn.addEventListener('click', (evt) => {
-      isOpen = !isOpen;
-
-      if (isOpen) openMenu();
-      else closeMenu();
-
-      evt.stopPropagation();
-    });
-
-    // close dropdown when clicked outside
-    const cb = (evt) => {
-      if (!menu.contains(evt.target)) {
-        closeMenu();
-        isOpen = false;
-      }
-    };
-
-    document.body.addEventListener('click', cb);
-    this.unsubscribe.push(() => document.body.removeEventListener('click', cb));
-  };
-
+  // prettier-ignore
   render(position) {
-    // prettier-ignore
     return html`
       <div
         key="${this.key}"
-        class="${this.type} box-border flex flex-col w-full px-3 py-2 bg-white rounded-md drop-shadow-lg"
+        class="${this.type} box-border flex flex-col w-full px-3 py-2 bg-white rounded-md drop-shadow-lg relative"
         data-id="${this.id}"
         data-project="${this.data.project}"
         data-list="${this.data.list}"
@@ -158,11 +116,7 @@ export default class BaseTask {
           </label>
 
           <div class="flex flex-1 flex-col space-y-1">
-            <div
-              is-list
-              class="flex flex-wrap gap-1"
-              ${this.props.labels}
-            >
+            <div is-list class="flex flex-wrap gap-1" ${this.props.labels}>
               ${this.data.labels.items.map(Chip)}
             </div>
 
@@ -173,40 +127,40 @@ export default class BaseTask {
               ${this.data.title}
             </h3>
 
-            <div
-              is-list
-              class="flex flex-wrap gap-1"
-              ${this.props.badges}
-            >
+            <div is-list class="flex flex-wrap gap-1" ${this.props.badges}>
               ${this.badges.map((item) => render(item))}
             </div>
           </div>
 
-          <div onMount=${this.initMenu} ${this.props.menu}>
-            ${KebabMenuIcon('cursor-pointer stroke-gray-500 hover:stroke-gray-800')}
-          </div>
+          <div ${this.props.menu}>
+            <button data-dropdown="${this.id}">
+              ${KebabMenuIcon('cursor-pointer stroke-gray-500 hover:stroke-gray-800')}
+            </button>
 
-          <div
-            ignore="class"
-            style="display: none;"
-            class="flex-col py-1 rounded divide-y divide divide-gray-500 space-y-1 text-center text-white text-sm bg-neutral-700 border border-gray-500 border-solid drop-shadow"
-          >
-            <button
-              class="px-2 hover:text-blue-400"
-              onClick=${this.editTask.bind(this)}
+            <div
+              ignore="class"
+              style="display: none;"
+              data-dropdown-id="${this.id}"
+              data-dropdown-position="right"
+              class="flex flex-col py-1 rounded divide-y divide divide-gray-500 space-y-1 text-center text-white text-sm bg-neutral-700 border border-gray-500 border-solid drop-shadow z-[99]"
             >
-              Edit
-            </button>
-            <button
-              class="px-2 hover:text-red-600"
-              onClick=${this.deleteTask.bind(this)}
-            >
-              Delete
-            </button>
+              <button
+                class="px-2 hover:text-blue-400"
+                onClick=${this.editTask.bind(this)}
+              >
+                Edit
+              </button>
+              <button
+                class="px-2 hover:text-red-600"
+                onClick=${this.deleteTask.bind(this)}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
 
-        ${(this.extraContent)}
+        ${this.extraContent}
       </div>
     `;
   }

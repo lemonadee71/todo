@@ -13,6 +13,7 @@ import {
 } from './core/constants';
 import { fetchProjects, initFirestore, setupListeners } from './core/firestore';
 import { isGuest, isNewUser, signIn } from './utils/auth';
+import { useDropdown } from './utils/useDropdown';
 import { useTooltip } from './utils/useTooltip';
 import { $$ } from './utils/query';
 import defineCustomElements from './components/custom';
@@ -127,6 +128,10 @@ PoorManJSX.onAfterCreation((element) => {
     autosize(item);
     // to get the correct size on render
     item.addEventListener('@mount', () => autosize.update(item));
+  });
+
+  $$.data('dropdown', null, element).forEach((item) => {
+    item.addEventListener('@mount', () => useDropdown(item, element));
   });
 });
 
