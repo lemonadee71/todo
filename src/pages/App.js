@@ -10,7 +10,7 @@ import {
   TASK,
 } from '../core/actions';
 import { fetchProjectData } from '../core/firestore';
-import { isGuest, signOut } from '../utils/auth';
+import { getProfilePicURL, getUserName, isGuest, signOut } from '../utils/auth';
 import { getDocumentRef } from '../utils/firestore';
 import logger from '../utils/logger';
 import { orderById } from '../utils/misc';
@@ -30,7 +30,7 @@ const routes = [
   {
     path: PATHS.project,
     component: Project,
-    className: 'sm:ml-56 pl-6 pr-2 py-8 font-sans flex flex-col h-screen',
+    className: 'sm:ml-56 pl-6 pr-2 pt-3 py-2 font-sans flex flex-col h-screen',
     resolver: async (component, match) => {
       if (!isGuest()) {
         const { id } = match.data;
@@ -99,8 +99,55 @@ const App = () => {
       tabindex="-1"
       onDestroy=${() => unsubscribe.forEach((cb) => cb())}
     ></div>
+    <!-- header -->
+    <header
+      class="fixed top-0 w-full flex flex-row justify-between pl-1 pr-4 pt-4 pb-2 mb-1"
+    >
+      <button
+        class="sm:invisible p-1 rounded-full active:ring active:ring-teal-500"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="stroke-gray-800 hover:stroke-gray-600"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="#000000"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <polyline points="7 7 12 12 7 17" />
+          <polyline points="13 7 18 12 13 17" />
+        </svg>
+      </button>
+
+      <div class="w-fit flex flex-row justify-between items-center relative">
+        <p>Hello, <span class="font-medium">${getUserName()}</span></p>
+        <button class="group" data-dropdown="user-menu">
+          <img
+            class="rounded-full h-6 w-6 ml-2 group-active:ring active:ring-teal-500"
+            src="${getProfilePicURL()}"
+            alt="profile picture"
+          />
+        </button>
+
+        <div
+          class="flex flex-col bg-neutral-700 text-white text-sm text-center py-1 rounded divide-y divide-neutral-500 drop-shadow z-[2]"
+          style="display: none;"
+          data-dropdown-id="user-menu"
+          data-dropdown-position="bottom-end"
+        >
+          <button class="px-2">Dark mode</button>
+          <button class="px-2 hover:text-red-600" onClick=${signOut}>
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
     <!-- sidebar -->
-    <button onClick=${signOut}>Logout</button>
     ${Sidebar()}
     <!-- main content -->
     ${Router({ routes, tag: 'section' })}
