@@ -1,10 +1,8 @@
 import { usePopper } from './popper';
-import { $ } from './query';
 
 // BUG: the dropdown is being covered by elements
-export const useDropdown = (target, context = document) => {
+export const createDropdown = (target, dropdown) => {
   let isOpen = false;
-  const dropdown = $.data('dropdown-id', target.dataset.dropdown, context);
 
   const [, onShow, onHide] = usePopper(target, dropdown, {
     placement: dropdown.dataset.dropdownPosition || 'bottom',

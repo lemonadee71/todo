@@ -13,9 +13,9 @@ import {
 } from './core/constants';
 import { fetchProjects, initFirestore, setupListeners } from './core/firestore';
 import { isGuest, isNewUser, signIn } from './utils/auth';
-import { useDropdown } from './utils/useDropdown';
+import { createDropdown } from './utils/dropdown';
 import { useTooltip } from './utils/useTooltip';
-import { $$ } from './utils/query';
+import { $, $$ } from './utils/query';
 import defineCustomElements from './components/custom';
 import Router from './components/Router';
 import Loading from './components/Loading';
@@ -132,7 +132,17 @@ PoorManJSX.onAfterCreation((element) => {
   });
 
   $$.data('dropdown', null, element).forEach((item) => {
-    item.addEventListener('@mount', () => useDropdown(item, element));
+    if (item.dataset.dropdownInitialized) return;
+
+    item.addEventListener('@mount', () => {
+      createDropdown(
+        item,
+        $.data('dropdown-id', item.dataset.dropdown, element)
+      );
+
+      // to prevent from being initialized again
+      item.dataset.dropdownInitialized = 'true';
+    });
   });
 });
 

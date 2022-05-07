@@ -5,6 +5,7 @@ import { EDIT_SUBTASK, EDIT_TASK } from '../../core/actions';
 import { formatDate, formatDateToNow } from '../../utils/date';
 import { getDateColor } from '../../utils/misc';
 import { useUndo } from '../../utils/undo';
+import { createDropdown } from '../../utils/dropdown';
 import Badge from './Badge';
 import Chip from './Chip';
 
@@ -80,12 +81,14 @@ export default class BaseTask {
     })();
   }
 
+  initMenu = (e) => createDropdown(e.target.children[0], e.target.children[1]);
+
   // prettier-ignore
   render(position) {
     return html`
       <div
         key="${this.key}"
-        class="${this.type} box-border flex flex-col w-full px-3 py-2 bg-white rounded-md drop-shadow-lg relative"
+        class="${this.type} box-border flex flex-col w-full px-3 py-2 bg-white rounded-md drop-shadow-lg relative z-20"
         data-id="${this.id}"
         data-project="${this.data.project}"
         data-list="${this.data.list}"
@@ -132,15 +135,14 @@ export default class BaseTask {
             </div>
           </div>
 
-          <div ${this.props.menu}>
-            <button data-dropdown="${this.id}">
+          <div onMount=${this.initMenu} ${this.props.menu}>
+            <button>
               ${KebabMenuIcon('cursor-pointer stroke-gray-500 hover:stroke-gray-800')}
             </button>
 
             <div
               ignore="class"
               style="display: none;"
-              data-dropdown-id="${this.id}"
               data-dropdown-position="right"
               class="flex flex-col py-1 rounded divide-y divide divide-gray-500 space-y-1 text-center text-white text-sm bg-neutral-700 border border-gray-500 border-solid drop-shadow z-[99]"
             >
