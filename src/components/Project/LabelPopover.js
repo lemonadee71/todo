@@ -23,7 +23,12 @@ const LabelPopover = (data, clickAction) => {
     state.isVisible = value ?? !state.isVisible;
   };
 
-  const closePopover = () => toggleVisibility(false);
+  const closePopover = () => {
+    // clear state
+    state.inEditMode = false;
+    state.currentTarget = null;
+    toggleVisibility(false);
+  };
 
   const createLabel = (e) => {
     const name = e.target.elements['new-label-name'];
