@@ -110,7 +110,7 @@ const Project = ({ data: { id } }) => {
   return html`
     <div
       data-name="project__name"
-      class="flex justify-between items-center mt-14 mb-5"
+      class="flex justify-between items-center mb-5"
       onDestroy=${unsubscribe}
     >
       <h1 class="sr-only">${project.$name}</h1>
@@ -148,8 +148,8 @@ const Project = ({ data: { id } }) => {
                 class="w-fit flex flex-row items-start space-x-6"
                 onCreate=${init}
               >
-                ${project.$lists((projects) =>
-                  [...projects.map(List), form].map((item) => render(item))
+                ${project.$lists((lists) =>
+                  [...lists.map(List), form].map((item) => render(item))
                 )}
               </div>
             `)

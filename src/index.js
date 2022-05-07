@@ -35,6 +35,7 @@ const routes = [
   {
     path: '/app*',
     component: pages.App,
+    className: 'font-sans sm:ml-56 pl-6 pr-2 pt-3 py-2 h-screen',
     nested: true,
     resolver: async (component, match) => {
       // setup core listeners

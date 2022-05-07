@@ -26,11 +26,12 @@ const routes = [
   {
     path: PATHS.app,
     component: Overview,
+    className: 'pt-14',
   },
   {
     path: PATHS.project,
     component: Project,
-    className: 'sm:ml-56 pl-6 pr-2 pt-3 py-2 font-sans flex flex-col h-screen',
+    className: 'flex flex-col h-full pt-14',
     resolver: async (component, match) => {
       if (!isGuest()) {
         const { id } = match.data;
@@ -101,7 +102,7 @@ const App = () => {
     ></div>
     <!-- header -->
     <header
-      class="fixed top-0 w-full flex flex-row justify-between pl-1 pr-4 pt-4 pb-2 mb-1"
+      class="fixed top-0 right-0 w-full flex flex-row justify-between pl-1 pr-4 pt-4 pb-2"
     >
       <button
         class="sm:invisible p-1 rounded-full active:ring active:ring-teal-500"
