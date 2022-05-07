@@ -15,9 +15,14 @@ const Calendar = (projectId) => {
   const [state] = createHook({ date: new Date() });
   let calendar;
 
+  const closeCreationPopup = () =>
+    dispatchCustomEvent($('#creation-popup'), 'popup:close');
+
   /** wrappers */
-  const createSchedule = (data, start, end) => {
-    const schedule = {
+  const createScheduleObject = (data) => {
+    const [start, end] = getDueDateRange(data.dueDate);
+
+    return {
       start,
       end,
       id: data.id,
@@ -33,11 +38,13 @@ const Calendar = (projectId) => {
       borderColor: 'rgb(251 191 36)',
       bgColor: 'rgb(251 191 36)',
       dragBgColor: 'rgb(94 234 212)',
-      customStyle:
-        'font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem;',
+      // prettier-ignore
+      customStyle: `font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem; ${data.completed ? 'text-decoration-line: line-through;' : ''}`,
     };
+  };
 
-    calendar.createSchedules([schedule]);
+  const createSchedule = (data) => {
+    calendar.createSchedules([createScheduleObject(data)]);
   };
 
   const updateSchedule = (id, calendarId, changes) => {
@@ -48,23 +55,17 @@ const Calendar = (projectId) => {
     calendar.deleteSchedule(id, calendarId);
   };
 
-  // const toggleSchedule = (calendarId, toHide) => {
-  //   calendar.toggleSchedules(calendarId, toHide);
-  // };
-
   const showTasks = () => {
     Core.main
       .getTasksFromProject(projectId)
       .filter((task) => task.dueDate)
-      .forEach((task) => {
-        createSchedule(task, ...getDueDateRange(task.dueDate));
-      });
+      .forEach((task) => createSchedule(task));
   };
 
   const setDate = () => {
     state.date = calendar.getDate().toDate();
     // to prevent creation popup from floating (having no ref)
-    dispatchCustomEvent($('#creation-popup'), 'popup:close');
+    closeCreationPopup();
   };
 
   const goToToday = () => {
@@ -85,8 +86,7 @@ const Calendar = (projectId) => {
   /** core */
   const initListeners = () => {
     calendar.on({
-      clickSchedule: () =>
-        dispatchCustomEvent($('#creation-popup'), 'popup:close'),
+      clickSchedule: closeCreationPopup,
       beforeCreateSchedule: (e) => {
         const popup = $('#creation-popup');
         // make sure to close previous popup first
@@ -114,7 +114,7 @@ const Calendar = (projectId) => {
         );
       },
       beforeUpdateSchedule: ({ schedule, changes }) => {
-        dispatchCustomEvent($('#creation-popup'), 'popup:close');
+        closeCreationPopup();
 
         const location = schedule.raw;
 
@@ -162,13 +162,13 @@ const Calendar = (projectId) => {
   /** listeners */
   const unsubscribe = [
     Core.event.onSuccess([TASK.ADD, TASK.INSERT], (data) => {
-      if (data.dueDate) createSchedule(data, ...getDueDateRange(data.dueDate));
+      if (data.dueDate) createSchedule(data);
     }),
     Core.event.onSuccess(TASK.TRANSFER, ({ type, changes, result }) => {
       switch (type) {
         case 'project':
           if (changes.project.to === projectId && result.dueDate) {
-            createSchedule(result, ...getDueDateRange(result.dueDate));
+            createSchedule(result);
           } else {
             deleteSchedule(result.id, changes.list.from);
           }
@@ -190,14 +190,13 @@ const Calendar = (projectId) => {
       }
     }),
     Core.event.onSuccess(TASK.UPDATE, (data) => {
-      // check if there's an existing schedule
-      const schedule = calendar.getSchedule(data.id, data.list);
-
       if (data.dueDate) {
-        const [start, end] = getDueDateRange(data.dueDate);
+        // check if there's an existing schedule
+        const schedule = calendar.getSchedule(data.id, data.list);
 
-        if (schedule) updateSchedule(data.id, data.list, { start, end });
-        else createSchedule(data, start, end);
+        if (schedule)
+          updateSchedule(data.id, data.list, createScheduleObject(data));
+        else createSchedule(data);
       } else {
         deleteSchedule(data.id, data.list);
       }
@@ -207,25 +206,25 @@ const Calendar = (projectId) => {
   return html`
     <div class="flex flex-row gap-1 mb-3" data-name="taskbar">
       <button
-        class="bg-neutral-300 py-1 px-3 rounded-2xl active:ring shadow-sm"
+        class="hover:bg-neutral-200 py-1 px-3 rounded border border-solid border-neutral-600 active:ring shadow-sm"
         name="today"
-        data-tooltip="${format(new Date(), 'MMMM dd, yyyy')}"
+        data-tooltip="${format(new Date(), 'eee, MMMM dd')}"
         onClick=${goToToday}
       >
         Today
       </button>
       <button
-        class="bg-neutral-300 py-1 px-3 rounded-full active:ring shadow-sm"
+        class="hover:bg-neutral-200 py-1 px-3 rounded-full active:ring shadow-sm"
         name="previous"
-        data-tooltip="Previous"
+        data-tooltip="Previous week"
         onClick=${previous}
       >
         <
       </button>
       <button
-        class="bg-neutral-300 py-1 px-3 rounded-full active:ring shadow-sm"
+        class="hover:bg-neutral-200 py-1 px-3 rounded-full active:ring shadow-sm"
         name="next"
-        data-tooltip="Next"
+        data-tooltip="Next week"
         onClick=${next}
       >
         >
@@ -241,7 +240,7 @@ const Calendar = (projectId) => {
   `;
 };
 
-export const template = {
+const template = {
   popupDetailDate: (...args) =>
     format(args[2].toDate(), 'MMMM d, yyyy hh:mm a'),
   popupDetailBody: (schedule) =>
