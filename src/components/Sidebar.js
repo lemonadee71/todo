@@ -4,7 +4,7 @@ import { PROJECT } from '../core/actions';
 import { useRoot } from '../core/hooks';
 import Core from '../core';
 import ProjectLink from './ProjectLink';
-import { AddIcon } from '../assets/icons';
+import { AddIcon, HomeIcon } from '../assets/icons';
 
 const Sidebar = () => {
   const [data, revoke] = useRoot();
@@ -43,31 +43,19 @@ const Sidebar = () => {
 
   return html`
     <aside
-      class="invisible sm:visible fixed top-0 left-0 w-56 h-screen p-5 bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all"
+      class="invisible sm:visible fixed top-0 left-0 w-56 h-screen p-5 pt-8 bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all"
       id="sidebar"
       onDestroy=${revoke}
     >
       <div class="relative h-full">
         <nav class="">
-          <ul class="space-y-1 m-0 mb-6">
-            <li>
-              <a
-                class="no-underline hover:underline text-sm text-white"
-                href="#"
-              >
-                User
-              </a>
-            </li>
-            <li>
-              <a
-                class="no-underline hover:underline text-sm text-white"
-                is="navigo-link"
-                href="/app"
-              >
-                Overview
-              </a>
-            </li>
-          </ul>
+          <a
+            class="no-underline hover:underline text-sm text-white flex flex-row items-center mb-8"
+            is="navigo-link"
+            href="/app"
+          >
+            ${HomeIcon('stroke-white mr-1', 16)} Home
+          </a>
 
           <div class="flex flex-row justify-between">
             <h2 class="font-bold text-sm text-neutral-400 tracking-wide mb-1">
@@ -85,6 +73,7 @@ const Sidebar = () => {
               <input type="hidden" name="new-project" value="Unnamed project" />
             </form>
           </div>
+
           <ul
             is-list
             keystring="data-id"
