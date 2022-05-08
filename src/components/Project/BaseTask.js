@@ -76,7 +76,7 @@ export default class BaseTask {
   deleteTask() {
     useUndo({
       type: this.action,
-      text: 'Task removed',
+      text: `${this.type[0].toUpperCase() + this.type.slice(1)} removed`,
       payload: { ...this.location, id: this.id },
     })();
   }
