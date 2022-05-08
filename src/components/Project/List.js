@@ -88,6 +88,7 @@ const List = (data, pos) => {
   };
 
   // ?TODO: Add animation when task is moved to completed
+  // BUG: There are z-index issues here
   return html`
     <div
       class="tasklist w-72 pt-3 pb-4 space-y-2 rounded-lg bg-[#dedede] sm:relative z-0"

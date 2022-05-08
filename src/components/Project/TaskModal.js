@@ -67,6 +67,8 @@ export default class TaskModal extends BaseTaskModal {
       },
       {
         // ISSUE: Divider not showing
+        target: 'date',
+        method: 'after',
         template: html`
           <div class="space-y-2" data-name="task__subtasks">
             <div class="flex flex-row space-x-1 items-center">

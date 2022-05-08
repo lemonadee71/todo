@@ -10,6 +10,7 @@ import { dispatchCustomEvent } from '../../utils/dispatch';
 import { usePopper } from '../../utils/popper';
 import { $ } from '../../utils/query';
 import convertToMarkdown from '../../utils/showdown';
+import { useUndo } from '../../utils/undo';
 import Badge from './Badge';
 import LabelPopover from './LabelPopover';
 
@@ -22,7 +23,10 @@ export default class BaseTaskModal {
     this.id = this.data.id;
 
     [this.task, this._revoke] = useTask(...Object.values(this.location));
-    [this.state] = createHook({ isEditingNotes: false });
+    [this.state] = createHook({
+      isEditingNotes: false,
+      isCompleted: data.completed,
+    });
 
     this.template = [];
   }
@@ -56,6 +60,21 @@ export default class BaseTaskModal {
 
   toggleNotesEdit = () => {
     this.state.isEditingNotes = !this.state.isEditingNotes;
+  };
+
+  toggleComplete = () => {
+    this.state.isCompleted = !this.state.isCompleted;
+    this.editTask({ target: { name: 'completed' } });
+  };
+
+  deleteTask = () => {
+    useUndo({
+      type: this.action,
+      text: `${this.type[0].toUpperCase() + this.type.slice(1)} removed`,
+      payload: { ...this.location, id: this.id },
+    })();
+    // close modal to prevent errors from further actions
+    $('#modal').pop();
   };
 
   initDatePicker = (e) => {
@@ -242,6 +261,27 @@ export default class BaseTaskModal {
               &times;
             </a>
           </div>
+        </div>
+
+        <div
+          class="mx-auto w-full flex flex-row justify-center items-center gap-4"
+          data-name="task__controls"
+        >
+          <button
+            class="text-sm text-white text-center px-3 py-2 rounded bg-blue-600 hover:bg-blue-700"
+            onClick=${this.toggleComplete}
+          >
+            Mark
+            ${this.state.$isCompleted((value) =>
+              value ? 'uncompleted' : 'completed'
+            )}
+          </button>
+          <button
+            class="text-sm text-white text-center px-3 py-2 rounded bg-red-600 hover:bg-red-700"
+            onClick=${this.deleteTask}
+          >
+            Delete
+          </button>
         </div>
       </div>
     `;
