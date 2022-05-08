@@ -13,7 +13,7 @@ export default class TaskModal extends BaseTaskModal {
     [this.SelectLocation] = useSelectLocation(this.transferTask, this.data, {
       project: {
         class:
-          'bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800',
+          'w-16 max-w-32 bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800',
         onMount: (e) => {
           e.target.before(
             render(html`<span class="text-sm text-gray-500">In</span>`)
@@ -25,7 +25,7 @@ export default class TaskModal extends BaseTaskModal {
       },
       list: {
         class:
-          'bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800',
+          'w-fit max-w-32 bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800',
       },
     });
   }
@@ -75,19 +75,19 @@ export default class TaskModal extends BaseTaskModal {
             </div>
 
             <form class="create-list" onSubmit.prevent=${this.createSubtask}>
-              <input
-                class="text-black text-sm p-1 rounded focus:ring mr-2"
-                type="text"
-                id="new-subtask"
-                name="new-subtask"
-                placeholder="New subtask"
-              />
               <button
                 class="text-xl text-blue-600 hover:text-blue-800"
                 type="submit"
               >
                 +
               </button>
+              <input
+                class="text-black text-sm p-1 rounded focus:ring ml-2"
+                type="text"
+                id="new-subtask"
+                name="new-subtask"
+                placeholder="New subtask"
+              />
             </form>
 
             <div is-list class="space-y-1 divide-y-1">
