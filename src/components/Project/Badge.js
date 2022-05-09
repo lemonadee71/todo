@@ -3,14 +3,12 @@ import { html } from 'poor-man-jsx';
 const Badge = ({
   content,
   bgColor,
-  fontSize = 'text-xs',
-  textColor = 'text-white',
-  additionalCls = '',
+  additionalCls = 'text-xs text-white',
   props = {},
 }) =>
   html`<div
     is-text
-    class="inline-block font-sans py-1 px-2 cursor-pointer rounded ${fontSize} ${textColor} ${additionalCls}"
+    class="inline-block font-sans py-1 px-2 cursor-pointer rounded ${additionalCls}"
     style="background-color: ${bgColor}"
     ${props}
   >

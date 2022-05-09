@@ -160,9 +160,7 @@ export default class BaseTaskModal {
               const button = Badge({
                 content: '+',
                 bgColor: '#dedede',
-                textColor: 'text-gray-600',
-                fontSize: 'text-sm',
-                additionalCls: 'px-3 hover:text-gray-800',
+                additionalCls: 'px-3 text-sm text-gray-600 hover:text-gray-800',
                 props: {
                   onMount: this.initPopover,
                   key: 'add-label',
@@ -175,7 +173,7 @@ export default class BaseTaskModal {
                 Badge({
                   content: label.name,
                   bgColor: label.color,
-                  fontSize: 'text-sm',
+                  additionalCls: 'text-sm text-white',
                   props: { key: label.id },
                 })
               );
