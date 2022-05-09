@@ -1,13 +1,18 @@
 import Sortable from 'sortablejs';
-import { html, render } from 'poor-man-jsx';
+import { createHook, html, render } from 'poor-man-jsx';
 import { PROJECT } from '../core/actions';
 import { useRoot } from '../core/hooks';
 import Core from '../core';
 import ProjectLink from './ProjectLink';
-import { AddIcon, HomeIcon } from '../assets/icons';
+import { AddIcon, CloseIcon, HomeIcon } from '../assets/icons';
 
 const Sidebar = () => {
   const [data, revoke] = useRoot();
+  const [state] = createHook({ isVisible: false });
+
+  const toggleVisibility = () => {
+    state.isVisible = !state.isVisible;
+  };
 
   const createNewProject = (e) => {
     const input = e.target.elements['new-project'];
@@ -41,13 +46,22 @@ const Sidebar = () => {
     });
   };
 
+  // prettier-ignore
   return html`
     <aside
-      class="invisible sm:visible fixed top-0 left-0 w-56 h-screen p-5 pt-8 bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all"
+      class="${state.$isVisible(value => value ? 'w-56' : 'w-0')} sm:w-56 fixed top-0 left-0 h-screen bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all"
       id="sidebar"
+      onToggleSidebar=${toggleVisibility}
       onDestroy=${revoke}
     >
-      <div class="relative h-full">
+      <div class="relative h-full p-5 pt-12">
+        <button
+          class="absolute top-4 right-4 ${state.$isVisible(value => value ? 'visible' : 'invisible')} sm:invisible"
+          onClick=${toggleVisibility}
+        >
+          ${CloseIcon('stroke-gray-400 hover:stroke-gray-600')}
+        </button>
+
         <nav class="">
           <a
             class="no-underline hover:underline text-sm text-white flex flex-row items-center mb-8"
@@ -87,7 +101,7 @@ const Sidebar = () => {
         <div class="absolute bottom-6 w-full">
           <form
             class="flex flex-row"
-            data-clear="success"
+            data-clear="onsuccess"
             onSubmit.prevent=${createNewProject}
           >
             <button type="submit">${AddIcon('stroke-gray-400')}</button>

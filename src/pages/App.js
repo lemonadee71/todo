@@ -21,6 +21,7 @@ import Sidebar from '../components/Sidebar';
 import Router from '../components/Router';
 import TaskModal from '../components/Project/TaskModal';
 import SubtaskModal from '../components/Project/SubtaskModal';
+import { dispatchCustomEvent } from '../utils/dispatch';
 
 const routes = [
   {
@@ -106,6 +107,7 @@ const App = () => {
     >
       <button
         class="sm:invisible p-1 rounded-full active:ring active:ring-teal-500"
+        onClick=${() => dispatchCustomEvent($('#sidebar'), 'togglesidebar')}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
