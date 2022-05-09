@@ -143,7 +143,7 @@ export default class BaseTask {
             <div
               ignore="class"
               style="display: none;"
-              data-dropdown-position="right"
+              data-dropdown-position="left"
               class="flex flex-col py-1 rounded divide-y divide divide-gray-500 space-y-1 text-center text-white text-sm bg-neutral-700 border border-gray-500 border-solid drop-shadow z-[99]"
             >
               <button
