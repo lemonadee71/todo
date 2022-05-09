@@ -140,6 +140,7 @@ const App = () => {
           style="display: none;"
           data-dropdown-id="user-menu"
           data-dropdown-position="bottom-end"
+          data-dropdown-offset="0,10"
         >
           <button class="px-2">Dark mode</button>
           <button class="px-2 hover:text-red-600" onClick=${signOut}>

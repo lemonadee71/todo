@@ -3,10 +3,20 @@ import { usePopper } from './popper';
 // BUG: the dropdown is being covered by elements
 export const createDropdown = (target, dropdown) => {
   let isOpen = false;
+  const { dropdownOffset, dropdownPosition } = dropdown.dataset;
 
   const [, onShow, onHide] = usePopper(target, dropdown, {
-    placement: dropdown.dataset.dropdownPosition || 'bottom',
-    modifiers: [{ name: 'offset', options: [6, 0] }],
+    placement: dropdownPosition || 'bottom',
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: dropdownOffset
+            ? dropdownOffset.split(',').map((x) => +x)
+            : [0, 0],
+        },
+      },
+    ],
     strategy: 'absolute',
   });
 
