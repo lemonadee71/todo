@@ -136,7 +136,6 @@ const Calendar = (projectId) => {
           text: 'Task removed',
           payload: { ...schedule.raw, id: schedule.id },
         })();
-        deleteSchedule(schedule.id, schedule.calendarId);
       },
     });
   };
@@ -163,6 +162,9 @@ const Calendar = (projectId) => {
   const unsubscribe = [
     Core.event.onSuccess([TASK.ADD, TASK.INSERT], (data) => {
       if (data.dueDate) createSchedule(data);
+    }),
+    Core.event.onSuccess(TASK.REMOVE, (data) => {
+      deleteSchedule(data.id, data.list);
     }),
     Core.event.onSuccess(TASK.TRANSFER, ({ type, changes, result }) => {
       switch (type) {
@@ -194,9 +196,12 @@ const Calendar = (projectId) => {
         // check if there's an existing schedule
         const schedule = calendar.getSchedule(data.id, data.list);
 
-        if (schedule)
-          updateSchedule(data.id, data.list, createScheduleObject(data));
-        else createSchedule(data);
+        if (schedule) {
+          // updateSchedule(data.id, data.list, createScheduleObject(data));
+          // update does not update the styles so we recreate instead
+          deleteSchedule(data.id, data.list);
+          createSchedule(data);
+        } else createSchedule(data);
       } else {
         deleteSchedule(data.id, data.list);
       }
