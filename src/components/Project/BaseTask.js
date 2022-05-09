@@ -88,7 +88,7 @@ export default class BaseTask {
     return html`
       <div
         key="${this.key}"
-        class="${this.type} box-border flex flex-col w-full px-3 py-2 bg-white rounded-md drop-shadow-lg relative z-20"
+        class="${this.type} box-border flex flex-col w-full px-3 py-2 bg-white rounded-md drop-shadow-lg relative z-[1]"
         data-id="${this.id}"
         data-project="${this.data.project}"
         data-list="${this.data.list}"

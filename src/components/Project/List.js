@@ -97,7 +97,7 @@ const List = (data, pos) => {
       data-position="${pos}"
     >
       <!-- List header -->
-      <div class="sm:sticky sm:top-0 px-3 py-2 space-y-1 bg-[#dedede] z-[1]">
+      <div class="sm:sticky sm:top-0 px-3 py-2 space-y-1 bg-[#dedede] z-[2]">
         <div class="flex justify-between items-center ">
           <h2 class="font-medium text-lg">{% ${data.name} %}</h2>
           <button class="h-full" onClick=${deleteList}>
@@ -154,7 +154,7 @@ const List = (data, pos) => {
               ignore="transform"
               d="M18 15l-6 -6l-6 6h12"
               transform=${state.$showCompleted((value) =>
-                value ? '' : 'rotate(180 12 12)'
+                value ? 'rotate(0 0 0)' : 'rotate(180 12 12)'
               )}
             />
           </svg>
