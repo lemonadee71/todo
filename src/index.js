@@ -18,7 +18,6 @@ import { useTooltip } from './utils/useTooltip';
 import { $, $$ } from './utils/query';
 import defineCustomElements from './components/custom';
 import Router from './components/Router';
-import Loading from './components/Loading';
 import * as pages from './pages';
 import { config as firebaseConfig } from './firebase-config';
 import './styles/style.css';
@@ -104,11 +103,7 @@ const routes = [
 
 const Website = html`
   <!-- The main content -->
-  ${Router({
-    routes,
-    tag: 'main',
-    props: { id: 'main', loadingComponent: Loading },
-  })}
+  ${Router({ routes, tag: 'main', props: { id: 'main' } })}
   <!-- Only one tooltip element for all -->
   <div id="tooltip" role="tooltip">
     <span id="tooltip_text"></span>

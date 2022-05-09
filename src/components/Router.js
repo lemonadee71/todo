@@ -1,6 +1,7 @@
 import { createHook, html, render } from 'poor-man-jsx';
 import Core from '../core';
 import { copy } from '../utils/misc';
+import Loading from './Loading';
 
 const Router = ({ routes, tag = 'div', props }) => {
   const containerClass = props?.class || '';
@@ -17,7 +18,7 @@ const Router = ({ routes, tag = 'div', props }) => {
     state.url = match.url;
 
     // show loading component
-    state.component = props?.loadingComponent?.() || [];
+    state.component = props?.loadingComponent?.() || Loading();
 
     // then show the actual component
     (async () => {
