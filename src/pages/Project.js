@@ -64,14 +64,14 @@ const Project = ({ data: { id } }) => {
     <div
       ignore-all
       key="list-form"
-      class="w-60 p-2 rounded-lg opacity-80 bg-[#dedede]"
+      class="w-60 p-2 rounded-lg opacity-80 bg-[#dedede] dark:bg-[#272727]"
     >
       ${state.$openForm((value) =>
         value
           ? render(html`
               <form class="w-full" onSubmit.prevent=${createNewList}>
                 <input
-                  class="w-full px-2 py-1 mb-1 text-sm rounded-sm placeholder-slate-400"
+                  class="w-full px-2 py-1 mb-1 text-sm rounded-sm placeholder-slate-400 dark:text-black"
                   type="text"
                   name="new-list"
                   placeholder="Enter list name..."
@@ -89,17 +89,22 @@ const Project = ({ data: { id } }) => {
                     data-tooltip-position="right"
                     onClick=${toggleFormVisibility}
                   >
-                    ${CloseIcon('stroke-black hover:stroke-red-600', 24)}
+                    ${CloseIcon(
+                      'stroke-black hover:stroke-red-600 dark:stroke-white dark:hover:stroke-red-400',
+                      24
+                    )}
                   </button>
                 </div>
               </form>
             `)
           : render(html`
               <button
-                class="w-full p-1 bg-transparent font-sans text-black text-sm hover:text-gray-800 group flex flex-row items-center space-x-3"
+                class="w-full p-1 bg-transparent text-sm hover:text-gray-800 group flex flex-row items-center space-x-3 dark:hover:text-gray-300"
                 onClick=${toggleFormVisibility}
               >
-                ${AddIcon('stroke-black group-hover:stroke-gray-800')}
+                ${AddIcon(
+                  'stroke-black group-hover:stroke-gray-800 dark:stroke-white dark:group-hover:stroke-gray-300'
+                )}
                 <span>Add another list</span>
               </button>
             `)
@@ -116,9 +121,10 @@ const Project = ({ data: { id } }) => {
       <h1 class="sr-only">${project.$name}</h1>
       <!-- prettier-ignore -->
       <textarea
-        class="text-2xl font-extrabold w-3/4 h-fit rounded-sm px-1 py-1 bg-transparent placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:bg-white focus:ring resize-none break-words overflow-hidden"
+        class="text-2xl font-extrabold w-3/4 h-fit rounded-sm px-1 py-1 bg-inherit resize-none break-words overflow-hidden placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:bg-white focus:ring dark:placeholder:text-slate-400 dark:focus:placeholder:text-slate-200 dark:focus:bg-inherit"
         name="project-name"
         rows="1"
+        placeholder="Project name"
         data-autosize
         onInput=${debounce(editProject, 200)}
       >${project.name}</textarea>
@@ -132,8 +138,10 @@ const Project = ({ data: { id } }) => {
       >
         ${state.$isListView((value) =>
           value
-            ? render(CalendarIcon('stroke-gray-800', 24, 1.75))
-            : render(ListIcon('stroke-gray-800', 24, 1.75))
+            ? render(
+                CalendarIcon('stroke-gray-800 dark:stroke-white', 24, 1.75)
+              )
+            : render(ListIcon('stroke-gray-800 dark:stroke-white', 24, 1.75))
         )}
       </button>
     </div>

@@ -64,6 +64,10 @@ const routes = [
 ];
 
 const App = () => {
+  const toggleDarkTheme = () => {
+    Core.state.darkTheme = !Core.state.darkTheme;
+  };
+
   // listeners
   const unsubscribe = [
     Core.event.on(REDIRECT, (data) => {
@@ -111,7 +115,7 @@ const App = () => {
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="stroke-gray-800 hover:stroke-gray-600"
+          class="stroke-gray-800 hover:stroke-gray-600 dark:stroke-white dark:hover:stroke-gray-300"
           width="20"
           height="20"
           viewBox="0 0 24 24"
@@ -144,7 +148,9 @@ const App = () => {
           data-dropdown-position="bottom-end"
           data-dropdown-offset="0,10"
         >
-          <button class="px-2">Dark mode</button>
+          <button class="px-2" onClick=${toggleDarkTheme}>
+            ${Core.state.$darkTheme((value) => (value ? 'Light' : 'Dark'))} mode
+          </button>
           <button class="px-2 hover:text-red-600" onClick=${signOut}>
             Logout
           </button>

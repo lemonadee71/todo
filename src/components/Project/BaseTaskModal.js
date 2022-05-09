@@ -1,6 +1,6 @@
 import flatpickr from 'flatpickr';
 import { createHook, html, render } from 'poor-man-jsx';
-import { CalendarIcon, LabelIcon } from '../../assets/icons';
+import { CalendarIcon, LabelIcon, NotesIcon } from '../../assets/icons';
 import Core from '../../core';
 import { TASK } from '../../core/actions';
 import { POPPER_CONFIG } from '../../core/constants';
@@ -124,12 +124,12 @@ export default class BaseTaskModal {
   render() {
     return html`
       <div
-        class="relative w-5/6 max-w-lg my-[10%] sm:my-[5%] mx-auto rounded-lg bg-white py-4 px-5 space-y-4"
+        class="relative w-5/6 max-w-lg my-[10%] sm:my-[5%] mx-auto rounded-lg py-4 px-5 space-y-4 bg-white dark:bg-[#353535]"
         onCreate=${this.init}
         onDestroy=${this._revoke}
       >
         <button
-          class="absolute top-0 right-0 mr-3 text-2xl text-gray-600 hover:text-gray-800"
+          class="absolute top-0 right-0 mr-3 text-2xl text-gray-600 hover:text-gray-800 dark:text-white dark:hover:text-gray-300"
           onClick=${() => $('#modal').pop()}
         >
           &times;
@@ -140,8 +140,8 @@ export default class BaseTaskModal {
           <h2 class="sr-only">{% ${this.data.title} %}</h2>
           <!-- prettier-ignore -->
           <textarea
-            class="text-lg font-semibold w-full h-fit rounded-sm px-1 py-1 bg-transparent placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:bg-white focus:ring resize-none break-words overflow-hidden"
-            name="task-title"
+            class="text-lg font-semibold w-full h-fit rounded-sm px-1 py-1 bg-inherit focus:ring resize-none break-words overflow-hidden placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:bg-white dark:placeholder:text-slate-200 dark:focus:placeholder:text-slate-400 focus:bg-inherit"
+            name="title"
             rows="1"
             data-autosize
             onInput=${debounce(this.editTask, 200)}
@@ -151,7 +151,7 @@ export default class BaseTaskModal {
         <!-- Labels -->
         <div data-name="task__labels">
           <div class="flex flex-row space-x-1 items-center mb-2">
-            ${LabelIcon()}
+            ${LabelIcon('dark:stroke-white')}
             <h3 class="text-md font-medium">Labels</h3>
           </div>
 
@@ -159,8 +159,8 @@ export default class BaseTaskModal {
             ${this.task.$labels((labels) => {
               const button = Badge({
                 content: '+',
-                bgColor: '#dedede',
-                additionalCls: 'px-3 text-sm text-gray-600 hover:text-gray-800',
+                additionalCls:
+                  'px-3 text-sm text-gray-600 bg-[#dedede] hover:text-gray-800 dark:text-white dark:hover:text-gray-300 dark:bg-transparent dark:border dark:border-solid dark:border-white',
                 props: {
                   onMount: this.initPopover,
                   key: 'add-label',
@@ -188,23 +188,7 @@ export default class BaseTaskModal {
         <!-- Notes -->
         <div data-name="task__notes">
           <div class="flex flex-row space-x-1 items-center mb-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="#000000"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <rect x="5" y="3" width="14" height="18" rx="2" />
-              <line x1="9" y1="7" x2="15" y2="7" />
-              <line x1="9" y1="11" x2="15" y2="11" />
-              <line x1="9" y1="15" x2="13" y2="15" />
-            </svg>
+            ${NotesIcon('dark:stroke-white')}
             <h3 class="text-md font-medium">Notes</h3>
           </div>
 
@@ -215,7 +199,7 @@ export default class BaseTaskModal {
                     // prettier-ignore
                     html`
                       <textarea
-                        class="resize-none w-full h-52 rounded-sm px-1 py-1 placeholder:text-base focus:ring"
+                        class="resize-none w-full h-52 rounded-sm px-1 py-1 text-inherit bg-inherit placeholder:text-base focus:ring"
                         name="notes"
                         placeholder="Add notes"
                         onInput=${this.editTask}
@@ -225,10 +209,13 @@ export default class BaseTaskModal {
                     `
                   )
                 : render(html`
-                    <div class="markdown-body" onClick=${this.toggleNotesEdit}>
+                    <div
+                      class="markdown-body text-gray-500 dark:text-gray-200"
+                      onClick=${this.toggleNotesEdit}
+                    >
                       ${this.data.notes.trim()
                         ? convertToMarkdown(this.data.notes)
-                        : `<p class="text-base text-gray-500">Add notes</p>`}
+                        : `<p class="text-base">Add notes</p>`}
                     </div>
                   `)
             )}
@@ -238,13 +225,13 @@ export default class BaseTaskModal {
         <!-- Date -->
         <div data-name="task__date">
           <div class="flex flex-row space-x-1 items-center mb-2">
-            ${CalendarIcon()}
+            ${CalendarIcon('dark:stroke-white')}
             <h3 class="text-md font-medium">Due Date</h3>
           </div>
 
           <div class="flatpickr" onMount=${this.initDatePicker}>
             <input
-              class="w-32 px-2 py-1 border border-solid border-gray-400 rounded-md placeholder:text-sm"
+              class="w-32 px-2 py-1 border border-solid border-gray-400 rounded-md text-inherit bg-inherit placeholder:text-sm"
               type="text"
               name="dueDate"
               value="${this.data.dueDate}"

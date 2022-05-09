@@ -88,7 +88,7 @@ export default class BaseTask {
     return html`
       <div
         key="${this.key}"
-        class="${this.type} box-border flex flex-col w-full px-3 py-2 bg-white rounded-md drop-shadow-lg relative z-[1]"
+        class="${this.type} box-border flex flex-col w-full px-3 py-2 bg-white dark:bg-[#353535] rounded-md drop-shadow-lg relative z-[1]"
         data-id="${this.id}"
         data-project="${this.data.project}"
         data-list="${this.data.list}"
@@ -106,12 +106,12 @@ export default class BaseTask {
               onClick=${this.toggleComplete.bind(this)}
             />
             <div
-              class="box-border flex justify-center items-center bg-slate-100 rounded-sm border border-solid border-gray-400"
+              class="box-border flex justify-center items-center bg-slate-100 rounded-sm border border-solid border-gray-400 dark:bg-transparent dark:border-white"
               style="width: 1.25rem; height: 1.25rem;"
               ${this.props.checkbox}
             >
               <div
-                class="rounded-sm bg-cyan-500 hover:opacity-80 ${this.data.completed ? 'visible' : 'invisible'}"
+                class="rounded-sm bg-cyan-500 hover:opacity-80 dark:bg-[#208DA5] ${this.data.completed ? 'visible' : 'invisible'}"
                 style="width: 0.75rem; height: 0.75rem;"
                 ${this.props.checkmark}
               ></div>
@@ -137,7 +137,7 @@ export default class BaseTask {
 
           <div onMount=${this.initMenu} ${this.props.menu}>
             <button>
-              ${KebabMenuIcon('cursor-pointer stroke-gray-500 hover:stroke-gray-800')}
+              ${KebabMenuIcon('cursor-pointer stroke-gray-500 hover:stroke-gray-800 dark:hover:stroke-gray-300')}
             </button>
 
             <div

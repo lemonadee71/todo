@@ -91,13 +91,15 @@ const List = (data, pos) => {
   // BUG: There are z-index issues here
   return html`
     <div
-      class="tasklist w-72 pt-3 pb-4 space-y-2 rounded-lg bg-[#dedede] sm:relative z-0"
+      class="tasklist w-72 pt-3 pb-4 space-y-2 rounded-lg bg-[#dedede] dark:bg-[#272727] sm:relative z-0"
       id="${data.id}"
       data-id="${data.id}"
       data-position="${pos}"
     >
       <!-- List header -->
-      <div class="sm:sticky sm:top-0 px-3 py-2 space-y-1 bg-[#dedede] z-[2]">
+      <div
+        class="sm:sticky sm:top-0 px-3 py-2 space-y-1 bg-[#dedede] dark:bg-[#272727] z-[2]"
+      >
         <div class="flex justify-between items-center ">
           <h2 class="font-medium text-lg">{% ${data.name} %}</h2>
           <button class="h-full" onClick=${deleteList}>
@@ -108,13 +110,15 @@ const List = (data, pos) => {
         <!-- New task form -->
         <form class="flex flex-row" onSubmit.prevent=${createTask}>
           <button type="submit">
-            ${AddIcon('stroke-blue-600 hover:stroke-blue-800')}
+            ${AddIcon(
+              'stroke-blue-600 hover:stroke-blue-800 dark:stroke-blue-400 dark:hover:stroke-blue-600'
+            )}
           </button>
           <input
             type="text"
             name="new-task"
             placeholder="Add task"
-            class="w-full text-sm rounded-sm px-1 py-1 bg-transparent placeholder:text-slate-600 focus:bg-white focus:placeholder:text-slate-400 focus:ring "
+            class="w-full text-sm rounded-sm px-1 py-1 bg-inherit placeholder:text-slate-600 focus:bg-white focus:placeholder:text-slate-400 focus:ring dark:focus:bg-inherit dark:placeholder:text-gray-400 dark:focus:placeholder:text-gray-200"
           />
         </form>
       </div>
@@ -134,13 +138,15 @@ const List = (data, pos) => {
 
       <!-- Completed tasks -->
       <div class="flex justify-between items-center group px-3">
-        <p class="text-neutral-500 group-hover:text-neutral-700 text-sm">
+        <p
+          class="text-sm text-neutral-500 group-hover:text-neutral-700 dark:group-hover:text-neutral-300"
+        >
           Completed ${data.completedTasks ? `(${data.completedTasks})` : ''}
         </p>
         <button onClick=${toggleCompletedTasks}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="fill-gray-500 stroke-gray-500 group-hover:fill-gray-700 group-hover:stroke-gray-700"
+            class="fill-gray-500 stroke-gray-500 group-hover:fill-gray-700 group-hover:stroke-gray-700 dark:group-hover:stroke-gray-300"
             width="16"
             height="16"
             viewBox="0 0 24 24"

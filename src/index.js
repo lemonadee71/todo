@@ -2,7 +2,7 @@ import autosize from 'autosize';
 import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
-import PoorManJSX, { html, render } from 'poor-man-jsx';
+import PoorManJSX, { addHooks, html, render } from 'poor-man-jsx';
 import Core from './core';
 import { LocalStorage } from './core/storage';
 import {
@@ -34,7 +34,8 @@ const routes = [
   {
     path: '/app*',
     component: pages.App,
-    className: 'font-sans sm:ml-56 pl-6 pr-2 pt-3 py-2 h-screen',
+    className:
+      'font-sans text-black sm:ml-56 pl-6 pr-2 pt-3 py-2 h-screen dark:text-white dark:bg-[#353535]',
     nested: true,
     resolver: async (component, match) => {
       // setup core listeners
@@ -139,6 +140,10 @@ PoorManJSX.onAfterCreation((element) => {
       item.dataset.dropdownInitialized = 'true';
     });
   });
+});
+
+addHooks(document.body, {
+  class: Core.state.$darkTheme((value) => (value ? 'dark' : '')),
 });
 
 initializeApp(firebaseConfig);

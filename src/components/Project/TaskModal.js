@@ -13,19 +13,27 @@ export default class TaskModal extends BaseTaskModal {
     [this.SelectLocation] = useSelectLocation(this.transferTask, this.data, {
       project: {
         class:
-          'w-16 max-w-32 bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800',
+          'w-16 max-w-32 bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100',
         onMount: (e) => {
           e.target.before(
-            render(html`<span class="text-sm text-gray-500">In</span>`)
+            render(
+              html`<span class="text-sm text-gray-500 dark:text-gray-200"
+                >In</span
+              >`
+            )
           );
           e.target.after(
-            render(html`<span class="text-sm text-gray-500">, </span>`)
+            render(
+              html`<span class="text-sm text-gray-500 dark:text-gray-200"
+                >,
+              </span>`
+            )
           );
         },
       },
       list: {
         class:
-          'w-fit max-w-32 bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800',
+          'w-fit max-w-32 bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100',
       },
     });
   }
@@ -72,7 +80,7 @@ export default class TaskModal extends BaseTaskModal {
         template: html`
           <div class="space-y-2" data-name="task__subtasks">
             <div class="flex flex-row space-x-1 items-center">
-              ${SubtasksIcon()}
+              ${SubtasksIcon('dark:stroke-white')}
               <h3 class="text-md font-medium">Subtasks</h3>
             </div>
 
@@ -84,7 +92,7 @@ export default class TaskModal extends BaseTaskModal {
                 +
               </button>
               <input
-                class="text-black text-sm p-1 rounded focus:ring ml-2"
+                class="text-inherit text-sm bg-inherit p-1 rounded focus:ring ml-2"
                 type="text"
                 id="new-subtask"
                 name="new-subtask"
