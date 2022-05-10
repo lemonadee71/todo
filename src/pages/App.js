@@ -22,6 +22,7 @@ import Router from '../components/Router';
 import TaskModal from '../components/Project/TaskModal';
 import SubtaskModal from '../components/Project/SubtaskModal';
 import { dispatchCustomEvent } from '../utils/dispatch';
+import { toggleDarkTheme } from '../utils/theme';
 
 const routes = [
   {
@@ -64,10 +65,6 @@ const routes = [
 ];
 
 const App = () => {
-  const toggleDarkTheme = () => {
-    Core.state.darkTheme = !Core.state.darkTheme;
-  };
-
   // listeners
   const unsubscribe = [
     Core.event.on(REDIRECT, (data) => {

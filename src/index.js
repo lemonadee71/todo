@@ -2,7 +2,7 @@ import autosize from 'autosize';
 import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
-import PoorManJSX, { addHooks, html, render } from 'poor-man-jsx';
+import PoorManJSX, { html, render } from 'poor-man-jsx';
 import Core from './core';
 import { LocalStorage } from './core/storage';
 import {
@@ -21,6 +21,7 @@ import Router from './components/Router';
 import * as pages from './pages';
 import { config as firebaseConfig } from './firebase-config';
 import './styles/style.css';
+import { initializeTheme } from './utils/theme';
 
 const routes = [
   {
@@ -142,12 +143,9 @@ PoorManJSX.onAfterCreation((element) => {
   });
 });
 
-addHooks(document.body, {
-  class: Core.state.$darkTheme((value) => (value ? 'dark' : '')),
-});
-
 initializeApp(firebaseConfig);
 defineCustomElements();
+initializeTheme();
 render(Website, document.body);
 
 onAuthStateChanged(getAuth(), (user) => {

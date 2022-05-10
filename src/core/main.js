@@ -36,7 +36,7 @@ export const loadDefaultData = () => {
 const recoverDataFromLocal = () => {
   const data = [];
   const stored = LocalStorage.filter(
-    (key) => ![LAST_UPDATE, LAST_OPENED_PAGE].includes(key)
+    (key) => ![LAST_UPDATE, LAST_OPENED_PAGE, 'theme'].includes(key)
   );
   const cache = Object.entries(stored).reduce((acc, [key, value]) => {
     const [projectId, type] = key.split('__');
@@ -99,7 +99,7 @@ const storeDataToLocal = function (data) {
 
     if (
       !data.has(projectId) &&
-      ![LAST_UPDATE, LAST_OPENED_PAGE].includes(key)
+      ![LAST_UPDATE, LAST_OPENED_PAGE, 'theme'].includes(key)
     ) {
       LocalStorage.remove(key);
     }
