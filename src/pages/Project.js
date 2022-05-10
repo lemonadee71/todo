@@ -21,10 +21,18 @@ const Project = ({ data: { id } }) => {
   };
 
   const editProject = (e) => {
-    Core.event.emit(PROJECT.UPDATE, {
-      project: id,
-      data: { name: e.target.value },
-    });
+    Core.event.emit(
+      PROJECT.UPDATE,
+      {
+        project: id,
+        data: { name: e.target.value },
+      },
+      {
+        onError: () => {
+          e.target.value = project.name;
+        },
+      }
+    );
   };
 
   const createNewList = (e) => {
