@@ -3,6 +3,7 @@ import { html } from 'poor-man-jsx';
 import Core from '../core';
 import { PATHS } from '../core/constants';
 import {
+  CHANGE_THEME,
   EDIT_SUBTASK,
   EDIT_TASK,
   PROJECT,
@@ -72,6 +73,7 @@ const App = () => {
         Core.router.redirect(PATHS.app, { title: 'Overview' });
       }
     }),
+    Core.event.on(CHANGE_THEME, toggleDarkTheme),
     Core.event.onError(
       [PROJECT.ADD, PROJECT.LISTS.ADD, PROJECT.LABELS.ADD],
       ({ e }) => logger.warning(e)
@@ -145,7 +147,7 @@ const App = () => {
           data-dropdown-position="bottom-end"
           data-dropdown-offset="0,10"
         >
-          <button class="px-2" onClick=${toggleDarkTheme}>
+          <button class="px-2" onClick=${() => Core.event.emit(CHANGE_THEME)}>
             ${Core.state.$darkTheme((value) => (value ? 'Light' : 'Dark'))} mode
           </button>
           <button class="px-2 hover:text-red-600" onClick=${signOut}>

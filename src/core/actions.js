@@ -9,6 +9,7 @@ const REDIRECT = 'redirect';
 const NAVIGATE_TO_PAGE = 'navigate.to.page';
 const EDIT_TASK = 'task.modal.open';
 const EDIT_SUBTASK = 'subtask.modal.open';
+const CHANGE_THEME = 'theme.change';
 
 const createActions = (prefix) => {
   const actions = [ADD, REMOVE, UPDATE, TRANSFER, MOVE, INSERT];
@@ -49,4 +50,5 @@ export {
   NAVIGATE_TO_PAGE,
   EDIT_TASK,
   EDIT_SUBTASK,
+  CHANGE_THEME,
 };

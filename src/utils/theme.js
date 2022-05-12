@@ -30,5 +30,9 @@ export const initializeTheme = async () => {
 
 export const toggleDarkTheme = () => {
   Core.state.darkTheme = !Core.state.darkTheme;
-  syncTheme(Core.state.darkTheme ? 'dark' : 'light');
+  const theme = Core.state.darkTheme ? 'dark' : 'light';
+
+  syncTheme(theme);
+
+  return theme;
 };
