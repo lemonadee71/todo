@@ -3,7 +3,7 @@ import { createPopper } from '@popperjs/core';
 import { createHook, html } from 'poor-man-jsx';
 import ToastUICalendar from 'tui-calendar';
 import Core from '../../core';
-import { EDIT_TASK, TASK } from '../../core/actions';
+import { CHANGE_THEME, EDIT_TASK, TASK } from '../../core/actions';
 import { POPPER_CONFIG } from '../../core/constants';
 import { $ } from '../../utils/query';
 import { dispatchCustomEvent } from '../../utils/dispatch';
@@ -13,6 +13,7 @@ import CreationPopup from './CreationPopup';
 
 const Calendar = (projectId) => {
   const [state] = createHook({ date: new Date() });
+  let cleanup = [];
   let calendar;
 
   const closeCreationPopup = () =>
@@ -34,12 +35,16 @@ const Calendar = (projectId) => {
         project: data.project,
         list: data.list,
         task: data.id,
+        completed: data.completed,
       },
+      // BUG: the color is always #333 regardless of what we set here
+      color: 'inherit !important',
       borderColor: 'rgb(251 191 36)',
+      // top line color of detail popup
       bgColor: 'rgb(251 191 36)',
       dragBgColor: 'rgb(94 234 212)',
       // prettier-ignore
-      customStyle: `font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem; ${data.completed ? 'text-decoration-line: line-through;' : ''}`,
+      customStyle: `font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem;`,
     };
   };
 
@@ -86,7 +91,12 @@ const Calendar = (projectId) => {
   /** core */
   const initListeners = () => {
     calendar.on({
-      clickSchedule: closeCreationPopup,
+      clickSchedule: () => {
+        closeCreationPopup();
+        $('.tui-full-calendar-popup-container').classList.add(
+          'dark:bg-[#353535]'
+        );
+      },
       beforeCreateSchedule: (e) => {
         const popup = $('#creation-popup');
         // make sure to close previous popup first
@@ -138,6 +148,62 @@ const Calendar = (projectId) => {
         })();
       },
     });
+
+    /** listeners */
+    cleanup = [
+      Core.event.onSuccess(CHANGE_THEME, () => {
+        // BUG: each theme should have the same set of keys or else
+        //      styles will be inherited from predecessor for every
+        //      missing keys in the new theme
+        calendar.setTheme(Core.state.darkTheme ? darkTheme : lightTheme);
+      }),
+      Core.event.onSuccess([TASK.ADD, TASK.INSERT], (data) => {
+        if (data.dueDate) createSchedule(data);
+      }),
+      Core.event.onSuccess(TASK.REMOVE, (data) => {
+        deleteSchedule(data.id, data.list);
+      }),
+      Core.event.onSuccess(TASK.TRANSFER, ({ type, changes, result }) => {
+        switch (type) {
+          case 'project':
+            if (changes.project.to === projectId && result.dueDate) {
+              createSchedule(result);
+            } else {
+              deleteSchedule(result.id, changes.list.from);
+            }
+
+            break;
+          case 'list':
+            updateSchedule(result.id, changes.list.from, {
+              calendarId: changes.list.to,
+              raw: {
+                project: result.project,
+                list: result.list,
+                task: result.id,
+              },
+            });
+            break;
+
+          default:
+            throw new Error('Type must be either project, list, or task');
+        }
+      }),
+      Core.event.onSuccess(TASK.UPDATE, (data) => {
+        if (data.dueDate) {
+          // check if there's an existing schedule
+          const schedule = calendar.getSchedule(data.id, data.list);
+
+          if (schedule) {
+            updateSchedule(data.id, data.list, createScheduleObject(data));
+            // BUG: update does not update the styles so we recreate instead
+            // deleteSchedule(data.id, data.list);
+            // createSchedule(data);
+          } else createSchedule(data);
+        } else {
+          deleteSchedule(data.id, data.list);
+        }
+      }),
+    ];
   };
 
   const init = function () {
@@ -147,6 +213,7 @@ const Calendar = (projectId) => {
       taskView: false,
       usageStatistics: false,
       useDetailPopup: true,
+      theme: Core.state.darkTheme ? darkTheme : lightTheme,
     });
 
     initListeners();
@@ -154,64 +221,14 @@ const Calendar = (projectId) => {
   };
 
   const destroy = () => {
-    unsubscribe.forEach((cb) => cb());
+    cleanup.forEach((cb) => cb());
     calendar.destroy();
   };
-
-  /** listeners */
-  const unsubscribe = [
-    Core.event.onSuccess([TASK.ADD, TASK.INSERT], (data) => {
-      if (data.dueDate) createSchedule(data);
-    }),
-    Core.event.onSuccess(TASK.REMOVE, (data) => {
-      deleteSchedule(data.id, data.list);
-    }),
-    Core.event.onSuccess(TASK.TRANSFER, ({ type, changes, result }) => {
-      switch (type) {
-        case 'project':
-          if (changes.project.to === projectId && result.dueDate) {
-            createSchedule(result);
-          } else {
-            deleteSchedule(result.id, changes.list.from);
-          }
-
-          break;
-        case 'list':
-          updateSchedule(result.id, changes.list.from, {
-            calendarId: changes.list.to,
-            raw: {
-              project: result.project,
-              list: result.list,
-              task: result.id,
-            },
-          });
-          break;
-
-        default:
-          throw new Error('Type must be either project, list, or task');
-      }
-    }),
-    Core.event.onSuccess(TASK.UPDATE, (data) => {
-      if (data.dueDate) {
-        // check if there's an existing schedule
-        const schedule = calendar.getSchedule(data.id, data.list);
-
-        if (schedule) {
-          // updateSchedule(data.id, data.list, createScheduleObject(data));
-          // update does not update the styles so we recreate instead
-          deleteSchedule(data.id, data.list);
-          createSchedule(data);
-        } else createSchedule(data);
-      } else {
-        deleteSchedule(data.id, data.list);
-      }
-    }),
-  ];
 
   return html`
     <div class="flex flex-row gap-1 mb-3" data-name="taskbar">
       <button
-        class="hover:bg-neutral-200 py-1 px-3 rounded border border-solid border-neutral-600 active:ring shadow-sm"
+        class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded border border-solid border-neutral-600 active:ring shadow-sm"
         name="today"
         data-tooltip="${format(new Date(), 'eee, MMMM dd')}"
         onClick=${goToToday}
@@ -219,7 +236,7 @@ const Calendar = (projectId) => {
         Today
       </button>
       <button
-        class="hover:bg-neutral-200 py-1 px-3 rounded-full active:ring shadow-sm"
+        class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded-full active:ring shadow-sm"
         name="previous"
         data-tooltip="Previous week"
         onClick=${previous}
@@ -227,7 +244,7 @@ const Calendar = (projectId) => {
         <
       </button>
       <button
-        class="hover:bg-neutral-200 py-1 px-3 rounded-full active:ring shadow-sm"
+        class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded-full active:ring shadow-sm"
         name="next"
         data-tooltip="Next week"
         onClick=${next}
@@ -246,10 +263,48 @@ const Calendar = (projectId) => {
 };
 
 const template = {
+  time: (schedule) =>
+    // prettier-ignore
+    // workaround since we can't update customStyle
+    `<span class="text-[#333] dark:text-white" style="text-decoration-line: ${schedule.raw.completed ? 'line-through' : 'none'};">
+      ${schedule.title}
+    </span>`,
+  monthMoreTitleDate: (date, dayname) => {
+    const day = date.split('.')[2];
+
+    return `
+      <span class="tui-full-calendar-month-more-title-day text-[#333] dark:text-white">${day}</span>
+      <span class="tui-full-calendar-month-more-title-day-label text-[#333] dark:text-white">${dayname}</span>      
+    `;
+  },
   popupDetailDate: (...args) =>
     format(args[2].toDate(), 'MMMM d, yyyy hh:mm a'),
   popupDetailBody: (schedule) =>
     `<p class="truncate">${schedule.body.trim()}</p>`,
+  // Icons are not visible for these buttons in dark mode
+  // since we can't change their color
+  popupEdit: () => '<span>Edit</span>',
+  popupDelete: () => '<span class="hover:text-red-500">Delete</span>',
+};
+
+const lightTheme = {
+  'common.border': '1px solid #e5e5e5',
+  'common.backgroundColor': 'inherit',
+  'common.saturday.color': '#333',
+  'common.dayname.color': '#333',
+  'month.dayname.borderLeft': '1px solid #e5e5e5',
+  'month.dayExceptThisMonth.color': 'rgba(51, 51, 51, 0.4)',
+  'month.moreView.backgroundColor': 'white',
+};
+
+const darkTheme = {
+  'common.border': '1px solid rgb(107 114 128)',
+  'common.backgroundColor': 'inherit',
+  'common.saturday.color': 'white',
+  'common.dayname.color': 'white',
+  'month.dayname.borderLeft': '1px solid rgb(107 114 128)',
+  'month.dayExceptThisMonth.color': 'gray',
+  'month.moreView.backgroundColor': '#202020',
 };
 
 export default Calendar;
