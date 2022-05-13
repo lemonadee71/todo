@@ -5,11 +5,7 @@ import { useRoot } from '../core/hooks';
 import { getCollectionRef, getDocuments } from './firestore';
 import { copy } from './misc';
 
-export const useSelectLocation = (
-  onChange,
-  data = {},
-  props = { project: '', list: '' }
-) => {
+export const useSelectLocation = (data = {}) => {
   const [root, unsubscribe] = useRoot();
   const [state] = createHook({
     project: data.project,
@@ -23,79 +19,70 @@ export const useSelectLocation = (
         html`
           <option
             value="${item.id}"
-            ${{
-              selected: item.id === defaultValue || (i === 0 && !defaultValue),
-            }}
+            selected=${item.id === defaultValue || (i === 0 && !defaultValue)}
           >
             ${item.name}
           </option>
         `
     );
 
-  const renderProjectNames = (items) => {
+  const renderProjectOptions = (items) => {
     const blank = html`<option
       hidden
       disabled
       value
-      ${{ selected: !state.project }}
+      selected=${!state.project}
     ></option>`;
     const options = [blank, ...turnItemsToOptions(items, state.project)];
 
     return render(html`${options}`);
   };
 
-  const renderListNames = (items) =>
+  const renderListOptions = (items) =>
     render(html`${turnItemsToOptions(items, state.list)}`);
 
-  const showListOptions = async (projectId) => {
+  const syncListOptions = async (projectId) => {
+    let result;
+
     if (!projectId) {
-      state.listOptions = [];
+      result = [];
     } else if (Core.data.fetched.projects.includes(projectId)) {
-      state.listOptions = renderListNames(Core.main.getLists(projectId));
+      result = Core.main.getLists(projectId);
     } else {
-      const result = await getDocuments(
+      result = await getDocuments(
         query(getCollectionRef('Lists'), where('project', '==', projectId))
       );
-
-      state.listOptions = renderListNames(result);
     }
+
+    state.listOptions = renderListOptions(result);
+
+    return result;
   };
 
-  const selectList = (e) => {
+  const onListChange = (onChange) => (e) => {
     state.list = e.target.value;
-    onChange?.(e, copy(state, ['listOptions']), 'list');
+    onChange?.(e, copy(state, ['listOptions']));
   };
 
-  const selectProject = (e) => {
+  const onProjectChange = (onChange) => (e) => {
     state.project = e.target.value;
 
     (async () => {
       state.list = null;
-      await showListOptions(state.project);
-      state.list = e.target.nextElementSibling.value;
+      const lists = await syncListOptions(state.project);
+      // default list is the first one if transferred to new project
+      state.list = lists[0].id;
 
-      onChange?.(e, copy(state, ['listOptions']), 'project');
+      onChange?.(e, copy(state, ['listOptions']));
     })();
   };
 
-  const component = html`
-    <select
-      name="project"
-      onDestroy=${unsubscribe}
-      onChange=${selectProject}
-      ${props.project}
-    >
-      ${root.$projects(renderProjectNames)}
-    </select>
-    <select
-      name="list"
-      onChange=${selectList}
-      onMount=${async () => showListOptions(state.project)}
-      ${props.list}
-    >
-      ${state.$listOptions}
-    </select>
-  `;
-
-  return [component, state];
+  return {
+    onProjectChange,
+    onListChange,
+    projectOptions: root.$projects(renderProjectOptions),
+    listOptions: state.$listOptions(),
+    initializeListOptions: async () => syncListOptions(state.project),
+    unsubscribe,
+  };
 };

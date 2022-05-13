@@ -9,36 +9,10 @@ import { SubtasksIcon } from '../../assets/icons';
 export default class TaskModal extends BaseTaskModal {
   constructor(data) {
     super(data, TASK);
-
-    [this.SelectLocation] = useSelectLocation(this.transferTask, this.data, {
-      project: {
-        class:
-          'w-16 max-w-32 bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100',
-        onMount: (e) => {
-          e.target.before(
-            render(
-              html`<span class="text-sm text-gray-500 dark:text-gray-200"
-                >In</span
-              >`
-            )
-          );
-          e.target.after(
-            render(
-              html`<span class="text-sm text-gray-500 dark:text-gray-200"
-                >,
-              </span>`
-            )
-          );
-        },
-      },
-      list: {
-        class:
-          'w-fit max-w-32 bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100',
-      },
-    });
   }
 
-  transferTask = (_, selected, type) => {
+  transferTask = (e, selected) => {
+    const type = e.target.name;
     const list = { to: selected.list, from: this.data.list };
     const project =
       type === 'list'
@@ -65,10 +39,39 @@ export default class TaskModal extends BaseTaskModal {
   };
 
   render() {
+    const {
+      projectOptions,
+      listOptions,
+      onProjectChange,
+      onListChange,
+      initializeListOptions,
+      unsubscribe,
+    } = useSelectLocation(this.data);
+
     this.template.push(
       {
-        template: this.SelectLocation,
         target: 'title',
+        template: html`
+          <div onDestroy=${unsubscribe}>
+            <span class="text-sm text-gray-500 dark:text-gray-200">In</span>
+            <select
+              class="w-16 max-w-32 bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100"
+              name="project"
+              onChange=${onProjectChange(this.transferTask)}
+            >
+              ${projectOptions}
+            </select>
+            <span class="text-sm text-gray-500 dark:text-gray-200">, </span>
+            <select
+              class="w-fit max-w-32 bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100"
+              name="list"
+              onChange=${onListChange(this.transferTask)}
+              onMount=${initializeListOptions}
+            >
+              ${listOptions}
+            </select>
+          </div>
+        `,
         // too lazy to specify margin manually so use default (append) instead
         // to avoid the sibling selector
         // method: 'after',

@@ -13,17 +13,8 @@ const CreationPopup = (projectId) => {
     isOpen: false,
     initialDate: new Date(),
   });
-  const [SelectLocation] = useSelectLocation(
-    null,
-    { project: projectId },
-    {
-      project: {
-        class: 'text-black w-full p-1 rounded mb-2',
-        disabled: true,
-      },
-      list: { class: 'text-black w-full p-1 rounded' },
-    }
-  );
+  const { projectOptions, listOptions, initializeListOptions, unsubscribe } =
+    useSelectLocation({ project: projectId });
   let flatpickrInstance;
 
   const togglePopup = (value) => {
@@ -110,9 +101,22 @@ const CreationPopup = (projectId) => {
           ></textarea>
         </label>
 
-        <div>
+        <div onDestroy=${unsubscribe}>
           <p class="text-xs font-medium text-gray-500 mb-1">Location</p>
-          ${SelectLocation}
+          <select
+            class="text-black w-full p-1 rounded mb-2"
+            name="project"
+            disabled
+          >
+            ${projectOptions}
+          </select>
+          <select
+            class="text-black w-full p-1 rounded"
+            name="list"
+            onMount=${initializeListOptions}
+          >
+            ${listOptions}
+          </select>
         </div>
 
         <label>
