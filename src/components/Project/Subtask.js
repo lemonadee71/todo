@@ -8,7 +8,7 @@ export default class Subtask extends BaseTask {
     this.props = {
       main: {
         // override class to remove drop-shadow and reduce padding
-        class: `${this.type} box-border flex flex-col w-full py-1 bg-white rounded-md dark:bg-[#353535]`,
+        class: `${this.type} box-border flex flex-col w-full py-1 bg-white dark:bg-[#353535]`,
         'data-parent': this.data.parent,
       },
     };
