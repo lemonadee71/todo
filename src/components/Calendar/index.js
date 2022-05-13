@@ -37,13 +37,10 @@ const Calendar = (projectId) => {
         task: data.id,
         completed: data.completed,
       },
-      // BUG: the color is always #333 regardless of what we set here
-      color: 'inherit !important',
       borderColor: 'rgb(251 191 36)',
       // top line color of detail popup
       bgColor: 'rgb(251 191 36)',
       dragBgColor: 'rgb(94 234 212)',
-      // prettier-ignore
       customStyle: `font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem;`,
     };
   };
@@ -180,6 +177,7 @@ const Calendar = (projectId) => {
                 project: result.project,
                 list: result.list,
                 task: result.id,
+                completed: result.completed,
               },
             });
             break;
@@ -193,12 +191,9 @@ const Calendar = (projectId) => {
           // check if there's an existing schedule
           const schedule = calendar.getSchedule(data.id, data.list);
 
-          if (schedule) {
+          if (schedule)
             updateSchedule(data.id, data.list, createScheduleObject(data));
-            // BUG: update does not update the styles so we recreate instead
-            // deleteSchedule(data.id, data.list);
-            // createSchedule(data);
-          } else createSchedule(data);
+          else createSchedule(data);
         } else {
           deleteSchedule(data.id, data.list);
         }
@@ -255,9 +250,7 @@ const Calendar = (projectId) => {
         ${state.$date((date) => format(date, 'MMMM yyyy'))}
       </h2>
     </div>
-    <div data-name="calendar">
-      <div onCreate=${init} onDestroy=${destroy}></div>
-    </div>
+    <div data-name="calendar" onCreate=${init} onDestroy=${destroy}></div>
     ${CreationPopup(projectId)}
   `;
 };
