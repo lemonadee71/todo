@@ -1,5 +1,5 @@
 import { createPopper } from '@popperjs/core';
-import { POPPER_CONFIG } from '../core/constants';
+import { POPPER_CONFIG } from '../constants';
 import { $ } from './query';
 
 let currentInstance;

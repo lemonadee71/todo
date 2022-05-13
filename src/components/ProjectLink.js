@@ -1,5 +1,5 @@
 import { html } from 'poor-man-jsx';
-import { PROJECT } from '../core/actions';
+import { PROJECT } from '../actions';
 import { useUndo } from '../utils/undo';
 import { DeleteIcon } from '../assets/icons';
 

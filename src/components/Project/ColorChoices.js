@@ -1,5 +1,5 @@
 import { html } from 'poor-man-jsx';
-import { DEFAULT_COLORS } from '../../core/constants';
+import { DEFAULT_COLORS } from '../../constants';
 
 const ColorChoices = (current = null) =>
   html`

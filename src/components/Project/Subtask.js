@@ -1,4 +1,4 @@
-import { TASK } from '../../core/actions';
+import { TASK } from '../../actions';
 import BaseTask from './BaseTask';
 
 export default class Subtask extends BaseTask {

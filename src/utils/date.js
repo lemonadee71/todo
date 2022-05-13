@@ -11,7 +11,7 @@ import {
   isFuture,
   subMinutes,
 } from 'date-fns';
-import { DATE_TIME_FORMAT, TZ_DATE_FORMAT } from '../core/constants';
+import { DATE_TIME_FORMAT, TZ_DATE_FORMAT } from '../constants';
 
 const isDueToday = (date) => isToday(date);
 const isDueTomorrow = (date) => isTomorrow(date);

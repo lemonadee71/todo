@@ -1,5 +1,5 @@
 import { html, render } from 'poor-man-jsx';
-import { TASK } from '../../core/actions';
+import { TASK } from '../../actions';
 import Core from '../../core';
 import { useSelectLocation } from '../../utils/useSelectLocation';
 import BaseTaskModal from './BaseTaskModal';

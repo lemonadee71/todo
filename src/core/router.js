@@ -1,5 +1,5 @@
 import Navigo from 'navigo';
-// import { GH_PATH } from './constants';
+// import { GH_PATH } from '../constants';
 
 const Router = (() => {
   const routes = new Map();

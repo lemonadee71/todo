@@ -1,6 +1,6 @@
 import Toast from '../components/Toast';
 import Core from '../core';
-import { REDIRECT } from '../core/actions';
+import { REDIRECT } from '../actions';
 import { showToast } from './showToast';
 import { $ } from './query';
 

@@ -1,6 +1,6 @@
 import { html, createHook, render } from 'poor-man-jsx';
+import { PROJECT } from '../../actions';
 import Core from '../../core';
-import { PROJECT } from '../../core/actions';
 import { useProject } from '../../core/hooks';
 import ColorChoices from './ColorChoices';
 import Label from './Label';

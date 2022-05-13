@@ -1,7 +1,7 @@
 import flatpickr from 'flatpickr';
 import { createHook, html } from 'poor-man-jsx';
 import Core from '../../core';
-import { TASK } from '../../core/actions';
+import { TASK } from '../../actions';
 import { debounce } from '../../utils/delay';
 import logger from '../../utils/logger';
 import { useSelectLocation } from '../../utils/useSelectLocation';

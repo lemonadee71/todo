@@ -3,7 +3,7 @@ import EventEmitter from './classes/Emitter';
 import IdList from './classes/IdList';
 import * as main from './main';
 import router from './router';
-import { TASK, PROJECT } from './actions';
+import { TASK, PROJECT } from '../actions';
 import { debounce } from '../utils/delay';
 import { copy } from '../utils/misc';
 

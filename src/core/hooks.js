@@ -1,6 +1,6 @@
 import { createHook } from 'poor-man-jsx';
 import Core from '.';
-import { FIREBASE, PROJECT, TASK } from './actions';
+import { FIREBASE, PROJECT, TASK } from '../actions';
 
 export const useRoot = () => {
   const [state] = createHook({ projects: Core.main.getProjectDetails() });

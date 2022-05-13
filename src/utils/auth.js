@@ -1,7 +1,7 @@
 import { signOut as signOutUser, getAuth } from 'firebase/auth';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import Core from '../core';
-import { LOCAL_USER, PATHS } from '../core/constants';
+import { LOCAL_USER, PATHS } from '../constants';
 import { getInitials } from './misc';
 
 export const isGuest = (id = Core.state.currentUser) => id === LOCAL_USER;

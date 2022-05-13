@@ -1,7 +1,7 @@
 import IdList from './IdList';
 import TaskList from './TaskList';
 import Label from './Label';
-import { DEFAULT_COLORS } from '../constants';
+import { DEFAULT_COLORS } from '../../constants';
 import uuid from '../../utils/id';
 import { copy, orderById } from '../../utils/misc';
 import { converter } from '../../utils/firestore';

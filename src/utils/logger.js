@@ -1,5 +1,5 @@
 import Toast from '../components/Toast';
-import { TOAST_COLORS } from '../core/constants';
+import { TOAST_COLORS } from '../constants';
 import { showToast } from './showToast';
 
 const logger = function (message, type = 'secondary') {

@@ -26,7 +26,7 @@ import Subtask from './classes/Subtask';
 import Task from './classes/Task';
 import TaskList from './classes/TaskList';
 import { loadDefaultData } from './main';
-import { FIREBASE, PROJECT, TASK } from './actions';
+import { FIREBASE, PROJECT, TASK } from '../actions';
 import Core from '.';
 
 // If there are a lot of subtasks, this might cause significant delay

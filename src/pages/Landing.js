@@ -1,6 +1,6 @@
 import { html } from 'poor-man-jsx';
 import Core from '../core';
-import { PATHS } from '../core/constants';
+import { PATHS } from '../constants';
 
 const Landing = () => {
   const loginBtn = html`

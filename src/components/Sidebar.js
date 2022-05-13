@@ -1,6 +1,6 @@
 import Sortable from 'sortablejs';
 import { createHook, html, render } from 'poor-man-jsx';
-import { PROJECT } from '../core/actions';
+import { PROJECT } from '../actions';
 import { useRoot } from '../core/hooks';
 import Core from '../core';
 import ProjectLink from './ProjectLink';

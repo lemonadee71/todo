@@ -3,14 +3,9 @@ import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import PoorManJSX, { html, render } from 'poor-man-jsx';
+import { HIDE_EVENTS, LAST_OPENED_PAGE, PATHS, SHOW_EVENTS } from './constants';
 import Core from './core';
 import { LocalStorage } from './core/storage';
-import {
-  HIDE_EVENTS,
-  LAST_OPENED_PAGE,
-  PATHS,
-  SHOW_EVENTS,
-} from './core/constants';
 import { fetchProjects, initFirestore, setupListeners } from './core/firestore';
 import { isGuest, isNewUser, signIn } from './utils/auth';
 import { createDropdown } from './utils/dropdown';

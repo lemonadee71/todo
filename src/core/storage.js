@@ -1,4 +1,4 @@
-import { LOCAL_USER } from './constants';
+import { LOCAL_USER } from '../constants';
 
 class Storage {
   constructor(prefix = '') {

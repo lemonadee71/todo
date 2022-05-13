@@ -1,6 +1,6 @@
 import { isPast, isWithinInterval, subHours } from 'date-fns';
 import IdList from '../core/classes/IdList';
-import { DEFAULT_COLORS } from '../core/constants';
+import { DEFAULT_COLORS } from '../constants';
 import { isDueToday, parse } from './date';
 
 export const memoize = (fn) => {

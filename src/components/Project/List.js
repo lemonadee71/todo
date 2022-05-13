@@ -1,6 +1,6 @@
 import Sortable from 'sortablejs';
 import { createHook, html } from 'poor-man-jsx';
-import { FIREBASE, PROJECT, TASK } from '../../core/actions';
+import { FIREBASE, PROJECT, TASK } from '../../actions';
 import Core from '../../core';
 import { useUndo } from '../../utils/undo';
 import { isGuest } from '../../utils/auth';

@@ -6,7 +6,7 @@ import IdList from './classes/IdList';
 import Label from './classes/Label';
 import Project from './classes/Project';
 import { LocalStorage } from './storage';
-import { LAST_OPENED_PAGE, LAST_UPDATE } from './constants';
+import { LAST_OPENED_PAGE, LAST_UPDATE } from '../constants';
 import defaultData from '../defaultData.json';
 import { filterById } from '../utils/misc';
 import { parse } from '../utils/date';

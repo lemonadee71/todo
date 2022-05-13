@@ -1,7 +1,7 @@
 import Sortable from 'sortablejs';
 import { createHook, html, render } from 'poor-man-jsx';
-import { DEFAULT_COLORS } from '../../core/constants';
-import { TASK } from '../../core/actions';
+import { DEFAULT_COLORS } from '../../constants';
+import { TASK } from '../../actions';
 import Core from '../../core';
 import BaseTask from './BaseTask';
 import Subtask from './Subtask';

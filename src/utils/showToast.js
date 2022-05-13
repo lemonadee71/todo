@@ -1,6 +1,6 @@
 import Toastify from 'toastify-js';
 import Core from '../core';
-import { TOAST_COLORS } from '../core/constants';
+import { TOAST_COLORS } from '../constants';
 
 export const showToast = (options) => {
   const toast = Toastify({

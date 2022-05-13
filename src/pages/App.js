@@ -1,7 +1,6 @@
 import { getDoc } from 'firebase/firestore';
 import { html } from 'poor-man-jsx';
-import Core from '../core';
-import { PATHS } from '../core/constants';
+import { PATHS } from '../constants';
 import {
   CHANGE_THEME,
   EDIT_SUBTASK,
@@ -9,7 +8,8 @@ import {
   PROJECT,
   REDIRECT,
   TASK,
-} from '../core/actions';
+} from '../actions';
+import Core from '../core';
 import { fetchProjectData } from '../core/firestore';
 import { getProfilePicURL, getUserName, isGuest, signOut } from '../utils/auth';
 import { getDocumentRef } from '../utils/firestore';

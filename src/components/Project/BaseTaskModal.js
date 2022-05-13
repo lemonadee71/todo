@@ -1,9 +1,9 @@
 import flatpickr from 'flatpickr';
 import { createHook, html, render } from 'poor-man-jsx';
 import { CalendarIcon, LabelIcon, NotesIcon } from '../../assets/icons';
+import { TASK } from '../../actions';
+import { POPPER_CONFIG } from '../../constants';
 import Core from '../../core';
-import { TASK } from '../../core/actions';
-import { POPPER_CONFIG } from '../../core/constants';
 import { useTask } from '../../core/hooks';
 import { debounce } from '../../utils/delay';
 import { dispatchCustomEvent } from '../../utils/dispatch';

@@ -1,6 +1,6 @@
 import { converter } from '../../utils/firestore';
 import uuid from '../../utils/id';
-import { DEFAULT_COLORS } from '../constants';
+import { DEFAULT_COLORS } from '../../constants';
 
 class Label {
   constructor({ name, color, project, id = null }) {

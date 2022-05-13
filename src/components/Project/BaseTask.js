@@ -1,7 +1,7 @@
 import { html, render } from 'poor-man-jsx';
 import { KebabMenuIcon } from '../../assets/icons';
 import Core from '../../core';
-import { EDIT_SUBTASK, EDIT_TASK } from '../../core/actions';
+import { EDIT_SUBTASK, EDIT_TASK } from '../../actions';
 import { formatDate, formatDateToNow } from '../../utils/date';
 import { getDateColor } from '../../utils/misc';
 import { useUndo } from '../../utils/undo';
