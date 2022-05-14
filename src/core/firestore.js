@@ -147,6 +147,8 @@ export const setupListeners = () => {
     data.lists.items.forEach(async (list) => {
       await setDocument('Lists', list.id, list.toFirestore());
     });
+
+    Core.data.root.add(data);
   });
 
   Core.event.on(`${PROJECT.REMOVE}:timeout`, async (data) => {
