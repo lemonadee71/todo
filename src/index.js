@@ -1,5 +1,4 @@
 import autosize from 'autosize';
-import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import PoorManJSX, { html, render } from 'poor-man-jsx';
@@ -9,14 +8,15 @@ import { LocalStorage } from './core/storage';
 import { fetchProjects, initFirestore, setupListeners } from './core/firestore';
 import { isGuest, isNewUser, signIn } from './utils/auth';
 import { createDropdown } from './utils/dropdown';
-import { useTooltip } from './utils/useTooltip';
+import { getUserRef, updateUser } from './utils/firestore';
 import { $, $$ } from './utils/query';
+import { initializeTheme } from './utils/theme';
+import { useTooltip } from './utils/useTooltip';
 import defineCustomElements from './components/custom';
 import Router from './components/Router';
 import * as pages from './pages';
 import { config as firebaseConfig } from './firebase-config';
 import './styles/style.css';
-import { initializeTheme } from './utils/theme';
 
 const routes = [
   {
@@ -72,7 +72,7 @@ const routes = [
         if (isGuest()) {
           LocalStorage.store(LAST_OPENED_PAGE, data);
         } else {
-          await updateDoc(doc(getFirestore(), Core.state.currentUser, 'data'), {
+          await updateUser(Core.state.currentUser, {
             [LAST_OPENED_PAGE]: data,
           });
         }
@@ -82,10 +82,7 @@ const routes = [
         if (isGuest()) {
           cached = LocalStorage.get(LAST_OPENED_PAGE);
         } else {
-          const document = await getDoc(
-            doc(getFirestore(), Core.state.currentUser, 'data')
-          );
-
+          const document = await getUserRef(Core.state.currentUser);
           cached = document.data()?.[LAST_OPENED_PAGE];
         }
 

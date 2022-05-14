@@ -12,6 +12,7 @@ import {
   where,
 } from 'firebase/firestore';
 import {
+  createUser,
   deleteDocument,
   getCollectionRef,
   getData,
@@ -91,9 +92,7 @@ export const fetchProjectData = async (id) => {
 
 export const initFirestore = async () => {
   // initialize user
-  await setDoc(doc(getFirestore(), Core.state.currentUser, 'data'), {
-    created: Date.now(),
-  });
+  await createUser(Core.state.currentUser);
 
   // initialize data
   const defaultData = loadDefaultData();

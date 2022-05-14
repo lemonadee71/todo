@@ -3,6 +3,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   getFirestore,
   setDoc,
@@ -39,3 +40,11 @@ export const updateDocument = (type, id, data) =>
   updateDoc(getDocumentRef(type, id), data);
 
 export const deleteDocument = (type, id) => deleteDoc(getDocumentRef(type, id));
+
+export const getUserRef = (id) => getDoc(doc(getFirestore(), id, 'data'));
+
+export const createUser = (id) =>
+  setDoc(doc(getFirestore(), id, 'data'), { created: Date.now() });
+
+export const updateUser = (id, data) =>
+  updateDoc(doc(getFirestore(), id, 'data'), data);

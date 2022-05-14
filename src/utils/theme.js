@@ -1,17 +1,15 @@
-import { doc, getFirestore, updateDoc } from 'firebase/firestore';
 import { addHooks } from 'poor-man-jsx';
 import Core from '../core';
 import { LocalStorage } from '../core/storage';
 import { isGuest } from './auth';
+import { updateUser } from './firestore';
 
 export const syncTheme = async (theme) => {
   if (isGuest()) {
     LocalStorage.store('theme', theme);
   } else {
     // we're syncing the theme but we're currently not reading it
-    await updateDoc(doc(getFirestore(), Core.state.currentUser, 'data'), {
-      theme,
-    });
+    await updateUser(Core.state.currentUser, { theme });
   }
 };
 
