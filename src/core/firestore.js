@@ -44,7 +44,9 @@ const fetchSubtasks = async (tasks, data) => {
   const result = await Promise.all(queries.map((q) => getDocs(q)));
   const subtasks = result.map((item) => item?.docs?.map(getData) || []);
 
-  tasks.forEach((task, i) => task.subtasks.add(subtasks[i]));
+  tasks.forEach((task, i) =>
+    task.subtasks.add(orderById(subtasks[i], task.__initialSubtasksOrder))
+  );
 };
 
 export const fetchProjects = async () => {

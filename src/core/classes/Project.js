@@ -7,10 +7,15 @@ import { copy, orderById } from '../../utils/misc';
 import { converter } from '../../utils/firestore';
 
 export default class Project {
-  constructor({ name, id, lastFetched, labels, lists }) {
+  constructor({ name, id, lastFetched, labels, lists, __initialListsOrder }) {
+    // meta
     this.name = name;
     this.id = id || uuid();
     this.lastFetched = lastFetched || Date.now();
+
+    // firestore specific props
+    // only set once on first fetched
+    this.__initialListsOrder = __initialListsOrder ?? [];
 
     const defaultLabels = [
       new Label({
@@ -43,12 +48,14 @@ export default class Project {
         (source.lists || []).filter((list) => list.project === data.id),
         data.lists || []
       ),
+      // just to save an extra read for order
+      __initialListsOrder: data.lists,
     }));
   }
 
   toFirestore() {
     return {
-      ...copy(this, ['lastFetched', 'labels', 'lists']),
+      ...copy(this, ['lastFetched', 'labels', 'lists', '__initialListsOrder']),
       lists: this.lists.items.map((item) => item.id),
     };
   }

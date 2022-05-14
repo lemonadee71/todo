@@ -9,6 +9,8 @@ export default class Task extends BaseTask {
     super(props);
 
     this.subtasks = new IdList(props.subtasks);
+
+    this.__initialSubtasksOrder = props.__initialSubtasksOrder ?? [];
   }
 
   static converter(source = {}) {
@@ -20,12 +22,13 @@ export default class Task extends BaseTask {
         (source.subtasks || []).filter((subtask) => subtask.parent === data.id),
         data.subtasks || []
       ),
+      __initialSubtasksOrder: data.subtasks,
     }));
   }
 
   toFirestore() {
     return {
-      ...copy(this, ['subtasks']),
+      ...copy(this, ['subtasks', '__initialSubtasksOrder']),
       dueDate: this.dueDate && toTimestamp(this.dueDate),
       labels: this.labels.items.map((label) => label.id),
       subtasks: this.subtasks.items.map((item) => item.id),

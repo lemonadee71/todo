@@ -1,4 +1,3 @@
-import { getDoc } from 'firebase/firestore';
 import { html } from 'poor-man-jsx';
 import { PATHS } from '../constants';
 import {
@@ -12,7 +11,6 @@ import {
 import Core from '../core';
 import { fetchProjectData } from '../core/firestore';
 import { getProfilePicURL, getUserName, isGuest, signOut } from '../utils/auth';
-import { getDocumentRef } from '../utils/firestore';
 import logger from '../utils/logger';
 import { orderById } from '../utils/misc';
 import { $ } from '../utils/query';
@@ -41,17 +39,15 @@ const routes = [
 
         // only fetch if not cached
         if (!Core.data.fetched.projects.includes(id)) {
-          // extra read
-          // consider caching results when projects are first fetched
           const data = await fetchProjectData(id);
           const project = Core.data.root.get(id);
-          const doc = await getDoc(getDocumentRef('Projects', project.id));
 
           project.lastFetched = Date.now();
+          // clear defaults
           project.labels.clear().add(data.labels);
           project.lists
             .clear()
-            .add(orderById(data.lists, doc.data().lists || []));
+            .add(orderById(data.lists, project.__initialListsOrder));
 
           // mark project as fetched
           Core.data.fetched.projects.push(id);
