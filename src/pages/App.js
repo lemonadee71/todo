@@ -33,7 +33,7 @@ const routes = [
     path: PATHS.project,
     component: Project,
     className: 'flex flex-col h-full pt-14',
-    resolver: async (component, match) => {
+    beforeRender: async (match) => {
       if (!isGuest()) {
         const { id } = match.data;
 
@@ -55,8 +55,6 @@ const routes = [
 
         Core.main.init(Core.data.root.items);
       }
-
-      return component(match);
     },
   },
 ];

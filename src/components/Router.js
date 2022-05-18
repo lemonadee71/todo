@@ -3,58 +3,66 @@ import Core from '../core';
 import { copy } from '../utils/misc';
 import Loading from './Loading';
 
-const Router = ({ routes, tag = 'div', props }) => {
+const Router = ({ routes, tag = 'div', props, loadingComponent }) => {
   const containerClass = props?.class || '';
   const [state] = createHook({
-    class: containerClass,
+    class: '',
     url: window.location.pathname,
     match: null,
     component: [],
   });
-  let unsubscribe;
+  let cleanup;
 
   const handler = (match) => {
     state.match = match;
     state.url = match.url;
 
     // show loading component
-    state.component = props?.loadingComponent?.() || Loading();
+    state.component = loadingComponent?.() ?? Loading();
 
-    // then show the actual component
     (async () => {
       const route = routes.find((r) =>
         Core.router.matchLocation(r.path, state.url)
       );
 
-      const dummy = (c, m) => c?.(m);
-      const resolver = route?.resolver || dummy;
+      // run preliminary stuff
+      await route.beforeRender?.(state.match);
 
-      state.component = route?.component
-        ? await resolver(route.component, state.match)
-        : [];
-      state.class = `${containerClass} ${route?.className || ''}`.trim();
+      // then show component
+      state.component = route.component(state.match) ?? [];
+      state.class = route.className || '';
     })();
   };
 
   const init = () => {
-    unsubscribe = routes.map((route) => {
+    cleanup = routes.map((route) => {
       if (route.nested) {
         return Core.router.on(route.path, null, {
           leave: route.hooks?.leave,
           before: (done, match) => {
-            // only run handler for nested routes on first match
-            if (!Core.router.matchLocation(route.path, state.url)) {
-              handler(match);
+            let shouldStopExecution;
 
-              // after hook is run after our own handler
-              route.hooks?.after?.(match);
-            } else {
-              // run already hook for consecutive matches
-              route.hooks?.already?.(match);
-            }
+            // to respect the behavior of navigo when passing false to done
+            const mockDone = (bool) => {
+              shouldStopExecution = bool === false;
+              done(bool);
+            };
 
-            if (route.hooks?.before) route.hooks.before(done, match);
+            if (route.hooks?.before) route.hooks.before(mockDone, match);
             else done();
+
+            if (!shouldStopExecution) {
+              // only run handler for nested routes on first match
+              if (!Core.router.matchLocation(route.path, state.url)) {
+                handler(match);
+
+                // after hook is run after our own handler
+                route.hooks?.after?.(match);
+              } else {
+                // run already hook for consecutive matches
+                route.hooks?.already?.(match);
+              }
+            }
           },
         });
       }
@@ -63,12 +71,12 @@ const Router = ({ routes, tag = 'div', props }) => {
     });
   };
 
-  const destroy = () => unsubscribe.forEach((cb) => cb());
+  const destroy = () => cleanup.forEach((cb) => cb());
 
   return html`
     <${tag}
-      ${copy(props, ['class', 'loadingComponent'])}
-      class=${state.$class}
+      ${copy(props, ['class'])}
+      class="${containerClass} ${state.$class}"
       onCreate=${init}
       onDestroy=${destroy}
       onMount=${() => Core.router.resolve(window.location.pathname)}
