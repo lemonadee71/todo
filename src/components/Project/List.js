@@ -98,7 +98,7 @@ const List = (data, pos) => {
     >
       <!-- List header -->
       <div
-        class="sm:sticky sm:top-0 px-3 py-2 space-y-1 bg-[#dedede] dark:bg-[#272727] z-[2]"
+        class="sm:sticky sm:top-0 px-3 py-2 space-y-1 bg-[#dedede] dark:bg-[#272727] z-[3]"
       >
         <div class="flex justify-between items-center ">
           <h2 class="font-medium text-lg">{% ${data.name} %}</h2>
