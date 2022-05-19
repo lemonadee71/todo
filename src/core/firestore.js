@@ -36,7 +36,8 @@ import Core from '.';
 const fetchSubtasks = async (tasks, data) => {
   const queries = tasks.map((task) =>
     query(
-      getCollectionRef('Subtasks', Subtask.converter(data)),
+      getCollectionRef('Tasks', Subtask.converter(data)),
+      where('type', '==', 'subtask'),
       where('parent', '==', task.id)
     )
   );
@@ -71,6 +72,7 @@ export const fetchProjectData = async (id) => {
   );
   const tasksRef = query(
     getCollectionRef('Tasks', Task.converter(data)),
+    where('type', '==', 'task'),
     where('project', '==', id),
     // fetch completed tasks on demand only
     where('completed', '==', false)
@@ -113,12 +115,7 @@ export const initFirestore = async () => {
         await setDocument('Tasks', task.id, task, Task.converter());
 
         task.data.subtasks.forEach(async (subtask) => {
-          await setDocument(
-            'Subtasks',
-            subtask.id,
-            subtask,
-            Subtask.converter()
-          );
+          await setDocument('Tasks', subtask.id, subtask, Subtask.converter());
         });
       });
     });
@@ -197,9 +194,7 @@ export const setupListeners = () => {
   // =====================================================================================
   Core.event.onSuccess(
     [PROJECT.LABELS.ADD, PROJECT.LABELS.UPDATE],
-    async (data) => {
-      setDocument('Labels', data.id, data.toFirestore());
-    }
+    async (data) => setDocument('Labels', data.id, data.toFirestore())
   );
 
   Core.event.onSuccess(PROJECT.LABELS.REMOVE, async (data) =>
@@ -207,10 +202,22 @@ export const setupListeners = () => {
   );
 
   // =====================================================================================
-  // Tasks
+  // Tasks and Subtasks
   // =====================================================================================
-  Core.event.onSuccess([TASK.ADD, TASK.UPDATE], async (data) =>
+
+  // task and subtask share TASK.LABELS.*
+  Core.event.onSuccess([TASK.LABELS.ADD, TASK.LABELS.REMOVE], async (data) =>
     setDocument('Tasks', data.id, data.toFirestore())
+  );
+
+  Core.event.onSuccess(
+    [TASK.ADD, TASK.UPDATE, TASK.SUBTASKS.ADD, TASK.SUBTASKS.UPDATE],
+    async (data) => setDocument('Tasks', data.id, data.toFirestore())
+  );
+
+  Core.event.on(
+    [`${TASK.REMOVE}:timeout`, `${TASK.SUBTASKS.REMOVE}:timeout`],
+    async (data) => deleteDocument('Tasks', data.id)
   );
 
   // transfer has a different return value for TASK
@@ -225,12 +232,12 @@ export const setupListeners = () => {
     await updateDocument('Lists', changes.list.from, {
       tasks: arrayRemove(result.id),
     });
+    // update type and location info
+    await updateDocument('Tasks', result.id, result.toFirestore());
 
     switch (type) {
       case 'list':
       case 'project':
-        await updateDocument('Tasks', result.id, result.toFirestore());
-
         await updateDocument(
           'Lists',
           changes.list.to,
@@ -240,11 +247,6 @@ export const setupListeners = () => {
         break;
 
       case 'task':
-        // delete original document
-        await deleteDocument('Tasks', result.id);
-        // create new one in a different collection
-        await setDocument('Subtasks', result.id, result.toFirestore());
-
         await updateDocument(
           'Tasks',
           changes.task.to,
@@ -292,47 +294,12 @@ export const setupListeners = () => {
     });
   });
 
-  Core.event.on(`${TASK.REMOVE}:timeout`, async (data) =>
-    deleteDocument('Tasks', data.id)
-  );
-
-  Core.event.onSuccess([TASK.ADD, TASK.REMOVE, TASK.MOVE], async (data) => {
-    const list = Core.main.getList(data.project, data.list);
-    await updateDocument('Lists', list.id, list.toFirestore());
-  });
-
-  // task and subtask share TASK.LABELS.*
-  Core.event.onSuccess(
-    [TASK.LABELS.ADD, TASK.LABELS.REMOVE],
-    async ({ type, result }) => {
-      // eslint-disable-next-line
-      const name = type[0].toUpperCase() + type.slice(1) + 's';
-
-      setDocument(name, result.id, result.toFirestore());
-    }
-  );
-
-  // =====================================================================================
-  // Subtasks
-  // =====================================================================================
-  Core.event.onSuccess(
-    [TASK.SUBTASKS.ADD, TASK.SUBTASKS.UPDATE],
-    async (data) => {
-      setDocument('Subtasks', data.id, data.toFirestore());
-    }
-  );
-
   Core.event.onSuccess(TASK.SUBTASKS.TRANSFER, async (data) => {
     const { result, type, changes } = data;
+    await updateDocument('Tasks', result.id, result.toFirestore());
 
+    // update order in old and new location
     if (type === 'list') {
-      // delete original document
-      await deleteDocument('Subtasks', result.id);
-
-      // create new one in a different collection
-      await setDocument('Tasks', result.id, result.toFirestore());
-
-      // update order in old and new location
       await updateDocument('Tasks', changes.task, {
         subtasks: arrayRemove(result.id),
       });
@@ -342,8 +309,6 @@ export const setupListeners = () => {
         Core.main.getList(changes.project, changes.list.to).toFirestore()
       );
     } else {
-      await updateDocument('Subtasks', result.id, result.toFirestore());
-      // update order in old and new location
       await updateDocument('Tasks', changes.task.from, {
         subtasks: arrayRemove(result.id),
       });
@@ -357,9 +322,10 @@ export const setupListeners = () => {
     }
   });
 
-  Core.event.on(`${TASK.SUBTASKS.REMOVE}:timeout`, async (data) =>
-    deleteDocument('Subtasks', data.id)
-  );
+  Core.event.onSuccess([TASK.ADD, TASK.REMOVE, TASK.MOVE], async (data) => {
+    const list = Core.main.getList(data.project, data.list);
+    await updateDocument('Lists', list.id, list.toFirestore());
+  });
 
   Core.event.onSuccess(
     [TASK.SUBTASKS.ADD, TASK.SUBTASKS.REMOVE, TASK.SUBTASKS.MOVE],
@@ -382,6 +348,7 @@ export const setupListeners = () => {
     const completedTasks = await getDocuments(
       query(
         getCollectionRef('Tasks', Task.converter()),
+        where('type', '==', 'task'),
         where('project', '==', data.project),
         where('list', '==', data.list),
         where('completed', '==', true),

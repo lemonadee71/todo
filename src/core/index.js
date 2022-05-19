@@ -157,7 +157,7 @@ const Core = (() => {
           throw new Error('Type must be add, remove or clear.');
       }
 
-      return { type: subtaskId ? 'subtask' : 'task', result: task };
+      return task;
     };
 
     event.on(TASK.LABELS.ADD, (payload) =>
