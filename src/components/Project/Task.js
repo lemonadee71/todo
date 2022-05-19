@@ -40,7 +40,7 @@ export default class Task extends BaseTask {
     Sortable.create(evt.target, {
       group: 'tasks',
       animation: 150,
-      delay: 10,
+      // delay: 10,
       draggable: '.subtask',
       filter: 'input,button',
       emptyInsertThreshold: 10,

@@ -35,7 +35,7 @@ const Sidebar = () => {
   const init = function () {
     Sortable.create(this, {
       animation: 150,
-      delay: 10,
+      // delay: 10,
       draggable: 'li',
       onUpdate: (e) => {
         Core.event.emit(PROJECT.MOVE, {

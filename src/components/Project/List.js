@@ -72,7 +72,8 @@ const List = (data, pos) => {
     Sortable.create(this, {
       group: 'tasks',
       animation: 150,
-      delay: 10,
+      // prevents sorting on touch
+      // delay: 10,
       draggable: '.task',
       filter: 'input,button',
       onUpdate: (e) => moveTask(e.item.dataset.id, e.newIndex),
