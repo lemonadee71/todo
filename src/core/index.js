@@ -109,9 +109,19 @@ const Core = (() => {
           result = main.transferTaskToList(project, list, task, position);
           break;
         // transfer from list to task
-        case 'task':
+        case 'task': {
+          const item = main.getTask(project, list.from, task.from);
+          // transfer subtasks too; flatten it
+          item.subtasks.items.forEach((subtask) => {
+            event.emit(TASK.SUBTASKS.TRANSFER, {
+              ...args,
+              subtask: subtask.id,
+            });
+          });
+
           result = main.convertTaskToSubtask(project, list, task, position);
           break;
+        }
         default:
           throw new Error('Type must be either project, list, or task');
       }
