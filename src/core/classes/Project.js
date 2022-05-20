@@ -56,7 +56,7 @@ export default class Project {
   toFirestore() {
     return {
       ...copy(this, ['lastFetched', 'labels', 'lists', '__initialListsOrder']),
-      lists: this.lists.items.map((item) => item.id),
+      lists: this.lists.ids,
     };
   }
 

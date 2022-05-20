@@ -53,7 +53,7 @@ class BaseTask {
     return {
       ...this,
       dueDate: this.dueDate && toTimestamp(this.dueDate),
-      labels: this.labels.items.map((label) => label.id),
+      labels: this.labels.ids,
     };
   }
 
@@ -65,7 +65,7 @@ class BaseTask {
   }
 
   getLabels() {
-    return this.labels.items.map((label) => label.id);
+    return this.labels.ids;
   }
 
   addLabel(label) {

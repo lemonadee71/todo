@@ -30,8 +30,8 @@ export default class Task extends BaseTask {
     return {
       ...copy(this, ['subtasks', '__initialSubtasksOrder']),
       dueDate: this.dueDate && toTimestamp(this.dueDate),
-      labels: this.labels.items.map((label) => label.id),
-      subtasks: this.subtasks.items.map((item) => item.id),
+      labels: this.labels.ids,
+      subtasks: this.subtasks.ids,
     };
   }
 
