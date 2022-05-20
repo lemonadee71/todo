@@ -33,7 +33,7 @@ const routes = [
     className:
       'font-sans text-black sm:ml-56 pl-6 pr-2 pt-3 py-2 h-screen dark:text-white dark:bg-[#353535]',
     nested: true,
-    resolver: async (component, match) => {
+    beforeRender: async () => {
       // setup core listeners
       Core.setupListeners();
       // setup local storage
@@ -57,8 +57,6 @@ const routes = [
         // setup firestore listeners
         setupListeners();
       }
-
-      return component(match);
     },
     hooks: {
       already: async (match) => {
