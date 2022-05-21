@@ -22,6 +22,7 @@ import Sidebar from '../components/Sidebar';
 import Router from '../components/Router';
 import TaskModal from '../components/Project/TaskModal';
 import SubtaskModal from '../components/Project/SubtaskModal';
+import Loading from '../components/Loading';
 
 const routes = [
   {
@@ -170,7 +171,12 @@ const App = () => {
     <!-- sidebar -->
     ${Sidebar()}
     <!-- main content -->
-    ${Router({ routes, tag: 'main', props: { class: 'pt-14' } })}
+    ${Router({
+      routes,
+      tag: 'main',
+      props: { class: 'pt-14' },
+      loadingComponent: () => Loading('h-[calc(100vh-80px)]', 'w-8 h-8'),
+    })}
     <!-- only one modal for all -->
     <my-modal id="modal"></my-modal>
     <!-- only one tooltip element for all -->
