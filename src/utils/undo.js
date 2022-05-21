@@ -1,11 +1,10 @@
 import Toast from '../components/Toast';
 import Core from '../core';
-import { REDIRECT } from '../actions';
 import { showToast } from './showToast';
 import { $ } from './query';
 
 export const useUndo =
-  ({ type, payload, text, onCancel, delay = 3000 }) =>
+  ({ type, payload, text, onSuccess, onCancel, delay = 3000 }) =>
   () => {
     let isCancelled = false;
     let extracted;
@@ -19,9 +18,7 @@ export const useUndo =
         // this will fail otherwise
         extracted = extracted || result;
 
-        // redirect on delete; this runs on all types
-        // but should only run for project delete
-        Core.event.emit(REDIRECT, result);
+        onSuccess?.(extracted);
       },
     });
 

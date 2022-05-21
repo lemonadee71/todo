@@ -5,23 +5,22 @@ import {
   EDIT_SUBTASK,
   EDIT_TASK,
   PROJECT,
-  REDIRECT,
   TASK,
 } from '../actions';
 import Core from '../core';
 import { fetchProjectData } from '../core/firestore';
 import { getProfilePicURL, getUserName, isGuest, signOut } from '../utils/auth';
+import { dispatchCustomEvent } from '../utils/dispatch';
 import logger from '../utils/logger';
 import { orderById } from '../utils/misc';
 import { $ } from '../utils/query';
+import { toggleDarkTheme } from '../utils/theme';
 import Overview from './Overview';
 import Project from './Project';
 import Sidebar from '../components/Sidebar';
 import Router from '../components/Router';
 import TaskModal from '../components/Project/TaskModal';
 import SubtaskModal from '../components/Project/SubtaskModal';
-import { dispatchCustomEvent } from '../utils/dispatch';
-import { toggleDarkTheme } from '../utils/theme';
 
 const routes = [
   {
@@ -61,13 +60,17 @@ const routes = [
 
 const App = () => {
   // listeners
-  const unsubscribe = [
-    Core.event.on(REDIRECT, (data) => {
-      if (Core.state.currentPage === `app/${data.link}`) {
-        Core.router.redirect(PATHS.app, { title: 'Overview' });
-      }
-    }),
+  const cleanup = [
     Core.event.on(CHANGE_THEME, toggleDarkTheme),
+    Core.event.onSuccess(
+      PROJECT.REMOVE,
+      (data) => {
+        if (Core.state.currentPage === `app/${data.link}`) {
+          Core.router.redirect(PATHS.app, { title: 'Overview' });
+        }
+      },
+      { order: 'last' }
+    ),
     Core.event.onError(
       [PROJECT.ADD, PROJECT.LISTS.ADD, PROJECT.LABELS.ADD],
       ({ e }) => logger.warning(e)
@@ -96,7 +99,7 @@ const App = () => {
     <div
       style="display: none;"
       tabindex="-1"
-      onDestroy=${() => unsubscribe.forEach((cb) => cb())}
+      onDestroy=${() => cleanup.forEach((cb) => cb())}
     ></div>
     <!-- header -->
     <header
