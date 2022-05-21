@@ -1,5 +1,5 @@
-import { html } from 'poor-man-jsx';
-import { PATHS } from '../constants';
+import PoorManJSX, { html } from 'poor-man-jsx';
+import { HIDE_EVENTS, PATHS, SHOW_EVENTS } from '../constants';
 import {
   CHANGE_THEME,
   EDIT_SUBTASK,
@@ -13,8 +13,9 @@ import { getProfilePicURL, getUserName, isGuest, signOut } from '../utils/auth';
 import { dispatchCustomEvent } from '../utils/dispatch';
 import logger from '../utils/logger';
 import { orderById } from '../utils/misc';
-import { $ } from '../utils/query';
+import { $, $$ } from '../utils/query';
 import { toggleDarkTheme } from '../utils/theme';
+import { useTooltip } from '../utils/useTooltip';
 import Overview from './Overview';
 import Project from './Project';
 import Sidebar from '../components/Sidebar';
@@ -58,8 +59,22 @@ const routes = [
 ];
 
 const App = () => {
+  const addTooltip = (element) => {
+    $$.data('tooltip', null, element).forEach((item) => {
+      const [onShow, onHide] = useTooltip(item);
+
+      SHOW_EVENTS.forEach((name) => item.addEventListener(name, onShow()));
+      HIDE_EVENTS.forEach((name) => item.addEventListener(name, onHide()));
+    });
+  };
+
+  // add tooltips to elements with data-tooltip attr
+  // only app/* page has tooltips
+  PoorManJSX.onAfterCreation(addTooltip);
+
   // listeners
   const cleanup = [
+    () => PoorManJSX.removeAfterCreation(addTooltip),
     Core.event.on(CHANGE_THEME, toggleDarkTheme),
     Core.event.onSuccess(
       PROJECT.REMOVE,
@@ -155,9 +170,14 @@ const App = () => {
     <!-- sidebar -->
     ${Sidebar()}
     <!-- main content -->
-    ${Router({ routes, tag: 'section', props: { class: 'pt-14' } })}
+    ${Router({ routes, tag: 'main', props: { class: 'pt-14' } })}
     <!-- only one modal for all -->
     <my-modal id="modal"></my-modal>
+    <!-- only one tooltip element for all -->
+    <div id="tooltip" role="tooltip">
+      <span id="tooltip_text"></span>
+      <div id="tooltip_arrow" data-popper-arrow></div>
+    </div>
   `;
 };
 

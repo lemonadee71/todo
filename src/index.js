@@ -1,8 +1,8 @@
 import autosize from 'autosize';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
-import PoorManJSX, { html, render } from 'poor-man-jsx';
-import { HIDE_EVENTS, LAST_OPENED_PAGE, PATHS, SHOW_EVENTS } from './constants';
+import PoorManJSX from 'poor-man-jsx';
+import { LAST_OPENED_PAGE, PATHS } from './constants';
 import Core from './core';
 import { LocalStorage } from './core/storage';
 import { fetchProjects, initFirestore, setupListeners } from './core/firestore';
@@ -11,12 +11,33 @@ import { createDropdown } from './utils/dropdown';
 import { getUserRef, updateUser } from './utils/firestore';
 import { $, $$ } from './utils/query';
 import { initializeTheme } from './utils/theme';
-import { useTooltip } from './utils/useTooltip';
 import defineCustomElements from './components/custom';
 import Router from './components/Router';
 import * as pages from './pages';
 import { config as firebaseConfig } from './firebase-config';
 import './styles/style.css';
+
+PoorManJSX.onAfterCreation((element) => {
+  $$.data('autosize', null, element).forEach((item) => {
+    autosize(item);
+    // to get the correct size on render
+    item.addEventListener('@mount', () => autosize.update(item));
+  });
+
+  $$.data('dropdown', null, element).forEach((item) => {
+    if (item.dataset.dropdownInitialized) return;
+
+    item.addEventListener('@mount', () => {
+      createDropdown(
+        item,
+        $.data('dropdown-id', item.dataset.dropdown, element)
+      );
+
+      // to prevent from being initialized again
+      item.dataset.dropdownInitialized = 'true';
+    });
+  });
+});
 
 const routes = [
   {
@@ -91,50 +112,11 @@ const routes = [
   },
 ];
 
-const Website = html`
-  <!-- The main content -->
-  ${Router({ routes, tag: 'main', props: { id: 'main' } })}
-  <!-- Only one tooltip element for all -->
-  <div id="tooltip" role="tooltip">
-    <span id="tooltip_text"></span>
-    <div id="tooltip_arrow" data-popper-arrow></div>
-  </div>
-`;
-
-PoorManJSX.onAfterCreation((element) => {
-  // add tooltips to elements with data-show-tooltip attr
-  $$.data('tooltip', null, element).forEach((item) => {
-    const [onShow, onHide] = useTooltip(item);
-
-    SHOW_EVENTS.forEach((name) => item.addEventListener(name, onShow()));
-    HIDE_EVENTS.forEach((name) => item.addEventListener(name, onHide()));
-  });
-
-  $$.data('autosize', null, element).forEach((item) => {
-    autosize(item);
-    // to get the correct size on render
-    item.addEventListener('@mount', () => autosize.update(item));
-  });
-
-  $$.data('dropdown', null, element).forEach((item) => {
-    if (item.dataset.dropdownInitialized) return;
-
-    item.addEventListener('@mount', () => {
-      createDropdown(
-        item,
-        $.data('dropdown-id', item.dataset.dropdown, element)
-      );
-
-      // to prevent from being initialized again
-      item.dataset.dropdownInitialized = 'true';
-    });
-  });
-});
-
 initializeApp(firebaseConfig);
 defineCustomElements();
 initializeTheme();
-render(Website, document.body);
+// make body our main router
+Router({ routes, target: document.body });
 
 onAuthStateChanged(getAuth(), (user) => {
   // sign in user if did not logged out
