@@ -129,7 +129,7 @@ const Project = ({ data: { id } }) => {
       <h1 class="sr-only">${project.$name}</h1>
       <!-- prettier-ignore -->
       <textarea
-        class="text-2xl font-extrabold w-3/4 h-fit rounded-sm px-1 py-1 bg-inherit resize-none break-words overflow-hidden placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:bg-white focus:ring dark:placeholder:text-slate-400 dark:focus:placeholder:text-slate-200 dark:focus:bg-inherit"
+        class="text-2xl font-extrabold w-3/4 h-fit px-1 py-1 rounded-sm bg-inherit resize-none break-words overflow-hidden placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:ring dark:placeholder:text-slate-400 dark:focus:placeholder:text-slate-200"
         name="project-name"
         rows="1"
         placeholder="Project name"

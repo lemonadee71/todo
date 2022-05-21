@@ -103,7 +103,7 @@ const List = (data, pos) => {
       >
         <div class="flex justify-between items-center ">
           <h2 class="font-medium text-lg">{% ${data.name} %}</h2>
-          <button class="h-full" onClick=${deleteList}>
+          <button onClick=${deleteList}>
             ${DeleteIcon('stroke-red-500 hover:stroke-red-700')}
           </button>
         </div>

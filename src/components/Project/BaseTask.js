@@ -88,7 +88,7 @@ export default class BaseTask {
     return html`
       <div
         key="${this.key}"
-        class="${this.type} box-border flex flex-col w-full px-3 py-2 bg-white dark:bg-[#353535] rounded-md drop-shadow-lg relative z-[2]"
+        class="${this.type} box-border flex flex-col px-3 py-2 bg-white dark:bg-[#353535] rounded-md drop-shadow-lg relative z-[2]"
         data-id="${this.id}"
         data-project="${this.data.project}"
         data-list="${this.data.list}"
@@ -96,7 +96,7 @@ export default class BaseTask {
         onDestroy=${() => this.unsubscribe.forEach((cb) => cb())}
         ${this.props.main}
       >
-        <div class="w-full flex justify-between items-center space-x-2">
+        <div class="flex justify-between items-center space-x-2">
           <label class="relative cursor-pointer select-none">
             <input
               class="absolute cursor-pointer w-0 h-0 opacity-0"

@@ -140,7 +140,7 @@ export default class BaseTaskModal {
           <h2 class="sr-only">{% ${this.data.title} %}</h2>
           <!-- prettier-ignore -->
           <textarea
-            class="text-lg font-semibold w-full h-fit rounded-sm px-1 py-1 bg-inherit focus:ring resize-none break-words overflow-hidden placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:bg-white dark:placeholder:text-slate-200 dark:focus:placeholder:text-slate-400 focus:bg-inherit"
+            class="text-lg font-semibold w-full h-fit px-1 py-1 rounded-sm bg-inherit resize-none break-words overflow-hidden placeholder:text-slate-600 focus:ring focus:placeholder:text-slate-400 dark:placeholder:text-slate-200 dark:focus:placeholder:text-slate-400"
             name="title"
             rows="1"
             data-autosize
@@ -192,7 +192,7 @@ export default class BaseTaskModal {
             <h3 class="text-md font-medium">Notes</h3>
           </div>
 
-          <div class="font-sans w-full max-h-56 overflow-auto">
+          <div class="max-h-56 overflow-auto">
             ${this.state.$isEditingNotes((value) =>
               value
                 ? render(
@@ -249,7 +249,7 @@ export default class BaseTaskModal {
         </div>
 
         <div
-          class="mx-auto w-full flex flex-row justify-center items-center gap-4"
+          class="mx-auto flex flex-row justify-center items-center gap-4"
           data-name="task__controls"
         >
           <button

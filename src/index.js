@@ -31,7 +31,7 @@ const routes = [
     path: '/app*',
     component: pages.App,
     className:
-      'font-sans text-black sm:ml-56 pl-6 pr-2 pt-3 py-2 h-screen dark:text-white dark:bg-[#353535]',
+      'font-sans text-black h-screen px-4 sm:ml-56 dark:text-white dark:bg-[#353535]',
     nested: true,
     beforeRender: async () => {
       // setup core listeners

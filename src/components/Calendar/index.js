@@ -221,7 +221,7 @@ const Calendar = (projectId) => {
   };
 
   return html`
-    <div class="flex flex-row gap-1 mb-3" data-name="taskbar">
+    <div class="flex gap-1 mb-3" data-name="taskbar">
       <button
         class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded border border-solid border-neutral-600 active:ring shadow-sm"
         name="today"

@@ -26,7 +26,7 @@ const ProjectLink = (data, i) => {
       </a>
       <button onClick=${deleteProject}>
         ${DeleteIcon(
-          'invisible stroke-red-500 group-hover:visible hover:stroke-red-700',
+          'invisible group-hover:visible stroke-red-500 hover:stroke-red-700',
           18
         )}
       </button>

@@ -129,7 +129,7 @@ const LabelPopover = (data, clickAction) => {
                   </p>
                   ${ColorChoices(state.currentTarget.color)}
 
-                  <div class="text-base w-full flex flex-row justify-between">
+                  <div class="text-base flex flex-row justify-between">
                     <button class="rounded px-2 py-1 bg-blue-700" type="submit">
                       Save
                     </button>

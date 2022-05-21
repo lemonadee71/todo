@@ -26,12 +26,11 @@ const routes = [
   {
     path: PATHS.app,
     component: Overview,
-    className: 'pt-14',
   },
   {
     path: PATHS.project,
     component: Project,
-    className: 'flex flex-col h-full pt-14',
+    className: 'flex flex-col h-full',
     beforeRender: async (match) => {
       if (!isGuest()) {
         const { id } = match.data;
@@ -156,7 +155,7 @@ const App = () => {
     <!-- sidebar -->
     ${Sidebar()}
     <!-- main content -->
-    ${Router({ routes, tag: 'section' })}
+    ${Router({ routes, tag: 'section', props: { class: 'pt-14' } })}
     <!-- only one modal for all -->
     <my-modal id="modal"></my-modal>
   `;

@@ -8,7 +8,7 @@ const Badge = ({
 }) =>
   html`<div
     is-text
-    class="inline-block font-sans py-1 px-2 cursor-pointer rounded ${additionalCls}"
+    class="py-1 px-2 cursor-pointer rounded ${additionalCls}"
     style="background-color: ${bgColor}"
     ${props}
   >

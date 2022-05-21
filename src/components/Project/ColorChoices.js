@@ -3,7 +3,7 @@ import { DEFAULT_COLORS } from '../../constants';
 
 const ColorChoices = (current = null) =>
   html`
-    <div class="flex flex-row flex-wrap justify-between gap-1 w-full">
+    <div class="flex flex-row flex-wrap justify-between gap-1">
       ${DEFAULT_COLORS.map(
         (color, i) =>
           // TODO: Provide color names for accessibility

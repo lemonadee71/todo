@@ -17,7 +17,7 @@ const Label = (data, clickAction, editAction, isSelected) => {
     <div
       key="${data.id}"
       ${isSelected ? 'data-selected="true"' : ''}
-      class="group w-full space-x-1 rounded px-2 py-1 flex flex-row justify-between items-center cursor-pointer border border-solid ${isSelected
+      class="group space-x-1 rounded px-2 py-1 flex justify-between items-center cursor-pointer border border-solid ${isSelected
         ? 'border-white'
         : 'border-transparent'}"
       style="background-color: ${data.color};"
@@ -25,7 +25,7 @@ const Label = (data, clickAction, editAction, isSelected) => {
     >
       <p>{% ${data.name} %}</p>
 
-      <button class="h-full invisible group-hover:visible" onClick=${editLabel}>
+      <button class="invisible group-hover:visible" onClick=${editLabel}>
         ${EditIcon('stroke-gray-300 hover:stroke-white')}
       </button>
     </div>

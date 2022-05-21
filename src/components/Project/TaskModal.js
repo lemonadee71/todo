@@ -77,7 +77,6 @@ export default class TaskModal extends BaseTaskModal {
         // method: 'after',
       },
       {
-        // ISSUE: Divider not showing
         target: 'date',
         method: 'after',
         template: html`
@@ -87,7 +86,7 @@ export default class TaskModal extends BaseTaskModal {
               <h3 class="text-md font-medium">Subtasks</h3>
             </div>
 
-            <form class="create-list" onSubmit.prevent=${this.createSubtask}>
+            <form onSubmit.prevent=${this.createSubtask}>
               <button
                 class="text-xl text-blue-600 hover:text-blue-800"
                 type="submit"

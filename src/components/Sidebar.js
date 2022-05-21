@@ -64,14 +64,14 @@ const Sidebar = () => {
 
         <nav class="">
           <a
-            class="no-underline hover:underline text-sm text-white flex flex-row items-center mb-8"
+            class="no-underline hover:underline text-sm text-white flex items-center mb-8"
             is="navigo-link"
             href="/app"
           >
             ${HomeIcon('stroke-white mr-1', 16)} Home
           </a>
 
-          <div class="flex flex-row justify-between">
+          <div class="flex justify-between">
             <h2 class="font-bold text-sm text-neutral-400 tracking-wide mb-1">
               PROJECTS
             </h2>
@@ -98,9 +98,9 @@ const Sidebar = () => {
           </ul>
         </nav>
 
-        <div class="absolute bottom-6 w-full">
+        <div class="absolute bottom-6 w-48">
           <form
-            class="flex flex-row"
+            class="flex w-full"
             data-clear="onsuccess"
             onSubmit.prevent=${createNewProject}
           >
