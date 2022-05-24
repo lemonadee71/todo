@@ -2,7 +2,6 @@ import { signOut as signOutUser, getAuth } from 'firebase/auth';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import Core from '../core';
 import { LOCAL_USER, PATHS } from '../constants';
-import { getInitials } from './misc';
 
 export const isGuest = (id = Core.state.currentUser) => id === LOCAL_USER;
 
@@ -29,7 +28,9 @@ export const getProfilePicURL = () => {
   const user = isGuest() ? { photoURL: '', displayName: 'Guest' } : getUser();
   const url =
     user.photoURL ||
-    `https://via.placeholder.com/60x60?text=${getInitials(user.displayName)}`;
+    `https://ui-avatars.com/api/?background=0D8ABC&color=fff&size=100&name=${encodeURI(
+      user.displayName
+    )}`;
 
   return url;
 };

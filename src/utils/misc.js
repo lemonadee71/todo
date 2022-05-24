@@ -67,11 +67,3 @@ export const getDateColor = (dueDate) => {
   // show green
   return DEFAULT_COLORS[0];
 };
-
-export const getInitials = (text, length = 2) =>
-  text
-    .split(' ')
-    .map((word) => word[0])
-    .slice(0, length)
-    .join('')
-    .toUpperCase();
