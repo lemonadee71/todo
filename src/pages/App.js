@@ -15,7 +15,7 @@ import logger from '../utils/logger';
 import { orderById } from '../utils/misc';
 import { $, $$ } from '../utils/query';
 import { toggleDarkTheme } from '../utils/theme';
-import Overview from './Overview';
+import Dashboard from './Dashboard';
 import Project from './Project';
 import Sidebar from '../components/Sidebar';
 import Router from '../components/Router';
@@ -26,7 +26,7 @@ import { useTooltip } from '../utils/useTooltip';
 const routes = [
   {
     path: PATHS.app,
-    component: Overview,
+    component: Dashboard,
   },
   {
     path: PATHS.project,
@@ -80,7 +80,7 @@ const App = () => {
       PROJECT.REMOVE,
       (data) => {
         if (Core.state.currentPage === `app/${data.link}`) {
-          Core.router.redirect(PATHS.app, { title: 'Overview' });
+          Core.router.redirect(PATHS.app, { title: 'Home' });
         }
       },
       { order: 'last' }

@@ -16,7 +16,7 @@ export const isNewUser = async (id) => {
 
 export const signIn = (id = LOCAL_USER) => {
   Core.state.currentUser = id;
-  Core.router.redirect(PATHS.app, { title: 'Overview' });
+  Core.router.redirect(PATHS.app, { title: 'Home' });
 };
 
 export const signOut = () => {
