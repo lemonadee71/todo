@@ -19,9 +19,7 @@ import './styles/style.css';
 
 PoorManJSX.onAfterCreation((element) => {
   $$.data('autosize', null, element).forEach((item) => {
-    autosize(item);
-    // to get the correct size on render
-    item.addEventListener('@mount', () => autosize.update(item));
+    item.addEventListener('@mount', () => autosize(item));
   });
 
   $$.data('dropdown', null, element).forEach((item) => {
