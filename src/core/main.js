@@ -1,4 +1,4 @@
-import { isWithinInterval } from 'date-fns';
+import { differenceInWeeks, isWithinInterval } from 'date-fns';
 import Task from './classes/Task';
 import Subtask from './classes/Subtask';
 import TaskList from './classes/TaskList';
@@ -9,7 +9,7 @@ import { LocalStorage } from './storage';
 import { LAST_OPENED_PAGE, LAST_UPDATE } from '../constants';
 import defaultData from '../defaultData.json';
 import { filterById } from '../utils/misc';
-import { parse } from '../utils/date';
+import { isDueThisWeek, parse } from '../utils/date';
 
 export const loadDefaultData = () => {
   const data = [];
@@ -255,6 +255,15 @@ export const getTasksByInterval = (interval) =>
     isWithinInterval(parse(task.dueDate), interval)
   );
 
+export const getTasksDueThisWeek = () =>
+  getAllTasks().filter((task) => isDueThisWeek(parse(task.dueDate)));
+
+// tasks are considered stale if there are no updates in 2 weeks
+export const getStaleTasks = () =>
+  getAllTasks().filter(
+    (task) => differenceInWeeks(new Date(), task.lastUpdate) >= 2
+  );
+
 export const getTasks = (projectId, listId) => getList(projectId, listId).items;
 
 export const getTask = (projectId, listId, taskId) =>
@@ -275,11 +284,7 @@ export const updateTask = (projectId, listId, taskId, data) => {
 
   if (prop === 'title' && !value) throw new Error('Task must have a title');
 
-  if (prop === 'completed') {
-    task.toggleComplete();
-  } else {
-    task[prop] = value;
-  }
+  task.update(prop, value);
 
   return task;
 };
@@ -349,13 +354,9 @@ export const updateSubtask = (projectId, listId, taskId, subtaskId, data) => {
   const subtask = getTask(projectId, listId, taskId).getSubtask(subtaskId);
   const [prop, value] = Object.entries(data).flat();
 
-  if (prop === 'title' && !value) throw new Error('Task must have a title');
+  if (prop === 'title' && !value) throw new Error('Subtask must have a title');
 
-  if (prop === 'completed') {
-    subtask.toggleComplete();
-  } else {
-    subtask[prop] = value;
-  }
+  subtask.update(prop, value);
 
   return subtask;
 };
