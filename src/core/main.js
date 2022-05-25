@@ -167,11 +167,14 @@ export const addProject = (name) => {
   return project;
 };
 
-export const updateProjectName = (projectId, name) => {
-  if (!name.trim()) throw new Error('Project must have a name');
+export const updateProject = (projectId, data) => {
+  const [prop, value] = Object.entries(data).flat();
+
+  if (prop === 'name' && !value.trim())
+    throw new Error('Project must have a name');
 
   const project = getProject(projectId);
-  project.name = name;
+  project[prop] = value;
 
   return project;
 };

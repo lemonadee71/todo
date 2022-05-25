@@ -40,8 +40,8 @@ const Core = (() => {
      */
     event.on(PROJECT.ADD, ({ data: { name } }) => main.addProject(name));
     event.on(PROJECT.REMOVE, ({ project }) => main.deleteProject(project));
-    event.on(PROJECT.UPDATE, ({ project: id, data: { name } }) =>
-      main.updateProjectName(id, name)
+    event.on(PROJECT.UPDATE, ({ project: id, data }) =>
+      main.updateProject(id, data)
     );
     event.on(PROJECT.MOVE, ({ project: id, data: { position } }) =>
       main.moveProject(id, position)

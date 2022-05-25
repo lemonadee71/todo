@@ -21,15 +21,17 @@ const Project = ({ data: { id } }) => {
   };
 
   const editProject = (e) => {
+    const type = e.target.name;
+
     Core.event.emit(
       PROJECT.UPDATE,
       {
         project: id,
-        data: { name: e.target.value },
+        data: { [type]: e.target.value },
       },
       {
         onError: () => {
-          e.target.value = project.name;
+          if (type === 'name') e.target.value = project.name;
         },
       }
     );
@@ -130,7 +132,7 @@ const Project = ({ data: { id } }) => {
       <!-- prettier-ignore -->
       <textarea
         class="text-2xl font-extrabold w-3/4 h-fit px-1 py-1 rounded-sm bg-inherit resize-none break-words overflow-hidden placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:ring dark:placeholder:text-slate-400 dark:focus:placeholder:text-slate-200"
-        name="project-name"
+        name="name"
         rows="1"
         placeholder="Project name"
         data-autosize
