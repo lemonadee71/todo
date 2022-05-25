@@ -10,6 +10,7 @@ class BaseTask {
     completed,
     id,
     createdDate,
+    lastUpdate,
     completionDate,
     list,
     project,
@@ -19,6 +20,7 @@ class BaseTask {
     this.type = 'task';
     this.id = id || uuid();
     this.createdDate = createdDate ?? Date.now();
+    this.lastUpdate = lastUpdate ?? this.createdDate;
     this.completionDate = completionDate || 0;
 
     // props
@@ -49,12 +51,26 @@ class BaseTask {
     };
   }
 
+  set location(data) {
+    this.update('project', data.project);
+    this.update('list', data.list);
+  }
+
   toFirestore() {
     return {
       ...this,
       dueDate: this.dueDate && toTimestamp(this.dueDate),
       labels: this.labels.ids,
     };
+  }
+
+  update(prop, value) {
+    if (prop === 'completed') this.toggleComplete();
+    else this[prop] = value;
+
+    this.lastUpdate = Date.now();
+
+    return this;
   }
 
   toggleComplete() {
@@ -72,15 +88,18 @@ class BaseTask {
     if (this.labels.has(label.id)) {
       throw new Error(`Label (${label.id}) is already added.`);
     }
+    this.lastUpdate = Date.now();
 
     return this.labels.add(label);
   }
 
   removeLabel(id) {
+    this.lastUpdate = Date.now();
     return this.labels.delete(id);
   }
 
   clearLabels() {
+    this.lastUpdate = Date.now();
     return this.labels.clear();
   }
 }

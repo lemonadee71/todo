@@ -20,6 +20,12 @@ export default class Subtask extends BaseTask {
     };
   }
 
+  set location(data) {
+    this.update('project', data.project);
+    this.update('list', data.list);
+    this.update('parent', data.task);
+  }
+
   static converter(source = {}) {
     return converter(Subtask, (data) => ({
       ...data,

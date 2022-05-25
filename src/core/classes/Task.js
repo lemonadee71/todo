@@ -52,9 +52,11 @@ export default class Task extends BaseTask {
   }
 
   _adopt(subtask) {
-    subtask.project = this.project;
-    subtask.list = this.list;
-    subtask.parent = this.id;
+    subtask.location = {
+      project: this.project,
+      list: this.list,
+      task: this.id,
+    };
   }
 
   getSubtask(id) {
@@ -63,37 +65,46 @@ export default class Task extends BaseTask {
 
   updateSubtasks() {
     this.subtasks.items.forEach(this._adopt.bind(this));
+    this.lastUpdate = Date.now();
 
     return this;
   }
 
   addSubtask(subtask) {
     this._adopt(subtask);
-    subtask.required = true;
+    this.lastUpdate = Date.now();
 
     return this.subtasks.add(subtask);
   }
 
   insertSubtask(subtask, idx) {
     this._adopt(subtask);
-    subtask.required = true;
+    this.lastUpdate = Date.now();
 
     return this.subtasks.insert(subtask, idx);
   }
 
   moveSubtask(id, idx) {
+    this.lastUpdate = Date.now();
+
     return this.subtasks.move(id, idx);
   }
 
   extractSubtask(id) {
+    this.lastUpdate = Date.now();
+
     return this.subtasks.extract(id);
   }
 
   deleteSubtask(id) {
+    this.lastUpdate = Date.now();
+
     return this.subtasks.delete(id);
   }
 
   clearSubtasks() {
+    this.lastUpdate = Date.now();
+
     return this.subtasks.clear();
   }
 }
