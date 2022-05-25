@@ -7,10 +7,19 @@ import { copy, orderById } from '../../utils/misc';
 import { converter } from '../../utils/firestore';
 
 export default class Project {
-  constructor({ name, id, lastFetched, labels, lists, __initialListsOrder }) {
+  constructor({
+    name,
+    id,
+    color,
+    lastFetched,
+    labels,
+    lists,
+    __initialListsOrder,
+  }) {
     // meta
     this.name = name;
     this.id = id || uuid();
+    this.color = color || DEFAULT_COLORS[0];
     this.lastFetched = lastFetched || Date.now();
 
     // firestore specific props

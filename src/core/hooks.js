@@ -18,8 +18,9 @@ export const useProject = (projectId) => {
   const projectRef = Core.main.getProject(projectId);
   const [project] = createHook({
     // Add other properties if needed
-    name: projectRef.name,
     id: projectRef.id,
+    name: projectRef.name,
+    color: projectRef.color,
     lists: projectRef.lists.items,
     labels: projectRef.labels.items,
   });
@@ -41,6 +42,7 @@ export const useProject = (projectId) => {
     ),
     Core.event.onSuccess(PROJECT.UPDATE, () => {
       project.name = projectRef.name;
+      project.color = projectRef.color;
     }),
   ];
 
