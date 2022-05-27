@@ -1,8 +1,14 @@
+const defaultTheme = require('tailwindcss/defaultTheme'); //eslint-disable-line
+
 module.exports = {
   content: ['./src/**/*.{html,js}'],
   darkMode: 'class',
   theme: {
-    extend: {},
+    screens: {
+      xs: '475px',
+      ...defaultTheme.screens,
+    },
   },
-  plugins: [],
+  // eslint-disable-next-line
+  plugins: [require('@tailwindcss/line-clamp')],
 };
