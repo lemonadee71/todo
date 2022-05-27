@@ -148,6 +148,7 @@ export const getProjectDetails = () =>
   Root.items.map((project) => ({
     id: project.id,
     name: project.name,
+    color: project.color,
     link: project.link,
   }));
 
