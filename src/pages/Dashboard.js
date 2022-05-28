@@ -4,10 +4,15 @@ import { useRoot } from '../core/hooks';
 import Core from '../core';
 import { PROJECT } from '../actions';
 import { getProfilePicURL, getUserName } from '../utils/auth';
+import { AddIcon } from '../assets/icons';
 import ProjectCard from '../components/Dashboard/ProjectCard';
 
 const Dashboard = () => {
   const [data, unsubscribe] = useRoot();
+
+  const createNewProject = () => {
+    Core.event.emit(PROJECT.ADD, { data: { name: 'Unnamed project' } });
+  };
 
   const init = function () {
     Sortable.create(this, {
@@ -45,7 +50,16 @@ const Dashboard = () => {
       <div
         class="sm:col-span-2 sm:row-auto lg:col-span-1 lg:row-span-2 flex flex-col overflow-auto scrollbar"
       >
-        <h2 class="font-semibold text-lg mb-3">Your Projects</h2>
+        <div class="flex justify-between items-center">
+          <h2 class="font-semibold text-lg mb-3">Your Projects</h2>
+          <button
+            class="group rounded border border-solid border-neutral-400 hover:border-blue-400 hover:bg-blue-100"
+            data-tooltip="Create new project"
+            onClick=${createNewProject}
+          >
+            ${AddIcon('stroke-black group-hover:stroke-blue-500', 20, 1.5)}
+          </button>
+        </div>
         <div
           is-list
           class="flex-1 grid auto-rows-[8rem] grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] content-start gap-3"
