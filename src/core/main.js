@@ -144,14 +144,6 @@ export const syncLocalStorage = () => LocalStorage.sync(LAST_UPDATE, Root);
 // =====================================================================================
 export const getAllProjects = () => [...Root.items];
 
-export const getProjectDetails = () =>
-  Root.items.map((project) => ({
-    id: project.id,
-    name: project.name,
-    color: project.color,
-    link: project.link,
-  }));
-
 export const getProject = (projectId) => {
   const project = Root.get(projectId);
 

@@ -3,10 +3,10 @@ import Core from '.';
 import { FIREBASE, PROJECT, TASK } from '../actions';
 
 export const useRoot = () => {
-  const [state] = createHook({ projects: Core.main.getProjectDetails() });
+  const [state] = createHook({ projects: Core.main.getAllProjects() });
 
   const unsubscribe = Core.event.onSuccess(PROJECT.ALL, () => {
-    state.projects = Core.main.getProjectDetails();
+    state.projects = Core.main.getAllProjects();
   });
 
   return [state, unsubscribe];
