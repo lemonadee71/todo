@@ -23,10 +23,7 @@ export default class BaseTaskModal {
     this.id = this.data.id;
 
     [this.task, this._revoke] = useTask(...Object.values(this.location));
-    [this.state] = createHook({
-      isEditingNotes: false,
-      isCompleted: data.completed,
-    });
+    [this.state] = createHook({ isEditingNotes: false });
 
     this.template = [];
   }
@@ -60,11 +57,6 @@ export default class BaseTaskModal {
 
   toggleNotesEdit = () => {
     this.state.isEditingNotes = !this.state.isEditingNotes;
-  };
-
-  toggleComplete = () => {
-    this.state.isCompleted = !this.state.isCompleted;
-    this.editTask({ target: { name: 'completed' } });
   };
 
   deleteTask = () => {
@@ -254,10 +246,10 @@ export default class BaseTaskModal {
         >
           <button
             class="text-sm text-white text-center px-3 py-2 rounded bg-blue-600 hover:bg-blue-700"
-            onClick=${this.toggleComplete}
+            onClick=${() => this.editTask({ target: { name: 'completed' } })}
           >
             Mark
-            ${this.state.$isCompleted((value) =>
+            ${this.task.$completed((value) =>
               value ? 'uncompleted' : 'completed'
             )}
           </button>
