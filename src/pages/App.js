@@ -119,7 +119,7 @@ const App = () => {
     ></div>
     <!-- header -->
     <header
-      class="fixed top-0 right-0 w-full h-14 flex flex-row justify-between pl-1 pr-4 pt-4 pb-2 bg-inherit"
+      class="fixed top-0 right-0 w-full h-14 flex flex-row justify-between pl-1 pr-4 pt-4 pb-2 bg-inherit z-50"
     >
       <button
         class="md:invisible p-1 rounded-full active:ring active:ring-teal-500"

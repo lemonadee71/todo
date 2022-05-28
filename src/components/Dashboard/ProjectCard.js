@@ -4,7 +4,7 @@ import { html } from 'poor-man-jsx';
 const ProjectCard = (data) => html`
   <div
     key="${data.id}"
-    class="relative h-32 pb-2 rounded-xl shadow-xl bg-white dark:bg-[#272727]"
+    class="relative pb-2 rounded-xl shadow-xl bg-white dark:bg-[#272727]"
   >
     <div
       class="h-1/4 rounded-t-xl"
