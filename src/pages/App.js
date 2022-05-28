@@ -27,11 +27,13 @@ const routes = [
   {
     path: PATHS.app,
     component: Dashboard,
+    className:
+      'grid grid-rows-[80px_1fr] gap-6 bg-neutral-200 dark:bg-[#424242]',
   },
   {
     path: PATHS.project,
     component: Project,
-    className: 'flex flex-col h-full',
+    className: 'flex flex-col pl-6 pr-2',
     beforeRender: async (match) => {
       if (!isGuest()) {
         const { id } = match.data;
@@ -117,10 +119,10 @@ const App = () => {
     ></div>
     <!-- header -->
     <header
-      class="fixed top-0 right-0 w-full flex flex-row justify-between pl-1 pr-4 pt-4 pb-2"
+      class="fixed top-0 right-0 w-full h-14 flex flex-row justify-between pl-1 pr-4 pt-4 pb-2 bg-inherit"
     >
       <button
-        class="sm:invisible p-1 rounded-full active:ring active:ring-teal-500"
+        class="md:invisible p-1 rounded-full active:ring active:ring-teal-500"
         onClick=${() => dispatchCustomEvent($('#sidebar'), 'togglesidebar')}
       >
         <svg
@@ -142,7 +144,7 @@ const App = () => {
       </button>
 
       <div class="w-fit flex flex-row justify-between items-center relative">
-        <p>Hello, <span class="font-medium">${getUserName()}</span></p>
+        <p class="font-medium">${getUserName()}</p>
         <button class="group" data-dropdown="user-menu">
           <img
             class="rounded-full h-6 w-6 ml-2 group-active:ring active:ring-teal-500"
@@ -170,7 +172,12 @@ const App = () => {
     <!-- sidebar -->
     ${Sidebar()}
     <!-- main content -->
-    ${Router({ routes, tag: 'main', props: { class: 'pt-14' } })}
+    ${Router({
+      routes,
+      tag: 'main',
+      // used padding instead of margin to avoid overflow issues
+      props: { class: 'pt-14 h-full' },
+    })}
     <!-- only one modal for all -->
     <my-modal id="modal"></my-modal>
     <!-- only one tooltip element for all -->
