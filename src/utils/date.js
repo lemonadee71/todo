@@ -24,27 +24,29 @@ const parse = (date) => parseISO(date);
 const formatDateToNow = (dirtyDate) =>
   formatDistanceToNow(parse(dirtyDate), { addSuffix: true });
 
-const formatDate = (dirtyDate) => {
-  const date = parse(dirtyDate);
+const getDateKeyword = (dirtyDate) => {
+  const date = typeof dirtyDate === 'number' ? dirtyDate : parse(dirtyDate);
 
   if (isDueToday(date)) {
-    return 'Due today';
+    return 'today';
   }
   if (isDueTomorrow(date)) {
-    return 'Due tomorrow';
+    return 'tomorrow';
   }
   if (isYesterday(date)) {
-    return 'Due yesterday';
+    return 'yesterday';
   }
   if (isPast(date) || isUpcomingInFuture(date)) {
-    return `Due ${formatDateToNow(dirtyDate)}`;
+    return formatDateToNow(dirtyDate);
   }
   if (isDueThisWeek(date)) {
-    return `Due ${format(date, 'E, MMM dd')}`;
+    return format(date, 'E, MMM dd');
   }
 
-  return `Due ${format(date, 'MMM dd')}`;
+  return format(date, 'MMM dd');
 };
+
+const formatDate = (dirtyDate) => `Due ${getDateKeyword(dirtyDate)}`;
 
 const formatToDateTime = (date) => format(date, DATE_TIME_FORMAT);
 
@@ -69,6 +71,7 @@ export {
   formatDateToNow,
   formatToDateTime,
   formatToTZDate,
+  getDateKeyword,
   getDueDateRange,
   parse,
   toTimestamp,
