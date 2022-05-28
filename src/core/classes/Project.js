@@ -11,19 +11,24 @@ export default class Project {
     name,
     id,
     color,
-    lastFetched,
     labels,
     lists,
+    lastOpened,
+    lastFetched,
     __initialListsOrder,
   }) {
-    // meta
-    this.name = name;
+    // props
     this.id = id || uuid();
+    this.name = name;
     this.color = color || DEFAULT_COLORS[0];
-    this.lastFetched = lastFetched || Date.now();
+
+    // misc
+    // not used anywhere, just additional info for dashboard
+    this.lastOpened = lastOpened || new Date();
 
     // firestore specific props
     // only set once on first fetched
+    this.lastFetched = lastFetched || Date.now();
     this.__initialListsOrder = __initialListsOrder ?? [];
 
     const defaultLabels = [
