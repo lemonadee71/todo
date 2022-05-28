@@ -57,7 +57,11 @@ const Dashboard = () => {
             data-tooltip="Create new project"
             onClick=${createNewProject}
           >
-            ${AddIcon('stroke-black group-hover:stroke-blue-500', 20, 1.5)}
+            ${AddIcon(
+              'stroke-black dark:stroke-white group-hover:stroke-blue-500',
+              20,
+              1.5
+            )}
           </button>
         </div>
         <div

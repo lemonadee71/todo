@@ -29,7 +29,8 @@ const ProjectCard = (data, i) => {
 
       <div class="px-3 pb-2 self-end flex justify-between">
         <p class="text-[0.7rem] text-gray-400 dark:text-gray-300">
-          Last opened: ${format(data.lastOpened, 'MM/dd/yyyy')}
+          Last opened:
+          ${data.lastOpened ? format(data.lastOpened, 'MM/dd/yyyy') : 'N/A'}
         </p>
         <div class="flex gap-1 items-center">
           <button

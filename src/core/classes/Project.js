@@ -24,7 +24,7 @@ export default class Project {
 
     // misc
     // not used anywhere, just additional info for dashboard
-    this.lastOpened = lastOpened || new Date();
+    this.lastOpened = lastOpened;
 
     // firestore specific props
     // only set once on first fetched

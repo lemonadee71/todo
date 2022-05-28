@@ -111,6 +111,7 @@ const storeDataToLocal = function (data) {
       id: project.id,
       name: project.name,
       color: project.color,
+      lastOpened: project.lastOpened,
       position: i,
     });
     LocalStorage.set(`${project.id}__labels`, project.labels.items);
