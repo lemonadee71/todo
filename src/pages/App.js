@@ -62,10 +62,12 @@ const routes = [
 const App = () => {
   const addTooltip = (element) => {
     $$.data('tooltip', null, element).forEach((item) => {
-      const [onShow, onHide] = useTooltip(item);
+      item.addEventListener('@mount', () => {
+        const [onShow, onHide] = useTooltip(item);
 
-      SHOW_EVENTS.forEach((name) => item.addEventListener(name, onShow()));
-      HIDE_EVENTS.forEach((name) => item.addEventListener(name, onHide()));
+        SHOW_EVENTS.forEach((name) => item.addEventListener(name, onShow()));
+        HIDE_EVENTS.forEach((name) => item.addEventListener(name, onHide()));
+      });
     });
   };
 

@@ -79,7 +79,8 @@ const Sidebar = () => {
             <form onSubmit.prevent=${createNewProject}>
               <button
                 class="rounded border border-solid border-neutral-400 hover:bg-neutral-700"
-                data-tooltip="Add new project"
+                data-tooltip="Create new project"
+                data-tooltip-position="right"
                 type="submit"
               >
                 ${AddIcon('stroke-neutral-400', 16, 1.25)}
