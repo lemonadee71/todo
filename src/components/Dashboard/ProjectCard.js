@@ -1,22 +1,47 @@
 import { format } from 'date-fns';
 import { html } from 'poor-man-jsx';
+import { PROJECT } from '../../actions';
+import { DeleteIcon } from '../../assets/icons';
+import Core from '../../core';
+import { useUndo } from '../../utils/undo';
 
-const ProjectCard = (data) => html`
-  <div
-    key="${data.id}"
-    class="relative pb-2 rounded-xl shadow-xl bg-white dark:bg-[#272727]"
-  >
+const ProjectCard = (data, i) => {
+  const deleteProject = useUndo({
+    type: PROJECT,
+    text: 'Project removed',
+    payload: { id: data.id, project: data.id },
+  });
+
+  return html`
     <div
-      class="h-1/4 rounded-t-xl"
-      style="background-color: ${data.color};"
-    ></div>
-    <h3 class="font-medium px-3 pt-2 line-clamp-2">${data.name}</h3>
-    <p
-      class="absolute bottom-2 left-3 text-xs text-gray-400 dark:text-gray-300"
+      key="${data.id}"
+      class="grid grid-rows-[1fr_2fr_1fr] rounded-xl shadow-xl bg-white dark:bg-[#272727] active:ring focus:ring group"
+      data-id="${data.id}"
+      data-position="${i}"
+      onDblClick=${() =>
+        Core.router.navigate(`app/${data.link}`, { title: data.name })}
     >
-      Last opened: ${format(data.lastOpened, 'MM/dd/yyyy')}
-    </p>
-  </div>
-`;
+      <div class="rounded-t-xl" style="background-color: ${data.color};"></div>
+
+      <h3 class="font-medium px-3 pt-2 line-clamp-2 self-start">
+        ${data.name}
+      </h3>
+
+      <div class="px-3 pb-2 self-end flex justify-between">
+        <p class="text-[0.7rem] text-gray-400 dark:text-gray-300">
+          Last opened: ${format(data.lastOpened, 'MM/dd/yyyy')}
+        </p>
+        <div class="flex gap-1 items-center">
+          <button
+            class="invisible group-hover:visible cursor-pointer"
+            onClick=${deleteProject}
+          >
+            ${DeleteIcon('stroke-red-600 hover:stroke-red-700', 15)}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+};
 
 export default ProjectCard;

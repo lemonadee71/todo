@@ -1,10 +1,26 @@
 import { html, render } from 'poor-man-jsx';
+import Sortable from 'sortablejs';
 import { useRoot } from '../core/hooks';
+import Core from '../core';
+import { PROJECT } from '../actions';
 import { getProfilePicURL, getUserName } from '../utils/auth';
 import ProjectCard from '../components/Dashboard/ProjectCard';
 
 const Dashboard = () => {
   const [data, unsubscribe] = useRoot();
+
+  const init = function () {
+    Sortable.create(this, {
+      animation: 150,
+      draggable: '[data-position]',
+      onUpdate: (e) => {
+        Core.event.emit(PROJECT.MOVE, {
+          project: e.item.dataset.id,
+          data: { position: e.newIndex },
+        });
+      },
+    });
+  };
 
   // TODO: Deal with overflows
   return html`
@@ -33,6 +49,7 @@ const Dashboard = () => {
         <div
           is-list
           class="flex-1 grid auto-rows-[8rem] grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] content-start gap-3"
+          onMount=${init}
         >
           ${data.$projects.map(ProjectCard).map((item) => render(item))}
         </div>
