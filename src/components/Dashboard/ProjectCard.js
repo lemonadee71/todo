@@ -15,7 +15,7 @@ const ProjectCard = (data, i) => {
   return html`
     <div
       key="${data.id}"
-      class="grid grid-rows-[1fr_2fr_1fr] rounded-xl shadow-xl bg-white dark:bg-[#272727] active:ring focus:ring group"
+      class="grid grid-rows-[1fr_2fr_1fr] rounded-xl shadow-xl bg-white dark:bg-[#272727] focus:ring group"
       data-id="${data.id}"
       data-position="${i}"
       onDblClick=${() =>
