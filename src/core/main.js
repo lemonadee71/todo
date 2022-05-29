@@ -254,13 +254,15 @@ export const getTasksByInterval = (interval) =>
   );
 
 export const getTasksDueThisWeek = () =>
-  getAllTasks().filter((task) => isDueThisWeek(parse(task.dueDate)));
+  getAllTasks()
+    .filter((task) => !task.completed)
+    .filter((task) => isDueThisWeek(parse(task.dueDate)));
 
 // tasks are considered stale if there are no updates in 2 weeks
 export const getStaleTasks = () =>
-  getAllTasks().filter(
-    (task) => differenceInWeeks(new Date(), task.lastUpdate) >= 2
-  );
+  getAllTasks()
+    .filter((task) => !task.completed)
+    .filter((task) => differenceInWeeks(new Date(), task.lastUpdate) >= 2);
 
 export const getTasks = (projectId, listId) => getList(projectId, listId).items;
 
