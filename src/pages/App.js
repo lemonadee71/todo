@@ -15,25 +15,24 @@ import logger from '../utils/logger';
 import { orderById } from '../utils/misc';
 import { $, $$ } from '../utils/query';
 import { toggleDarkTheme } from '../utils/theme';
+import { useTooltip } from '../utils/useTooltip';
 import Dashboard from './Dashboard';
 import Project from './Project';
 import Sidebar from '../components/Sidebar';
 import Router from '../components/Router';
 import TaskModal from '../components/Project/TaskModal';
 import SubtaskModal from '../components/Project/SubtaskModal';
-import { useTooltip } from '../utils/useTooltip';
 
 const routes = [
   {
     path: PATHS.app,
     component: Dashboard,
-    className:
-      'grid grid-rows-[80px_1fr] gap-6 bg-neutral-200 dark:bg-[#424242]',
+    className: 'gap-6 bg-neutral-200 dark:bg-[#424242]',
   },
   {
     path: PATHS.project,
     component: Project,
-    className: 'flex flex-col pl-6 pr-2',
+    className: 'pl-6 pr-2',
     beforeRender: async (match) => {
       if (!isGuest()) {
         const { id } = match.data;
@@ -176,7 +175,7 @@ const App = () => {
       routes,
       tag: 'main',
       // used padding instead of margin to avoid overflow issues
-      props: { class: 'pt-14 h-full' },
+      props: { class: 'flex flex-col h-full pt-14' },
     })}
     <!-- only one modal for all -->
     <my-modal id="modal"></my-modal>

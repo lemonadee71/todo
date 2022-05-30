@@ -1,14 +1,21 @@
-import { html, render } from 'poor-man-jsx';
+import { compareAsc, parseISO } from 'date-fns';
+import { createHook, html, render } from 'poor-man-jsx';
 import Sortable from 'sortablejs';
 import { useRoot } from '../core/hooks';
 import Core from '../core';
-import { PROJECT } from '../actions';
+import { PROJECT, TASK } from '../actions';
 import { getProfilePicURL, getUserName } from '../utils/auth';
 import { AddIcon } from '../assets/icons';
 import ProjectCard from '../components/Dashboard/ProjectCard';
+import Task from '../components/Dashboard/Task';
 
 const Dashboard = () => {
-  const [data, unsubscribe] = useRoot();
+  const [root, unsubscribe] = useRoot();
+  const [tasks] = createHook({
+    dueThisWeek: Core.main.getTasksDueThisWeek(),
+    stale: Core.main.getStaleTasks(),
+  });
+  const cleanup = [unsubscribe];
 
   const createNewProject = () => {
     Core.event.emit(PROJECT.ADD, { data: { name: 'Unnamed project' } });
@@ -27,11 +34,21 @@ const Dashboard = () => {
     });
   };
 
-  // TODO: Deal with overflows
+  // for some reason this doesn't work if we don't do it like this
+  cleanup.push(
+    Core.event.onSuccess(
+      [...PROJECT.LABELS.ALL, ...TASK.ALL, ...TASK.LABELS.ALL],
+      () => {
+        tasks.dueThisWeek = Core.main.getTasksDueThisWeek();
+        tasks.stale = Core.main.getStaleTasks();
+      }
+    )
+  );
+
   return html`
     <div
-      class="grid grid-cols-[auto_1fr] grid-rows-2 px-6 shadow-md bg-white dark:bg-[#353535]"
-      onDestroy=${unsubscribe}
+      class="h-20 grid grid-cols-[auto_1fr] grid-rows-2 px-6 shadow-md bg-white dark:bg-[#353535]"
+      onDestroy=${() => cleanup.map((fn) => fn())}
     >
       <img
         class="row-span-2 rounded-full h-14 w-14 mr-6 active:ring-teal-500 self-center"
@@ -45,10 +62,10 @@ const Dashboard = () => {
     </div>
 
     <div
-      class="grid auto-rows-min sm:grid-rows-[1.5fr_1fr] sm:grid-cols-2 lg:grid-rows-2 lg:grid-cols-[1fr_minmax(14rem,17rem)] gap-x-6 gap-y-4 h-[calc(100vh-56px-80px-24px)] px-6 overflow-auto scrollbar"
+      class="flex-1 grid auto-rows-min xs:grid-cols-2 lg:grid-rows-2 lg:grid-cols-[1fr_minmax(14rem,18rem)] gap-x-6 gap-y-4 px-6 overflow-auto scrollbar"
     >
       <div
-        class="sm:col-span-2 sm:row-auto lg:col-span-1 lg:row-span-2 flex flex-col overflow-auto scrollbar"
+        class="xs:col-span-2 xs:row-auto lg:col-span-1 lg:row-span-2 flex flex-col overflow-auto scrollbar"
       >
         <div class="flex justify-between items-center">
           <h2 class="font-semibold text-lg mb-3">Your Projects</h2>
@@ -66,21 +83,35 @@ const Dashboard = () => {
         </div>
         <div
           is-list
-          class="flex-1 grid auto-rows-[8rem] grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] content-start gap-3"
+          class="flex-1 grid auto-rows-[8rem] grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] content-start gap-3 p-2"
           onMount=${init}
         >
-          ${data.$projects.map(ProjectCard).map((item) => render(item))}
+          ${root.$projects.map(ProjectCard).map((item) => render(item))}
         </div>
       </div>
 
-      <div>
-        <h2 class="font-semibold text-lg mb-3">Due This Week</h2>
-        <div></div>
+      <div class="grid grid-rows-[auto_1fr] gap-3">
+        <h2 class="font-semibold text-lg">Due This Week</h2>
+        <div is-list class="px-2 space-y-1 overflow-auto scrollbar">
+          ${tasks.$dueThisWeek
+            .sort((a, b) =>
+              compareAsc(parseISO(a.dueDate), parseISO(b.dueDate))
+            )
+            .map((data, i) => Task(data, i, false))
+            .map((data) => render(data))}
+        </div>
       </div>
 
-      <div>
-        <h2 class="font-semibold text-lg mb-3">Stale Tasks</h2>
-        <div></div>
+      <div class="grid grid-rows-[auto_1fr] gap-3">
+        <h2 class="font-semibold text-lg">Stale Tasks</h2>
+        <div is-list class="px-2 space-y-1 overflow-auto scrollbar">
+          ${tasks.$stale
+            .sort((a, b) =>
+              compareAsc(parseISO(a.lastUpdate), parseISO(b.lastUpdate))
+            )
+            .map((data, i) => Task(data, i, true))
+            .map((data) => render(data))}
+        </div>
       </div>
     </div>
   `;
