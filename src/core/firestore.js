@@ -33,10 +33,10 @@ import Core from '.';
 // If there are a lot of subtasks, this might cause significant delay
 // so consider rerendering after fetching instead
 // like emitting an event
-const fetchSubtasks = async (tasks, data) => {
+const fetchSubtasks = async (tasks, labels) => {
   const queries = tasks.map((task) =>
     query(
-      getCollectionRef('Tasks', Subtask.converter(data)),
+      getCollectionRef('Tasks', Subtask.converter({ labels })),
       where('type', '==', 'subtask'),
       where('parent', '==', task.id)
     )
@@ -89,7 +89,7 @@ export const fetchProjectData = async (id) => {
   data.tasks = result[1].docs?.map(getData);
   data.lists = result[2].docs?.map(getData);
 
-  await fetchSubtasks(data.tasks, data);
+  await fetchSubtasks(data.tasks, data.labels);
 
   return data;
 };
@@ -127,9 +127,6 @@ export const initFirestore = async () => {
   });
 };
 
-/**
- * Setup all list
- */
 export const setupListeners = () => {
   // =====================================================================================
   // Projects
@@ -359,7 +356,7 @@ export const setupListeners = () => {
     );
 
     // fetch subtasks
-    await fetchSubtasks(completedTasks, data);
+    await fetchSubtasks(completedTasks, project.labels.items);
     list.add(completedTasks || []);
 
     Core.data.fetched.lists.push(data.list);
