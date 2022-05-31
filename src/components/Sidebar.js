@@ -94,7 +94,7 @@ const Sidebar = () => {
             class="space-y-1 m-0"
             onCreate=${init}
           >
-            ${data.$projects.map(ProjectLink).map((item) => render(item))}
+            ${data.$projects(items => items.map(ProjectLink).map((item) => render(item)))}
           </ul>
         </nav>
 
