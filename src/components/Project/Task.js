@@ -91,7 +91,7 @@ export default class Task extends BaseTask {
             value ? 'block' : 'none'
           )}
         >
-          <div is-list class="space-y-1" onCreate=${this.initSubtasks}>
+          <div is-list class="space-y-1" onMount=${this.initSubtasks}>
             ${this.data.subtasks.items
               .filter((subtask) => !subtask.completed)
               .map((subtask, i) => new Subtask(subtask).render(i))}

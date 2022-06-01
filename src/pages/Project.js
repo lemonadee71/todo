@@ -193,7 +193,7 @@ const Project = ({ data: { id } }) => {
                 is-list
                 keystring="id"
                 class="w-fit flex flex-row items-start space-x-6"
-                onCreate=${init}
+                onMount=${init}
               >
                 ${project.$lists((lists) =>
                   [...lists.map(List), form].map((item) => render(item))

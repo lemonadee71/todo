@@ -93,7 +93,7 @@ const Sidebar = () => {
             is-list
             keystring="data-id"
             class="space-y-1 m-0"
-            onCreate=${init}
+            onMount=${init}
           >
             ${data.$projects(items => items.map(ProjectLink).map((item) => render(item)))}
           </ul>

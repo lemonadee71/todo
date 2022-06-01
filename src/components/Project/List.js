@@ -130,7 +130,7 @@ const List = (data, pos) => {
         class="space-y-2 px-3"
         data-id="${data.id}"
         data-name="current-tasks"
-        onCreate=${init}
+        onMount=${init}
       >
         ${data.items
           .filter((task) => !task.completed)
