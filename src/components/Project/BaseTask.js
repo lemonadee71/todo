@@ -156,7 +156,7 @@ export default class BaseTask {
             </div>
 
             <h3
-              class="text-base font-sans break-words break-all ${this.data.completed ? 'line-through' : ''}"
+              class="text-base font-sans break-words line-clamp-3 ${this.data.completed ? 'line-through' : ''}"
               data-name="task__title"
               ${this.props.title}
             >

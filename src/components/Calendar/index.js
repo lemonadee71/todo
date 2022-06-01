@@ -275,7 +275,7 @@ const template = {
   popupDetailDate: (...args) =>
     format(args[2].toDate(), 'MMMM d, yyyy hh:mm a'),
   popupDetailBody: (schedule) =>
-    `<p class="truncate">${schedule.body.trim()}</p>`,
+    `<p class="line-clamp-3">${schedule.body.trim()}</p>`,
   // Icons are not visible for these buttons in dark mode
   // since we can't change their color
   popupEdit: () => '<span>Edit</span>',
