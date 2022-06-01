@@ -49,14 +49,14 @@ const Sidebar = () => {
   // prettier-ignore
   return html`
     <aside
-      class="${state.$isVisible(value => value ? 'w-56' : 'w-0')} sm:w-56 fixed top-0 left-0 h-screen bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all dark:bg-[#202020]"
+      class="${state.$isVisible(value => value ? 'w-56' : 'w-0')} md:w-56 fixed top-0 left-0 h-screen bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all dark:bg-[#202020]"
       id="sidebar"
       onToggleSidebar=${toggleVisibility}
       onDestroy=${revoke}
     >
       <div class="relative h-full p-5 pt-12">
         <button
-          class="absolute top-4 right-4 ${state.$isVisible(value => value ? 'visible' : 'invisible')} sm:invisible"
+          class="absolute top-4 right-4 ${state.$isVisible(value => value ? 'visible' : 'invisible')} md:invisible"
           onClick=${toggleVisibility}
         >
           ${CloseIcon('stroke-gray-400 hover:stroke-gray-600 dark:stroke-gray-50 dark:hover:stroke-gray-200')}
@@ -95,7 +95,7 @@ const Sidebar = () => {
             class="space-y-1 m-0"
             onCreate=${init}
           >
-            ${data.$projects.map(ProjectLink).map((item) => render(item))}
+            ${data.$projects(items => items.map(ProjectLink).map((item) => render(item)))}
           </ul>
         </nav>
 

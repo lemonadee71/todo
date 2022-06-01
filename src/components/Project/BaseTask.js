@@ -6,6 +6,7 @@ import { formatDate, formatDateToNow } from '../../utils/date';
 import { getDateColor } from '../../utils/misc';
 import { useUndo } from '../../utils/undo';
 import { createDropdown } from '../../utils/dropdown';
+import { $ } from '../../utils/query';
 import Badge from './Badge';
 import Chip from './Chip';
 
@@ -23,7 +24,7 @@ export default class BaseTask {
     this.unsubscribe = [];
     this.props = { main: '', checkbox: '' };
     this.badges = [];
-    this.extraContent = '';
+    this.template = [];
 
     if (this.data.dueDate) {
       this.badges.push(
@@ -83,6 +84,19 @@ export default class BaseTask {
 
   initMenu = (e) => createDropdown(e.target.children[0], e.target.children[1]);
 
+  // BUG: Initiating on create doubles the component
+  //      must be due to the diffing not seeing the change
+  init = (e) => {
+    this.template.forEach((content) => {
+      const { template, target: selector, method } = content;
+      const target = selector
+        ? $.data('name', `task__${selector}`, e.target)
+        : e.target;
+
+      target[method || 'append'](render(template));
+    });
+  };
+
   // prettier-ignore
   render(position) {
     return html`
@@ -93,11 +107,12 @@ export default class BaseTask {
         data-project="${this.data.project}"
         data-list="${this.data.list}"
         data-position="${position}"
+        onCreate=${this.init}
         onDestroy=${() => this.unsubscribe.forEach((cb) => cb())}
         ${this.props.main}
       >
-        <div class="flex justify-between items-center space-x-2">
-          <label class="relative cursor-pointer select-none">
+        <div class="flex justify-between items-center space-x-2" data-name="task__body">
+          <label class="relative cursor-pointer select-none" data-name="task__checkbox">
             <input
               class="absolute cursor-pointer w-0 h-0 opacity-0"
               type="checkbox"
@@ -118,24 +133,25 @@ export default class BaseTask {
             </div>
           </label>
 
-          <div class="flex flex-1 flex-col space-y-1">
-            <div is-list class="flex flex-wrap gap-1" ${this.props.labels}>
+          <div class="flex flex-1 flex-col space-y-1" data-name="task__main">
+            <div is-list class="flex flex-wrap gap-1" ${this.props.labels} data-name="task__labels">
               ${this.data.labels.items.map(Chip)}
             </div>
 
             <h3
               class="text-base font-sans break-words break-all ${this.data.completed ? 'line-through' : ''}"
+              data-name="task__title"
               ${this.props.title}
             >
               ${this.data.title}
             </h3>
 
-            <div is-list class="flex flex-wrap gap-1" ${this.props.badges}>
+            <div is-list class="flex flex-wrap gap-1" data-name="task__badges" ${this.props.badges}>
               ${this.badges.map((item) => render(item))}
             </div>
           </div>
 
-          <div onMount=${this.initMenu} ${this.props.menu}>
+          <div onMount=${this.initMenu} ${this.props.menu} data-name="task__controls">
             <button>
               ${KebabMenuIcon('cursor-pointer stroke-gray-500 hover:stroke-gray-800 dark:hover:stroke-gray-300')}
             </button>
@@ -143,8 +159,9 @@ export default class BaseTask {
             <div
               ignore="class"
               style="display: none;"
+              data-name="task__menu"
               data-dropdown-position="left"
-              class="flex flex-col py-1 rounded divide-y divide divide-gray-500 space-y-1 text-center text-white text-sm bg-neutral-700 border border-gray-500 border-solid drop-shadow z-[99]"
+              class="flex flex-col py-1 rounded divide-y divide-gray-500 space-y-1 text-center text-white text-sm bg-neutral-700 border border-gray-500 border-solid drop-shadow z-[99]"
             >
               <button
                 class="px-2 hover:text-blue-400"
@@ -161,8 +178,6 @@ export default class BaseTask {
             </div>
           </div>
         </div>
-
-        ${this.extraContent}
       </div>
     `;
   }

@@ -7,14 +7,28 @@ import { copy, orderById } from '../../utils/misc';
 import { converter } from '../../utils/firestore';
 
 export default class Project {
-  constructor({ name, id, lastFetched, labels, lists, __initialListsOrder }) {
-    // meta
-    this.name = name;
+  constructor({
+    name,
+    id,
+    color,
+    labels,
+    lists,
+    lastOpened,
+    lastFetched,
+    __initialListsOrder,
+  }) {
+    // props
     this.id = id || uuid();
-    this.lastFetched = lastFetched || Date.now();
+    this.name = name;
+    this.color = color || DEFAULT_COLORS[0];
+
+    // misc
+    // not used anywhere, just additional info for dashboard
+    this.lastOpened = lastOpened;
 
     // firestore specific props
     // only set once on first fetched
+    this.lastFetched = lastFetched;
     this.__initialListsOrder = __initialListsOrder ?? [];
 
     const defaultLabels = [

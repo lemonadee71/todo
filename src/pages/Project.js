@@ -1,6 +1,6 @@
 import Sortable from 'sortablejs';
 import { createHook, html, render } from 'poor-man-jsx';
-import { PROJECT } from '../actions';
+import { EDIT_TASK, PROJECT } from '../actions';
 import { useProject } from '../core/hooks';
 import Core from '../core';
 import Calendar from '../components/Calendar';
@@ -20,16 +20,31 @@ const Project = ({ data: { id } }) => {
     state.openForm = !state.openForm;
   };
 
+  // We put this here since Router hooks aren't called sequentially
+  const openTask = () => {
+    const data = Core.data.queue.pop();
+
+    if (data) {
+      Core.event.emit(
+        EDIT_TASK,
+        // make root the source to use the completed data we just fetched
+        Core.main.getTask(data.project, data.list, data.task)
+      );
+    }
+  };
+
   const editProject = (e) => {
+    const type = e.target.name;
+
     Core.event.emit(
       PROJECT.UPDATE,
       {
         project: id,
-        data: { name: e.target.value },
+        data: { [type]: e.target.value },
       },
       {
         onError: () => {
-          e.target.value = project.name;
+          if (type === 'name') e.target.value = project.name;
         },
       }
     );
@@ -124,18 +139,34 @@ const Project = ({ data: { id } }) => {
     <div
       data-name="project__name"
       class="flex justify-between items-center mb-5"
+      onMount=${openTask}
       onDestroy=${unsubscribe}
     >
       <h1 class="sr-only">${project.$name}</h1>
-      <!-- prettier-ignore -->
-      <textarea
-        class="text-2xl font-extrabold w-3/4 h-fit px-1 py-1 rounded-sm bg-inherit resize-none break-words overflow-hidden placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:ring dark:placeholder:text-slate-400 dark:focus:placeholder:text-slate-200"
-        name="project-name"
+      <div class="w-3/4 flex items-center">
+        <label class="relative select-none mr-3">
+          <input
+            class="absolute w-0 h-0 opacity-0"
+            type="color"
+            name="color"
+            value=${project.color}
+            onChange=${editProject}
+          />
+          <div
+            class="rounded-full w-4 h-4"
+            style="background-color: ${project.$color};"
+          ></div>
+        </label>
+        <!-- prettier-ignore -->
+        <textarea
+        class="flex-1 text-2xl font-extrabold px-1 py-1 rounded-sm bg-inherit resize-none break-words overflow-hidden placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:ring dark:placeholder:text-slate-400 dark:focus:placeholder:text-slate-200"
+        name="name"
         rows="1"
         placeholder="Project name"
         data-autosize
         onInput=${debounce(editProject, 200)}
-      >${project.name}</textarea>
+        >${project.name}</textarea>
+      </div>
 
       <button
         class="px-3 py-2 rounded active:ring"

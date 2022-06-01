@@ -50,7 +50,7 @@ const routes = [
     path: '/app*',
     component: pages.App,
     className:
-      'font-sans text-black h-screen px-4 sm:ml-56 dark:text-white dark:bg-[#353535]',
+      'font-sans text-black h-screen bg-white md:ml-56 dark:text-white dark:bg-[#353535]',
     nested: true,
     beforeRender: async () => {
       // setup core listeners
@@ -83,6 +83,12 @@ const routes = [
           title: document.title,
           url: match.url,
         };
+
+        const [, , id] = match.url.split('/');
+        if (id) Core.main.updateProject(id, { lastOpened: Date.now() });
+        // sync local storage manually
+        // since we don't emit any events
+        Core.main.syncLocalStorage();
 
         if (isGuest()) {
           LocalStorage.store(LAST_OPENED_PAGE, data);

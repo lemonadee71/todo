@@ -42,8 +42,7 @@ class TaskList extends IdList {
 
   add(task) {
     const tasks = [task].flat().map((item) => {
-      item.project = this.project;
-      item.list = this.id;
+      item.location = { project: this.project, list: this.id };
       item.updateSubtasks();
 
       return item;
@@ -53,8 +52,7 @@ class TaskList extends IdList {
   }
 
   insert(task, idx) {
-    task.project = this.project;
-    task.list = this.id;
+    task.location = { project: this.project, list: this.id };
     task.updateSubtasks();
 
     return super.insert(task, idx);

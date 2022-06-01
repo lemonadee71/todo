@@ -1,5 +1,5 @@
 import Sortable from 'sortablejs';
-import { createHook, html, render } from 'poor-man-jsx';
+import { createHook, html } from 'poor-man-jsx';
 import { DEFAULT_COLORS } from '../../constants';
 import { TASK } from '../../actions';
 import Core from '../../core';
@@ -80,26 +80,31 @@ export default class Task extends BaseTask {
       );
     }
 
-    this.extraContent = render(html`
-      <div
-        ignore="style"
-        style_display=${this.state.$showSubtasks((value) =>
-          value ? 'block' : 'none'
-        )}
-      >
-        <div is-list class="space-y-1" onCreate=${this.initSubtasks}>
-          ${this.data.subtasks.items
-            .filter((subtask) => !subtask.completed)
-            .map((subtask, i) => new Subtask(subtask).render(i))}
+    this.template.push({
+      target: 'body',
+      method: 'after',
+      template: html`
+        <div
+          ignore="style"
+          data-name="task__subtasks"
+          style_display=${this.state.$showSubtasks((value) =>
+            value ? 'block' : 'none'
+          )}
+        >
+          <div is-list class="space-y-1" onCreate=${this.initSubtasks}>
+            ${this.data.subtasks.items
+              .filter((subtask) => !subtask.completed)
+              .map((subtask, i) => new Subtask(subtask).render(i))}
+          </div>
+          <div is-list class="space-y-1">
+            ${this.data.subtasks.items
+              .filter((subtask) => subtask.completed)
+              .sort((a, b) => b.completionDate - a.completionDate)
+              .map((subtask, i) => new Subtask(subtask).render(i))}
+          </div>
         </div>
-        <div is-list class="space-y-1">
-          ${this.data.subtasks.items
-            .filter((subtask) => subtask.completed)
-            .sort((a, b) => b.completionDate - a.completionDate)
-            .map((subtask, i) => new Subtask(subtask).render(i))}
-        </div>
-      </div>
-    `);
+      `,
+    });
 
     return super.render(position);
   }

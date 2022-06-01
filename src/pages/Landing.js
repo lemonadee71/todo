@@ -12,9 +12,7 @@ const Landing = () => {
   `;
 
   const goBackBtn = html`
-    <button
-      onClick=${() => Core.router.navigate(PATHS.app, { title: 'Overview' })}
-    >
+    <button onClick=${() => Core.router.navigate(PATHS.app, { title: 'Home' })}>
       Open app
     </button>
   `;

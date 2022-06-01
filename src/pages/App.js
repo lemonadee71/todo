@@ -16,7 +16,7 @@ import { orderById } from '../utils/misc';
 import { $, $$ } from '../utils/query';
 import { toggleDarkTheme } from '../utils/theme';
 import { useTooltip } from '../utils/useTooltip';
-import Overview from './Overview';
+import Dashboard from './Dashboard';
 import Project from './Project';
 import Sidebar from '../components/Sidebar';
 import Router from '../components/Router';
@@ -27,12 +27,13 @@ import Loading from '../components/Loading';
 const routes = [
   {
     path: PATHS.app,
-    component: Overview,
+    component: Dashboard,
+    className: 'gap-6 bg-neutral-200 dark:bg-[#424242]',
   },
   {
     path: PATHS.project,
     component: Project,
-    className: 'flex flex-col h-full',
+    className: 'pl-6 pr-2',
     beforeRender: async (match) => {
       if (!isGuest()) {
         const { id } = match.data;
@@ -83,7 +84,7 @@ const App = () => {
       PROJECT.REMOVE,
       (data) => {
         if (Core.state.currentPage === `app/${data.link}`) {
-          Core.router.redirect(PATHS.app, { title: 'Overview' });
+          Core.router.redirect(PATHS.app, { title: 'Home' });
         }
       },
       { order: 'last' }
@@ -120,10 +121,10 @@ const App = () => {
     ></div>
     <!-- header -->
     <header
-      class="fixed top-0 right-0 w-full flex flex-row justify-between pl-1 pr-4 pt-4 pb-2"
+      class="fixed top-0 right-0 w-full h-14 flex flex-row justify-between pl-1 pr-4 pt-4 pb-2 bg-inherit z-50"
     >
       <button
-        class="sm:invisible p-1 rounded-full active:ring active:ring-teal-500"
+        class="md:invisible p-1 rounded-full active:ring active:ring-teal-500"
         onClick=${() => dispatchCustomEvent($('#sidebar'), 'togglesidebar')}
       >
         <svg
@@ -145,7 +146,7 @@ const App = () => {
       </button>
 
       <div class="w-fit flex flex-row justify-between items-center relative">
-        <p>Hello, <span class="font-medium">${getUserName()}</span></p>
+        <p class="font-medium">${getUserName()}</p>
         <button class="group" data-dropdown="user-menu">
           <img
             class="rounded-full h-6 w-6 ml-2 group-active:ring active:ring-teal-500"
@@ -176,8 +177,9 @@ const App = () => {
     ${Router({
       routes,
       tag: 'main',
-      props: { class: 'pt-14' },
       loadingComponent: () => Loading('h-[calc(100vh-80px)]', 'w-8 h-8'),
+      // used padding instead of margin to avoid overflow issues
+      props: { class: 'flex flex-col h-full pt-14' },
     })}
     <!-- only one modal for all -->
     <my-modal id="modal"></my-modal>

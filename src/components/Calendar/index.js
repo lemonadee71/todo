@@ -22,6 +22,7 @@ const Calendar = (projectId) => {
   /** wrappers */
   const createScheduleObject = (data) => {
     const [start, end] = getDueDateRange(data.dueDate);
+    const project = Core.main.getProject(projectId);
 
     return {
       start,
@@ -37,11 +38,12 @@ const Calendar = (projectId) => {
         task: data.id,
         completed: data.completed,
       },
-      borderColor: 'rgb(251 191 36)',
+      borderColor: project.color,
       // top line color of detail popup
-      bgColor: 'rgb(251 191 36)',
+      bgColor: project.color,
       dragBgColor: 'rgb(94 234 212)',
-      customStyle: `font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem;`,
+      customStyle:
+        'font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; font-weight: 500; font-size: 0.875rem; line-height: 1.25rem;',
     };
   };
 
