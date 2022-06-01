@@ -28,7 +28,7 @@ export default class Project {
 
     // firestore specific props
     // only set once on first fetched
-    this.lastFetched = lastFetched || Date.now();
+    this.lastFetched = lastFetched;
     this.__initialListsOrder = __initialListsOrder ?? [];
 
     const defaultLabels = [
