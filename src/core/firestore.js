@@ -1,3 +1,4 @@
+import { endOfWeek, startOfWeek, subWeeks } from 'date-fns';
 import {
   arrayRemove,
   arrayUnion,
@@ -48,6 +49,59 @@ const fetchSubtasks = async (tasks, labels) => {
   tasks.forEach((task, i) =>
     task.subtasks.add(orderById(subtasks[i], task.__initialSubtasksOrder))
   );
+};
+
+export const fetchTasksDueThisWeek = async () => {
+  const firstDay = startOfWeek(new Date()).getTime();
+  const lastDay = endOfWeek(new Date()).getTime();
+
+  const conditions = [
+    where('type', '==', 'task'),
+    where('completed', '==', false),
+    where('dueDate', '>=', firstDay),
+    where('dueDate', '<=', lastDay),
+    // fetch max of 20 only
+    limit(20),
+  ];
+
+  const allProjects = Core.data.root.ids;
+  const unfetchedProjects = allProjects
+    .filter((id) => !Core.data.fetched.projects.includes(id))
+    .slice(0, 10);
+  if (unfetchedProjects.length) {
+    conditions.push(where('project', 'in', unfetchedProjects));
+  }
+
+  const tasks = await getDocuments(
+    query(getCollectionRef('Tasks', Task.converter()), ...conditions)
+  );
+
+  return tasks;
+};
+
+export const fetchStaleTasks = async () => {
+  const twoWeeksAgo = subWeeks(new Date(), 2).getTime();
+  const conditions = [
+    where('type', '==', 'task'),
+    where('completed', '==', false),
+    where('lastUpdate', '<=', twoWeeksAgo),
+    // fetch max of 20 only
+    limit(20),
+  ];
+
+  const allProjects = Core.data.root.ids;
+  const unfetchedProjects = allProjects
+    .filter((id) => !Core.data.fetched.projects.includes(id))
+    .slice(0, 10);
+  if (unfetchedProjects.length) {
+    conditions.push(where('project', 'in', unfetchedProjects));
+  }
+
+  const tasks = await getDocuments(
+    query(getCollectionRef('Tasks', Task.converter()), ...conditions)
+  );
+
+  return tasks;
 };
 
 export const fetchProjects = async () => {
