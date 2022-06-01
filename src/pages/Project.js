@@ -1,6 +1,6 @@
 import Sortable from 'sortablejs';
 import { createHook, html, render } from 'poor-man-jsx';
-import { PROJECT } from '../actions';
+import { EDIT_TASK, PROJECT } from '../actions';
 import { useProject } from '../core/hooks';
 import Core from '../core';
 import Calendar from '../components/Calendar';
@@ -18,6 +18,19 @@ const Project = ({ data: { id } }) => {
 
   const toggleFormVisibility = () => {
     state.openForm = !state.openForm;
+  };
+
+  // We put this here since Router hooks aren't called sequentially
+  const openTask = () => {
+    const data = Core.data.queue.pop();
+
+    if (data) {
+      Core.event.emit(
+        EDIT_TASK,
+        // make root the source to use the completed data we just fetched
+        Core.main.getTask(data.project, data.list, data.task)
+      );
+    }
   };
 
   const editProject = (e) => {
@@ -126,6 +139,7 @@ const Project = ({ data: { id } }) => {
     <div
       data-name="project__name"
       class="flex justify-between items-center mb-5"
+      onMount=${openTask}
       onDestroy=${unsubscribe}
     >
       <h1 class="sr-only">${project.$name}</h1>

@@ -1,22 +1,33 @@
 import { html } from 'poor-man-jsx';
 import { TASK } from '../../actions';
+import { KebabMenuIcon, SubtasksIcon } from '../../assets/icons';
 import { DEFAULT_COLORS } from '../../constants';
 import Core from '../../core';
+import { isGuest } from '../../utils/auth';
 import { getDateKeyword } from '../../utils/date';
 import Badge from '../Project/Badge';
 import BaseTask from '../Project/BaseTask';
 
 const Task = (data, i, showLastUpdate = false) => {
-  const project = Core.main.getProject(data.project);
+  const project = Core.data.root.get(data.project);
   const component = new BaseTask(data, TASK);
 
   const openOnLocation = () => {
+    Core.data.queue.push(component.location);
     Core.router.navigate(`app/${project.link}`, { title: project.name });
-    component.editTask();
   };
 
-  component.props.checkbox = {
-    style: 'display: none;',
+  component.props = {
+    checkbox: {
+      style: 'display: none;',
+    },
+    // to avoid clutter and additional reads for online mode
+    labels: {
+      style: 'display: none;',
+    },
+    menu: {
+      style: 'display: none;',
+    },
   };
 
   component.template.push(
@@ -29,20 +40,48 @@ const Task = (data, i, showLastUpdate = false) => {
       ></div>`,
     },
     {
-      target: 'menu',
-      method: 'prepend',
+      // create own menu; copy-pasted from BaseTask
+      // to avoid errors created by manually deleting the elements
+      target: 'controls',
+      method: 'after',
       template: html`
-        <button class="hover:text-blue-400" onClick=${openOnLocation}>
-          Open
-        </button>
+        <div onMount=${component.initMenu}>
+          <button>
+            ${KebabMenuIcon(
+              'cursor-pointer stroke-gray-500 hover:stroke-gray-800 dark:hover:stroke-gray-300'
+            )}
+          </button>
+
+          <div
+            ignore="class"
+            style="display: none;"
+            data-dropdown-position="left"
+            class="flex flex-col py-1 rounded divide-y divide-gray-500 space-y-1 text-center text-white text-sm bg-neutral-700 border border-gray-500 border-solid drop-shadow z-[99]"
+          >
+            <button class="px-2 hover:text-blue-400" onClick=${openOnLocation}>
+              Open
+            </button>
+            <button
+              class="px-2 hover:text-red-600"
+              onClick=${() => component.deleteTask()}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
       `,
     }
   );
 
-  if (data.totalSubtasks) {
+  // to avoid fetching just to show how many subtasks there are
+  const hasSubtasks = isGuest()
+    ? data.totalSubtasks
+    : data.__initialSubtasksOrder.length;
+
+  if (data.totalSubtasks && hasSubtasks) {
     component.badges.push(
       Badge({
-        content: `${data.incompleteSubtasks} / ${data.totalSubtasks}`,
+        content: SubtasksIcon('stroke-white', 16, 1.75),
         bgColor: DEFAULT_COLORS[9],
         props: {
           key: 'subtasks',

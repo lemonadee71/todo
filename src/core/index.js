@@ -17,6 +17,9 @@ const Core = (() => {
   const [hook] = createHook({
     root: new IdList(),
     toasts: [],
+    // temp queue of task ids to open after project rendered
+    // either 0 or 1 in length
+    queue: [],
     fetched: { projects: [], lists: [] },
   });
   const event = new EventEmitter();

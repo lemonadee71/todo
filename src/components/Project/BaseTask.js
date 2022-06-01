@@ -151,7 +151,7 @@ export default class BaseTask {
             </div>
           </div>
 
-          <div onMount=${this.initMenu} ${this.props.menu}>
+          <div onMount=${this.initMenu} ${this.props.menu} data-name="task__controls">
             <button>
               ${KebabMenuIcon('cursor-pointer stroke-gray-500 hover:stroke-gray-800 dark:hover:stroke-gray-300')}
             </button>

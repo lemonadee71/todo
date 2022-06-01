@@ -1,10 +1,11 @@
 import { compareAsc, parseISO } from 'date-fns';
 import { createHook, html, render } from 'poor-man-jsx';
 import Sortable from 'sortablejs';
+import { fetchStaleTasks, fetchTasksDueThisWeek } from '../core/firestore';
 import { useRoot } from '../core/hooks';
 import Core from '../core';
-import { PROJECT, TASK } from '../actions';
-import { getProfilePicURL, getUserName } from '../utils/auth';
+import { PROJECT } from '../actions';
+import { getProfilePicURL, getUserName, isGuest } from '../utils/auth';
 import { AddIcon } from '../assets/icons';
 import ProjectCard from '../components/Dashboard/ProjectCard';
 import Task from '../components/Dashboard/Task';
@@ -12,10 +13,21 @@ import Task from '../components/Dashboard/Task';
 const Dashboard = () => {
   const [root, unsubscribe] = useRoot();
   const [tasks] = createHook({
+    // initial state
     dueThisWeek: Core.main.getTasksDueThisWeek(),
     stale: Core.main.getStaleTasks(),
   });
-  const cleanup = [unsubscribe];
+
+  // fetch from firestore tasks that aren't cached yet
+  (async () => {
+    if (isGuest()) return;
+
+    const dueThisWeek = fetchTasksDueThisWeek();
+    const stale = fetchStaleTasks();
+
+    tasks.dueThisWeek = [...tasks.dueThisWeek, ...((await dueThisWeek) ?? [])];
+    tasks.stale = [...tasks.stale, ...((await stale) ?? [])];
+  })();
 
   const createNewProject = () => {
     Core.event.emit(PROJECT.ADD, { data: { name: 'Unnamed project' } });
@@ -34,21 +46,10 @@ const Dashboard = () => {
     });
   };
 
-  // for some reason this doesn't work if we don't do it like this
-  cleanup.push(
-    Core.event.onSuccess(
-      [...PROJECT.LABELS.ALL, ...TASK.ALL, ...TASK.LABELS.ALL],
-      () => {
-        tasks.dueThisWeek = Core.main.getTasksDueThisWeek();
-        tasks.stale = Core.main.getStaleTasks();
-      }
-    )
-  );
-
   return html`
     <div
       class="h-20 grid grid-cols-[auto_1fr] grid-rows-2 px-6 shadow-md bg-white dark:bg-[#353535]"
-      onDestroy=${() => cleanup.map((fn) => fn())}
+      onDestroy=${unsubscribe}
     >
       <img
         class="row-span-2 rounded-full h-14 w-14 mr-6 active:ring-teal-500 self-center"
@@ -96,7 +97,6 @@ const Dashboard = () => {
         <h2 class="font-semibold text-lg">Due This Week</h2>
         <div is-list class="px-2 space-y-1 overflow-auto scrollbar">
           ${tasks.$dueThisWeek((items) =>
-            // BUG: See https://github.com/lemonadee71/poor-man-jsx/issues/27
             items
               .sort((a, b) =>
                 compareAsc(parseISO(a.dueDate), parseISO(b.dueDate))
