@@ -9,6 +9,8 @@ import { createDropdown } from '../../utils/dropdown';
 import { $ } from '../../utils/query';
 import Badge from './Badge';
 import Chip from './Chip';
+import { useTooltip } from '../../utils/useTooltip';
+import { HIDE_EVENTS, SHOW_EVENTS } from '../../constants';
 
 // data here points to the Task stored in main
 // so we rely on the fact that changes are reflected on data
@@ -84,8 +86,6 @@ export default class BaseTask {
 
   initMenu = (e) => createDropdown(e.target.children[0], e.target.children[1]);
 
-  // BUG: Initiating on create doubles the component
-  //      must be due to the diffing not seeing the change
   init = (e) => {
     this.template.forEach((content) => {
       const { template, target: selector, method } = content;
@@ -94,6 +94,23 @@ export default class BaseTask {
         : e.target;
 
       target[method || 'append'](render(template));
+    });
+
+    // Manually init tooltip due to bug
+    const badges = [
+      ...($.data('name', 'task__badges', e.target).children ?? []),
+    ];
+    badges.forEach((badge) => {
+      badge.dataset.tooltipManual = 'true';
+      badge.addEventListener('@mount', () => {
+        const [onShow, onHide] = useTooltip(badge);
+
+        // BUG: Attaches twice on first render if `lastOpenedPage`
+        //      but not on consecutive renders. This must be due to the
+        //      async nature of MutationObserver
+        SHOW_EVENTS.forEach((name) => badge.addEventListener(name, onShow()));
+        HIDE_EVENTS.forEach((name) => badge.addEventListener(name, onHide()));
+      });
     });
   };
 
