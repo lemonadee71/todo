@@ -1,4 +1,5 @@
 import { html, render, createHook } from 'poor-man-jsx';
+import Core from '../../core';
 
 class Modal extends HTMLElement {
   constructor() {
@@ -8,6 +9,9 @@ class Modal extends HTMLElement {
   }
 
   connectedCallback() {
+    // close modal if the page changed
+    this._removePageTracking = Core.router.on('*', this.close.bind(this));
+
     this.style.display = 'none';
     // add our default style
     this.classList.add('backdrop');
@@ -24,6 +28,7 @@ class Modal extends HTMLElement {
 
   disconnectedCallback() {
     this._revoke();
+    this._removePageTracking();
   }
 
   open = () => {
