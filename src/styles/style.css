@@ -12,6 +12,10 @@
 @tailwind utilities;
 
 @layer utilities {
+  .container-auto {
+    @apply container mx-auto lg:max-w-5xl;
+  }
+
   /* TODO: Make border-color be the color of the background
            instead of hard-coded
   */
