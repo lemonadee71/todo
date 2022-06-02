@@ -24,16 +24,19 @@ const Core = (() => {
   });
   const event = new EventEmitter();
 
-  // track current opened page
-  router.on('*', (match) => {
+  const trackPage = (match) => {
     state.currentPage = match.url;
-  });
+  };
+  // track current opened page
+  router.on('*', trackPage);
 
   const clearData = () => {
     state.currentUser = null;
 
     hook.root.clear();
     hook.fetched = { projects: [], lists: [] };
+
+    router.off(trackPage);
   };
 
   const setupListeners = () => {
