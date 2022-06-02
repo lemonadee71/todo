@@ -8,19 +8,9 @@ class Modal extends HTMLElement {
   }
 
   connectedCallback() {
-    const defaultBackdropStyle = {
-      display: 'none',
-      position: 'fixed',
-      zIndex: '99',
-      left: '0',
-      top: '0',
-      width: '100%',
-      height: '100%',
-      overflow: 'auto',
-      backgroundColor: 'rgba(102, 102, 102, 0.4)',
-    };
-
-    if (!this.classList.length) Object.assign(this.style, defaultBackdropStyle);
+    this.style.display = 'none';
+    // add our default style
+    this.classList.add('backdrop');
 
     render(
       html`
