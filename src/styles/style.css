@@ -12,23 +12,40 @@
 @tailwind utilities;
 
 @layer utilities {
+  /* TODO: Make border-color be the color of the background
+           instead of hard-coded
+  */
+
   .scrollbar::-webkit-scrollbar {
-    width: 13px;
-    height: 13px;
+    @apply w-4 h-4;
   }
 
   .scrollbar::-webkit-scrollbar-track {
-    border-radius: 100vh;
+    @apply rounded-full;
+  }
+
+  .scrollbar::-webkit-scrollbar-track-piece {
+    @apply p-0.5 bg-inherit;
   }
 
   .scrollbar::-webkit-scrollbar-thumb {
-    background: #afafaf;
-    border-radius: 100vh;
-    border: 3px solid #f6f7ed;
+    @apply rounded-full bg-clip-padding border-4 border-solid;
   }
 
-  .scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #838383;
+  .light .scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-400 border-white;
+  }
+
+  .light .scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500;
+  }
+
+  .dark .scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 border-[#353535];
+  }
+
+  .dark .scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
   }
 }
 
