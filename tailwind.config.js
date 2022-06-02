@@ -8,6 +8,11 @@ module.exports = {
       xs: '475px',
       ...defaultTheme.screens,
     },
+    extend: {
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
+      },
+    },
   },
   // eslint-disable-next-line
   plugins: [require('@tailwindcss/line-clamp')],
