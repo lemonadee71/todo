@@ -123,3 +123,28 @@ export const HomeIcon = createIcon(`
   <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
   <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
 `);
+
+export const KanbanIcon = createIcon(`
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <line x1="4" y1="4" x2="10" y2="4" />
+  <line x1="14" y1="4" x2="20" y2="4" />
+  <rect x="4" y="8" width="6" height="12" rx="2" />
+  <rect x="14" y="8" width="6" height="6" rx="2" />
+`);
+
+export const SortIcon = createIcon(`
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M3 9l4 -4l4 4m-4 -4v14" />
+  <path d="M21 15l-4 4l-4 -4m4 4v-14" />
+`);
+
+export const SyncIcon = createIcon(`
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
+  <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
+`);
+
+export const GithubIcon = createIcon(`
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+`);

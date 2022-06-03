@@ -36,7 +36,7 @@ const Core = (() => {
     hook.root.clear();
     hook.fetched = { projects: [], lists: [] };
 
-    router.off(trackPage);
+    router.off('*', trackPage);
   };
 
   const setupListeners = () => {
