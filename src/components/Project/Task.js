@@ -3,9 +3,9 @@ import { createHook, html } from 'poor-man-jsx';
 import { DEFAULT_COLORS } from '../../constants';
 import { TASK } from '../../actions';
 import Core from '../../core';
-import BaseTask from './BaseTask';
 import Subtask from './Subtask';
-import Badge from './Badge';
+import Badge from '../Badge';
+import BaseTask from '../BaseTask';
 
 export default class Task extends BaseTask {
   constructor(data) {

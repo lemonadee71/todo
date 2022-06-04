@@ -11,8 +11,8 @@ import { usePopper } from '../../utils/popper';
 import { $ } from '../../utils/query';
 import convertToMarkdown from '../../utils/showdown';
 import { useUndo } from '../../utils/undo';
-import Badge from './Badge';
 import LabelPopover from './LabelPopover';
+import Badge from '../Badge';
 
 export default class BaseTaskModal {
   constructor(data, action) {

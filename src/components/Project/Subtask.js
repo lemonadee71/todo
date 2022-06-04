@@ -1,5 +1,5 @@
 import { TASK } from '../../actions';
-import BaseTask from './BaseTask';
+import BaseTask from '../BaseTask';
 
 export default class Subtask extends BaseTask {
   constructor(data) {

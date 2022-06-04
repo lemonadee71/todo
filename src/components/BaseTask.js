@@ -1,16 +1,14 @@
 import { html, render } from 'poor-man-jsx';
-import { KebabMenuIcon } from '../../assets/icons';
-import Core from '../../core';
-import { EDIT_SUBTASK, EDIT_TASK } from '../../actions';
-import { formatDate, formatDateToNow } from '../../utils/date';
-import { getDateColor } from '../../utils/misc';
-import { useUndo } from '../../utils/undo';
-import { createDropdown } from '../../utils/dropdown';
-import { $ } from '../../utils/query';
-import Badge from './Badge';
+import { KebabMenuIcon } from '../assets/icons';
+import Core from '../core';
+import { HIDE_EVENTS, SHOW_EVENTS } from '../constants';
+import { EDIT_SUBTASK, EDIT_TASK } from '../actions';
+import { createDropdown } from '../utils/dropdown';
+import { useUndo } from '../utils/undo';
+import { $ } from '../utils/query';
+import { useTooltip } from '../utils/useTooltip';
 import Chip from './Chip';
-import { useTooltip } from '../../utils/useTooltip';
-import { HIDE_EVENTS, SHOW_EVENTS } from '../../constants';
+import DateBadge from './DateBadge';
 
 // data here points to the Task stored in main
 // so we rely on the fact that changes are reflected on data
@@ -28,35 +26,7 @@ export default class BaseTask {
     this.badges = [];
     this.template = [];
 
-    if (this.data.dueDate) {
-      this.badges.push(
-        // date badge
-        Badge({
-          content: formatDate(this.data.dueDate),
-          bgColor: getDateColor(this.data.dueDate),
-          props: {
-            key: 'date',
-            ignore: 'data-interval-id',
-            'data-tooltip': `Due ${formatDateToNow(this.data.dueDate)}`,
-            onMount: (e) => {
-              // change status of badge every x minute(s)
-              const id = setInterval(() => {
-                e.target.textContent = formatDate(this.data.dueDate);
-                e.target.style.backgroundColor = getDateColor(
-                  this.data.dueDate
-                );
-                e.target.dataset.tooltipText = `Due ${formatDateToNow(
-                  this.data.dueDate
-                )}`;
-              }, 3 * 60 * 1000);
-
-              e.target.dataset.intervalId = id;
-            },
-            onUnmount: (e) => clearInterval(e.target.dataset.intervalId),
-          },
-        })
-      );
-    }
+    if (this.data.dueDate) this.badges.push(DateBadge(data));
   }
 
   get location() {
