@@ -23,6 +23,7 @@ import Router from '../components/Router';
 import TaskModal from '../components/Project/TaskModal';
 import SubtaskModal from '../components/Project/SubtaskModal';
 import Loading from '../components/Loading';
+import SearchBar from '../components/SearchBar';
 
 const routes = [
   {
@@ -126,32 +127,37 @@ const App = () => {
     ></div>
     <!-- header -->
     <header
-      class="fixed top-0 right-0 w-full h-14 flex flex-row justify-between pl-1 pr-4 pt-4 pb-2 bg-inherit z-50"
+      class="fixed top-0 right-0 w-screen h-14 flex flex-row justify-between pl-2 pr-4 pt-4 pb-2 bg-inherit z-50 md:px-4"
     >
-      <button
-        class="md:invisible p-1 rounded-full active:ring active:ring-teal-500"
-        onClick=${() => dispatchCustomEvent($('#sidebar'), 'togglesidebar')}
+      <div
+        class="w-[90%] flex justify-start items-center gap-3 xs:w-3/4 md:w-1/2 md:ml-56"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="stroke-gray-800 hover:stroke-gray-600 dark:stroke-white dark:hover:stroke-gray-300"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="#000000"
-          fill="none"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+        <button
+          class="p-1 rounded-full active:ring active:ring-teal-500 md:hidden"
+          onClick=${() => dispatchCustomEvent($('#sidebar'), 'togglesidebar')}
         >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <polyline points="7 7 12 12 7 17" />
-          <polyline points="13 7 18 12 13 17" />
-        </svg>
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="stroke-gray-800 hover:stroke-gray-600 dark:stroke-white dark:hover:stroke-gray-300"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="#000000"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <polyline points="7 7 12 12 7 17" />
+            <polyline points="13 7 18 12 13 17" />
+          </svg>
+        </button>
+        ${SearchBar()}
+      </div>
 
       <div class="w-fit flex flex-row justify-between items-center relative">
-        <p class="font-medium">${getUserName()}</p>
+        <p class="font-medium hidden xs:block">${getUserName()}</p>
         <button class="group" data-dropdown="user-menu">
           <img
             class="rounded-full h-6 w-6 ml-2 group-active:ring active:ring-teal-500"
