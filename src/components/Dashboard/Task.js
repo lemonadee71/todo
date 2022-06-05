@@ -1,19 +1,26 @@
 import { html } from 'poor-man-jsx';
 import { KebabMenuIcon } from '../../assets/icons';
 import { getDateKeyword } from '../../utils/date';
+import { createDropdown } from '../../utils/dropdown';
 import Badge from '../Badge';
-import TaskGlobalVariant from '../TaskGlobalVariant';
+import GlobalTask from '../GlobalTask';
 
-const Task = (data, i, showLastUpdate = false) => {
-  const component = new TaskGlobalVariant(data);
+const Task = (data, showLastUpdate = false) => {
+  const component = new GlobalTask(data);
+
+  component.props.main = {
+    class: `${component._className} rounded-md drop-shadow-md`,
+  };
 
   component.template.push({
-    // create own menu; copy-pasted from BaseTask
-    // to avoid errors created by manually deleting the elements
-    target: 'controls',
+    // create own menu; copy pasted from BaseTask
+    target: 'main',
     method: 'after',
     template: html`
-      <div onMount=${component.initMenu}>
+      <div
+        onMount=${(e) =>
+          createDropdown(e.target.children[0], e.target.children[1])}
+      >
         <button>
           ${KebabMenuIcon(
             'cursor-pointer stroke-gray-500 hover:stroke-gray-800 dark:hover:stroke-gray-300'
@@ -54,7 +61,7 @@ const Task = (data, i, showLastUpdate = false) => {
     );
   }
 
-  return component.render(i);
+  return component.render();
 };
 
 export default Task;

@@ -4,7 +4,7 @@ import { CloseIcon, SearchIcon } from '../assets/icons';
 import Core from '../core';
 import { debounce } from '../utils/delay';
 import { $ } from '../utils/query';
-import TaskSearchResult from './TaskSearchResult';
+import SearchResult from './SearchResult';
 
 const SearchBar = () => {
   const [state] = createHook({
@@ -64,7 +64,7 @@ const SearchBar = () => {
       >
         ${state.$results((items) =>
           items.length
-            ? items.map(TaskSearchResult).map((item) => render(item))
+            ? items.map(SearchResult).map((item) => render(item))
             : render(
                 html`
                   <p class="px-3 py-4 text-sm text-gray-400">

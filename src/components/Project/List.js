@@ -132,9 +132,7 @@ const List = (data, pos) => {
         data-name="current-tasks"
         onMount=${init}
       >
-        ${data.items
-          .filter((task) => !task.completed)
-          .map((task, i) => new Task(task).render(i))}
+        ${data.items.filter((task) => !task.completed).map(Task)}
       </div>
 
       <!-- Completed tasks -->
@@ -180,7 +178,7 @@ const List = (data, pos) => {
         ${data.items
           .filter((task) => task.completed)
           .sort((a, b) => b.completionDate - a.completionDate)
-          .map((task, i) => new Task(task).render(i))}
+          .map(Task)}
       </div>
     </div>
   `;

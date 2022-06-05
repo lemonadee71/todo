@@ -10,6 +10,7 @@ import { AddIcon } from '../assets/icons';
 import ProjectCard from '../components/Dashboard/ProjectCard';
 import Task from '../components/Dashboard/Task';
 
+// BUG: Delete and undo are not reflected here
 const Dashboard = () => {
   const [root, unsubscribe] = useRoot();
   const [tasks] = createHook({
@@ -101,7 +102,7 @@ const Dashboard = () => {
               .sort((a, b) =>
                 compareAsc(parseISO(a.dueDate), parseISO(b.dueDate))
               )
-              .map((data, i) => Task(data, i, false))
+              .map((data) => Task(data, false))
               .map((data) => render(data))
           )}
         </div>
@@ -115,7 +116,7 @@ const Dashboard = () => {
               .sort((a, b) =>
                 compareAsc(parseISO(a.lastUpdate), parseISO(b.lastUpdate))
               )
-              .map((data, i) => Task(data, i, true))
+              .map((data) => Task(data, true))
               .map((data) => render(data))
           )}
         </div>

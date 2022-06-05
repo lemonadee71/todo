@@ -4,32 +4,20 @@ import { DEFAULT_COLORS } from '../constants';
 import Core from '../core';
 import { SubtasksIcon } from '../assets/icons';
 import { isGuest } from '../utils/auth';
+import { useUndo } from '../utils/undo';
+import TaskTemplate from '../template/Task';
 import Badge from './Badge';
-import BaseTask from './BaseTask';
 import DateBadge from './DateBadge';
 
-class TaskGlobalVariant extends BaseTask {
+class TaskGlobalVariant extends TaskTemplate {
   constructor(data) {
-    super(data, TASK);
-
+    super(data);
     this.projectData = Core.data.root.get(data.project);
-    this.props = {
-      checkbox: {
-        style: 'display: none;',
-      },
-      // to avoid clutter and additional reads for online mode
-      labels: {
-        style: 'display: none;',
-      },
-      menu: {
-        style: 'display: none;',
-      },
-    };
 
-    // replace default date badge
-    if (this.data.dueDate) {
-      this.badges = [DateBadge(data, true)];
-    }
+    // to avoid clutter and additional reads for online mode
+    this.props.labels = { style: 'display: none;' };
+
+    if (this.data.dueDate) this.badges.push(DateBadge(data, true));
 
     // to avoid fetching just to show how many subtasks there are
     const hasSubtasks = isGuest()
@@ -49,8 +37,9 @@ class TaskGlobalVariant extends BaseTask {
       );
     }
 
+    // show the color of project
     this.template.push({
-      target: 'checkbox',
+      target: 'main',
       method: 'before',
       template: html`<div
         class="self-stretch w-1"
@@ -60,11 +49,19 @@ class TaskGlobalVariant extends BaseTask {
   }
 
   openOnLocation = () => {
-    Core.data.queue.push(this.location);
+    Core.data.queue.push(this.data.location);
     Core.router.navigate(`app/${this.projectData.link}`, {
       title: this.projectData.name,
     });
   };
+
+  deleteTask() {
+    useUndo({
+      type: TASK,
+      text: `${this.type[0].toUpperCase() + this.type.slice(1)} removed`,
+      payload: { ...this.data.location, id: this.id },
+    })();
+  }
 }
 
 export default TaskGlobalVariant;

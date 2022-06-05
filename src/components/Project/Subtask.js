@@ -1,28 +1,26 @@
 import { TASK } from '../../actions';
-import BaseTask from '../BaseTask';
+import BaseTask from './BaseTask';
 
-export default class Subtask extends BaseTask {
-  constructor(data) {
-    super(data, TASK.SUBTASKS);
+const Subtask = (data, i, variant) => {
+  const component = new BaseTask(data, TASK.SUBTASKS);
 
-    this.props = {
-      main: {
-        // override class to remove drop-shadow and reduce padding
-        class: `${this.type} box-border flex flex-col py-1 bg-white dark:bg-[#353535]`,
-        'data-parent': this.data.parent,
-      },
-    };
+  component.props.main = {
+    // remove and reduce padding
+    class: component._className
+      .replace(/px-[0-9]+/, '')
+      .replace(/py-[0-9]+/, 'py-1'),
+    'data-parent': data.parent,
+  };
+
+  if (variant === 'small') {
+    Object.assign(component.props, {
+      title: { style: 'font-size: 0.875rem; line-height: 1.25rem;' },
+      checkbox: { style: 'width: 1rem; height: 1rem;' },
+      checkmark: { style: 'width: 0.5rem; height: 0.5rem;' },
+    });
   }
 
-  render(i, size = 'small') {
-    if (size === 'small') {
-      Object.assign(this.props, {
-        title: { style: 'font-size: 0.875rem; line-height: 1.25rem;' },
-        checkbox: { style: 'width: 1rem; height: 1rem;' },
-        checkmark: { style: 'width: 0.5rem; height: 0.5rem;' },
-      });
-    }
+  return component.render(i);
+};
 
-    return super.render(i);
-  }
-}
+export default Subtask;

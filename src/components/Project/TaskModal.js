@@ -104,9 +104,7 @@ export default class TaskModal extends BaseTaskModal {
 
             <div is-list class="space-y-1 divide-y-1">
               ${this.task.$subtasks((items) =>
-                items
-                  .map((subtask, i) => new Subtask(subtask).render(i, 'normal'))
-                  .map((item) => render(item))
+                items.map(Subtask).map((item) => render(item))
               )}
             </div>
           </div>
