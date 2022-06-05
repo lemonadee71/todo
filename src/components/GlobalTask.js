@@ -1,5 +1,5 @@
 import { html } from 'poor-man-jsx';
-import { TASK } from '../actions';
+import { EDIT_TASK, TASK } from '../actions';
 import { DEFAULT_COLORS } from '../constants';
 import Core from '../core';
 import { SubtasksIcon } from '../assets/icons';
@@ -50,9 +50,19 @@ class TaskGlobalVariant extends TaskTemplate {
 
   openOnLocation = () => {
     Core.data.queue.push(this.data.location);
-    Core.router.navigate(`app/${this.projectData.link}`, {
-      title: this.projectData.name,
-    });
+
+    const url = `app/${this.projectData.link}`;
+
+    if (url !== Core.state.currentPage) {
+      Core.router.navigate(url, { title: this.projectData.name });
+    } else {
+      // it's okay to emit directly since we know that data is already fetched
+      Core.event.emit(
+        EDIT_TASK,
+        // NOTE: May not be necessary
+        Core.main.getTask(...Object.values(this.data.location))
+      );
+    }
   };
 
   deleteTask() {
