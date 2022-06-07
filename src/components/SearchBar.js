@@ -8,13 +8,49 @@ import SearchResult from './SearchResult';
 
 const SearchBar = () => {
   const [state] = createHook({
+    query: '',
     showResults: false,
     results: [],
+    isComparisonAND: true,
   });
+
+  const updateResults = (query) => {
+    const tasks = Core.main.getAllTasks();
+
+    const items = tasks
+      .map((task) => ({
+        data: task,
+        score: matches(query, task, state.isComparisonAND ? 'AND' : 'OR'),
+      }))
+      .filter((task) => task.score > 0)
+      .sort((a, b) => b.score - a.score); // sort in ascending
+
+    return items.length
+      ? items
+          .map((task, i) =>
+            // the threshold for best match is different
+            SearchResult(task.data, i === 0 && task.score > 0.5)
+          )
+          .map((item) => render(item))
+      : render(
+          html`
+            <p key="no-results" class="px-3 py-4 text-sm text-gray-400">
+              No results found
+            </p>
+          `
+        );
+  };
 
   const toggleFocus = (e) => {
     const isFocused = e.target === document.activeElement;
     state.showResults = isFocused && e.target.value.trim();
+  };
+
+  // BUG: Only updates the results if we typed again after clicking the button
+  //      the behavior should be to update the results on button clicked
+  const toggleSearchMode = () => {
+    state.isComparisonAND = !state.isComparisonAND;
+    updateResults(state.query);
   };
 
   const clearInput = () => {
@@ -22,14 +58,7 @@ const SearchBar = () => {
   };
 
   const onChange = (e) => {
-    const tasks = Core.main.getAllTasks();
-    const query = e.target.value.trim();
-
-    state.results = tasks
-      .map((task) => ({ data: task, score: matches(query, task) }))
-      .filter((task) => task.score > 0)
-      .sort((a, b) => b.score - a.score); // sort in ascending
-
+    state.query = e.target.value.trim();
     toggleFocus(e);
   };
 
@@ -53,6 +82,12 @@ const SearchBar = () => {
           onInput=${debounce(onChange, 200)}
         />
         <button
+          class="text-xs text-gray-400 px-1 py-0.5 bg-transparent rounded-md hover:text-gray-600 invisible group-focus-within:visible"
+          onClick=${toggleSearchMode}
+        >
+          ${state.$isComparisonAND((value) => (value ? 'AND' : 'OR'))}
+        </button>
+        <button
           class="invisible group-focus-within:visible"
           onClick=${clearInput}
         >
@@ -65,22 +100,7 @@ const SearchBar = () => {
           (value) => (value ? 'block' : 'hidden')
         )}"
       >
-        ${state.$results((items) =>
-          items.length
-            ? items
-                .map((task, i) =>
-                  // the threshold for best match is different
-                  SearchResult(task.data, i === 0 && task.score > 0.5)
-                )
-                .map((item) => render(item))
-            : render(
-                html`
-                  <p key="no-results" class="px-3 py-4 text-sm text-gray-400">
-                    No results found
-                  </p>
-                `
-              )
-        )}
+        ${state.$query(updateResults)}
       </div>
     </div>
   `;
