@@ -7,7 +7,7 @@ import { CHANGE_THEME, EDIT_TASK, TASK } from '../../actions';
 import { POPPER_CONFIG } from '../../constants';
 import { $ } from '../../utils/query';
 import { dispatchCustomEvent } from '../../utils/dispatch';
-import { formatToDateTime, getDueDateRange } from '../../utils/date';
+import { formatToDateTime, getDateRange } from '../../utils/date';
 import { useUndo } from '../../utils/undo';
 import CreationPopup from './CreationPopup';
 
@@ -21,7 +21,7 @@ const Calendar = (projectId) => {
 
   /** wrappers */
   const createScheduleObject = (data) => {
-    const [start, end] = getDueDateRange(data.dueDate);
+    const [start, end] = getDateRange(data.dueDate);
     const project = Core.main.getProject(projectId);
 
     return {

@@ -1,6 +1,6 @@
 import { html } from 'poor-man-jsx';
 import { CalendarIcon } from '../assets/icons';
-import { formatDate, formatDateToNow } from '../utils/date';
+import { formatDate, formatDateToNow, parse } from '../utils/date';
 import { getDateColor } from '../utils/misc';
 import { $ } from '../utils/query';
 import Badge from './Badge';
@@ -21,7 +21,7 @@ const DateBadge = (data, compact = false) => {
     props: {
       key: 'date',
       ignore: 'data-interval-id',
-      'data-tooltip': `Due ${formatDateToNow(data.dueDate)}`,
+      'data-tooltip': `Due ${formatDateToNow(parse(data.dueDate))}`,
       onMount: (e) => {
         // change status of badge every x minute(s)
         const id = setInterval(() => {
@@ -34,7 +34,9 @@ const DateBadge = (data, compact = false) => {
           }
 
           e.target.style.backgroundColor = getDateColor(data.dueDate);
-          e.target.dataset.tooltipText = `Due ${formatDateToNow(data.dueDate)}`;
+          e.target.dataset.tooltipText = `Due ${formatDateToNow(
+            parse(data.dueDate)
+          )}`;
         }, 3 * 60 * 1000);
 
         e.target.dataset.intervalId = id;

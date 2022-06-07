@@ -1,8 +1,20 @@
 import { html } from 'poor-man-jsx';
+import { DEFAULT_COLORS } from '../constants';
+import Badge from './Badge';
 import GlobalTask from './GlobalTask';
 
-const TaskSearchResult = (data) => {
+const SearchResult = (data, isBestMatch = false) => {
   const component = new GlobalTask(data);
+
+  if (isBestMatch) {
+    component.badges.unshift(
+      Badge({
+        content: 'Best match',
+        bgColor: DEFAULT_COLORS[5],
+        props: { key: 'best-match' },
+      })
+    );
+  }
 
   component.template.push({
     target: 'main',
@@ -20,4 +32,4 @@ const TaskSearchResult = (data) => {
   return component.render();
 };
 
-export default TaskSearchResult;
+export default SearchResult;

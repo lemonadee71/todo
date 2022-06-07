@@ -21,11 +21,11 @@ const isUpcomingInFuture = (date) => !isThisMonth(date) && isFuture(date);
 
 const parse = (date) => parseISO(date);
 
-const formatDateToNow = (dirtyDate) =>
-  formatDistanceToNow(parse(dirtyDate), { addSuffix: true });
+const formatDateToNow = (date) =>
+  formatDistanceToNow(date, { addSuffix: true });
 
 const getDateKeyword = (dirtyDate) => {
-  const date = typeof dirtyDate === 'number' ? dirtyDate : parse(dirtyDate);
+  const date = typeof dirtyDate === 'string' ? parse(dirtyDate) : dirtyDate;
 
   if (isDueToday(date)) {
     return 'today';
@@ -37,7 +37,7 @@ const getDateKeyword = (dirtyDate) => {
     return 'yesterday';
   }
   if (isPast(date) || isUpcomingInFuture(date)) {
-    return formatDateToNow(dirtyDate);
+    return formatDateToNow(date);
   }
   if (isDueThisWeek(date)) {
     return format(date, 'E, MMM dd');
@@ -52,8 +52,8 @@ const formatToDateTime = (date) => format(date, DATE_TIME_FORMAT);
 
 const formatToTZDate = (date) => format(date, TZ_DATE_FORMAT);
 
-const getDueDateRange = (dueDate, range = '5', formatter = formatToTZDate) => {
-  const date = parse(dueDate);
+const getDateRange = (dirtyDate, range = '5', formatter = formatToTZDate) => {
+  const date = typeof dirtyDate === 'string' ? parse(dirtyDate) : dirtyDate;
   const start = formatter(subMinutes(date, range));
   const end = formatter(date);
 
@@ -72,7 +72,7 @@ export {
   formatToDateTime,
   formatToTZDate,
   getDateKeyword,
-  getDueDateRange,
+  getDateRange,
   parse,
   toTimestamp,
 };

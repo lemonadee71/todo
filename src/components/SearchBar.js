@@ -1,9 +1,9 @@
 import { createHook, html, render } from 'poor-man-jsx';
-import { compareTwoStrings } from 'string-similarity';
 import { CloseIcon, SearchIcon } from '../assets/icons';
 import Core from '../core';
 import { debounce } from '../utils/delay';
 import { $ } from '../utils/query';
+import { matches } from '../utils/search';
 import SearchResult from './SearchResult';
 
 const SearchBar = () => {
@@ -23,11 +23,12 @@ const SearchBar = () => {
 
   const onChange = (e) => {
     const tasks = Core.main.getAllTasks();
+    const query = e.target.value.trim();
 
-    state.results = tasks.filter(
-      // case sensitive
-      (task) => compareTwoStrings(task.title, e.target.value.trim()) > 0.4
-    );
+    state.results = tasks
+      .map((task) => ({ data: task, score: matches(query, task) }))
+      .filter((task) => task.score > 0)
+      .sort((a, b) => b.score - a.score); // sort in ascending
 
     toggleFocus(e);
   };
@@ -59,15 +60,22 @@ const SearchBar = () => {
         </button>
       </div>
       <div
-        class="absolute top-8 left-0 right-0 p-1 space-y-1 rounded-b-lg drop-shadow-lg bg-white dark:bg-[#272727]
-         ${state.$showResults((value) => (value ? 'block' : 'hidden'))}"
+        is-list
+        class="absolute top-8 left-0 right-0 p-1 divide-y-2 divide-gray-200 rounded-b-lg drop-shadow-lg bg-white dark:bg-[#272727] dark:divide-[#272727] ${state.$showResults(
+          (value) => (value ? 'block' : 'hidden')
+        )}"
       >
         ${state.$results((items) =>
           items.length
-            ? items.map(SearchResult).map((item) => render(item))
+            ? items
+                .map((task, i) =>
+                  // the threshold for best match is different
+                  SearchResult(task.data, i === 0 && task.score > 0.5)
+                )
+                .map((item) => render(item))
             : render(
                 html`
-                  <p class="px-3 py-4 text-sm text-gray-400">
+                  <p key="no-results" class="px-3 py-4 text-sm text-gray-400">
                     No results found
                   </p>
                 `
