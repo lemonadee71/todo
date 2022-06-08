@@ -127,60 +127,57 @@ const App = () => {
     ></div>
     <!-- header -->
     <header
-      class="fixed top-0 right-0 w-screen h-14 flex flex-row justify-between pl-2 pr-4 pt-4 pb-2 bg-inherit z-50 md:px-4"
+      class="fixed top-0 right-0 z-50 w-screen h-24 px-2 pt-4 pb-2 md:px-4 bg-inherit grid grid-cols-2 grid-rows-2 gap-x-4 items-center conten xs:grid-cols-[auto_1fr_auto] xs:grid-rows-1 xs:h-14"
     >
-      <div
-        class="w-[90%] flex justify-start items-center gap-3 xs:w-3/4 md:w-1/2 md:ml-56"
+      <button
+        class="justify-self-start col-span-1 p-1 rounded-full active:ring active:ring-teal-500 md:hidden"
+        onClick=${() => dispatchCustomEvent($('#sidebar'), 'togglesidebar')}
       >
-        <button
-          class="p-1 rounded-full active:ring active:ring-teal-500 md:hidden"
-          onClick=${() => dispatchCustomEvent($('#sidebar'), 'togglesidebar')}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="stroke-gray-800 hover:stroke-gray-600 dark:stroke-white dark:hover:stroke-gray-300"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="#000000"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="stroke-gray-800 hover:stroke-gray-600 dark:stroke-white dark:hover:stroke-gray-300"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="#000000"
-            fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <polyline points="7 7 12 12 7 17" />
-            <polyline points="13 7 18 12 13 17" />
-          </svg>
-        </button>
-        ${SearchBar()}
-      </div>
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <polyline points="7 7 12 12 7 17" />
+          <polyline points="13 7 18 12 13 17" />
+        </svg>
+      </button>
 
-      <div class="w-fit flex flex-row justify-between items-center relative">
-        <p class="font-medium hidden xs:block">${getUserName()}</p>
-        <button class="group" data-dropdown="user-menu">
+      <div class="justify-self-end sm:col-[3] flex flex-row items-center gap-1">
+        <p class="font-medium">${getUserName()}</p>
+        <button class="group h-6 w-6" data-dropdown="user-menu">
           <img
-            class="rounded-full h-6 w-6 ml-2 group-active:ring active:ring-teal-500"
+            class="rounded-full group-active:ring active:ring-teal-500"
             src="${getProfilePicURL()}"
             alt="profile picture"
           />
         </button>
-
-        <div
-          class="flex flex-col bg-neutral-700 text-white text-sm text-center py-1 rounded divide-y divide-neutral-500 drop-shadow z-[2]"
-          style="display: none;"
-          data-dropdown-id="user-menu"
-          data-dropdown-position="bottom-end"
-          data-dropdown-offset="0,10"
-        >
-          <button class="px-2" onClick=${() => Core.event.emit(CHANGE_THEME)}>
-            ${Core.state.$darkTheme((value) => (value ? 'Light' : 'Dark'))} mode
-          </button>
-          <button class="px-2 hover:text-red-600" onClick=${signOut}>
-            Logout
-          </button>
-        </div>
       </div>
+
+      <div
+        class="flex flex-col bg-neutral-700 text-white text-sm text-center py-1 rounded divide-y divide-neutral-500 drop-shadow z-[2]"
+        style="display: none;"
+        data-dropdown-id="user-menu"
+        data-dropdown-position="bottom-end"
+        data-dropdown-offset="0,10"
+      >
+        <button class="px-2" onClick=${() => Core.event.emit(CHANGE_THEME)}>
+          ${Core.state.$darkTheme((value) => (value ? 'Light' : 'Dark'))} mode
+        </button>
+        <button class="px-2 hover:text-red-600" onClick=${signOut}>
+          Logout
+        </button>
+      </div>
+
+      ${SearchBar()}
     </header>
     <!-- sidebar -->
     ${Sidebar()}
@@ -190,7 +187,7 @@ const App = () => {
       tag: 'main',
       loadingComponent: () => Loading('h-[calc(100vh-80px)]', 'w-8 h-8'),
       // used padding instead of margin to avoid overflow issues
-      props: { class: 'flex flex-col h-full pt-14' },
+      props: { class: 'flex flex-col h-full pt-24 xs:pt-14' },
     })}
     <!-- only one modal for all -->
     <my-modal id="modal"></my-modal>
