@@ -10,7 +10,7 @@ import {
 import Core from '../core';
 import { fetchProjectData } from '../core/firestore';
 import { getProfilePicURL, getUserName, isGuest, signOut } from '../utils/auth';
-import { dispatchCustomEvent } from '../utils/dispatch';
+import { customDispatch } from '../utils/dispatch';
 import logger from '../utils/logger';
 import { orderById } from '../utils/misc';
 import { $, $$ } from '../utils/query';
@@ -131,7 +131,7 @@ const App = () => {
     >
       <button
         class="justify-self-start col-span-1 p-1 rounded-full active:ring active:ring-teal-500 md:hidden"
-        onClick=${() => dispatchCustomEvent($('#sidebar'), 'togglesidebar')}
+        onClick=${() => customDispatch($('#sidebar'), 'togglesidebar')}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

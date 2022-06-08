@@ -1,4 +1,4 @@
-export const dispatchCustomEvent = (
+export const customDispatch = (
   el,
   name,
   data,

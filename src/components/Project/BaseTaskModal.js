@@ -6,7 +6,7 @@ import { POPPER_CONFIG } from '../../constants';
 import Core from '../../core';
 import { useTask } from '../../core/hooks';
 import { debounce } from '../../utils/delay';
-import { dispatchCustomEvent } from '../../utils/dispatch';
+import { customDispatch } from '../../utils/dispatch';
 import { usePopper } from '../../utils/popper';
 import { $ } from '../../utils/query';
 import convertToMarkdown from '../../utils/showdown';
@@ -97,7 +97,7 @@ export default class BaseTaskModal {
 
     node.addEventListener(
       'click',
-      onShow(() => dispatchCustomEvent(popover, 'popover:toggle'))
+      onShow(() => customDispatch(popover, 'popover:toggle'))
     );
     popover.addEventListener('popover:hide', onHide());
   };

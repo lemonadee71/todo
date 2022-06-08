@@ -6,7 +6,7 @@ import Core from '../../core';
 import { CHANGE_THEME, EDIT_TASK, TASK } from '../../actions';
 import { POPPER_CONFIG } from '../../constants';
 import { $ } from '../../utils/query';
-import { dispatchCustomEvent } from '../../utils/dispatch';
+import { customDispatch } from '../../utils/dispatch';
 import { formatToDateTime, getDateRange } from '../../utils/date';
 import { useUndo } from '../../utils/undo';
 import CreationPopup from './CreationPopup';
@@ -17,7 +17,7 @@ const Calendar = (projectId) => {
   let calendar;
 
   const closeCreationPopup = () =>
-    dispatchCustomEvent($('#creation-popup'), 'popup:close');
+    customDispatch($('#creation-popup'), 'popup:close');
 
   /** wrappers */
   const createScheduleObject = (data) => {
@@ -99,11 +99,11 @@ const Calendar = (projectId) => {
       beforeCreateSchedule: (e) => {
         const popup = $('#creation-popup');
         // make sure to close previous popup first
-        dispatchCustomEvent(popup, 'popup:close');
+        customDispatch(popup, 'popup:close');
         // change initial date
-        dispatchCustomEvent(popup, 'datechange', { date: e.start.toDate() });
+        customDispatch(popup, 'datechange', { date: e.start.toDate() });
         // show popup
-        dispatchCustomEvent(popup, 'popup:open');
+        customDispatch(popup, 'popup:open');
 
         // init popper
         const ref =
