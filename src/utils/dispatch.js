@@ -1,11 +1,9 @@
-export const dispatchCustomEvent = (
-  el,
-  name,
-  data,
-  bubbles = false,
-  cancelable = false
-) => {
-  el.dispatchEvent(
-    new CustomEvent(name, { bubbles, cancelable, detail: data })
+export const dispatchCustom = (name, to, data) => {
+  to.dispatchEvent(
+    new CustomEvent(name, {
+      bubbles: false,
+      cancelable: false,
+      detail: data,
+    })
   );
 };

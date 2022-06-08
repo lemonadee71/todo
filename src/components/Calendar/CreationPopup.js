@@ -5,7 +5,7 @@ import { useLocationOptions } from '../../core/hooks';
 import { TASK } from '../../actions';
 import { debounce } from '../../utils/delay';
 import logger from '../../utils/logger';
-import { dispatchCustomEvent } from '../../utils/dispatch';
+import { dispatchCustom } from '../../utils/dispatch';
 
 const CreationPopup = (projectId) => {
   const [state, revoke] = createHook({
@@ -36,8 +36,7 @@ const CreationPopup = (projectId) => {
       TASK.ADD,
       { project, list, data: { title, dueDate: state.dueDate } },
       {
-        onSuccess: () =>
-          dispatchCustomEvent(e.target.parentElement, 'popup:close'),
+        onSuccess: () => dispatchCustom('popup:close', e.target.parentElement),
         onError: logger.error,
       }
     );
@@ -79,8 +78,7 @@ const CreationPopup = (projectId) => {
     >
       <button
         class="absolute top-0 right-0 mr-3 text-lg"
-        onClick=${(e) =>
-          dispatchCustomEvent(e.target.parentElement, 'popup:close')}
+        onClick=${(e) => dispatchCustom('popup:close', e.target.parentElement)}
       >
         &times;
       </button>
