@@ -1,10 +1,10 @@
 import flatpickr from 'flatpickr';
 import { createHook, html } from 'poor-man-jsx';
 import Core from '../../core';
+import { useLocationOptions } from '../../core/hooks';
 import { TASK } from '../../actions';
 import { debounce } from '../../utils/delay';
 import logger from '../../utils/logger';
-import { useSelectLocation } from '../../utils/useSelectLocation';
 import { dispatchCustomEvent } from '../../utils/dispatch';
 
 const CreationPopup = (projectId) => {
@@ -14,7 +14,7 @@ const CreationPopup = (projectId) => {
     initialDate: new Date(),
   });
   const { projectOptions, listOptions, initializeListOptions, unsubscribe } =
-    useSelectLocation({ project: projectId });
+    useLocationOptions({ project: projectId });
   let flatpickrInstance;
 
   const togglePopup = (value) => {

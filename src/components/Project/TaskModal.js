@@ -1,10 +1,10 @@
 import { html, render } from 'poor-man-jsx';
 import { TASK } from '../../actions';
 import Core from '../../core';
-import { useSelectLocation } from '../../utils/useSelectLocation';
 import BaseTaskModal from './BaseTaskModal';
 import Subtask from './Subtask';
 import { SubtasksIcon } from '../../assets/icons';
+import { useLocationOptions } from '../../core/hooks';
 
 export default class TaskModal extends BaseTaskModal {
   constructor(data) {
@@ -46,7 +46,7 @@ export default class TaskModal extends BaseTaskModal {
       onListChange,
       initializeListOptions,
       unsubscribe,
-    } = useSelectLocation(this.data);
+    } = useLocationOptions(this.data);
 
     this.template.push(
       {
