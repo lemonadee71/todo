@@ -2,6 +2,7 @@ import { html } from 'poor-man-jsx';
 import { PROJECT } from '../actions';
 import { useUndo } from '../utils/undo';
 import { DeleteIcon } from '../assets/icons';
+import { PATHS } from '../constants';
 
 const ProjectLink = (data, i) => {
   const deleteProject = useUndo({
@@ -20,7 +21,7 @@ const ProjectLink = (data, i) => {
       <a
         is="navigo-link"
         class="no-underline hover:underline text-sm text-white truncate"
-        href="/app/${data.link}"
+        href="/${PATHS.project.url.replace(':id', data.id)}"
       >
         {% ${data.name} %}
       </a>
