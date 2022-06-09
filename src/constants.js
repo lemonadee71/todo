@@ -4,12 +4,25 @@ export const ROOT_NAME = 'root';
 export const LAST_UPDATE = 'lastUpdate';
 export const LAST_OPENED_PAGE = 'lastOpenedPage';
 export const PATHS = {
-  home: { url: '/', title: 'todo' },
-  login: { url: 'login', title: 'Login' },
-  app: { url: 'app/*', title: 'Home' },
-  dashboard: { url: 'app', title: 'Dashboard' },
-  project: { url: 'app/p/:id' },
-  task: { url: 'app/t/:id' },
+  home: {
+    url: process.env.NODE_ENV !== 'production' ? '/' : 'todo',
+    title: 'todo',
+  },
+  login: {
+    url: process.env.NODE_ENV !== 'production' ? 'login' : 'todo/login',
+    title: 'Login',
+  },
+  app: {
+    url: process.env.NODE_ENV !== 'production' ? 'app/*' : 'todo/app/*',
+    title: 'Home',
+  },
+  dashboard: {
+    url: process.env.NODE_ENV !== 'production' ? 'app' : 'todo/app',
+    title: 'Dashboard',
+  },
+  project: {
+    url: process.env.NODE_ENV !== 'production' ? 'app/p/:id' : 'todo/app/p/:id',
+  },
 };
 export const DEFAULT_COLORS = [
   '#61BD4F', // 0, green
