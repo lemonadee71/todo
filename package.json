@@ -8,7 +8,7 @@
     "start": "webpack serve --config webpack.dev.js --open 'google-chrome'",
     "build": "webpack --config webpack.prod.js",
     "watch": "webpack --watch --config webpack.dev.js",
-    "deploy": "npm run build && git subtree push --prefix public origin gh-pages"
+    "deploy": "git subtree push --prefix public origin gh-pages"
   },
   "repository": {
     "type": "git",
