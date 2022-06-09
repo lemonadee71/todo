@@ -75,7 +75,7 @@ const Router = ({ routes, tag = 'div', target, props, loadingComponent }) => {
   // we can do this once on first render
   // but nested routes will show undefined on mount
   // so do this for every creation instead
-  Core.router.resolve(window.location.pathname);
+  Core.router.resolve(window.location.pathname.replace(/^\/todo/, ''));
 
   // props are not inherited if target is used
   if (target && target instanceof HTMLElement) {
