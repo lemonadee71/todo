@@ -27,12 +27,12 @@ import SearchBar from '../components/SearchBar';
 
 const routes = [
   {
-    path: PATHS.app,
+    path: PATHS.dashboard.url,
     component: Dashboard,
     className: 'gap-6 bg-neutral-200 dark:bg-[#424242]',
   },
   {
-    path: PATHS.project,
+    path: PATHS.project.url,
     component: Project,
     className: 'pl-6 pr-2',
     beforeRender: async (match) => {
@@ -90,7 +90,9 @@ const App = () => {
       PROJECT.REMOVE,
       (data) => {
         if (Core.state.currentPage === `app/${data.link}`) {
-          Core.router.redirect(PATHS.app, { title: 'Home' });
+          Core.router.redirect(PATHS.dashboard.url, {
+            title: PATHS.dashboard.title,
+          });
         }
       },
       { order: 'last' }

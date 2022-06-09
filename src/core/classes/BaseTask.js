@@ -19,8 +19,9 @@ class BaseTask {
     // meta
     this.type = 'task';
     this.id = id || uuid();
+    // all integers
     this.createdDate = createdDate ?? Date.now();
-    this.lastUpdate = lastUpdate ?? this.createdDate;
+    this.lastUpdate = lastUpdate || 0;
     this.completionDate = completionDate || 0;
 
     // props
@@ -75,7 +76,7 @@ class BaseTask {
 
   toggleComplete() {
     this.completed = !this.completed;
-    this.completionDate = this.completed ? Date.now() : 0;
+    this.completionDate = this.completed ? Date.now() : null;
 
     return this.completed;
   }

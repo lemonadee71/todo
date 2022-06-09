@@ -1,15 +1,14 @@
 import { html } from 'poor-man-jsx';
-import { EDIT_TASK, TASK } from '../actions';
+import { EDIT_TASK } from '../actions';
 import { DEFAULT_COLORS } from '../constants';
 import Core from '../core';
 import { SubtasksIcon } from '../assets/icons';
 import { isGuest } from '../utils/auth';
-import { useUndo } from '../utils/undo';
 import TaskTemplate from '../template/Task';
 import Badge from './Badge';
 import DateBadge from './DateBadge';
 
-class TaskGlobalVariant extends TaskTemplate {
+class GlobalTask extends TaskTemplate {
   constructor(data) {
     super(data);
     this.projectData = Core.data.root.get(data.project);
@@ -24,7 +23,7 @@ class TaskGlobalVariant extends TaskTemplate {
       ? this.data.totalSubtasks
       : this.data.__initialSubtasksOrder.length;
 
-    if (this.data.totalSubtasks && hasSubtasks) {
+    if (hasSubtasks) {
       this.badges.push(
         Badge({
           content: SubtasksIcon('stroke-white', 16, 1.75),
@@ -64,14 +63,6 @@ class TaskGlobalVariant extends TaskTemplate {
       );
     }
   };
-
-  deleteTask() {
-    useUndo({
-      type: TASK,
-      text: `${this.type[0].toUpperCase() + this.type.slice(1)} removed`,
-      payload: { ...this.data.location, id: this.id },
-    })();
-  }
 }
 
-export default TaskGlobalVariant;
+export default GlobalTask;

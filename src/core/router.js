@@ -1,9 +1,12 @@
 import Navigo from 'navigo';
-// import { GH_PATH } from '../constants';
+import { GH_PATH } from '../constants';
 
 const Router = (() => {
   const routes = new Map();
-  const navigo = new Navigo('/', { strategy: 'ALL' });
+  const navigo = new Navigo(
+    process.env.NODE_ENV !== 'production' ? '/' : GH_PATH,
+    { strategy: 'ALL' }
+  );
 
   const _getHandlers = (path) => Array.from(routes.get(path).keys());
 

@@ -10,27 +10,29 @@ import {
   isThisMonth,
   isFuture,
   subMinutes,
+  subHours,
+  isWithinInterval,
+  isValid,
 } from 'date-fns';
-import { DATE_TIME_FORMAT, TZ_DATE_FORMAT } from '../constants';
+import { DATE_TIME_FORMAT, DEFAULT_COLORS, TZ_DATE_FORMAT } from '../constants';
 
-const isDueToday = (date) => isToday(date);
-const isDueTomorrow = (date) => isTomorrow(date);
-const isDueThisWeek = (date) => isThisWeek(date);
-const isUpcoming = (date) => !isThisWeek(date) && isFuture(date);
-const isUpcomingInFuture = (date) => !isThisMonth(date) && isFuture(date);
+export const parseDate = (input) => {
+  if (typeof input === 'string') return parseISO(input);
+  if (isValid(input)) return input;
+  throw new TypeError('Invalid date input');
+};
 
-const parse = (date) => parseISO(date);
+export const isUpcoming = (date) => !isThisWeek(date) && isFuture(date);
+export const isUpcomingInFuture = (date) =>
+  !isThisMonth(date) && isFuture(date);
 
-const formatDateToNow = (date) =>
-  formatDistanceToNow(date, { addSuffix: true });
+export const getDateKeyword = (dirtyDate) => {
+  const date = parseDate(dirtyDate);
 
-const getDateKeyword = (dirtyDate) => {
-  const date = typeof dirtyDate === 'string' ? parse(dirtyDate) : dirtyDate;
-
-  if (isDueToday(date)) {
+  if (isToday(date)) {
     return 'today';
   }
-  if (isDueTomorrow(date)) {
+  if (isTomorrow(date)) {
     return 'tomorrow';
   }
   if (isYesterday(date)) {
@@ -39,40 +41,50 @@ const getDateKeyword = (dirtyDate) => {
   if (isPast(date) || isUpcomingInFuture(date)) {
     return formatDateToNow(date);
   }
-  if (isDueThisWeek(date)) {
+  if (isThisWeek(date)) {
     return format(date, 'E, MMM dd');
   }
 
   return format(date, 'MMM dd');
 };
 
-const formatDate = (dirtyDate) => `Due ${getDateKeyword(dirtyDate)}`;
-
-const formatToDateTime = (date) => format(date, DATE_TIME_FORMAT);
-
-const formatToTZDate = (date) => format(date, TZ_DATE_FORMAT);
-
-const getDateRange = (dirtyDate, range = '5', formatter = formatToTZDate) => {
-  const date = typeof dirtyDate === 'string' ? parse(dirtyDate) : dirtyDate;
+export const getDateRange = (
+  dirtyDate,
+  range = '5',
+  formatter = formatToTZDate
+) => {
+  const date = parseDate(dirtyDate);
   const start = formatter(subMinutes(date, range));
   const end = formatter(date);
 
   return [start, end];
 };
 
-const toTimestamp = (date) => parse(date).getTime();
+export const getDateColor = (dueDate) => {
+  const date = parseDate(dueDate);
+  const upperLimit = subHours(date, 3);
 
-export {
-  isDueToday,
-  isDueTomorrow,
-  isDueThisWeek,
-  isUpcoming,
-  formatDate,
-  formatDateToNow,
-  formatToDateTime,
-  formatToTZDate,
-  getDateKeyword,
-  getDateRange,
-  parse,
-  toTimestamp,
+  if (
+    isWithinInterval(new Date(), { start: upperLimit, end: date }) ||
+    isPast(date)
+  )
+    // show red for urgency
+    return DEFAULT_COLORS[3];
+
+  // show orange for warning
+  if (isToday(date)) return DEFAULT_COLORS[2];
+
+  // show green
+  return DEFAULT_COLORS[0];
 };
+
+export const formatDate = (dirtyDate) => `Due ${getDateKeyword(dirtyDate)}`;
+
+export const formatDateToNow = (date) =>
+  formatDistanceToNow(date, { addSuffix: true });
+
+export const formatToDateTime = (date) => format(date, DATE_TIME_FORMAT);
+
+export const formatToTZDate = (date) => format(date, TZ_DATE_FORMAT);
+
+export const toTimestamp = (date) => parseDate(date).getTime();

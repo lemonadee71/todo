@@ -1,16 +1,18 @@
-import { compareAsc, parseISO } from 'date-fns';
+import { compareAsc } from 'date-fns';
 import { createHook, html, render } from 'poor-man-jsx';
 import Sortable from 'sortablejs';
+import Core from '../core';
 import { fetchStaleTasks, fetchTasksDueThisWeek } from '../core/firestore';
 import { useRoot } from '../core/hooks';
-import Core from '../core';
 import { PROJECT } from '../actions';
 import { getProfilePicURL, getUserName, isGuest } from '../utils/auth';
+import { parseDate } from '../utils/date';
 import { AddIcon } from '../assets/icons';
 import ProjectCard from '../components/Dashboard/ProjectCard';
 import Task from '../components/Dashboard/Task';
 
-// BUG: Delete and undo are not reflected here
+// one-time render component to avoid complexity
+// user has to open the tasks first before they can edit
 const Dashboard = () => {
   const [root, unsubscribe] = useRoot();
   const [tasks] = createHook({
@@ -100,7 +102,7 @@ const Dashboard = () => {
           ${tasks.$dueThisWeek((items) =>
             items
               .sort((a, b) =>
-                compareAsc(parseISO(a.dueDate), parseISO(b.dueDate))
+                compareAsc(parseDate(a.dueDate), parseDate(b.dueDate))
               )
               .map((data) => Task(data, false))
               .map((data) => render(data))
@@ -114,7 +116,7 @@ const Dashboard = () => {
           ${tasks.$stale((items) =>
             items
               .sort((a, b) =>
-                compareAsc(parseISO(a.lastUpdate), parseISO(b.lastUpdate))
+                compareAsc(parseDate(a.lastUpdate), parseDate(b.lastUpdate))
               )
               .map((data) => Task(data, true))
               .map((data) => render(data))
