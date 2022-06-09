@@ -20,7 +20,7 @@ const ProjectLink = (data, i) => {
       <a
         is="navigo-link"
         class="no-underline hover:underline text-sm text-white truncate"
-        href="/app/${data.link}"
+        href="${data.link}"
       >
         {% ${data.name} %}
       </a>

@@ -50,7 +50,7 @@ class GlobalTask extends TaskTemplate {
   openOnLocation = () => {
     Core.data.queue.push(this.data.location);
 
-    const url = `app/${this.projectData.link}`;
+    const url = this.projectData.link;
 
     if (url !== Core.state.currentPage) {
       Core.router.navigate(url, { title: this.projectData.name });

@@ -89,7 +89,7 @@ const App = () => {
     Core.event.onSuccess(
       PROJECT.REMOVE,
       (data) => {
-        if (Core.state.currentPage === `app/${data.link}`) {
+        if (Core.state.currentPage === data.link) {
           Core.router.redirect(PATHS.dashboard.url, {
             title: PATHS.dashboard.title,
           });

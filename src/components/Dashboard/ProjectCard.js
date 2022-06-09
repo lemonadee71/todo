@@ -18,8 +18,7 @@ const ProjectCard = (data, i) => {
       class="grid grid-rows-[1fr_2fr_1fr] rounded-xl shadow-md bg-white dark:bg-[#272727] focus:ring group"
       data-id="${data.id}"
       data-position="${i}"
-      onDblClick=${() =>
-        Core.router.navigate(`app/${data.link}`, { title: data.name })}
+      onDblClick=${() => Core.router.navigate(data.link, { title: data.name })}
     >
       <div class="rounded-t-xl" style="background-color: ${data.color};"></div>
 
