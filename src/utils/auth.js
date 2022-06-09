@@ -15,13 +15,13 @@ export const isNewUser = async (id) => {
 
 export const signIn = (id = LOCAL_USER) => {
   Core.state.currentUser = id;
-  Core.router.redirect(PATHS.app, { title: 'Home' });
+  Core.router.redirect(PATHS.dashboard.url, { title: PATHS.dashboard.title });
 };
 
 export const signOut = () => {
   signOutUser(getAuth());
   Core.clearData();
-  Core.router.redirect(PATHS.home, { title: 'To Do List' });
+  Core.router.redirect(PATHS.home.url, { title: PATHS.home.title });
 };
 
 export const getProfilePicURL = () => {

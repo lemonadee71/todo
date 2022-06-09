@@ -4,12 +4,12 @@ export const ROOT_NAME = 'root';
 export const LAST_UPDATE = 'lastUpdate';
 export const LAST_OPENED_PAGE = 'lastOpenedPage';
 export const PATHS = {
-  home: '/',
-  login: 'login',
-  app: 'app',
-  calendar: 'app/calendar',
-  project: 'app/p/:id',
-  task: 'app/t/:id',
+  home: { url: '/', title: 'todo' },
+  login: { url: 'login', title: 'Login' },
+  app: { url: 'app/*', title: 'Home' },
+  dashboard: { url: 'app', title: 'Dashboard' },
+  project: { url: 'app/p/:id' },
+  task: { url: 'app/t/:id' },
 };
 export const DEFAULT_COLORS = [
   '#61BD4F', // 0, green

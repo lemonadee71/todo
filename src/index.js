@@ -34,15 +34,15 @@ PoorManJSX.onAfterCreation((element) => {
 
 const routes = [
   {
-    path: PATHS.home,
+    path: PATHS.home.url,
     component: pages.Landing,
   },
   {
-    path: PATHS.login,
+    path: PATHS.login.url,
     component: pages.Login,
   },
   {
-    path: '/app*',
+    path: PATHS.app.url,
     component: pages.App,
     className:
       'font-sans text-black h-screen bg-white md:ml-56 dark:text-white dark:bg-[#353535]',

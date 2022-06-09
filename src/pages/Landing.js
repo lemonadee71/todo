@@ -11,9 +11,11 @@ import {
 } from '../assets/icons';
 
 const Landing = () => {
-  const goToHome = () => Core.router.navigate(PATHS.app, { title: 'Home' });
+  const goToHome = () =>
+    Core.router.navigate(PATHS.dashboard.url, { title: PATHS.dashboard.title });
 
-  const goToLogin = () => Core.router.navigate(PATHS.login, { title: 'Login' });
+  const goToLogin = () =>
+    Core.router.navigate(PATHS.login.url, { title: PATHS.login.title });
 
   return html`
     <header class="h-16 bg-[#1F2937]">
