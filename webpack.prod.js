@@ -8,15 +8,17 @@ module.exports = merge(common, {
   mode: 'production',
   output: {
     filename: 'main.[hash].js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'public'),
     clean: true,
   },
+  devtool: 'source-map',
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'main.[contenthash].css',
     }),
   ],
   optimization: {
+    minimize: true,
     minimizer: [
       new TerserPlugin({
         extractComments: false,
