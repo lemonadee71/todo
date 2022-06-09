@@ -27,8 +27,6 @@ const Core = (() => {
   const trackPage = (match) => {
     state.currentPage = match.url;
   };
-  // track current opened page
-  router.on('*', trackPage);
 
   const clearData = () => {
     state.currentUser = null;
@@ -40,6 +38,9 @@ const Core = (() => {
   };
 
   const setupListeners = () => {
+    // track current opened page
+    router.on('*', trackPage);
+
     /**
      * wrappers for core functions
      * just so multiple components can listen to an event
