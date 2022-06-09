@@ -119,6 +119,7 @@ defineCustomElements();
 initializeTheme();
 // make body our main router
 Router({ routes, target: document.body });
+Core.router.resolve('/');
 
 onAuthStateChanged(getAuth(), (user) => {
   // sign in user if did not logged out
