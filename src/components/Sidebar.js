@@ -5,7 +5,6 @@ import { useRoot } from '../core/hooks';
 import Core from '../core';
 import ProjectLink from './ProjectLink';
 import { AddIcon, CloseIcon, HomeIcon } from '../assets/icons';
-import { PATHS } from '../constants';
 
 const Sidebar = () => {
   const [data, revoke] = useRoot();
@@ -67,7 +66,7 @@ const Sidebar = () => {
           <a
             class="no-underline hover:underline text-sm text-white flex items-center mb-8"
             is="navigo-link"
-            href="/${PATHS.dashboard.url}"
+            href="/app"
           >
             ${HomeIcon('stroke-white mr-1', 16)} Home
           </a>
