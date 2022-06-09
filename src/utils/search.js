@@ -5,9 +5,9 @@ import {
   isThisWeek,
   isThisYear,
   isToday,
-  parseISO,
 } from 'date-fns';
 import { compareTwoStrings } from 'string-similarity';
+import { parseDate } from './date';
 
 const SIMILARITY_THRESHOLD = 0.4;
 const DATE_MAP = {
@@ -45,10 +45,9 @@ const evaluate = (task, { keyword, value }) => {
       // no numbers for now
       if (!(val in DATE_FN_MAP)) return 0;
 
-      let date = task[DATE_MAP[keyword]];
-      date = typeof date === 'string' ? parseISO(date) : date;
+      const date = task[DATE_MAP[keyword]];
 
-      return date ? +DATE_FN_MAP[val](date) : 0;
+      return date ? +DATE_FN_MAP[val](parseDate(date)) : 0;
     }
     case 'has': {
       const data = task.data[value];

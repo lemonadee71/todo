@@ -1,4 +1,4 @@
-import { differenceInWeeks, isWithinInterval } from 'date-fns';
+import { differenceInWeeks, isThisWeek, isWithinInterval } from 'date-fns';
 import Task from './classes/Task';
 import Subtask from './classes/Subtask';
 import TaskList from './classes/TaskList';
@@ -8,8 +8,8 @@ import Project from './classes/Project';
 import { LocalStorage } from './storage';
 import { LAST_OPENED_PAGE, LAST_UPDATE } from '../constants';
 import defaultData from '../defaultData.json';
+import { parseDate } from '../utils/date';
 import { filterById } from '../utils/misc';
-import { isDueThisWeek, parse } from '../utils/date';
 
 export const loadDefaultData = () => {
   const data = [];
@@ -250,13 +250,13 @@ export const getTasksFromProject = (projectId) =>
 
 export const getTasksByInterval = (interval) =>
   getAllTasks().filter((task) =>
-    isWithinInterval(parse(task.dueDate), interval)
+    isWithinInterval(parseDate(task.dueDate), interval)
   );
 
 export const getTasksDueThisWeek = () =>
   getAllTasks()
     .filter((task) => !task.completed)
-    .filter((task) => isDueThisWeek(parse(task.dueDate)));
+    .filter((task) => isThisWeek(parseDate(task.dueDate)));
 
 // tasks are considered stale if there are no updates in 2 weeks
 export const getStaleTasks = () =>

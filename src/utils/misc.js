@@ -1,7 +1,4 @@
-import { isPast, isWithinInterval, subHours } from 'date-fns';
 import IdList from '../core/classes/IdList';
-import { DEFAULT_COLORS } from '../constants';
-import { isDueToday, parse } from './date';
 
 export const memoize = (fn) => {
   const cache = new Map();
@@ -48,22 +45,4 @@ export const copy = (target, toExclude = []) => {
   toExclude.forEach((prop) => delete clone[prop]);
 
   return clone;
-};
-
-export const getDateColor = (dueDate) => {
-  const date = parse(dueDate);
-  const upperLimit = subHours(date, 3);
-
-  if (
-    isWithinInterval(new Date(), { start: upperLimit, end: date }) ||
-    isPast(date)
-  )
-    // show red for urgency
-    return DEFAULT_COLORS[3];
-
-  // show orange for warning
-  if (isDueToday(date)) return DEFAULT_COLORS[2];
-
-  // show green
-  return DEFAULT_COLORS[0];
 };
