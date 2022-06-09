@@ -102,10 +102,13 @@ const routes = [
           cached = document.data()?.[LAST_OPENED_PAGE];
         }
 
-        Core.router.navigate(cached?.url || '/app', {
-          title: cached?.title,
-          replace: true,
-        });
+        // do not redirect if same page
+        if (cached && cached.url !== PATHS.dashboard.url) {
+          Core.router.navigate(cached.url, {
+            title: cached?.title,
+            replace: true,
+          });
+        }
       },
     },
   },
