@@ -1,5 +1,6 @@
 const path = require('path');
 const merge = require('webpack-merge');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const common = require('./webpack.common');
@@ -20,6 +21,7 @@ module.exports = merge(common, {
   optimization: {
     minimize: true,
     minimizer: [
+      new CssMinimizerPlugin(),
       new TerserPlugin({
         extractComments: false,
       }),
@@ -34,6 +36,7 @@ module.exports = merge(common, {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
+              // Specifies a custom public path for the external resources like images, files, etc inside CSS
               publicPath: '',
             },
           },
