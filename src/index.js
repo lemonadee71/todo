@@ -1,7 +1,7 @@
 import autosize from 'autosize';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
-import PoorManJSX from 'poor-man-jsx';
+import PoorManJSX, { addHooks } from 'poor-man-jsx';
 import { LAST_OPENED_PAGE, PATHS } from './constants';
 import Core from './core';
 import { LocalStorage } from './core/storage';
@@ -48,6 +48,9 @@ const routes = [
       'font-sans text-black h-screen bg-white md:ml-56 dark:text-white dark:bg-[#353535]',
     nested: true,
     beforeRender: async () => {
+      // call here since only app/* page is themed
+      await initializeTheme();
+
       // setup core listeners
       Core.setupListeners();
       // setup local storage
@@ -116,7 +119,10 @@ const routes = [
 
 initializeApp(firebaseConfig);
 defineCustomElements();
-initializeTheme();
+// allow toggling of theme
+addHooks(document.documentElement, {
+  class: Core.state.$darkTheme((value) => (value ? 'dark' : 'light')),
+});
 // make body our main router
 Router({ routes, target: document.body });
 Core.router.resolve('/');

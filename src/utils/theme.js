@@ -1,8 +1,7 @@
-import { addHooks } from 'poor-man-jsx';
 import Core from '../core';
 import { LocalStorage } from '../core/storage';
 import { isGuest } from './auth';
-import { updateUser } from './firestore';
+import { getUserRef, updateUser } from './firestore';
 
 export const syncTheme = async (theme) => {
   if (isGuest()) {
@@ -15,15 +14,18 @@ export const syncTheme = async (theme) => {
 
 // this currently syncs theme for app/* pages only
 export const initializeTheme = async () => {
+  let themeStoredOnline;
+  if (!isGuest()) {
+    const doc = await getUserRef(Core.state.currentUser);
+    themeStoredOnline = doc.data()?.theme;
+  }
+
   // On page load or when changing themes, best to add inline in `head` to avoid FOUC
   Core.state.darkTheme =
-    LocalStorage.get('theme') === 'dark' &&
     // respect the user's preference
-    window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-  addHooks(document.documentElement, {
-    class: Core.state.$darkTheme((value) => (value ? 'dark' : 'light')),
-  });
+    window.matchMedia('(prefers-color-scheme: dark)').matches ||
+    themeStoredOnline === 'dark' ||
+    LocalStorage.get('theme') === 'dark';
 };
 
 export const toggleDarkTheme = () => {
