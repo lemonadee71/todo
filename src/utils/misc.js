@@ -40,9 +40,8 @@ export const sortById = (source, ids) => {
   return [...sorted, ...list.items];
 };
 
-export const intersectAndSortById = (source, ids) => {
+export const intersectAndSortById = (source, ids) =>
   sortById(intersectById(source, ids), ids);
-};
 
 export const copy = (target, toExclude = []) => {
   const clone = { ...target };
