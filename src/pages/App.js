@@ -44,7 +44,7 @@ const routes = [
           const data = await fetchProjectData(id);
           const project = Core.data.root.get(id);
 
-          project.lastFetched = Date.now();
+          project.$$lastFetched = Date.now();
           // clear defaults
           project.labels.clear().add(data.labels);
           project.lists.clear().add(sortById(data.lists, project.$$order));

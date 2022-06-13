@@ -404,7 +404,7 @@ export const setupListeners = () => {
         where('list', '==', data.list),
         where('completed', '==', true),
         // do not fetch recently marked completed tasks
-        where('completionDate', '<=', project.lastFetched),
+        where('completionDate', '<=', project.$$lastFetched),
         limit(25)
       )
     );
