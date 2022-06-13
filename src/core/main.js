@@ -1,15 +1,87 @@
 import { differenceInWeeks, isThisWeek, isWithinInterval } from 'date-fns';
-import Task from './classes/Task';
-import Subtask from './classes/Subtask';
-import TaskList from './classes/TaskList';
+import { LocalStorage } from './storage';
 import IdList from './classes/IdList';
 import Label from './classes/Label';
 import Project from './classes/Project';
-import { LocalStorage } from './storage';
-import { LAST_OPENED_PAGE, LAST_UPDATE } from '../constants';
+import Subtask from './classes/Subtask';
+import Task from './classes/Task';
+import TaskList from './classes/TaskList';
 import defaultData from '../defaultData.json';
 import { parseDate } from '../utils/date';
-import { filterById } from '../utils/misc';
+import { intersectAndSortById, intersectById } from '../utils/misc';
+import { LAST_UPDATE } from '../constants';
+
+const Root = new IdList();
+
+const recoverDataFromLocal = () => {
+  if (!LocalStorage.get(LAST_UPDATE)) return null;
+
+  const labels = Object.values(LocalStorage.get('labels')).map(
+    (data) => new Label(data)
+  );
+  const projects = Object.values(LocalStorage.get('projects'));
+  const lists = Object.values(LocalStorage.get('lists'));
+  const tasks = Object.values(LocalStorage.get('tasks'));
+  const subtasks = Object.values(LocalStorage.get('subtasks'));
+
+  return projects
+    .sort((a, b) => a.position - b.position)
+    .map((project) => ({
+      ...project,
+      labels: intersectById(labels, project.labels),
+      lists: intersectAndSortById(lists, project.lists)
+        .map((list) => ({
+          ...list,
+          tasks: intersectAndSortById(tasks, list.tasks)
+            .map((task) => ({
+              ...task,
+              labels: intersectById(labels, task.labels),
+              subtasks: intersectAndSortById(subtasks, task.subtasks)
+                .map((subtask) => ({
+                  ...subtask,
+                  labels: intersectById(labels, subtask.labels),
+                }))
+                .map((data) => new Subtask(data)),
+            }))
+            .map((data) => new Task(data)),
+        }))
+        .map((data) => new TaskList(data)),
+    }))
+    .map((data) => new Project(data));
+};
+
+export const syncLocalStorage = () => {
+  // create similar structure to firestore
+  const data = Root.items.reduce(
+    (acc, curr, i) => {
+      const toStore = curr.toJSON();
+
+      acc.projects[toStore.data.id] = { ...toStore.data, position: i };
+      toStore.labels.forEach((label) => {
+        acc.labels[label.id] = label;
+      });
+      toStore.lists.forEach((list) => {
+        acc.lists[list.id] = list;
+      });
+      toStore.tasks.forEach((task) => {
+        acc.tasks[task.id] = task;
+      });
+      toStore.subtasks.forEach((subtask) => {
+        acc.subtasks[subtask.id] = subtask;
+      });
+
+      return acc;
+    },
+    { projects: {}, lists: {}, tasks: {}, subtasks: {}, labels: {} }
+  );
+
+  // rewrite each folder every sync
+  Object.entries(data).forEach(([key, value]) => {
+    LocalStorage.sync(key, value);
+  });
+
+  LocalStorage.sync(LAST_UPDATE, Date.now());
+};
 
 export const loadDefaultData = () => {
   const data = [];
@@ -33,112 +105,14 @@ export const loadDefaultData = () => {
   return data;
 };
 
-const recoverDataFromLocal = () => {
-  const data = [];
-  const stored = LocalStorage.filter(
-    (key) => ![LAST_UPDATE, LAST_OPENED_PAGE, 'theme'].includes(key)
-  );
-  const cache = Object.entries(stored).reduce((acc, [key, value]) => {
-    const [projectId, type] = key.split('__');
-
-    if (!acc[projectId]) {
-      acc[projectId] = {};
-    }
-
-    acc[projectId][type] = value;
-
-    return acc;
-  }, {});
-
-  // reinitialize data
-  Object.values(cache)
-    .sort((a, b) => a.metadata.position - b.metadata.position)
-    .forEach((project) => {
-      const projectLabels = project.labels.map((label) => new Label(label));
-
-      const projectLists = project.lists.map((list) => {
-        const tasks = list._items.map((task) => {
-          let { labels, subtasks } = task;
-
-          labels = filterById(
-            projectLabels,
-            labels._items.map((label) => label.id)
-          );
-
-          subtasks = subtasks._items.map((subtask) => {
-            const subtaskLabels = filterById(
-              projectLabels,
-              subtask.labels._items.map((label) => label.id)
-            );
-
-            return new Subtask({ ...subtask, labels: subtaskLabels });
-          });
-
-          return new Task({ ...task, labels, subtasks });
-        });
-
-        return new TaskList({ ...list, defaultItems: tasks });
-      });
-
-      data.push(
-        new Project({
-          ...project.metadata,
-          labels: projectLabels,
-          lists: projectLists,
-        })
-      );
-    });
-
-  return data;
-};
-
-const storeDataToLocal = function (data) {
-  // remove deleted projects
-  LocalStorage.keys.forEach((key) => {
-    const [projectId] = key.split('__');
-
-    if (
-      !data.has(projectId) &&
-      ![LAST_UPDATE, LAST_OPENED_PAGE, 'theme'].includes(key)
-    ) {
-      LocalStorage.remove(key);
-    }
-  });
-
-  // sync new and existing ones
-  data.items.forEach((project, i) => {
-    LocalStorage.set(`${project.id}__metadata`, {
-      id: project.id,
-      name: project.name,
-      color: project.color,
-      lastOpened: project.lastOpened,
-      position: i,
-    });
-    LocalStorage.set(`${project.id}__labels`, project.labels.items);
-    LocalStorage.set(`${project.id}__lists`, project.lists.items);
-  });
-
-  // store the date last synced
-  return Date.now();
-};
-
-let Root = new IdList();
+export const getLocalData = () => recoverDataFromLocal() ?? loadDefaultData();
 
 export const init = (data) => {
-  Root = new IdList(data);
-  LocalStorage.store(LAST_UPDATE, Root, storeDataToLocal);
-};
-
-export const getLocalData = () => {
-  const recoveredData = recoverDataFromLocal();
-  const data = recoveredData.length ? recoveredData : loadDefaultData();
-
-  return data;
+  Root.clear().add(data);
+  syncLocalStorage();
 };
 
 export const initLocal = () => init(getLocalData());
-
-export const syncLocalStorage = () => LocalStorage.sync(LAST_UPDATE, Root);
 
 // =====================================================================================
 // Projects
