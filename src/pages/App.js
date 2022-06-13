@@ -12,7 +12,7 @@ import { fetchProjectData } from '../core/firestore';
 import { getProfilePicURL, getUserName, isGuest, signOut } from '../utils/auth';
 import { dispatchCustom } from '../utils/dispatch';
 import logger from '../utils/logger';
-import { orderById } from '../utils/misc';
+import { sortById } from '../utils/misc';
 import { $, $$ } from '../utils/query';
 import { toggleDarkTheme } from '../utils/theme';
 import { useTooltip } from '../utils/useTooltip';
@@ -49,7 +49,7 @@ const routes = [
           project.labels.clear().add(data.labels);
           project.lists
             .clear()
-            .add(orderById(data.lists, project.__initialListsOrder));
+            .add(sortById(data.lists, project.__initialListsOrder));
 
           // mark project as fetched
           Core.data.fetched.projects.push(id);
