@@ -65,6 +65,13 @@ class BaseTask {
     };
   }
 
+  toJSON() {
+    return {
+      ...this,
+      labels: this.labels.ids,
+    };
+  }
+
   update(prop, value) {
     if (prop === 'completed') this.toggleComplete();
     else this[prop] = value;
@@ -86,9 +93,7 @@ class BaseTask {
   }
 
   addLabel(label) {
-    if (this.labels.has(label.id)) {
-      throw new Error(`Label (${label.id}) is already added.`);
-    }
+    if (this.labels.has(label.id)) return this;
     this.lastUpdate = Date.now();
 
     return this.labels.add(label);

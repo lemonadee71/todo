@@ -1,27 +1,31 @@
 import IdList from './IdList';
 import uuid from '../../utils/id';
 import { converter } from '../../utils/firestore';
-import { orderById } from '../../utils/misc';
+import { sortById } from '../../utils/misc';
 
 class TaskList extends IdList {
-  constructor({ name, id, project, defaultItems, __initialTasksOrder }) {
-    super(defaultItems);
+  constructor({ id, name, project, tasks, $$order }) {
+    super(tasks);
 
     this.id = id || uuid();
     this.name = name || 'Unnamed List';
     this.project = project;
 
-    this.__initialTasksOrder = __initialTasksOrder ?? [];
+    this.$$order = $$order ?? [];
+  }
+
+  get completedTasks() {
+    return this.items.filter((task) => task.completed).length;
   }
 
   static converter(source = {}) {
     return converter(TaskList, (data) => ({
       ...data,
-      defaultItems: orderById(
+      tasks: sortById(
         (source.tasks || []).filter((task) => task.list === data.id),
         data.tasks || []
       ),
-      __initialTasksOrder: data.tasks,
+      $$order: data.tasks,
     }));
   }
 
@@ -36,8 +40,13 @@ class TaskList extends IdList {
     };
   }
 
-  get completedTasks() {
-    return this.items.filter((task) => task.completed).length;
+  toJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+      project: this.project,
+      tasks: this.ids,
+    };
   }
 
   add(task) {

@@ -47,9 +47,7 @@ const routes = [
           project.lastFetched = Date.now();
           // clear defaults
           project.labels.clear().add(data.labels);
-          project.lists
-            .clear()
-            .add(sortById(data.lists, project.__initialListsOrder));
+          project.lists.clear().add(sortById(data.lists, project.$$order));
 
           // mark project as fetched
           Core.data.fetched.projects.push(id);

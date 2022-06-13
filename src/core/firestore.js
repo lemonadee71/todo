@@ -47,7 +47,7 @@ const fetchSubtasks = async (tasks, labels) => {
   const subtasks = result.map((item) => item?.docs?.map(getData) || []);
 
   tasks.forEach((task, i) =>
-    task.subtasks.add(sortById(subtasks[i], task.__initialSubtasksOrder))
+    task.subtasks.add(sortById(subtasks[i], task.$$order))
   );
 };
 

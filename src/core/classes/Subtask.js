@@ -1,6 +1,6 @@
 import { formatToDateTime } from '../../utils/date';
 import { converter } from '../../utils/firestore';
-import { filterById } from '../../utils/misc';
+import { intersectById } from '../../utils/misc';
 import BaseTask from './BaseTask';
 
 export default class Subtask extends BaseTask {
@@ -30,7 +30,7 @@ export default class Subtask extends BaseTask {
     return converter(Subtask, (data) => ({
       ...data,
       dueDate: data.dueDate && formatToDateTime(new Date(data.dueDate)),
-      labels: filterById(source.labels || [], data.labels || []),
+      labels: intersectById(source.labels || [], data.labels || []),
     }));
   }
 }
