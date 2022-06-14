@@ -159,12 +159,12 @@ const Project = ({ data: { id } }) => {
         </label>
         <!-- prettier-ignore -->
         <textarea
-        class="flex-1 text-2xl font-extrabold px-1 py-1 rounded-sm bg-inherit resize-none break-words overflow-hidden placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:ring dark:placeholder:text-slate-400 dark:focus:placeholder:text-slate-200"
-        name="name"
-        rows="1"
-        placeholder="Project name"
-        data-autosize
-        onInput=${debounce(editProject, 200)}
+          class="flex-1 text-2xl font-extrabold px-1 py-1 rounded-sm bg-inherit resize-none break-words overflow-hidden placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:ring dark:placeholder:text-slate-400 dark:focus:placeholder:text-slate-200"
+          name="name"
+          rows="1"
+          placeholder="Project name"
+          data-autosize
+          onInput=${debounce(editProject, 200)}
         >${project.name}</textarea>
       </div>
 

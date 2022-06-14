@@ -127,7 +127,7 @@ const App = () => {
     ></div>
     <!-- header -->
     <header
-      class="fixed top-0 right-0 z-50 w-screen h-24 px-2 pt-4 pb-2 md:px-4 bg-inherit grid grid-cols-2 grid-rows-2 gap-x-4 items-center conten xs:grid-cols-[auto_1fr_auto] xs:grid-rows-1 xs:h-14"
+      class="fixed top-0 right-0 z-50 w-screen h-24 px-2 pt-4 pb-2 bg-inherit grid grid-cols-2 grid-rows-2 gap-x-4 items-center xs:grid-cols-[auto_1fr_auto] xs:grid-rows-1 xs:h-14 md:px-4"
     >
       <button
         class="justify-self-start col-span-1 p-1 rounded-full active:ring active:ring-teal-500 md:hidden"
