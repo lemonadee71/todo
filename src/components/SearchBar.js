@@ -14,18 +14,8 @@ const SearchBar = () => {
     isComparisonAND: true,
   });
 
-  const updateResults = (query) => {
-    const tasks = Core.main.getAllTasks();
-
-    const items = tasks
-      .map((task) => ({
-        data: task,
-        score: matches(query, task, state.isComparisonAND ? 'AND' : 'OR'),
-      }))
-      .filter((task) => task.score > 0)
-      .sort((a, b) => b.score - a.score); // sort in ascending
-
-    return items.length
+  const renderResults = (items) =>
+    items.length
       ? items
           .map((task, i) =>
             // the threshold for best match is different
@@ -39,6 +29,17 @@ const SearchBar = () => {
             </p>
           `
         );
+
+  const updateResults = (query) => {
+    const tasks = Core.main.getAllTasks();
+
+    state.results = tasks
+      .map((task) => ({
+        data: task,
+        score: matches(query, task, state.isComparisonAND ? 'AND' : 'OR'),
+      }))
+      .filter((task) => task.score > 0)
+      .sort((a, b) => b.score - a.score); // sort in ascending
   };
 
   const toggleFocus = (e) => {
@@ -46,8 +47,6 @@ const SearchBar = () => {
     state.showResults = isFocused && e.target.value.trim();
   };
 
-  // BUG: Only updates the results if we typed again after clicking the button
-  //      the behavior should be to update the results on button clicked
   const toggleSearchMode = () => {
     state.isComparisonAND = !state.isComparisonAND;
     updateResults(state.query);
@@ -59,6 +58,7 @@ const SearchBar = () => {
 
   const onChange = (e) => {
     state.query = e.target.value.trim();
+    updateResults(state.query);
     toggleFocus(e);
   };
 
@@ -101,7 +101,7 @@ const SearchBar = () => {
           (value) => (value ? 'block' : 'hidden')
         )}"
       >
-        ${state.$query(updateResults)}
+        ${state.$results(renderResults)}
       </div>
     </div>
   `;
