@@ -225,7 +225,7 @@ const Calendar = (projectId) => {
   return html`
     <div class="flex gap-1 mb-3" data-name="taskbar">
       <button
-        class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded border border-solid border-neutral-600 active:ring shadow-sm"
+        class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded border border-solid border-neutral-600 active:ring active:ring-inset shadow-sm"
         name="today"
         data-tooltip="${format(new Date(), 'eee, MMMM dd')}"
         onClick=${goToToday}
@@ -233,7 +233,7 @@ const Calendar = (projectId) => {
         Today
       </button>
       <button
-        class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded-full active:ring shadow-sm"
+        class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded-full active:ring active:ring-inset shadow-sm"
         name="previous"
         data-tooltip="Previous week"
         onClick=${previous}
@@ -241,7 +241,7 @@ const Calendar = (projectId) => {
         <
       </button>
       <button
-        class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded-full active:ring shadow-sm"
+        class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded-full active:ring active:ring-inset shadow-sm"
         name="next"
         data-tooltip="Next week"
         onClick=${next}
