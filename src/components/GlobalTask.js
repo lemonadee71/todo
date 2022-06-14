@@ -48,11 +48,10 @@ class GlobalTask extends TaskTemplate {
   }
 
   openOnLocation = () => {
-    Core.data.queue.push(this.data.location);
-
     const url = this.projectData.link;
 
     if (url !== Core.state.currentPage) {
+      Core.data.queue.push(this.data.location);
       Core.router.navigate(url, { title: this.projectData.name });
     } else {
       // it's okay to emit directly since we know that data is already fetched
