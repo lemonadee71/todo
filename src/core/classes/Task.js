@@ -1,6 +1,6 @@
 import { formatToDateTime, toTimestamp } from '../../utils/date';
 import { converter } from '../../utils/firestore';
-import { copy, filterById, orderById } from '../../utils/misc';
+import { copy, intersectAndSortById } from '../../utils/misc';
 import BaseTask from './BaseTask';
 import IdList from './IdList';
 
@@ -10,29 +10,7 @@ export default class Task extends BaseTask {
 
     this.subtasks = new IdList(props.subtasks);
 
-    this.__initialSubtasksOrder = props.__initialSubtasksOrder ?? [];
-  }
-
-  static converter(source = {}) {
-    return converter(Task, (data) => ({
-      ...data,
-      dueDate: data.dueDate && formatToDateTime(new Date(data.dueDate)),
-      labels: filterById(source.labels || [], data.labels || []),
-      subtasks: orderById(
-        (source.subtasks || []).filter((subtask) => subtask.parent === data.id),
-        data.subtasks || []
-      ),
-      __initialSubtasksOrder: data.subtasks,
-    }));
-  }
-
-  toFirestore() {
-    return {
-      ...copy(this, ['subtasks', '__initialSubtasksOrder']),
-      dueDate: this.dueDate && toTimestamp(this.dueDate),
-      labels: this.labels.ids,
-      subtasks: this.subtasks.ids,
-    };
+    this.$$order = props.$$order ?? [];
   }
 
   get data() {
@@ -49,6 +27,36 @@ export default class Task extends BaseTask {
 
   get incompleteSubtasks() {
     return this.subtasks.items.filter((subtask) => subtask.completed).length;
+  }
+
+  static converter(source = {}) {
+    return converter(Task, (data) => ({
+      ...data,
+      dueDate: data.dueDate && formatToDateTime(new Date(data.dueDate)),
+      labels: intersectAndSortById(source.labels || [], data.labels || []),
+      subtasks: intersectAndSortById(
+        source.subtasks || [],
+        data.subtasks || []
+      ),
+      $$order: data.subtasks,
+    }));
+  }
+
+  toFirestore() {
+    return {
+      ...copy(this, ['subtasks', '$$order']),
+      dueDate: this.dueDate && toTimestamp(this.dueDate),
+      labels: this.labels.ids,
+      subtasks: this.subtasks.ids,
+    };
+  }
+
+  toJSON() {
+    return {
+      ...copy(this, ['subtasks', '$$order']),
+      labels: this.labels.ids,
+      subtasks: this.subtasks.ids,
+    };
   }
 
   _adopt(subtask) {

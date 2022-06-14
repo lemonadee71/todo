@@ -25,10 +25,10 @@ export const curry = (fn) =>
     return (...rest) => curried(...args.concat(rest));
   };
 
-export const filterById = (source, ids) =>
+export const intersectById = (source, ids) =>
   source.filter((item) => ids.find((id) => item?.id === id));
 
-export const orderById = (source, ids) => {
+export const sortById = (source, ids) => {
   const sorted = [];
   const list = new IdList(source);
 
@@ -39,6 +39,9 @@ export const orderById = (source, ids) => {
 
   return [...sorted, ...list.items];
 };
+
+export const intersectAndSortById = (source, ids) =>
+  sortById(intersectById(source, ids), ids);
 
 export const copy = (target, toExclude = []) => {
   const clone = { ...target };

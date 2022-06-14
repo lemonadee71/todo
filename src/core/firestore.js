@@ -21,7 +21,7 @@ import {
   setDocument,
   updateDocument,
 } from '../utils/firestore';
-import { orderById } from '../utils/misc';
+import { sortById } from '../utils/misc';
 import Label from './classes/Label';
 import Project from './classes/Project';
 import Subtask from './classes/Subtask';
@@ -47,7 +47,7 @@ const fetchSubtasks = async (tasks, labels) => {
   const subtasks = result.map((item) => item?.docs?.map(getData) || []);
 
   tasks.forEach((task, i) =>
-    task.subtasks.add(orderById(subtasks[i], task.__initialSubtasksOrder))
+    task.subtasks.add(sortById(subtasks[i], task.$$order))
   );
 };
 
@@ -110,7 +110,7 @@ export const fetchProjects = async () => {
   const projects = await getDocuments(itemsRef);
   const { order } = (await getDoc(folderRef)).data();
 
-  return orderById(projects, order);
+  return sortById(projects, order);
 };
 
 export const fetchProjectData = async (id) => {
@@ -404,7 +404,7 @@ export const setupListeners = () => {
         where('list', '==', data.list),
         where('completed', '==', true),
         // do not fetch recently marked completed tasks
-        where('completionDate', '<=', project.lastFetched),
+        where('completionDate', '<=', project.$$lastFetched),
         limit(25)
       )
     );

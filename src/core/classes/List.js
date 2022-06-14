@@ -11,6 +11,10 @@ class List {
     return [...this._items];
   }
 
+  toJSON() {
+    return this.items.map((item) => item.toJSON());
+  }
+
   /**
    * Get an item from the list.
    * @param {function} predicate

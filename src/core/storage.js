@@ -3,8 +3,8 @@ import { LOCAL_USER } from '../constants';
 class Storage {
   constructor(prefix = '') {
     this.prefix = prefix;
-    this._cache = new Map();
-    this._localStorage = window.localStorage;
+    this.cache = new Map();
+    this._self = window.localStorage;
   }
 
   get items() {
@@ -12,7 +12,7 @@ class Storage {
   }
 
   get keys() {
-    return Object.keys(this._localStorage)
+    return Object.keys(this._self)
       .filter((key) => key.startsWith(this.prefix))
       .map((key) => key.replace(this.prefix, ''));
   }
@@ -22,17 +22,17 @@ class Storage {
   }
 
   get(key) {
-    return JSON.parse(this._localStorage.getItem(this.prefix + key));
+    return JSON.parse(this._self.getItem(this.prefix + key));
   }
 
   set(key, data, resolver = JSON.stringify) {
-    this._localStorage.setItem(this.prefix + key, resolver(data));
+    this._self.setItem(this.prefix + key, resolver(data));
 
     return this;
   }
 
   remove(key) {
-    this._localStorage.removeItem(this.prefix + key);
+    this._self.removeItem(this.prefix + key);
 
     return this;
   }
@@ -54,22 +54,30 @@ class Storage {
   }
 
   store(key, data, resolver = null) {
-    this._cache.set(key, { data, resolver });
+    this.cache.set(key, { data, resolver });
 
     return this.sync(key, data);
   }
 
-  sync(key, newData) {
+  sync(key, data) {
     Promise.resolve().then(() => {
-      const { resolver, data: cached } = this._cache.get(key);
-      const data = newData || cached;
+      const cached = this.cache.get(key);
+      const newData = data || cached?.data;
 
-      if (resolver && typeof resolver === 'function') {
-        this.set(key, resolver(data));
+      if (cached?.resolver && typeof cached.resolver === 'function') {
+        this.set(key, cached.resolver(newData));
       } else {
-        this.set(key, data);
+        this.set(key, newData);
       }
     });
+
+    return this;
+  }
+
+  reset() {
+    this.clear();
+    this.prefix = '';
+    this.cache = new Map();
 
     return this;
   }

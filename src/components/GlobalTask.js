@@ -21,7 +21,7 @@ class GlobalTask extends TaskTemplate {
     // to avoid fetching just to show how many subtasks there are
     const hasSubtasks = isGuest()
       ? this.data.totalSubtasks
-      : this.data.__initialSubtasksOrder.length;
+      : this.data.$$order.length;
 
     if (hasSubtasks) {
       this.badges.push(
