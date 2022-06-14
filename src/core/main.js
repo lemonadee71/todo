@@ -8,7 +8,7 @@ import Task from './classes/Task';
 import TaskList from './classes/TaskList';
 import defaultData from '../defaultData.json';
 import { parseDate } from '../utils/date';
-import { intersectAndSortById, intersectById } from '../utils/misc';
+import { intersectAndSortById } from '../utils/misc';
 import { LAST_UPDATE } from '../constants';
 
 const Root = new IdList();
@@ -28,18 +28,18 @@ const recoverDataFromLocal = () => {
     .sort((a, b) => a.position - b.position)
     .map((project) => ({
       ...project,
-      labels: intersectById(labels, project.labels),
+      labels: intersectAndSortById(labels, project.labels),
       lists: intersectAndSortById(lists, project.lists)
         .map((list) => ({
           ...list,
           tasks: intersectAndSortById(tasks, list.tasks)
             .map((task) => ({
               ...task,
-              labels: intersectById(labels, task.labels),
+              labels: intersectAndSortById(labels, task.labels),
               subtasks: intersectAndSortById(subtasks, task.subtasks)
                 .map((subtask) => ({
                   ...subtask,
-                  labels: intersectById(labels, subtask.labels),
+                  labels: intersectAndSortById(labels, subtask.labels),
                 }))
                 .map((data) => new Subtask(data)),
             }))

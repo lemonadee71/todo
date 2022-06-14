@@ -1,6 +1,6 @@
 import { formatToDateTime, toTimestamp } from '../../utils/date';
 import { converter } from '../../utils/firestore';
-import { copy, intersectById, sortById } from '../../utils/misc';
+import { copy, intersectAndSortById } from '../../utils/misc';
 import BaseTask from './BaseTask';
 import IdList from './IdList';
 
@@ -33,9 +33,9 @@ export default class Task extends BaseTask {
     return converter(Task, (data) => ({
       ...data,
       dueDate: data.dueDate && formatToDateTime(new Date(data.dueDate)),
-      labels: intersectById(source.labels || [], data.labels || []),
-      subtasks: sortById(
-        (source.subtasks || []).filter((subtask) => subtask.parent === data.id),
+      labels: intersectAndSortById(source.labels || [], data.labels || []),
+      subtasks: intersectAndSortById(
+        source.subtasks || [],
         data.subtasks || []
       ),
       $$order: data.subtasks,

@@ -2,7 +2,7 @@ import IdList from './IdList';
 import { DEFAULT_COLORS, PATHS } from '../../constants';
 import { defaultLabels, defaultLists } from '../../default';
 import uuid from '../../utils/id';
-import { copy, sortById } from '../../utils/misc';
+import { copy, intersectAndSortById } from '../../utils/misc';
 import { converter } from '../../utils/firestore';
 
 export default class Project {
@@ -44,10 +44,7 @@ export default class Project {
     return converter(Project, (data) => ({
       ...data,
       labels: source.labels?.filter((label) => label.project === data.id),
-      lists: sortById(
-        (source.lists || []).filter((list) => list.project === data.id),
-        data.lists || []
-      ),
+      lists: intersectAndSortById(source.lists || [], data.lists || []),
       // just to save an extra read for order
       $$order: data.lists,
     }));
