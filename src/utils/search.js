@@ -5,6 +5,8 @@ import {
   isThisWeek,
   isThisYear,
   isToday,
+  isTomorrow,
+  isYesterday,
 } from 'date-fns';
 import { compareTwoStrings } from 'string-similarity';
 import { parseDate } from './date';
@@ -19,8 +21,10 @@ const DATE_MAP = {
 const DATE_FN_MAP = {
   // is past means overdue for due date
   past: (date) => isPast(date),
+  yesterday: (date) => isYesterday(date),
   day: (date) => isToday(date),
   today: (date) => isToday(date),
+  tomorrow: (date) => isTomorrow(date),
   week: (date) => isThisWeek(date),
   month: (date) => isThisMonth(date),
   quarter: (date) => isThisQuarter(date),
@@ -30,7 +34,6 @@ const DATE_FN_MAP = {
 const evaluate = (task, { keyword, value }) => {
   switch (keyword) {
     case 'label':
-    case '#':
       return +task.data.labels
         .map((label) => label.name)
         .map((name) => compareTwoStrings(name, value))
@@ -66,22 +69,20 @@ export const matches = (queryString, task, mode = 'AND') => {
     .split(',')
     .map((frag) => frag.trim())
     .map((frag) => {
-      const hasColon = frag.includes(':');
       const [keyword, value] = frag.split(':').map((str) => str.trim());
 
-      // if no value and colon but has keyword, we assume it's the title
-      if (!value && !hasColon && keyword) {
-        return { keyword: 'title', value: keyword };
+      if (keyword && !value) {
+        // if it starts with #, it's label
+        if (keyword.startsWith('#'))
+          return { keyword: 'label', value: keyword.replace('#', '') };
+
+        // if no value and colon but has keyword, we assume it's the title
+        if (!frag.includes(':')) return { keyword: 'title', value: keyword };
       }
       // preserve case for value
       return { keyword: keyword.toLowerCase(), value };
     })
     .map((data) => evaluate(task, data));
-
-  // we compute the score to determine best match
-  const score =
-    results.reduce((acc, curr) => acc + curr) / results.length >
-    SIMILARITY_THRESHOLD;
 
   let isAMatch;
   if (mode === 'AND') {
@@ -89,6 +90,11 @@ export const matches = (queryString, task, mode = 'AND') => {
   } else {
     isAMatch = results.some((n) => n > SIMILARITY_THRESHOLD);
   }
+
+  // we compute the score to determine best match
+  const score =
+    results.reduce((acc, curr) => acc + curr) / results.length >
+    SIMILARITY_THRESHOLD;
 
   return isAMatch ? score : 0;
 };
