@@ -1,12 +1,9 @@
 import { html } from 'poor-man-jsx';
 import { KebabMenuIcon } from '../../assets/icons';
 import Core from '../../core';
-import { HIDE_EVENTS, SHOW_EVENTS } from '../../constants';
 import { EDIT_SUBTASK, EDIT_TASK } from '../../actions';
 import { createDropdown } from '../../utils/dropdown';
 import { useUndo } from '../../utils/undo';
-import { $ } from '../../utils/query';
-import { useTooltip } from '../../utils/useTooltip';
 import TaskTemplate from '../../template/Task';
 import DateBadge from '../DateBadge';
 
@@ -94,8 +91,6 @@ export default class BaseTask extends TaskTemplate {
         `,
       }
     );
-
-    this.oncreate.push(this.initTooltips.bind(this));
   }
 
   get location() {
@@ -124,25 +119,6 @@ export default class BaseTask extends TaskTemplate {
   }
 
   initMenu = (e) => createDropdown(e.target.children[0], e.target.children[1]);
-
-  initTooltips = (e) => {
-    // Manually init tooltip due to bug
-    const badges = [
-      ...($.data('name', 'task__badges', e.target).children ?? []),
-    ];
-    badges.forEach((badge) => {
-      badge.dataset.tooltipManual = 'true';
-      badge.addEventListener('@mount', () => {
-        const [onShow, onHide] = useTooltip(badge);
-
-        // BUG: Attaches twice on first render if `lastOpenedPage`
-        //      but not on consecutive renders. This must be due to the
-        //      async nature of MutationObserver
-        SHOW_EVENTS.forEach((name) => badge.addEventListener(name, onShow()));
-        HIDE_EVENTS.forEach((name) => badge.addEventListener(name, onHide()));
-      });
-    });
-  };
 
   render(position) {
     this.props.main['data-position'] = position;

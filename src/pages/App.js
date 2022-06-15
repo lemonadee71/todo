@@ -61,12 +61,7 @@ const routes = [
 
 const App = () => {
   const addTooltip = (element) => {
-    // BUG: Runs multiple times even though the element is only created once
-    //      especially for elements under `is-list`
     $$.data('tooltip', null, element).forEach((item) => {
-      // Manually use `useTooltip` for `is-list` items
-      if (item.dataset.tooltipManual) return;
-
       item.addEventListener('@mount', () => {
         const [onShow, onHide] = useTooltip(item);
 

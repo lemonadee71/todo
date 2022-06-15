@@ -23,11 +23,16 @@ PoorManJSX.onAfterCreation((element) => {
   });
 
   $$.data('dropdown', null, element).forEach((item) => {
+    if (item.dataset.dropdownInitialized) return;
+
     item.addEventListener('@mount', () => {
       createDropdown(
         item,
         $.data('dropdown-id', item.dataset.dropdown, element)
       );
+
+      // to prevent from being initialized again
+      item.dataset.dropdownInitialized = 'true';
     });
   });
 });
