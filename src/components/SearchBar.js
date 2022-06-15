@@ -19,7 +19,7 @@ const SearchBar = () => {
       ? items
           .map((task, i) =>
             // the threshold for best match is different
-            SearchResult(task.data, i === 0 && task.score > 0.5)
+            SearchResult(task.data, i === 0 && task.score > 0.65)
           )
           .map((item) => render(item))
       : render(
