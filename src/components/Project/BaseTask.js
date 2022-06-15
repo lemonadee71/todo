@@ -2,7 +2,6 @@ import { html } from 'poor-man-jsx';
 import { KebabMenuIcon } from '../../assets/icons';
 import Core from '../../core';
 import { EDIT_SUBTASK, EDIT_TASK } from '../../actions';
-import { createDropdown } from '../../utils/dropdown';
 import { useUndo } from '../../utils/undo';
 import TaskTemplate from '../../template/Task';
 import DateBadge from '../DateBadge';
@@ -56,12 +55,8 @@ export default class BaseTask extends TaskTemplate {
         target: 'main',
         method: 'after',
         template: html`
-          <div
-            data-name="task__controls"
-            onMount=${this.initMenu}
-            ${this.props.menu}
-          >
-            <button>
+          <div data-name="task__controls" ${this.props.menu}>
+            <button data-dropdown="${this.id}-menu">
               ${KebabMenuIcon(
                 'cursor-pointer stroke-gray-500 hover:stroke-gray-800 dark:hover:stroke-gray-300'
               )}
@@ -71,6 +66,7 @@ export default class BaseTask extends TaskTemplate {
               ignore="class"
               style="display: none;"
               data-name="task__menu"
+              data-dropdown-id="${this.id}-menu"
               data-dropdown-position="left"
               class="flex flex-col py-1 rounded divide-y divide-gray-500 space-y-1 text-center text-white text-sm bg-neutral-700 border border-gray-500 border-solid drop-shadow z-[99]"
             >
@@ -117,8 +113,6 @@ export default class BaseTask extends TaskTemplate {
       payload: { ...this.location, id: this.id },
     })();
   }
-
-  initMenu = (e) => createDropdown(e.target.children[0], e.target.children[1]);
 
   render(position) {
     this.props.main['data-position'] = position;

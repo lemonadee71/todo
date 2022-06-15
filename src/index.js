@@ -19,7 +19,9 @@ import './styles/style.css';
 
 PoorManJSX.onAfterCreation((element) => {
   $$.data('autosize', null, element).forEach((item) => {
+    if (item.dataset.autosized) return;
     item.addEventListener('@mount', () => autosize(item));
+    item.dataset.autosized = true;
   });
 
   $$.data('dropdown', null, element).forEach((item) => {
@@ -30,10 +32,10 @@ PoorManJSX.onAfterCreation((element) => {
         item,
         $.data('dropdown-id', item.dataset.dropdown, element)
       );
-
-      // to prevent from being initialized again
-      item.dataset.dropdownInitialized = 'true';
     });
+
+    // to prevent from being initialized again
+    item.dataset.dropdownInitialized = true;
   });
 });
 
