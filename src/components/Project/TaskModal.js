@@ -103,9 +103,7 @@ export default class TaskModal extends BaseTaskModal {
             </form>
 
             <div is-list class="space-y-1 divide-y-1">
-              ${this.task.$subtasks((items) =>
-                items.map(Subtask).map((item) => render(item))
-              )}
+              ${this.task.$subtasks.map(Subtask).map((item) => render(item))}
             </div>
           </div>
         `,

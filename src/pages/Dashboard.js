@@ -90,37 +90,31 @@ const Dashboard = () => {
           class="flex-1 grid auto-rows-[8rem] grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] content-start gap-3 p-2"
           onMount=${init}
         >
-          ${root.$projects((items) =>
-            items.map(ProjectCard).map((item) => render(item))
-          )}
+          ${root.$projects.map(ProjectCard).map((item) => render(item))}
         </div>
       </div>
 
       <div class="grid grid-rows-[auto_1fr] gap-3">
         <h2 class="font-semibold text-lg">Due This Week</h2>
         <div is-list class="px-2 space-y-1 overflow-auto scrollbar">
-          ${tasks.$dueThisWeek((items) =>
-            items
-              .sort((a, b) =>
-                compareAsc(parseDate(a.dueDate), parseDate(b.dueDate))
-              )
-              .map((data) => Task(data, false))
-              .map((data) => render(data))
-          )}
+          ${tasks.$dueThisWeek
+            .sort((a, b) =>
+              compareAsc(parseDate(a.dueDate), parseDate(b.dueDate))
+            )
+            .map((data) => Task(data, false))
+            .map((data) => render(data))}
         </div>
       </div>
 
       <div class="grid grid-rows-[auto_1fr] gap-3">
         <h2 class="font-semibold text-lg">Stale Tasks</h2>
         <div is-list class="px-2 space-y-1 overflow-auto scrollbar">
-          ${tasks.$stale((items) =>
-            items
-              .sort((a, b) =>
-                compareAsc(parseDate(a.lastUpdate), parseDate(b.lastUpdate))
-              )
-              .map((data) => Task(data, true))
-              .map((data) => render(data))
-          )}
+          ${tasks.$stale
+            .sort((a, b) =>
+              compareAsc(parseDate(a.lastUpdate), parseDate(b.lastUpdate))
+            )
+            .map((data) => Task(data, true))
+            .map((data) => render(data))}
         </div>
       </div>
     </div>

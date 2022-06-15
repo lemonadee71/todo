@@ -95,7 +95,7 @@ const Sidebar = () => {
             class="space-y-1 m-0"
             onMount=${init}
           >
-            ${data.$projects(items => items.map(ProjectLink).map((item) => render(item)))}
+            ${data.$projects.map(ProjectLink).map((item) => render(item))}
           </ul>
         </nav>
 

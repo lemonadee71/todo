@@ -146,18 +146,16 @@ const LabelPopover = (data, clickAction) => {
                 <h4 class="text-md font-medium mb-2">Labels</h4>
 
                 <div is-list class="mb-2 flex flex-col gap-1">
-                  ${project.$labels((items) =>
-                    items
-                      .map((label) =>
-                        Label(
-                          label,
-                          clickAction,
-                          toggleEditingMode,
-                          data.getLabels().includes(label.id)
-                        )
+                  ${project.$labels
+                    .map((label) =>
+                      Label(
+                        label,
+                        clickAction,
+                        toggleEditingMode,
+                        data.getLabels().includes(label.id)
                       )
-                      .map((item) => render(item))
-                  )}
+                    )
+                    .map((item) => render(item))}
                 </div>
 
                 <form class="space-y-2" onSubmit.prevent=${createLabel}>
