@@ -10,7 +10,7 @@ export const showToast = (options) => {
       border: `1px solid ${TOAST_COLORS.secondary.border}`,
     },
     ...options,
-    className: `custom-toast absolute box-border flex flex-row-reverse justify-between items-center px-3 py-2 w-72 rounded`,
+    className: `custom-toast absolute box-border flex flex-row-reverse justify-between items-center px-3 py-2 rounded min-w-min w-64 max-w-[18rem] mx-auto xs:mx-0`,
     gravity: 'bottom',
     position: 'left',
     stopOnFocus: false,
