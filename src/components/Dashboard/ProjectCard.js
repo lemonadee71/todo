@@ -8,8 +8,8 @@ import { useUndo } from '../../utils/undo';
 const ProjectCard = (data, i) => {
   const deleteProject = useUndo({
     type: PROJECT,
-    text: 'Project removed',
-    payload: { id: data.id, project: data.id },
+    message: 'Project removed',
+    data: { id: data.id, project: data.id },
   });
 
   return html`

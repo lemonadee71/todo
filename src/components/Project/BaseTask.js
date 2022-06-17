@@ -109,8 +109,8 @@ export default class BaseTask extends TaskTemplate {
   deleteTask() {
     useUndo({
       type: this.action,
-      text: `${this.type[0].toUpperCase() + this.type.slice(1)} removed`,
-      payload: { ...this.location, id: this.id },
+      message: `${this.type[0].toUpperCase() + this.type.slice(1)} removed`,
+      data: { ...this.location, id: this.id },
     })();
   }
 

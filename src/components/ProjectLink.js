@@ -6,8 +6,8 @@ import { DeleteIcon } from '../assets/icons';
 const ProjectLink = (data, i) => {
   const deleteProject = useUndo({
     type: PROJECT,
-    text: 'Project removed',
-    payload: { id: data.id, project: data.id },
+    message: 'Project removed',
+    data: { id: data.id, project: data.id },
   });
 
   return html`

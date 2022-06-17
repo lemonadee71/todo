@@ -142,8 +142,8 @@ const Calendar = (projectId) => {
       beforeDeleteSchedule: ({ schedule }) => {
         useUndo({
           type: TASK,
-          text: 'Task removed',
-          payload: { ...schedule.raw, id: schedule.id },
+          message: 'Task removed',
+          data: { ...schedule.raw, id: schedule.id },
         })();
       },
     });

@@ -23,8 +23,8 @@ const List = (data, pos) => {
 
   const deleteList = useUndo({
     type: PROJECT.LISTS,
-    text: 'List removed',
-    payload: {
+    message: 'List removed',
+    data: {
       id: data.id,
       project: data.project,
       list: data.id,
