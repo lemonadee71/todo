@@ -11,7 +11,7 @@ import DateBadge from './DateBadge';
 class GlobalTask extends TaskTemplate {
   constructor(data) {
     super(data);
-    this.projectData = Core.data.root.get(data.project);
+    this.projectData = Core.main.getProject(data.project);
 
     // to avoid clutter and additional reads for online mode
     this.props.labels = { style: 'display: none;' };
