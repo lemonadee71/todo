@@ -16,6 +16,7 @@ import Router from './components/Router';
 import * as pages from './pages';
 import { config as firebaseConfig } from './firebase-config';
 import './styles/style.css';
+import { PROJECT } from './actions';
 
 PoorManJSX.onAfterCreation((element) => {
   $$.data('autosize', null, element).forEach((item) => {
@@ -91,7 +92,10 @@ const routes = [
 
         const [, , id] = match.url.split('/');
         if (id) {
-          Core.event.emit({ project: id, data: { lastOpened: Date.now() } });
+          Core.event.emit(PROJECT.UPDATE, {
+            project: id,
+            data: { lastOpened: Date.now() },
+          });
         }
 
         if (isGuest()) {
