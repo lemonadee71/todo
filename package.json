@@ -1,7 +1,7 @@
 {
   "name": "todo",
-  "version": "1.0.0",
-  "description": "",
+  "version": "3.0.0",
+  "description": "A full-featured task management app. A project for The Odin Project.",
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,8 +15,14 @@
     "type": "git",
     "url": "git+https://github.com/lemonadee71/todo.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "todo",
+    "todo-list",
+    "project-management",
+    "kanban",
+    "markdown"
+  ],
+  "author": "Shin Andrei Riego",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/lemonadee71/todo/issues"
