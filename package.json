@@ -9,7 +9,7 @@
     "build": "webpack --config webpack.prod.js",
     "watch": "webpack --watch --config webpack.dev.js",
     "predeploy": "npm run build && git add . && git commit -m ':package: Update build file'",
-    "deploy": "git subtree push --prefix public origin gh-pages"
+    "deploy": "git subtree push --prefix public origin gh-pages && firebase deploy --only hosting"
   },
   "repository": {
     "type": "git",
