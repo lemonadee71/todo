@@ -92,9 +92,7 @@ export const matches = (queryString, task, mode = 'AND') => {
   }
 
   // we compute the score to determine best match
-  const score =
-    results.reduce((acc, curr) => acc + curr) / results.length >
-    SIMILARITY_THRESHOLD;
+  const score = results.reduce((acc, curr) => acc + curr) / results.length;
 
   return isAMatch ? score : 0;
 };
