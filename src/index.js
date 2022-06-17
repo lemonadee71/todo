@@ -90,10 +90,9 @@ const routes = [
         };
 
         const [, , id] = match.url.split('/');
-        if (id) Core.main.updateProject(id, { lastOpened: Date.now() });
-        // sync local storage manually
-        // since we don't emit any events
-        Core.main.syncLocalStorage();
+        if (id) {
+          Core.event.emit({ project: id, data: { lastOpened: Date.now() } });
+        }
 
         if (isGuest()) {
           LocalStorage.store(LAST_OPENED_PAGE, data);
