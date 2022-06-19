@@ -64,10 +64,10 @@ const SearchBar = () => {
 
   return html`
     <div
-      class="group relative col-span-2 xs:col-[2_/_3] xs:row-[1_/_2] sm:w-3/4 sm:max-w-2xl md:w-1/2 md:ml-56"
+      class="group relative col-span-2 xs:col-span-1 xs:col-start-2 xs:row-start-1 sm:w-3/4 sm:max-w-2xl md:w-1/2 md:ml-56"
     >
       <div
-        class="justify-self-stretch px-3 flex items-center gap-1 sm:gap-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-100 dark:hover:bg-gray-200 focus-within:bg-white focus-within:hover:bg-white focus-within:ring-2 focus-within:ring-sky-400"
+        class="justify-self-stretch px-3 flex items-center gap-1 sm:gap-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-100 dark:hover:bg-gray-200 focus-within:bg-white focus-within:ring-2 focus-within:ring-sky-400"
       >
         <label for="search">
           ${SearchIcon('stroke-gray-600 group-hover:stroke-gray-700', 20)}

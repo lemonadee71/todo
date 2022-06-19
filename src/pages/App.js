@@ -146,8 +146,12 @@ const App = () => {
         </svg>
       </button>
 
-      <div class="justify-self-end sm:col-[3] flex flex-row items-center gap-1">
-        <p class="font-medium">${getUserName()}</p>
+      ${SearchBar()}
+
+      <div
+        class="justify-self-end row-start-1 col-start-2 xs:col-start-3 flex items-center gap-1"
+      >
+        <span class="font-medium">${getUserName()}</span>
         <button class="group h-6 w-6" data-dropdown="user-menu">
           <img
             class="rounded-full group-active:ring active:ring-teal-500"
@@ -155,24 +159,22 @@ const App = () => {
             alt="profile picture"
           />
         </button>
-      </div>
 
-      <div
-        class="flex flex-col bg-neutral-700 text-white text-sm text-center py-1 rounded divide-y divide-neutral-500 drop-shadow z-[2]"
-        style="display: none;"
-        data-dropdown-id="user-menu"
-        data-dropdown-position="bottom-end"
-        data-dropdown-offset="0,10"
-      >
-        <button class="px-2" onClick=${() => Core.event.emit(CHANGE_THEME)}>
-          ${Core.state.$darkTheme((value) => (value ? 'Light' : 'Dark'))} mode
-        </button>
-        <button class="px-2 hover:text-red-600" onClick=${signOut}>
-          Logout
-        </button>
+        <div
+          class="flex flex-col bg-neutral-700 text-white text-sm text-center py-1 rounded divide-y divide-neutral-500 drop-shadow z-[2]"
+          style="display: none;"
+          data-dropdown-id="user-menu"
+          data-dropdown-position="bottom-end"
+          data-dropdown-offset="0,10"
+        >
+          <button class="px-2" onClick=${() => Core.event.emit(CHANGE_THEME)}>
+            ${Core.state.$darkTheme((value) => (value ? 'Light' : 'Dark'))} mode
+          </button>
+          <button class="px-2 hover:text-red-600" onClick=${signOut}>
+            Logout
+          </button>
+        </div>
       </div>
-
-      ${SearchBar()}
     </header>
     <!-- sidebar -->
     ${Sidebar()}

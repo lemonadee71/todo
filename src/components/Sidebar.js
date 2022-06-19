@@ -49,7 +49,7 @@ const Sidebar = () => {
   // prettier-ignore
   return html`
     <aside
-      class="${state.$isVisible(value => value ? 'w-56' : 'w-0')} md:w-56 fixed top-0 left-0 h-screen bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all dark:bg-[#202020]"
+      class="${state.$isVisible(value => value ? 'visible w-56' : 'invisible w-0')} md:visible md:w-56 fixed top-0 left-0 h-screen bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all dark:bg-[#202020]"
       id="sidebar"
       onToggleSidebar=${toggleVisibility}
       onDestroy=${revoke}

@@ -21,12 +21,15 @@ const ProjectLink = (data, i) => {
         is="navigo-link"
         class="no-underline hover:underline text-sm text-white truncate"
         href="${data.link}"
+        text="${data.name}"
       >
-        {% ${data.name} %}
       </a>
-      <button onClick=${deleteProject}>
+      <button
+        class="w-0 opacity-0 group-hover:w-fit group-hover:opacity-100 focus:w-fit focus:opacity-100"
+        onClick=${deleteProject}
+      >
         ${DeleteIcon(
-          'invisible group-hover:visible stroke-red-500 hover:stroke-red-700',
+          'stroke-red-500 hover:stroke-red-700 focus:stroke-red-700',
           18
         )}
       </button>
