@@ -9,12 +9,17 @@ import Badge from './Badge';
 import DateBadge from './DateBadge';
 
 class GlobalTask extends TaskTemplate {
+  #projectData;
+
   constructor(data) {
     super(data);
-    this.projectData = Core.main.getProject(data.project);
+    this.#projectData = Core.main.getProject(data.project);
 
     // to avoid clutter and additional reads for online mode
     this.props.labels = { style: 'display: none;' };
+    this.props.openBtn = {
+      class: 'px-2 py-1 rounded text-white text-sm bg-sky-500 hover:bg-sky-600',
+    };
 
     if (this.data.dueDate) this.badges.push(DateBadge(data, true));
 
@@ -35,24 +40,14 @@ class GlobalTask extends TaskTemplate {
         })
       );
     }
-
-    // show the color of project
-    this.template.push({
-      target: 'main',
-      method: 'before',
-      template: html`<div
-        class="self-stretch w-1"
-        style="background-color: ${this.projectData.color};"
-      ></div>`,
-    });
   }
 
   openOnLocation = () => {
-    const url = this.projectData.link;
+    const url = this.#projectData.link;
 
     if (url !== Core.state.currentPage) {
       Core.data.queue.push(this.data.location);
-      Core.router.navigate(url, { title: this.projectData.name });
+      Core.router.navigate(url, { title: this.#projectData.name });
     } else {
       // it's okay to emit directly since we know that data is already fetched
       Core.event.emit(
@@ -62,6 +57,32 @@ class GlobalTask extends TaskTemplate {
       );
     }
   };
+
+  render() {
+    // we add the templates here so that we have access to props
+    this.template.push(
+      // show the color of project
+      {
+        target: 'main',
+        method: 'before',
+        template: html`<div
+          class="self-stretch w-1"
+          style="background-color: ${this.#projectData.color};"
+        ></div>`,
+      },
+      {
+        target: 'main',
+        method: 'after',
+        template: html`
+          <button onClick=${this.openOnLocation} ${this.props.openBtn}>
+            Open
+          </button>
+        `,
+      }
+    );
+
+    return super.render();
+  }
 }
 
 export default GlobalTask;

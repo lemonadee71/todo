@@ -1,4 +1,3 @@
-import { html } from 'poor-man-jsx';
 import { getDateKeyword } from '../../utils/date';
 import Badge from '../Badge';
 import GlobalTask from '../GlobalTask';
@@ -9,19 +8,9 @@ const Task = (data, showLastUpdate = false) => {
   component.props.main = {
     class: `${component._className} rounded-md drop-shadow-md group`,
   };
-
-  component.template.push({
-    target: 'main',
-    method: 'after',
-    template: html`
-      <button
-        class="px-2 py-1 rounded text-white text-sm bg-sky-500 hover:bg-sky-600 hidden group-hover:block"
-        onClick=${component.openOnLocation}
-      >
-        Open
-      </button>
-    `,
-  });
+  component.props.openBtn = {
+    class: `${component.props.openBtn.class} invisible group-hover:visible`,
+  };
 
   if (showLastUpdate) {
     component.badges.unshift(
