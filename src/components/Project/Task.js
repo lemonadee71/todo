@@ -52,7 +52,8 @@ const Task = (data, idx) => {
   };
 
   component.props = {
-    main: { class: `${component._className} rounded-md drop-shadow-lg` },
+    ...component.props,
+    main: { class: `${component.props.main.class} rounded-md drop-shadow-lg` },
     badges: {
       onClick: (e) => {
         // use event delegation

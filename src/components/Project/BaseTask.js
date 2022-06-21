@@ -13,80 +13,20 @@ export default class BaseTask extends TaskTemplate {
     super(data);
     this.action = action;
 
-    if (this.data.dueDate) this.badges.push(DateBadge(data));
-
-    // populate our template
-    this.template.push(
-      // add checkbox
-      {
-        target: 'main',
-        method: 'before',
-        template: html`
-          <label
-            class="relative cursor-pointer select-none"
-            data-name="task__checkbox"
-          >
-            <input
-              class="absolute cursor-pointer w-0 h-0 opacity-0"
-              type="checkbox"
-              name="mark-as-done"
-              checked="${this.data.completed}"
-              onClick=${this.toggleComplete.bind(this)}
-            />
-            <div
-              class="box-border flex justify-center items-center bg-slate-100 rounded-sm border border-solid border-gray-400 dark:bg-transparent dark:border-white"
-              style="width: 1.25rem; height: 1.25rem;"
-              ${this.props.checkbox}
-            >
-              <div
-                class="rounded-sm bg-cyan-500 hover:opacity-80 dark:bg-[#208DA5] ${this
-                  .data.completed
-                  ? 'visible'
-                  : 'invisible'}"
-                style="width: 0.75rem; height: 0.75rem;"
-                ${this.props.checkmark}
-              ></div>
-            </div>
-          </label>
-        `,
+    this.props = {
+      ...this.props,
+      checkbox: {
+        class:
+          'box-border w-5 h-5 flex justify-center items-center bg-slate-100 rounded-sm border border-solid border-gray-400 dark:bg-transparent dark:border-white',
       },
-      // add kebab menu
-      {
-        target: 'main',
-        method: 'after',
-        template: html`
-          <div data-name="task__controls" ${this.props.menu}>
-            <button data-dropdown="${this.id}-menu">
-              ${KebabMenuIcon(
-                'cursor-pointer stroke-gray-500 hover:stroke-gray-800 dark:hover:stroke-gray-300'
-              )}
-            </button>
+      checkmark: {
+        class: `w-3 h-3 rounded-sm bg-cyan-500 hover:opacity-80 dark:bg-[#208DA5] ${
+          this.data.completed ? 'visible' : 'invisible'
+        }`,
+      },
+    };
 
-            <div
-              ignore="class"
-              style="display: none;"
-              data-name="task__menu"
-              data-dropdown-id="${this.id}-menu"
-              data-dropdown-position="left"
-              class="flex flex-col py-1 rounded divide-y divide-gray-500 space-y-1 text-center text-white text-sm bg-neutral-700 border border-gray-500 border-solid drop-shadow z-[99]"
-            >
-              <button
-                class="px-2 hover:text-blue-400"
-                onClick=${this.editTask.bind(this)}
-              >
-                Edit
-              </button>
-              <button
-                class="px-2 hover:text-red-600"
-                onClick=${this.deleteTask.bind(this)}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        `,
-      }
-    );
+    if (this.data.dueDate) this.badges.push(DateBadge(data));
   }
 
   get location() {
@@ -116,6 +56,69 @@ export default class BaseTask extends TaskTemplate {
 
   render(position) {
     this.props.main['data-position'] = position;
+
+    // populate our template
+    this.template.push(
+      // add checkbox
+      {
+        target: 'main',
+        method: 'before',
+        template: html`
+          <label
+            class="relative cursor-pointer select-none focus-within:ring"
+            data-name="task__checkbox"
+          >
+            <input
+              class="absolute w-0 h-0 opacity-0"
+              type="checkbox"
+              name="mark-as-done"
+              checked="${this.data.completed}"
+              onClick=${this.toggleComplete.bind(this)}
+            />
+            <div ${this.props.checkbox}>
+              <div ${this.props.checkmark}></div>
+            </div>
+          </label>
+        `,
+      },
+      // add kebab menu
+      {
+        target: 'main',
+        method: 'after',
+        template: html`
+          <div data-name="task__controls" ${this.props.menu}>
+            <button data-dropdown="${this.id}-menu">
+              ${KebabMenuIcon(
+                'stroke-gray-500 hover:stroke-gray-800 dark:hover:stroke-gray-300'
+              )}
+            </button>
+
+            <div
+              ignore="class"
+              class="flex flex-col py-1 rounded divide-y divide-gray-500 space-y-1 text-center text-white text-sm bg-neutral-700 border border-solid border-gray-500 drop-shadow z-[99]"
+              style="display: none;"
+              data-name="task__menu"
+              data-dropdown-id="${this.id}-menu"
+              data-dropdown-position="left"
+            >
+              <button
+                class="px-2 hover:text-blue-400"
+                onClick=${this.editTask.bind(this)}
+              >
+                Edit
+              </button>
+              <button
+                class="px-2 hover:text-red-600"
+                onClick=${this.deleteTask.bind(this)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        `,
+      }
+    );
+
     return super.render();
   }
 }
