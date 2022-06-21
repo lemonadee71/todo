@@ -69,17 +69,17 @@ const Dashboard = () => {
       class="flex-1 grid auto-rows-min xs:grid-cols-2 lg:grid-rows-2 lg:grid-cols-[1fr_minmax(14rem,18rem)] gap-x-6 gap-y-4 px-6 overflow-auto scrollbar"
     >
       <div
-        class="xs:col-span-2 xs:row-auto lg:col-span-1 lg:row-span-2 flex flex-col overflow-auto scrollbar"
+        class="xs:col-span-2 xs:row-auto lg:col-span-1 lg:row-span-2 flex flex-col overflow-auto scrollbar px-2"
       >
         <div class="flex justify-between items-center">
           <h2 class="font-semibold text-lg mb-3">Your Projects</h2>
           <button
-            class="group rounded border border-solid border-neutral-400 hover:border-blue-400 hover:bg-blue-100"
+            class="group rounded border border-solid border-neutral-400 hover:border-blue-400 hover:bg-blue-100 focus:border-blue-400 focus:bg-blue-100"
             data-tooltip="Create new project"
             onClick=${createNewProject}
           >
             ${AddIcon(
-              'stroke-black dark:stroke-white group-hover:stroke-blue-500',
+              'stroke-black dark:stroke-white group-hover:stroke-blue-500 group-focus:stroke-blue-500',
               20,
               1.5
             )}
