@@ -45,7 +45,7 @@ export default class Task {
     return html`
       <div
         key="${this.type}-${this.id}"
-        class="${this._className}"
+        tabindex="0"
         data-id="${this.id}"
         data-project="${this.data.project}"
         data-list="${this.data.list}"

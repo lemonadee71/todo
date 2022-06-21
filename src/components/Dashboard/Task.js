@@ -6,6 +6,7 @@ const Task = (data, showLastUpdate = false) => {
   const component = new GlobalTask(data);
 
   component.props.main = {
+    ...component.props.main,
     class: `${component.props.main.class} rounded-md drop-shadow-md group`,
   };
   component.props.openBtn = {

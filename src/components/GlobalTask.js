@@ -15,6 +15,12 @@ class GlobalTask extends TaskTemplate {
     super(data);
     this.#projectData = Core.main.getProject(data.project);
 
+    this.props.main = {
+      ...this.props.main,
+      onKeydown: (e) => {
+        if (e.key === ' ' || e.key === 'Enter') this.openOnLocation();
+      },
+    };
     // to avoid clutter and additional reads for online mode
     this.props.labels = { style: 'display: none;' };
     this.props.openBtn = {
