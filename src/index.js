@@ -17,6 +17,7 @@ import Router from './components/Router';
 import * as pages from './pages';
 import { config as firebaseConfig } from './firebase-config';
 import './styles/style.css';
+import 'wicg-inert';
 
 PoorManJSX.onAfterCreation((element) => {
   if (element.matches('[data-autosize]')) {
