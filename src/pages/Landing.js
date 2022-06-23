@@ -37,18 +37,15 @@ const Landing = () => {
     <main>
       <!-- Hero -->
       <div class="bg-[#1F2937]">
+        <h2 class="sr-only">Hero</h2>
         <div
           class="container-auto px-6 py-10 space-y-4 lg:gap-6 lg:py-20 lg:flex lg:flex-row-reverse lg:justify-between lg:items-center"
         >
-          <img
-            class="h-full md:w-96 mx-auto"
-            src="${heroImage}"
-            alt="hero image"
-          />
+          <img class="h-full md:w-96 mx-auto" src="${heroImage}" alt="" />
           <div class="space-y-3 text-center lg:text-left">
-            <h2 class="font-extrabold text-5xl text-[#F9FAF8]">
+            <p class="font-extrabold text-5xl text-[#F9FAF8]">
               Manage your tasks efficiently
-            </h2>
+            </p>
             <p class="text-lg text-[#E5E7EB]">
               Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae ea
               eaque molestiae explicabo nihil corporis ipsum error maxime
@@ -126,8 +123,8 @@ const Landing = () => {
       </div>
       <!-- Testimonial -->
       <div class="bg-[#E5E7EB]">
+        <h2 class="sr-only">Testimonial</h2>
         <div class="container-auto px-8 py-20 md:px-20 md:py-28">
-          <h2 class="sr-only">Testimonial</h2>
           <p
             class="font-extralight italic text-3xl text-[#1F2937] mb-4 md:text-4xl"
           >
@@ -146,9 +143,9 @@ const Landing = () => {
           class="p-12 space-y-4 bg-[#3882F6] text-center rounded-lg md:px-20 md:flex md:justify-between md:items-center md:gap-3"
         >
           <div class="space-y-2 md:text-left">
-            <h2 class="font-bold text-2xl text-white">
+            <p class="font-bold text-2xl text-white">
               What are you waiting for? Try it now!
-            </h2>
+            </p>
             <p class="text-white">
               Sign up now by clicking that button right over there!
             </p>
@@ -163,38 +160,31 @@ const Landing = () => {
       </div>
     </main>
 
-    <footer class="h-28 bg-[#1F2937]">
+    <footer class="h-20 bg-[#1F2937]">
       <div
         class="container-auto h-full px-6 flex flex-col justify-center items-center space-y-1"
       >
         <p class="text-center text-white">
-          Created with &#10084; by
+          Created with &#10084 <span class="sr-only">love</span> by
           <a
-            class="hover:underline"
+            class="font-medium hover:underline"
             href="https://github.com/lemonadee71"
-            target="_blank"
           >
             Shin Andrei Riego
           </a>
-          . See code on
+          . See
           <a
-            class="hover:underline"
+            class="font-medium hover:underline"
             href="https://github.com/lemonadee71/todo"
             target="_blank"
           >
-            Github
-            <span class="inline-block">
-              ${GithubIcon(
-                'stroke-white group-hover:stroke-gray-300',
-                15,
-                1.25
-              )}
+            code on Github
+            <span class="sr-only">Opens in new window</span>
+            <span class="inline-block" aria-hidden="true">
+              ${GithubIcon('stroke-white group-hover:stroke-gray-300', 15)}
             </span>
           </a>
           .
-        </p>
-        <p class="text-sm text-center text-gray-300">
-          Copyright &copy; The Odin Project 2022
         </p>
       </div>
     </footer>
