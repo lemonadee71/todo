@@ -36,7 +36,7 @@ class Modal extends HTMLElement {
     this.append(
       render(html`
         <div
-          class="fixed top-0 left-0 w-full h-full z-[101] overflow-auto ${this
+          class="fixed top-0 left-0 w-full h-full z-50 overflow-auto ${this
             .state.$contentClass}"
           data-name="dialog__content"
           onClick=${(e) => {
@@ -46,7 +46,7 @@ class Modal extends HTMLElement {
           ${this.state.$content((value) => render(value))}
         </div>
         <div
-          class="fixed top-0 left-0 w-full h-full bg-[rgba(102,102,102,0.4)] z-[99]"
+          class="fixed top-0 left-0 w-full h-full bg-[rgba(102,102,102,0.4)] z-40"
           data-name="dialog__mask"
         ></div>
       `)

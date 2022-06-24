@@ -69,13 +69,13 @@ export default class BaseTask extends TaskTemplate {
             data-name="task__checkbox"
           >
             <input
-              class="absolute w-0 h-0 opacity-0"
+              class="absolute w-0 h-0 opacity-0 peer"
               type="checkbox"
               name="mark-as-done"
               checked="${this.data.completed}"
               onClick=${this.toggleComplete.bind(this)}
             />
-            <div ${this.props.checkbox}>
+            <div class="peer-focus:ring" ${this.props.checkbox}>
               <div ${this.props.checkmark}></div>
             </div>
           </label>
@@ -95,7 +95,7 @@ export default class BaseTask extends TaskTemplate {
 
             <div
               ignore="class"
-              class="flex flex-col py-1 rounded divide-y divide-gray-500 space-y-1 text-center text-white text-sm bg-neutral-700 border border-solid border-gray-500 drop-shadow z-[99]"
+              class="flex flex-col py-1 rounded divide-y divide-gray-500 space-y-1 text-center text-white text-sm bg-neutral-700 border border-solid border-gray-500 drop-shadow z-20"
               style="display: none;"
               data-name="task__menu"
               data-dropdown-id="${this.id}-menu"
