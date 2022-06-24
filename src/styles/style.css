@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
 /* vendor css */
-@import '~github-markdown-css';
 @import '~flatpickr/dist/flatpickr.min.css';
 @import '~toastify-js/src/toastify.css';
 @import '~tui-calendar/dist/tui-calendar.css';

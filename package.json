@@ -34,6 +34,8 @@
   "devDependencies": {
     "@babel/core": "^7.17.9",
     "@babel/preset-env": "^7.16.11",
+    "@tailwindcss/line-clamp": "^0.4.0",
+    "@tailwindcss/typography": "^0.5.2",
     "@types/webpack-merge": "^5.0.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.4",
@@ -62,12 +64,10 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.10.2",
-    "@tailwindcss/line-clamp": "^0.4.0",
     "autosize": "^5.0.1",
     "date-fns": "^2.16.1",
     "firebase": "^9.5.0",
     "flatpickr": "^4.6.9",
-    "github-markdown-css": "^4.0.0",
     "navigo": "^8.11.1",
     "poor-man-jsx": "^3.3.0",
     "showdown": "^1.9.1",
