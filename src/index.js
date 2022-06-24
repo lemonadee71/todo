@@ -65,8 +65,8 @@ const routes = [
       LocalStorage.prefix = `${Core.state.currentUser}__`;
 
       if (isGuest()) {
-        Core.data.root.add(Core.main.getLocalData());
         Core.main.initLocal();
+        Core.data.root.add(Core.main.getAllProjects());
 
         // to make local work with useSelectLocation
         Core.data.fetched.projects.push(...Core.data.root.ids);

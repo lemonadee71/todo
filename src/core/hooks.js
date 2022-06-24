@@ -2,6 +2,7 @@ import { query, where } from 'firebase/firestore';
 import { createHook, html, render } from 'poor-man-jsx';
 import Core from '.';
 import { FIREBASE, PROJECT, TASK } from '../actions';
+import { isGuest } from '../utils/auth';
 import { getCollectionRef, getDocuments } from '../utils/firestore';
 import { copy } from '../utils/misc';
 
@@ -124,13 +125,13 @@ export const useLocationOptions = (data = {}) => {
     render(html`${turnItemsToOptions(items, state.list)}`);
 
   const syncListOptions = async (projectId) => {
-    let result;
+    let result = [];
 
     if (!projectId) {
       result = [];
     } else if (Core.data.fetched.projects.includes(projectId)) {
       result = Core.main.getLists(projectId);
-    } else {
+    } else if (!isGuest()) {
       result = await getDocuments(
         query(getCollectionRef('Lists'), where('project', '==', projectId))
       );
