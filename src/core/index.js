@@ -14,25 +14,29 @@ const Core = (() => {
     currentPage: '',
     expandLabels: false,
   });
-  const [hook] = createHook({
+  const globalData = {
     root: new IdList(),
     toasts: [],
     // temp queue of task ids to open after project rendered
     // either 0 or 1 in length
     queue: [],
     fetched: { projects: [], lists: [] },
-  });
+  };
   const event = new EventEmitter();
 
   const trackPage = (match) => {
     state.currentPage = match.url;
   };
 
+  /**
+   * Clear global data and state
+   */
   const clearData = () => {
     state.currentUser = null;
+    state.expandLabels = false;
 
-    hook.root.clear();
-    hook.fetched = { projects: [], lists: [] };
+    globalData.root.clear();
+    globalData.fetched = { projects: [], lists: [] };
 
     router.off('*', trackPage);
   };
@@ -247,7 +251,7 @@ const Core = (() => {
     event,
     router,
     state,
-    data: hook,
+    data: globalData,
     clearData,
     setupListeners,
   };
