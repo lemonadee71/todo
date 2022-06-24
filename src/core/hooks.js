@@ -64,6 +64,11 @@ export const useTask = (projectId, listId, taskId, subtaskId = null) => {
   const action = subtaskId ? TASK.SUBTASKS : TASK;
 
   const unsubscribe = [
+    Core.event.onSuccess(TASK.TRANSFER, ({ result }) => {
+      task.project = result.project;
+      task.list = result.list;
+      if (subtaskId) task.parent = result.parent;
+    }),
     Core.event.onSuccess(action.UPDATE, (newData) => {
       Object.assign(task, newData.data);
     }),
@@ -101,6 +106,7 @@ export const useLocationOptions = (data = {}) => {
       (item, i) =>
         html`
           <option
+            class="text-black bg-white dark:text-white dark:bg-[#272727]"
             value="${item.id}"
             selected=${item.id === defaultValue || (i === 0 && !defaultValue)}
           >

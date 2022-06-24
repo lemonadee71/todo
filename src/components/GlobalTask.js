@@ -41,6 +41,7 @@ class GlobalTask extends TaskTemplate {
           bgColor: DEFAULT_COLORS[9],
           props: {
             key: 'subtasks',
+            'aria-label': 'This task has subtasks',
             'data-tooltip': 'This task has subtasks',
           },
         })

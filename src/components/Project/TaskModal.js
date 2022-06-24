@@ -1,10 +1,10 @@
 import { html, render } from 'poor-man-jsx';
 import { TASK } from '../../actions';
 import Core from '../../core';
+import { useLocationOptions } from '../../core/hooks';
+import { SubtasksIcon } from '../../assets/icons';
 import BaseTaskModal from './BaseTaskModal';
 import Subtask from './Subtask';
-import { SubtasksIcon } from '../../assets/icons';
-import { useLocationOptions } from '../../core/hooks';
 
 export default class TaskModal extends BaseTaskModal {
   constructor(data) {
@@ -53,17 +53,31 @@ export default class TaskModal extends BaseTaskModal {
         target: 'title',
         template: html`
           <div onDestroy=${unsubscribe}>
-            <span class="text-sm text-gray-500 dark:text-gray-200">In</span>
+            <p class="inline text-sm text-gray-500 dark:text-gray-200">
+              In
+              <span class="sr-only">
+                project
+                ${this.task.$project((id) => Core.main.getProject(id).name)}
+              </span>
+            </p>
             <select
-              class="w-16 max-w-32 bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100"
+              class="max-w-[128px] bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100"
               name="project"
               onChange=${onProjectChange(this.transferTask)}
             >
               ${projectOptions}
             </select>
-            <span class="text-sm text-gray-500 dark:text-gray-200">, </span>
+            <p class="inline text-sm text-gray-500 dark:text-gray-200">
+              ,
+              <span class="sr-only">
+                and in list
+                ${this.task.$list(
+                  (id) => Core.main.getList(this.task.project, id).name
+                )}
+              </span>
+            </p>
             <select
-              class="w-fit max-w-32 bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100"
+              class="max-w-[128px] bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100"
               name="list"
               onChange=${onListChange(this.transferTask)}
               onMount=${initializeListOptions}
@@ -89,6 +103,7 @@ export default class TaskModal extends BaseTaskModal {
             <form onSubmit.prevent=${this.createSubtask}>
               <button
                 class="text-xl text-blue-600 hover:text-blue-800"
+                aria-label="Add subtask"
                 type="submit"
               >
                 +
@@ -98,11 +113,11 @@ export default class TaskModal extends BaseTaskModal {
                 type="text"
                 id="new-subtask"
                 name="new-subtask"
-                placeholder="New subtask"
+                placeholder="Create subtask"
               />
             </form>
 
-            <div is-list class="space-y-1 divide-y-1">
+            <div is-list class="space-y-1 divide-y-1 px-2">
               ${this.task.$subtasks.map(Subtask).map((item) => render(item))}
             </div>
           </div>

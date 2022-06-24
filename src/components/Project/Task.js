@@ -57,7 +57,7 @@ const Task = (data, idx) => {
     badges: {
       onClick: (e) => {
         // use event delegation
-        if (e.target.dataset.id === 'subtask-badge') {
+        if (e.target.getAttribute('key') === 'subtasks') {
           state.showSubtasks = !state.showSubtasks;
         }
       },
@@ -65,13 +65,14 @@ const Task = (data, idx) => {
   };
 
   if (data.totalSubtasks) {
+    // TODO: Make this more accessible; should be read as toggle button
     component.badges.push(
       Badge({
         content: `${data.incompleteSubtasks} / ${data.totalSubtasks}`,
         bgColor: DEFAULT_COLORS[9],
         props: {
           key: 'subtasks',
-          'data-id': 'subtask-badge',
+          'aria-label': `Completed ${data.incompleteSubtasks} out of ${data.totalSubtasks} subtasks`,
           'data-tooltip': 'This task has subtasks',
         },
       })

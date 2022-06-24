@@ -122,19 +122,22 @@ export default class BaseTaskModal {
         onCreate=${this.init}
         onDestroy=${this._revoke}
       >
-        <button
-          class="absolute top-0 right-0 mr-3 text-2xl text-gray-600 hover:text-gray-800 dark:text-white dark:hover:text-gray-300"
-          onClick=${() => $('#modal').pop()}
-        >
-          &times;
-        </button>
+        <div data-name="task__buttons">
+          <button
+            class="absolute top-0 right-4 text-2xl text-gray-600 hover:text-gray-800 dark:text-white dark:hover:text-gray-300"
+            aria-label="Close modal"
+            onClick=${() => $('#modal').close()}
+          >
+            &times;
+          </button>
+        </div>
 
         <!-- Title -->
         <div data-name="task__title">
           <h2 class="sr-only">{% ${this.data.title} %}</h2>
           <!-- prettier-ignore -->
           <textarea
-            class="font-semibold text-lg w-full p-1 rounded-sm bg-inherit resize-none overflow-hidden placeholder:text-slate-600 focus:ring focus:placeholder:text-slate-400 dark:placeholder:text-slate-200 dark:focus:placeholder:text-slate-400"
+            class="font-semibold text-xl w-full p-1 rounded-sm bg-inherit resize-none overflow-hidden placeholder:text-slate-600 focus:ring focus:placeholder:text-slate-400 dark:placeholder:text-slate-200 dark:focus:placeholder:text-slate-400"
             name="title"
             rows="1"
             data-autosize
@@ -152,18 +155,20 @@ export default class BaseTaskModal {
 
           <div is-list class="flex flex-row flex-wrap gap-1">
             ${this.task.$labels((labels) => {
-              const button = Badge({
-                content: '+',
-                additionalCls:
-                  'px-3 text-sm text-gray-600 bg-[#dedede] hover:text-gray-800 dark:text-white dark:hover:text-gray-300 dark:bg-transparent dark:border dark:border-solid dark:border-white',
-                props: {
-                  onMount: this.initPopover,
-                  key: 'add-label',
-                  'ignore-all': '',
-                  'data-tooltip': 'Add label',
-                  'data-tooltip-position': 'top',
-                },
-              });
+              const btn = html`
+                <button
+                  ignore-all
+                  key="add-label"
+                  class="text-sm text-gray-600 px-3 py-1 rounded bg-[#dedede] hover:text-gray-800 dark:text-white dark:hover:text-gray-300 dark:bg-transparent dark:border dark:border-solid dark:border-white"
+                  aria-label="Add or edit labels"
+                  data-tooltip="Add label"
+                  data-tooltip-position="top"
+                  onMount=${this.initPopover}
+                >
+                  +
+                </button>
+              `;
+
               const items = labels.map((label) =>
                 Badge({
                   content: label.name,
@@ -173,7 +178,7 @@ export default class BaseTaskModal {
                 })
               );
 
-              return [button, ...items].map((item) => render(item));
+              return [btn, ...items].map((item) => render(item));
             })}
           </div>
 
@@ -187,16 +192,16 @@ export default class BaseTaskModal {
             <h3 class="text-md font-medium">Notes</h3>
           </div>
 
-          <div class="max-h-56 overflow-auto">
+          <div class="max-h-80 p-1 overflow-auto">
             ${this.state.$isEditingNotes((value) =>
               value
                 ? render(
                     // prettier-ignore
                     html`
                       <textarea
-                        class="resize-none w-full h-52 rounded-sm px-1 py-1 text-inherit bg-inherit placeholder:text-base focus:ring"
+                        class="resize-none w-full h-72 rounded-sm p-2 text-inherit bg-inherit placeholder:text-base focus:ring"
                         name="notes"
-                        placeholder="Add notes"
+                        placeholder="Edit notes"
                         onInput=${this.editTask}
                         onBlur=${this.toggleNotesEdit}
                         onMount=${(e) => e.target.focus()}
@@ -205,12 +210,12 @@ export default class BaseTaskModal {
                   )
                 : render(html`
                     <div
-                      class="markdown-body text-gray-500 dark:text-gray-200"
+                      class="prose prose-slate dark:prose-invert"
                       onClick=${this.toggleNotesEdit}
                     >
                       ${this.data.notes.trim()
                         ? convertToMarkdown(this.data.notes)
-                        : `<p class="text-base">Add notes</p>`}
+                        : `<div class="text-base" tabindex="0">Add notes</div>`}
                     </div>
                   `)
             )}
@@ -224,25 +229,31 @@ export default class BaseTaskModal {
             <h3 class="text-md font-medium">Due Date</h3>
           </div>
 
-          <div class="flatpickr" onMount=${this.initDatePicker}>
+          <div
+            class="flatpickr w-56 px-2 flex justify-between items-center border border-solid border-gray-400 rounded-md focus-within:ring focus-within:border-gray-600 dark:focus-within:border-gray-200"
+            onMount=${this.initDatePicker}
+          >
             <input
-              class="w-32 px-2 py-1 border border-solid border-gray-400 rounded-md text-inherit bg-inherit placeholder:text-sm"
+              class="w-full font-light text-sm text-inherit bg-inherit focus:outline-none"
               type="text"
               name="dueDate"
               value="${this.data.dueDate}"
-              placeholder="Select date..."
+              placeholder="Select date"
               data-input
             />
-            <a
-              class="inline-block text-3xl font-bold text-center align-middle text-red-500 hover:text-red-700 cursor-pointer"
-              title="clear"
+            <button
+              class="text-3xl font-medium text-center text-red-500 hover:text-red-700 cursor-pointer"
+              aria-label="Remove due date"
+              data-tooltip="Clear date"
+              data-tooltip-position="right"
               data-clear
             >
               &times;
-            </a>
+            </button>
           </div>
         </div>
 
+        <!-- Controls -->
         <div
           class="mx-auto flex flex-row justify-center items-center gap-4"
           data-name="task__controls"
