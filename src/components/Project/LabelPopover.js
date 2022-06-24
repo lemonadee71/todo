@@ -89,6 +89,7 @@ const LabelPopover = (data, clickAction) => {
     >
       <button
         class="absolute top-0 right-0 mr-3 text-lg"
+        aria-label="Close popover"
         onClick=${closePopover}
       >
         &times;
@@ -98,6 +99,7 @@ const LabelPopover = (data, clickAction) => {
         style_visibility=${state.$inEditMode((value) =>
           value ? 'visible' : 'hidden'
         )}
+        aria-label="Go back"
         onClick=${() => toggleEditingMode()}
       >
         &#8249;
@@ -110,7 +112,7 @@ const LabelPopover = (data, clickAction) => {
                 <form class="space-y-2" onSubmit.prevent=${editLabel}>
                   <label
                     for="label-name"
-                    class="text-sm font-medium text-gray-500"
+                    class="text-sm font-medium text-gray-400"
                   >
                     Edit Label
                   </label>
@@ -119,15 +121,16 @@ const LabelPopover = (data, clickAction) => {
                     class="text-black font-medium w-full px-1 rounded focus:ring resize-none break-words"
                     id="label-name"
                     name="label-name"
-                    placeholder="Label name..."
+                    placeholder="Label name"
                     rows="1"
                     data-autosize
                   >${state.currentTarget.name}</textarea>
 
-                  <p class="text-sm font-medium text-gray-500">
-                    Select a color
-                  </p>
-                  ${ColorChoices(state.currentTarget.color)}
+                  ${ColorChoices(
+                    'Change color',
+                    'text-sm font-medium text-gray-400',
+                    state.currentTarget.color
+                  )}
 
                   <div class="text-base flex flex-row justify-between">
                     <button class="rounded px-2 py-1 bg-blue-700" type="submit">
@@ -169,7 +172,7 @@ const LabelPopover = (data, clickAction) => {
                     type="text"
                   />
 
-                  ${ColorChoices()}
+                  ${ColorChoices('Select a color', 'sr-only')}
                 </form>
               `)
         )}

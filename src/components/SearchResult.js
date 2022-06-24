@@ -9,7 +9,7 @@ const SearchResult = (data, isBestMatch = false) => {
     component.badges.unshift(
       Badge({
         content: 'Best match',
-        bgColor: DEFAULT_COLORS[5],
+        bgColor: DEFAULT_COLORS.blue,
         props: { key: 'best-match' },
       })
     );

@@ -19,7 +19,7 @@ export default class Project {
     // props
     this.id = id || uuid();
     this.name = name;
-    this.color = color || DEFAULT_COLORS[0];
+    this.color = color || DEFAULT_COLORS.green;
 
     // not used anywhere, just additional info for dashboard
     this.lastOpened = lastOpened;

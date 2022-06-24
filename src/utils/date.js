@@ -69,13 +69,13 @@ export const getDateColor = (dueDate) => {
     isPast(date)
   )
     // show red for urgency
-    return DEFAULT_COLORS[3];
+    return DEFAULT_COLORS.red;
 
   // show orange for warning
-  if (isToday(date)) return DEFAULT_COLORS[2];
+  if (isToday(date)) return DEFAULT_COLORS.orange;
 
   // show green
-  return DEFAULT_COLORS[0];
+  return DEFAULT_COLORS.green;
 };
 
 export const formatDate = (dirtyDate) => `Due ${getDateKeyword(dirtyDate)}`;

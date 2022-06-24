@@ -69,7 +69,7 @@ const Task = (data, idx) => {
     component.badges.push(
       Badge({
         content: `${data.incompleteSubtasks} / ${data.totalSubtasks}`,
-        bgColor: DEFAULT_COLORS[9],
+        bgColor: DEFAULT_COLORS.gray,
         props: {
           key: 'subtasks',
           'aria-label': `Completed ${data.incompleteSubtasks} out of ${data.totalSubtasks} subtasks`,
