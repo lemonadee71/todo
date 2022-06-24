@@ -186,13 +186,13 @@ const App = () => {
       // used padding instead of margin to avoid overflow issues
       props: { class: 'flex flex-col h-full pt-24 xs:pt-14' },
     })}
-    <!-- only one modal for all -->
-    <my-modal id="modal"></my-modal>
     <!-- only one tooltip element for all -->
     <div id="tooltip" role="tooltip">
       <span id="tooltip_text"></span>
       <div id="tooltip_arrow" data-popper-arrow></div>
     </div>
+    <!-- only one modal for all -->
+    <my-modal id="modal" role="dialog" close-action="close"></my-modal>
   `;
 };
 

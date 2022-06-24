@@ -118,7 +118,7 @@ export default class BaseTaskModal {
   render() {
     return html`
       <div
-        class="relative w-5/6 max-w-lg my-[10%] sm:my-[5%] mx-auto rounded-lg py-4 px-5 space-y-4 bg-white dark:bg-[#353535]"
+        class="relative w-5/6 max-w-lg mx-auto my-10 py-4 px-5 space-y-4 rounded-lg bg-white dark:bg-[#353535]"
         onCreate=${this.init}
         onDestroy=${this._revoke}
       >
@@ -134,10 +134,11 @@ export default class BaseTaskModal {
           <h2 class="sr-only">{% ${this.data.title} %}</h2>
           <!-- prettier-ignore -->
           <textarea
-            class="text-lg font-semibold w-full h-fit px-1 py-1 rounded-sm bg-inherit resize-none break-words overflow-hidden placeholder:text-slate-600 focus:ring focus:placeholder:text-slate-400 dark:placeholder:text-slate-200 dark:focus:placeholder:text-slate-400"
+            class="font-semibold text-lg w-full p-1 rounded-sm bg-inherit resize-none overflow-hidden placeholder:text-slate-600 focus:ring focus:placeholder:text-slate-400 dark:placeholder:text-slate-200 dark:focus:placeholder:text-slate-400"
             name="title"
             rows="1"
             data-autosize
+            data-focus="first"
             onInput=${debounce(this.editTask, 200)}
           >${this.data.title.trim()}</textarea>
         </div>
