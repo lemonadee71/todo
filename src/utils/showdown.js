@@ -1,4 +1,5 @@
 import { Converter } from 'showdown';
+import { escapeHTML } from './misc';
 
 const options = {
   omitExtraWLInCodeBlocks: true,
@@ -9,6 +10,7 @@ const options = {
   strikethrough: true,
   tables: true,
   ghCodeBlocks: true,
+  ghMentions: true,
   tasklists: true,
   smartIndentationFix: true,
   simpleLineBreaks: true,
@@ -20,6 +22,9 @@ const options = {
 const txtToMdConverter = new Converter(options);
 txtToMdConverter.setFlavor('github');
 
-const convertToMarkdown = (text) => txtToMdConverter.makeHtml(text);
+// escape text first
+// because for some reason the `backslashEscapesHTMLTags`
+// doesn't work
+const convertToMarkdown = (text) => txtToMdConverter.makeHtml(escapeHTML(text));
 
 export default convertToMarkdown;

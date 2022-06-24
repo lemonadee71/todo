@@ -49,3 +49,12 @@ export const copy = (target, toExclude = []) => {
 
   return clone;
 };
+
+// taken from: https://stackoverflow.com/questions/6234773
+export const escapeHTML = (unsafe) =>
+  unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
