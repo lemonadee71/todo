@@ -13,7 +13,7 @@ import { getProfilePicURL, getUserName, isGuest, signOut } from '../utils/auth';
 import { dispatchCustom } from '../utils/dispatch';
 import logger from '../utils/logger';
 import { sortById } from '../utils/misc';
-import { $, $$ } from '../utils/query';
+import { $ } from '../utils/query';
 import { toggleDarkTheme } from '../utils/theme';
 import { useTooltip } from '../utils/useTooltip';
 import Dashboard from './Dashboard';
@@ -61,18 +61,14 @@ const routes = [
 
 const App = () => {
   const addTooltip = (element) => {
-    $$.data('tooltip', null, element).forEach((item) => {
-      if (item.dataset.tooltipInitialized) return;
+    if (element.matches('[data-tooltip]')) {
+      element.addEventListener('@mount', () => {
+        const [onShow, onHide] = useTooltip(element);
 
-      item.addEventListener('@mount', () => {
-        const [onShow, onHide] = useTooltip(item);
-
-        SHOW_EVENTS.forEach((name) => item.addEventListener(name, onShow()));
-        HIDE_EVENTS.forEach((name) => item.addEventListener(name, onHide()));
+        SHOW_EVENTS.forEach((name) => element.addEventListener(name, onShow()));
+        HIDE_EVENTS.forEach((name) => element.addEventListener(name, onHide()));
       });
-
-      item.dataset.tooltipInitialized = true;
-    });
+    }
   };
 
   // add tooltips to elements with data-tooltip attr

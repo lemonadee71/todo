@@ -2,6 +2,7 @@ import autosize from 'autosize';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import PoorManJSX, { addHooks } from 'poor-man-jsx';
+import { PROJECT } from './actions';
 import { LAST_OPENED_PAGE, PATHS } from './constants';
 import Core from './core';
 import { LocalStorage } from './core/storage';
@@ -9,35 +10,24 @@ import { fetchProjects, initFirestore, setupListeners } from './core/firestore';
 import { isGuest, isNewUser, signIn } from './utils/auth';
 import { createDropdown } from './utils/dropdown';
 import { getUserRef, updateUser } from './utils/firestore';
-import { $, $$ } from './utils/query';
+import { $ } from './utils/query';
 import { initializeTheme } from './utils/theme';
 import defineCustomElements from './components/custom';
 import Router from './components/Router';
 import * as pages from './pages';
 import { config as firebaseConfig } from './firebase-config';
 import './styles/style.css';
-import { PROJECT } from './actions';
 
 PoorManJSX.onAfterCreation((element) => {
-  $$.data('autosize', null, element).forEach((item) => {
-    if (item.dataset.autosized) return;
-    item.addEventListener('@mount', () => autosize(item));
-    item.dataset.autosized = true;
-  });
+  if (element.matches('[data-autosize]')) {
+    element.addEventListener('@mount', () => autosize(element));
+  }
 
-  $$.data('dropdown', null, element).forEach((item) => {
-    if (item.dataset.dropdownInitialized) return;
-
-    item.addEventListener('@mount', () => {
-      createDropdown(
-        item,
-        $.data('dropdown-id', item.dataset.dropdown, element)
-      );
+  if (element.matches('[data-dropdown]')) {
+    element.addEventListener('@mount', () => {
+      createDropdown(element, $.data('dropdown-id', element.dataset.dropdown));
     });
-
-    // to prevent from being initialized again
-    item.dataset.dropdownInitialized = true;
-  });
+  }
 });
 
 const routes = [
