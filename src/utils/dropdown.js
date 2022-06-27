@@ -3,6 +3,8 @@ import { usePopper } from './popper';
 // BUG: the dropdown is being covered by elements
 export const createDropdown = (target, dropdown) => {
   let isOpen = false;
+  target.setAttribute('aria-haspopup', 'true');
+
   const { dropdownOffset, dropdownPosition } = dropdown.dataset;
 
   const [, onShow, onHide] = usePopper(target, dropdown, {
@@ -22,10 +24,12 @@ export const createDropdown = (target, dropdown) => {
 
   const openMenu = onShow(() => {
     dropdown.style.removeProperty('display');
+    target.setAttribute('aria-expanded', 'true');
   });
 
   const closeMenu = onHide(() => {
     dropdown.style.display = 'none';
+    target.removeAttribute('aria-expanded');
   });
 
   target.addEventListener('click', (evt) => {
