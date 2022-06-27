@@ -10,7 +10,6 @@ import { fetchProjects, initFirestore, setupListeners } from './core/firestore';
 import { isGuest, isNewUser, signIn } from './utils/auth';
 import { createDropdown } from './utils/dropdown';
 import { getUserRef, updateUser } from './utils/firestore';
-import { $ } from './utils/query';
 import { initializeTheme } from './utils/theme';
 import defineCustomElements from './components/custom';
 import Router from './components/Router';
@@ -26,9 +25,10 @@ PoorManJSX.onAfterCreation((element) => {
     element.addEventListener('@mount', () => autosize(element));
   }
 
+  // for dropdowns we assume that the button is next to its dropdown menu
   if (element.matches('[data-dropdown]')) {
     element.addEventListener('@mount', () => {
-      createDropdown(element, $.data('dropdown-id', element.dataset.dropdown));
+      createDropdown(element, element.nextElementSibling);
     });
   }
 });
