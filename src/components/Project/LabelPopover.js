@@ -2,6 +2,7 @@ import { html, createHook, render } from 'poor-man-jsx';
 import { PROJECT } from '../../actions';
 import Core from '../../core';
 import { useProject } from '../../core/hooks';
+import { dispatchCustom } from '../../utils/dispatch';
 import ColorChoices from './ColorChoices';
 import Label from './Label';
 
@@ -19,15 +20,20 @@ const LabelPopover = (data, clickAction) => {
     state.inEditMode = !state.inEditMode;
   };
 
-  const toggleVisibility = (value) => {
-    state.isVisible = value ?? !state.isVisible;
+  const togglePopover = () => {
+    if (state.isVisible) closePopover();
+    else openPopover();
+  };
+
+  const openPopover = () => {
+    state.isVisible = true;
   };
 
   const closePopover = () => {
+    state.isVisible = false;
     // clear state
     state.inEditMode = false;
     state.currentTarget = null;
-    toggleVisibility(false);
   };
 
   const createLabel = (e) => {
@@ -55,7 +61,7 @@ const LabelPopover = (data, clickAction) => {
     Core.event.emit(
       PROJECT.LABELS.UPDATE,
       {
-        project: state.currentTarget.project,
+        project: data.project,
         label: state.currentTarget.id,
         data: { name: name.value, color },
       },
@@ -69,12 +75,17 @@ const LabelPopover = (data, clickAction) => {
   };
 
   const deleteLabel = () => {
-    Core.event.emit(PROJECT.LABELS.REMOVE, {
-      project: state.currentTarget.project,
-      label: state.currentTarget.id,
-    });
+    Core.event.emit(
+      PROJECT.LABELS.REMOVE,
+      {
+        project: data.project,
+        label: state.currentTarget.id,
+      },
+      { onSuccess: toggleEditingMode }
+    );
   };
 
+  // TODO: Put a character limit to label name
   return html`
     <div
       id="label-popover"
@@ -82,15 +93,15 @@ const LabelPopover = (data, clickAction) => {
       style_visibility=${state.$isVisible((val) =>
         val ? 'visible' : 'hidden'
       )}
-      onPopover:toggle=${() => toggleVisibility()}
-      onPopover:open=${() => toggleVisibility(true)}
-      onPopover:hide=${() => toggleVisibility(false)}
+      onPopover:toggle=${togglePopover}
+      onPopover:open=${openPopover}
+      onPopover:hide=${closePopover}
       onDestroy=${revoke}
     >
       <button
         class="absolute top-0 right-0 mr-3 text-lg"
         aria-label="Close popover"
-        onClick=${closePopover}
+        onClick=${(e) => dispatchCustom('popover:hide', e.target.parentElement)}
       >
         &times;
       </button>
@@ -114,7 +125,7 @@ const LabelPopover = (data, clickAction) => {
                     for="label-name"
                     class="text-sm font-medium text-gray-400"
                   >
-                    Edit Label
+                    Edit name
                   </label>
                   <!-- prettier-ignore -->
                   <textarea
@@ -124,10 +135,11 @@ const LabelPopover = (data, clickAction) => {
                     placeholder="Label name"
                     rows="1"
                     data-autosize
+                    onMount=${(e) => e.target.focus()}
                   >${state.currentTarget.name}</textarea>
 
                   ${ColorChoices(
-                    'Change color',
+                    'Edit color',
                     'text-sm font-medium text-gray-400',
                     state.currentTarget.color
                   )}
@@ -146,18 +158,26 @@ const LabelPopover = (data, clickAction) => {
                 </form>
               `)
             : render(html`
-                <h4 class="text-md font-medium mb-2">Labels</h4>
+                <h4 id="label-heading" class="text-md font-medium mb-2">
+                  Labels
+                </h4>
 
-                <div is-list class="mb-2 flex flex-col gap-1">
+                <div
+                  is-list
+                  class="mb-2 flex flex-col gap-1"
+                  aria-labelledby="label-heading"
+                >
                   ${project.$labels
-                    .map((label) =>
-                      Label(
+                    .map((label) => {
+                      const isSelected = data.getLabels().includes(label.id);
+
+                      return Label(
                         label,
                         clickAction,
                         toggleEditingMode,
-                        data.getLabels().includes(label.id)
-                      )
-                    )
+                        isSelected
+                      );
+                    })
                     .map((item) => render(item))}
                 </div>
 

@@ -19,6 +19,8 @@ import { config as firebaseConfig } from './firebase-config';
 import './styles/style.css';
 import 'wicg-inert';
 
+PoorManJSX.addBooleanAttribute('data-selected');
+
 PoorManJSX.onAfterCreation((element) => {
   if (element.matches('[data-autosize]')) {
     element.addEventListener('@mount', () => autosize(element));

@@ -1,11 +1,10 @@
 import { html } from 'poor-man-jsx';
 import { EditIcon } from '../../assets/icons';
+import { runOnlyIfClick } from '../../utils/misc';
 
 const Label = (data, clickAction, editAction, isSelected) => {
   const clickLabel = (e) => {
-    const { selected } = e.currentTarget.dataset;
-
-    clickAction(data.id, !selected);
+    clickAction(data.id, !e.currentTarget.matches('[data-selected]'));
   };
 
   const editLabel = (e) => {
@@ -16,17 +15,22 @@ const Label = (data, clickAction, editAction, isSelected) => {
   return html`
     <div
       key="${data.id}"
-      ${isSelected ? 'data-selected="true"' : ''}
-      class="group space-x-1 rounded px-2 py-1 flex justify-between items-center cursor-pointer border border-solid ${isSelected
+      class="group px-2 py-1 rounded flex justify-between items-center cursor-pointer border border-solid ${isSelected
         ? 'border-white'
         : 'border-transparent'}"
+      tabindex="0"
       style="background-color: ${data.color};"
+      data-selected=${isSelected}
       onClick=${clickLabel}
+      onKeydown=${runOnlyIfClick(clickLabel)}
     >
-      <p>{% ${data.name} %}</p>
+      <span>{% ${data.name} %}</span>
 
-      <button class="invisible group-hover:visible" onClick=${editLabel}>
-        ${EditIcon('stroke-gray-300 hover:stroke-white')}
+      <button
+        class="w-0 opacity-0 focus:w-fit focus:opacity-100 group-hover:w-fit group-hover:opacity-100"
+        onClick=${editLabel}
+      >
+        ${EditIcon('stroke-gray-300 focus:stroke-white hover:stroke-white')}
       </button>
     </div>
   `;

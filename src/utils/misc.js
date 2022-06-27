@@ -58,3 +58,14 @@ export const escapeHTML = (unsafe) =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+
+/**
+ * Make a function run only for valid "click" events.
+ * Does not run if altKey is held down
+ * @param {Function} fn - the callback to be wrapped
+ * @returns {Function}
+ */
+export const runOnlyIfClick = (fn) => (e) => {
+  if (e.altKey) return;
+  if (e.type === 'click' || e.key === ' ' || e.key === 'Enter') fn(e);
+};

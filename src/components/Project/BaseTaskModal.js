@@ -1,5 +1,5 @@
 import flatpickr from 'flatpickr';
-import { createHook, html, render } from 'poor-man-jsx';
+import { addHooks, createHook, html, render } from 'poor-man-jsx';
 import { CalendarIcon, LabelIcon, NotesIcon } from '../../assets/icons';
 import { TASK } from '../../actions';
 import { POPPER_CONFIG } from '../../constants';
@@ -89,19 +89,26 @@ export default class BaseTaskModal {
   };
 
   initPopover = (e) => {
+    const [state] = createHook({ expanded: false });
     const node = e.target;
-    const popover = $.by.id('label-popover');
+    const popover = $('#label-popover');
 
     const [, onShow, onHide] = usePopper(node, popover, {
       ...POPPER_CONFIG,
       placement: 'right-start',
     });
 
-    node.addEventListener(
-      'click',
-      onShow(() => dispatchCustom('popover:toggle', popover))
-    );
-    popover.addEventListener('popover:hide', onHide());
+    const openPopover = onShow(() => {
+      dispatchCustom('popover:toggle', popover);
+      state.expanded = !state.expanded;
+    });
+    const closePopover = onHide(() => {
+      state.expanded = false;
+    });
+
+    addHooks(node, { 'aria-expanded': state.$expanded });
+    node.addEventListener('click', openPopover);
+    popover.addEventListener('popover:hide', closePopover);
   };
 
   init = (e) => {
@@ -159,8 +166,9 @@ export default class BaseTaskModal {
                 <button
                   ignore-all
                   key="add-label"
-                  class="text-sm text-gray-600 px-3 py-1 rounded bg-[#dedede] hover:text-gray-800 dark:text-white dark:hover:text-gray-300 dark:bg-transparent dark:border dark:border-solid dark:border-white"
+                  class="text-sm font-medium text-gray-600 px-3 py-1 rounded bg-[#dedede] hover:text-gray-800 dark:text-white dark:hover:text-gray-300 dark:bg-transparent dark:border dark:border-solid dark:border-white"
                   aria-label="Add or edit labels"
+                  aria-haspopup="true"
                   data-tooltip="Add label"
                   data-tooltip-position="top"
                   onMount=${this.initPopover}
