@@ -153,7 +153,8 @@ const App = () => {
         class="justify-self-end row-start-1 col-start-2 xs:col-start-3 flex items-center gap-1"
       >
         <span class="font-medium">${getUserName()}</span>
-        <button class="group h-6 w-6" data-dropdown="user-menu">
+        <button class="group h-6 w-6" data-dropdown>
+          <span class="sr-only">Open user menu</span>
           <img
             class="rounded-full group-active:ring active:ring-teal-500"
             src="${getProfilePicURL()}"
@@ -164,7 +165,7 @@ const App = () => {
         <div
           class="flex flex-col bg-neutral-700 text-white text-sm text-center py-1 rounded divide-y divide-neutral-500 drop-shadow z-20"
           style="display: none;"
-          data-dropdown-id="user-menu"
+          data-dropdown-name="user"
           data-dropdown-position="bottom-end"
           data-dropdown-offset="0,10"
         >

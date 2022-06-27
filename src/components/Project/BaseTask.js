@@ -87,10 +87,7 @@ export default class BaseTask extends TaskTemplate {
         method: 'after',
         template: html`
           <div data-name="task__controls" ${this.props.menu}>
-            <button
-              data-dropdown="${this.id}-menu"
-              aria-label="Open ${this.type} menu"
-            >
+            <button aria-label="Open ${this.type} menu" data-dropdown>
               ${KebabMenuIcon({
                 class:
                   'stroke-gray-500 hover:stroke-gray-800 dark:hover:stroke-gray-300',
@@ -103,7 +100,7 @@ export default class BaseTask extends TaskTemplate {
               class="flex flex-col py-1 rounded divide-y divide-gray-500 space-y-1 text-center text-white text-sm bg-neutral-700 border border-solid border-gray-500 drop-shadow z-20"
               style="display: none;"
               data-name="task__menu"
-              data-dropdown-id="${this.id}-menu"
+              data-dropdown-name="${this.type}"
               data-dropdown-position="left"
             >
               <button

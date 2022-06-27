@@ -27,9 +27,7 @@ PoorManJSX.onAfterCreation((element) => {
 
   // for dropdowns we assume that the button is next to its dropdown menu
   if (element.matches('[data-dropdown]')) {
-    element.addEventListener('@mount', () => {
-      createDropdown(element, element.nextElementSibling);
-    });
+    createDropdown(element, element.nextElementSibling);
   }
 });
 
