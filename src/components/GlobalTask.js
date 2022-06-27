@@ -37,7 +37,11 @@ class GlobalTask extends TaskTemplate {
     if (hasSubtasks) {
       this.badges.push(
         Badge({
-          content: SubtasksIcon('stroke-white', 16, 1.75),
+          content: SubtasksIcon({
+            cls: 'stroke-white stroke-2',
+            size: 16,
+            decorative: true,
+          }),
           bgColor: DEFAULT_COLORS.gray,
           props: {
             key: 'subtasks',

@@ -2,7 +2,7 @@ import { html } from 'poor-man-jsx';
 
 const createIcon =
   (content) =>
-  (cls = '', size = 20, stroke = 1.5, color = '#000000') =>
+  ({ cls, id, title, size = 20, decorative }) =>
     html`
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -10,13 +10,15 @@ const createIcon =
         width="${size}"
         height="${size}"
         viewBox="0 0 24 24"
-        stroke-width="${stroke}"
-        stroke="${color}"
+        stroke-width="1.5"
+        stroke="#000000"
         fill="none"
         stroke-linecap="round"
         stroke-linejoin="round"
+        ${id ? `aria-labelledby=${id}` : ''}
+        ${decorative ? 'aria-hidden="true"' : ''}
       >
-        ${content}
+        ${title ? `<title id="${id || ''}">${title}</title>` : ''} ${content}
       </svg>
     `;
 
@@ -27,6 +29,7 @@ export const Spinner = (cls) => html`<svg
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
 >
+  <title>Loading content</title>
   <path
     d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
     fill="currentColor"

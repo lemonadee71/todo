@@ -140,6 +140,7 @@ const App = () => {
           stroke-linecap="round"
           stroke-linejoin="round"
         >
+          <title>Hide sidebar</title>
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <polyline points="7 7 12 12 7 17" />
           <polyline points="13 7 18 12 13 17" />

@@ -104,23 +104,29 @@ const List = (data, pos) => {
         <div class="flex justify-between items-center ">
           <h2 class="font-medium text-lg line-clamp-3">{% ${data.name} %}</h2>
           <button onClick=${deleteList}>
-            ${DeleteIcon('stroke-red-500 hover:stroke-red-700')}
+            ${DeleteIcon({
+              cls: 'stroke-red-500 hover:stroke-red-700',
+              id: `delete-${data.id}`,
+              title: 'Delete list',
+            })}
           </button>
         </div>
 
         <!-- New task form -->
         <form class="flex flex-row" onSubmit.prevent=${createTask}>
-          <button type="submit">
-            ${AddIcon(
-              'stroke-blue-600 hover:stroke-blue-800 dark:stroke-blue-400 dark:hover:stroke-blue-600'
-            )}
-          </button>
           <input
             type="text"
             name="new-task"
             placeholder="Add task"
             class="w-full text-sm rounded-sm px-1 py-1 bg-inherit placeholder:text-slate-600 focus:bg-white focus:placeholder:text-slate-400 focus:ring dark:focus:bg-inherit dark:placeholder:text-gray-400 dark:focus:placeholder:text-gray-200"
           />
+          <button type="submit">
+            ${AddIcon({
+              cls: 'stroke-blue-600 hover:stroke-blue-800 dark:stroke-blue-400 dark:hover:stroke-blue-600',
+              id: `add_item-${data.id}`,
+              title: 'Create task',
+            })}
+          </button>
         </form>
       </div>
 
@@ -142,7 +148,10 @@ const List = (data, pos) => {
         >
           Completed ${data.completedTasks ? `(${data.completedTasks})` : ''}
         </p>
-        <button onClick=${toggleCompletedTasks}>
+        <button
+          onClick=${toggleCompletedTasks}
+          aria-pressed=${state.$showCompleted}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="fill-gray-500 stroke-gray-500 group-hover:fill-gray-700 group-hover:stroke-gray-700 dark:group-hover:stroke-gray-300"
@@ -154,6 +163,7 @@ const List = (data, pos) => {
             stroke-linecap="round"
             stroke-linejoin="round"
           >
+            <title>Show completed tasks</title>
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path
               ignore="transform"

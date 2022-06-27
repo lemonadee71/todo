@@ -44,10 +44,12 @@ const ProjectCard = (data, i) => {
             onClick=${deleteProject}
             onKeydown=${(e) => e.stopPropagation()}
           >
-            ${DeleteIcon(
-              'stroke-red-600 hover:stroke-red-700 focus:stroke-red-700',
-              15
-            )}
+            ${DeleteIcon({
+              cls: 'stroke-red-600 hover:stroke-red-700 focus:stroke-red-700',
+              size: 15,
+              id: `title-card-${data.id}`,
+              title: 'Delete this project',
+            })}
           </button>
         </div>
       </div>

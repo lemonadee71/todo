@@ -156,7 +156,7 @@ export default class BaseTaskModal {
         <!-- Labels -->
         <div data-name="task__labels">
           <div class="flex flex-row space-x-1 items-center mb-2">
-            ${LabelIcon('dark:stroke-white')}
+            ${LabelIcon({ cls: 'dark:stroke-white', decorative: true })}
             <h3 class="text-md font-medium">Labels</h3>
           </div>
 
@@ -196,7 +196,7 @@ export default class BaseTaskModal {
         <!-- Notes -->
         <div data-name="task__notes">
           <div class="flex flex-row space-x-1 items-center mb-2">
-            ${NotesIcon('dark:stroke-white')}
+            ${NotesIcon({ cls: 'dark:stroke-white', decorative: true })}
             <h3 class="text-md font-medium">Notes</h3>
           </div>
 
@@ -233,7 +233,7 @@ export default class BaseTaskModal {
         <!-- Date -->
         <div data-name="task__date">
           <div class="flex flex-row space-x-1 items-center mb-2">
-            ${CalendarIcon('dark:stroke-white')}
+            ${CalendarIcon({ cls: 'dark:stroke-white', decorative: true })}
             <h3 class="text-md font-medium">Due Date</h3>
           </div>
 

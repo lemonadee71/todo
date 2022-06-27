@@ -108,14 +108,16 @@ const Project = ({ data: { id } }) => {
                   </button>
                   <button
                     type="reset"
+                    aria-label="Cancel"
                     data-tooltip="Cancel"
                     data-tooltip-position="right"
                     onClick=${toggleFormVisibility}
                   >
-                    ${CloseIcon(
-                      'stroke-black hover:stroke-red-600 dark:stroke-white dark:hover:stroke-red-400',
-                      24
-                    )}
+                    ${CloseIcon({
+                      class:
+                        'stroke-black hover:stroke-red-600 dark:stroke-white dark:hover:stroke-red-400',
+                      size: 24,
+                    })}
                   </button>
                 </div>
               </form>
@@ -125,9 +127,11 @@ const Project = ({ data: { id } }) => {
                 class="w-full p-1 bg-transparent text-sm hover:text-gray-800 group flex flex-row items-center space-x-3 dark:hover:text-gray-300"
                 onClick=${toggleFormVisibility}
               >
-                ${AddIcon(
-                  'stroke-black group-hover:stroke-gray-800 dark:stroke-white dark:group-hover:stroke-gray-300'
-                )}
+                ${AddIcon({
+                  class:
+                    'stroke-black group-hover:stroke-gray-800 dark:stroke-white dark:group-hover:stroke-gray-300',
+                  decorative: true,
+                })}
                 <span>Add another list</span>
               </button>
             `)
@@ -178,9 +182,21 @@ const Project = ({ data: { id } }) => {
         ${state.$isListView((value) =>
           value
             ? render(
-                CalendarIcon('stroke-gray-800 dark:stroke-white', 24, 1.75)
+                CalendarIcon({
+                  cls: 'stroke-gray-800 dark:stroke-white stroke-2',
+                  size: 24,
+                  id: 'toggle-calendar',
+                  title: 'Switch to calendar view',
+                })
               )
-            : render(ListIcon('stroke-gray-800 dark:stroke-white', 24, 1.75))
+            : render(
+                ListIcon({
+                  cls: 'stroke-gray-800 dark:stroke-white stroke-2',
+                  size: 24,
+                  id: 'toggle-list',
+                  title: 'Switch to list view',
+                })
+              )
         )}
       </button>
     </div>

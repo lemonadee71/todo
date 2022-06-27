@@ -87,10 +87,15 @@ export default class BaseTask extends TaskTemplate {
         method: 'after',
         template: html`
           <div data-name="task__controls" ${this.props.menu}>
-            <button data-dropdown="${this.id}-menu">
-              ${KebabMenuIcon(
-                'stroke-gray-500 hover:stroke-gray-800 dark:hover:stroke-gray-300'
-              )}
+            <button
+              data-dropdown="${this.id}-menu"
+              aria-label="Open ${this.type} menu"
+            >
+              ${KebabMenuIcon({
+                class:
+                  'stroke-gray-500 hover:stroke-gray-800 dark:hover:stroke-gray-300',
+                decorative: true,
+              })}
             </button>
 
             <div

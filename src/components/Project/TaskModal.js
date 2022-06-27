@@ -96,7 +96,7 @@ export default class TaskModal extends BaseTaskModal {
         template: html`
           <div class="space-y-2" data-name="task__subtasks">
             <div class="flex flex-row space-x-1 items-center">
-              ${SubtasksIcon('dark:stroke-white')}
+              ${SubtasksIcon({ cls: 'dark:stroke-white', decorative: true })}
               <h3 class="text-md font-medium">Subtasks</h3>
             </div>
 

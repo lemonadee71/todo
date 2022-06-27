@@ -28,10 +28,12 @@ const ProjectLink = (data, i) => {
         class="w-0 opacity-0 group-hover:w-fit group-hover:opacity-100 focus:w-fit focus:opacity-100"
         onClick=${deleteProject}
       >
-        ${DeleteIcon(
-          'stroke-red-500 hover:stroke-red-700 focus:stroke-red-700',
-          18
-        )}
+        ${DeleteIcon({
+          cls: 'stroke-red-500 hover:stroke-red-700 focus:stroke-red-700',
+          size: 18,
+          id: `title-link-${data.id}`,
+          title: 'Delete this project',
+        })}
       </button>
     </li>
   `;

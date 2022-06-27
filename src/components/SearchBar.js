@@ -70,7 +70,11 @@ const SearchBar = () => {
         class="justify-self-stretch px-3 flex items-center gap-1 sm:gap-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-100 dark:hover:bg-gray-200 focus-within:bg-white focus-within:ring-2 focus-within:ring-sky-400"
       >
         <label for="search">
-          ${SearchIcon('stroke-gray-600 group-hover:stroke-gray-700', 20)}
+          ${SearchIcon({
+            cls: 'stroke-gray-600 group-hover:stroke-gray-700',
+            size: 20,
+            decorative: true,
+          })}
         </label>
         <input
           class="flex-1 py-0.5 text-black bg-inherit focus:outline-none"
@@ -92,7 +96,12 @@ const SearchBar = () => {
           class="invisible group-focus-within:visible"
           onClick=${clearInput}
         >
-          ${CloseIcon('stroke-gray-600 hover:stroke-red-500', 20)}
+          ${CloseIcon({
+            cls: 'stroke-gray-600 hover:stroke-red-500',
+            size: 20,
+            id: 'clear-search',
+            title: 'Clear search input',
+          })}
         </button>
       </div>
       <div

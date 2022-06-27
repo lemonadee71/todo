@@ -67,11 +67,11 @@ const Landing = () => {
         <h2 class="font-extrabold text-center text-4xl">Features</h2>
         <div class="flex flex-wrap gap-5 justify-around items-start">
           <div class="group w-52 p-3 space-y-2">
-            ${KanbanIcon(
-              'stroke-sky-500 group-hover:stroke-sky-600 mx-auto',
-              130,
-              1.25
-            )}
+            ${KanbanIcon({
+              cls: 'stroke-sky-500 group-hover:stroke-sky-600 mx-auto',
+              size: 130,
+              decorative: true,
+            })}
             <h3 class="font-medium text-xl text-center">Kanban boards</h3>
             <p class="text-neutral-700 text-center">
               Inspired by desktop app for
@@ -85,22 +85,22 @@ const Landing = () => {
             </p>
           </div>
           <div class="group w-52 p-3 space-y-2">
-            ${SortIcon(
-              'stroke-sky-500 group-hover:stroke-sky-600 mx-auto',
-              130,
-              1.25
-            )}
+            ${SortIcon({
+              cls: 'stroke-sky-500 group-hover:stroke-sky-600 mx-auto',
+              size: 130,
+              decorative: true,
+            })}
             <h3 class="font-medium text-xl text-center">Sorting</h3>
             <p class="text-neutral-700 text-center">
               Sort your projects, lists, and tasks however you want!
             </p>
           </div>
           <div class="group w-52 p-3 space-y-2">
-            ${CalendarIcon(
-              'stroke-sky-500 group-hover:stroke-sky-600 mx-auto',
-              130,
-              1.25
-            )}
+            ${CalendarIcon({
+              cls: 'stroke-sky-500 group-hover:stroke-sky-600 mx-auto',
+              size: 130,
+              decorative: true,
+            })}
             <h3 class="font-medium text-xl text-center">Calendar View</h3>
             <p class="text-neutral-700 text-center">
               Easily switch between list and calendar view to easily manage your
@@ -108,11 +108,11 @@ const Landing = () => {
             </p>
           </div>
           <div class="group w-52 p-3 space-y-2">
-            ${SyncIcon(
-              'stroke-sky-500 group-hover:stroke-sky-600 mx-auto',
-              130,
-              1.2
-            )}
+            ${SyncIcon({
+              cls: 'stroke-sky-500 group-hover:stroke-sky-600 mx-auto',
+              size: 130,
+              decorative: true,
+            })}
             <h3 class="font-medium text-xl text-center">Backup your data</h3>
             <p class="text-neutral-700 text-center">
               Sync your tasks online with Firebase!
@@ -181,7 +181,10 @@ const Landing = () => {
             code on Github
             <span class="sr-only">Opens in new window</span>
             <span class="inline-block" aria-hidden="true">
-              ${GithubIcon('stroke-white group-hover:stroke-gray-300', 15)}
+              ${GithubIcon({
+                cls: 'stroke-white group-hover:stroke-gray-300',
+                size: 15,
+              })}
             </span>
           </a>
           .

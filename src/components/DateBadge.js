@@ -13,7 +13,13 @@ import Badge from './Badge';
 // so that changes in props are reflected
 const DateBadge = (data, compact = false) => {
   const compactContent = html`
-    <span class="md:hidden">${CalendarIcon('stroke-white', 16, 1.75)}</span>
+    <span class="md:hidden">
+      ${CalendarIcon({
+        cls: 'stroke-white stroke-2',
+        size: 16,
+        decorative: true,
+      })}
+    </span>
     <span data-name="date-text" class="hidden md:inline">
       ${formatDate(data.dueDate)}
     </span>

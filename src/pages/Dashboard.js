@@ -75,14 +75,15 @@ const Dashboard = () => {
           <h2 class="font-semibold text-lg mb-3">Your Projects</h2>
           <button
             class="group rounded border border-solid border-neutral-400 hover:border-blue-400 hover:bg-blue-100 focus:border-blue-400 focus:bg-blue-100"
+            aria-label="Create new project"
             data-tooltip="Create new project"
             onClick=${createNewProject}
           >
-            ${AddIcon(
-              'stroke-black dark:stroke-white group-hover:stroke-blue-500 group-focus:stroke-blue-500',
-              20,
-              1.5
-            )}
+            ${AddIcon({
+              class:
+                'stroke-black dark:stroke-white group-hover:stroke-blue-500 group-focus:stroke-blue-500',
+              size: 20,
+            })}
           </button>
         </div>
         <div

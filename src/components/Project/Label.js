@@ -30,7 +30,11 @@ const Label = (data, clickAction, editAction, isSelected) => {
         class="w-0 opacity-0 focus:w-fit focus:opacity-100 group-hover:w-fit group-hover:opacity-100"
         onClick=${editLabel}
       >
-        ${EditIcon('stroke-gray-300 focus:stroke-white hover:stroke-white')}
+        ${EditIcon({
+          cls: 'stroke-gray-300 focus:stroke-white hover:stroke-white',
+          id: `edit-${data.id}`,
+          title: 'Edit label',
+        })}
       </button>
     </div>
   `;
