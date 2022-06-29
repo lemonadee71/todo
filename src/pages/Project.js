@@ -146,7 +146,10 @@ const Project = ({ data: { id } }) => {
     >
       <h1 class="sr-only">${project.$name}</h1>
       <div class="w-3/4 flex items-center">
-        <label class="relative select-none mr-3">
+        <label
+          class="relative rounded-full mr-3 select-none cursor-pointer focus-within:ring focus-within:ring-offset-2"
+        >
+          <span class="sr-only">Choose project color</span>
           <input
             class="absolute w-0 h-0 opacity-0"
             type="color"
@@ -155,7 +158,7 @@ const Project = ({ data: { id } }) => {
             onChange=${editProject}
           />
           <div
-            class="rounded-full w-4 h-4"
+            class="w-4 h-4 rounded-full"
             style="background-color: ${project.$color};"
           ></div>
         </label>
