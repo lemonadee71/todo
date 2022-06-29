@@ -144,6 +144,10 @@ export const createDropdown = (button, dropdown) => {
       }
       case 'Esc':
       case 'Escape':
+        closeMenu();
+        button.focus();
+        isOpen = false;
+        break;
       case 'Tab':
         closeMenu();
         isOpen = false;
