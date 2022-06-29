@@ -114,8 +114,7 @@ const Project = ({ data: { id } }) => {
                     onClick=${toggleFormVisibility}
                   >
                     ${CloseIcon({
-                      class:
-                        'stroke-black hover:stroke-red-600 dark:stroke-white dark:hover:stroke-red-400',
+                      cls: 'stroke-black hover:stroke-red-600 dark:stroke-white dark:hover:stroke-red-400',
                       size: 24,
                     })}
                   </button>
@@ -128,8 +127,7 @@ const Project = ({ data: { id } }) => {
                 onClick=${toggleFormVisibility}
               >
                 ${AddIcon({
-                  class:
-                    'stroke-black group-hover:stroke-gray-800 dark:stroke-white dark:group-hover:stroke-gray-300',
+                  cls: 'stroke-black group-hover:stroke-gray-800 dark:stroke-white dark:group-hover:stroke-gray-300',
                   decorative: true,
                 })}
                 <span>Add another list</span>

@@ -89,8 +89,7 @@ export default class BaseTask extends TaskTemplate {
           <div data-name="task__controls" ${this.props.menu}>
             <button aria-label="Open ${this.type} menu" data-dropdown>
               ${KebabMenuIcon({
-                class:
-                  'stroke-gray-500 hover:stroke-gray-800 dark:hover:stroke-gray-300',
+                cls: 'stroke-gray-500 hover:stroke-gray-800 dark:hover:stroke-gray-300',
                 decorative: true,
               })}
             </button>

@@ -80,8 +80,7 @@ const Dashboard = () => {
             onClick=${createNewProject}
           >
             ${AddIcon({
-              class:
-                'stroke-black dark:stroke-white group-hover:stroke-blue-500 group-focus:stroke-blue-500',
+              cls: 'stroke-black dark:stroke-white group-hover:stroke-blue-500 group-focus:stroke-blue-500',
               size: 20,
             })}
           </button>
