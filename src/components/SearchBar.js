@@ -71,7 +71,7 @@ const SearchBar = () => {
     >
       <form
         role="search"
-        class="peer justify-self-stretch flex items-center gap-1 sm:gap-2 px-3 rounded-full bg-gray-200 dark:bg-gray-100 focus-within:ring-2 focus-within:ring-sky-400 hover:shadow-md dark:hover:shadow-slate-500"
+        class="peer justify-self-stretch flex items-center gap-1 sm:gap-2 px-3 rounded-full bg-gray-200 dark:bg-gray-100 focus-within:bg-white focus-within:ring-2 focus-within:ring-sky-400 hover:shadow-md dark:hover:shadow-slate-500"
       >
         <label for="search">
           <span class="sr-only"> Search tasks </span>
