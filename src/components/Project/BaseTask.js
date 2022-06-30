@@ -2,6 +2,7 @@ import { html } from 'poor-man-jsx';
 import { KebabMenuIcon } from '../../assets/icons';
 import Core from '../../core';
 import { EDIT_SUBTASK, EDIT_TASK } from '../../actions';
+import { runOnlyIfClick } from '../../utils/misc';
 import { useUndo } from '../../utils/undo';
 import TaskTemplate from '../../template/Task';
 import DateBadge from '../DateBadge';
@@ -15,6 +16,10 @@ export default class BaseTask extends TaskTemplate {
 
     this.props = {
       ...this.props,
+      main: {
+        ...this.props.main,
+        onKeydown: runOnlyIfClick(this.editTask.bind(this)),
+      },
       checkbox: {
         class:
           'box-border w-5 h-5 flex justify-center items-center bg-slate-100 rounded-sm border border-solid border-gray-400 dark:bg-transparent dark:border-white',
