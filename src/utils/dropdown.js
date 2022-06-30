@@ -104,6 +104,7 @@ export const createDropdown = (button, dropdown) => {
       case 'Enter':
       case ' ':
         toggleMenu(e);
+        e.preventDefault();
         break;
 
       default:

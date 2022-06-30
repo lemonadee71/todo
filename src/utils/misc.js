@@ -67,5 +67,8 @@ export const escapeHTML = (unsafe) =>
  */
 export const runOnlyIfClick = (fn) => (e) => {
   if (e.altKey) return;
-  if (e.type === 'click' || e.key === ' ' || e.key === 'Enter') fn(e);
+  if (e.type === 'click' || e.key === ' ' || e.key === 'Enter') {
+    fn(e);
+    e.preventDefault();
+  }
 };
