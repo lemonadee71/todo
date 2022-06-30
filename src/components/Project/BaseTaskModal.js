@@ -168,7 +168,7 @@ export default class BaseTaskModal {
                   key="add-label"
                   class="text-sm font-medium text-gray-600 px-3 py-1 rounded bg-[#dedede] hover:text-gray-800 dark:text-white dark:hover:text-gray-300 dark:bg-transparent dark:border dark:border-solid dark:border-white"
                   aria-label="Add or edit labels"
-                  aria-haspopup="true"
+                  aria-haspopup="dialog"
                   data-tooltip="Add label"
                   data-tooltip-position="top"
                   onMount=${this.initPopover}

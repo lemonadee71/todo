@@ -109,6 +109,7 @@ export default class BaseTask extends TaskTemplate {
             >
               <button
                 class="px-2 hover:text-blue-400"
+                aria-haspopup="dialog"
                 onClick=${this.editTask.bind(this)}
               >
                 Edit
