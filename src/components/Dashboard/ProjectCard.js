@@ -3,6 +3,7 @@ import { PROJECT } from '../../actions';
 import { DeleteIcon } from '../../assets/icons';
 import Core from '../../core';
 import { getDateKeyword } from '../../utils/date';
+import { runOnlyIfClick } from '../../utils/misc';
 import { useUndo } from '../../utils/undo';
 
 const ProjectCard = (data, i) => {
@@ -23,9 +24,7 @@ const ProjectCard = (data, i) => {
       data-id="${data.id}"
       data-position="${i}"
       onDblClick=${openProject}
-      onKeydown=${(e) => {
-        if (e.key === ' ' || e.key === 'Enter') openProject();
-      }}
+      onKeydown=${runOnlyIfClick(openProject)}
     >
       <div class="rounded-t-xl" style="background-color: ${data.color};"></div>
 

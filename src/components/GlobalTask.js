@@ -4,6 +4,7 @@ import { DEFAULT_COLORS } from '../constants';
 import Core from '../core';
 import { SubtasksIcon } from '../assets/icons';
 import { isGuest } from '../utils/auth';
+import { runOnlyIfClick } from '../utils/misc';
 import TaskTemplate from '../template/Task';
 import Badge from './Badge';
 import DateBadge from './DateBadge';
@@ -17,9 +18,7 @@ class GlobalTask extends TaskTemplate {
 
     this.props.main = {
       ...this.props.main,
-      onKeydown: (e) => {
-        if (e.key === ' ' || e.key === 'Enter') this.openOnLocation();
-      },
+      onKeydown: runOnlyIfClick(this.openOnLocation),
     };
     // to avoid clutter and additional reads for online mode
     this.props.labels = { style: 'display: none;' };
