@@ -54,6 +54,9 @@ const SearchBar = () => {
 
   const clearInput = () => {
     $('#search').value = '';
+    state.query = '';
+    state.results = [];
+    state.showResults = false;
   };
 
   const onChange = (e) => {
@@ -66,10 +69,12 @@ const SearchBar = () => {
     <div
       class="group relative col-span-2 xs:col-span-1 xs:col-start-2 xs:row-start-1 sm:w-3/4 sm:max-w-2xl md:w-1/2 md:ml-56"
     >
-      <div
-        class="justify-self-stretch px-3 flex items-center gap-1 sm:gap-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-100 dark:hover:bg-gray-200 focus-within:bg-white focus-within:ring-2 focus-within:ring-sky-400"
+      <form
+        role="search"
+        class="peer justify-self-stretch flex items-center gap-1 sm:gap-2 px-3 rounded-full bg-gray-200 dark:bg-gray-100 focus-within:ring-2 focus-within:ring-sky-400 hover:shadow-md dark:hover:shadow-slate-500"
       >
         <label for="search">
+          <span class="sr-only"> Search tasks </span>
           ${SearchIcon({
             cls: 'stroke-gray-600 group-hover:stroke-gray-700',
             size: 20,
@@ -81,34 +86,37 @@ const SearchBar = () => {
           type="text"
           name="search"
           id="search"
-          placeholder="Search"
           onFocus=${toggleFocus}
           onBlur=${debounce(toggleFocus, 150)}
-          onInput=${debounce(onChange, 200)}
+          onInput=${debounce(onChange, 400)}
         />
         <button
+          type="button"
           class="text-xs text-gray-400 px-1 py-0.5 bg-transparent rounded-md hover:text-gray-600 invisible group-focus-within:visible"
           onClick=${toggleSearchMode}
         >
-          ${state.$isComparisonAND((value) => (value ? 'AND' : 'OR'))}
+          <span class="sr-only">Mode:</span>
+          <span>
+            ${state.$isComparisonAND((value) => (value ? 'AND' : 'OR'))}
+          </span>
         </button>
         <button
+          type="button"
           class="invisible group-focus-within:visible"
           onClick=${clearInput}
         >
           ${CloseIcon({
             cls: 'stroke-gray-600 hover:stroke-red-500',
             size: 20,
-            id: 'clear-search',
-            title: 'Clear search input',
+            id: 'search-clear',
+            title: 'Clear input',
           })}
         </button>
-      </div>
+      </form>
       <div
-        is-list
         class="absolute top-8 left-0 right-0 p-1 divide-y-2 divide-gray-200 rounded-b-lg drop-shadow-lg bg-white dark:bg-[#272727] dark:divide-[#272727] ${state.$showResults(
           (value) => (value ? 'block' : 'hidden')
-        )}"
+        )} "
       >
         ${state.$results(renderResults)}
       </div>
