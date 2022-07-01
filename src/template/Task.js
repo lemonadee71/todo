@@ -48,8 +48,6 @@ export default class Task {
         ignore="style"
         tabindex="0"
         data-id="${this.id}"
-        data-project="${this.data.project}"
-        data-list="${this.data.list}"
         data-location="${Object.values(this.data.location).join(',')}"
         onCreate=${(e) => [this.initTemplate.bind(this), ...this.oncreate].forEach((cb) => cb(e))}
         onDestroy=${(e) => this.ondestroy.forEach((cb) => cb(e))}

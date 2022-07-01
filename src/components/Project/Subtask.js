@@ -10,7 +10,6 @@ const Subtask = (data, i, variant) => {
     class: component.props.main.class
       .replace(/px-[0-9]+/, '')
       .replace(/py-[0-9]+/, 'py-1'),
-    'data-parent': data.parent,
   };
 
   if (variant === 'small') {

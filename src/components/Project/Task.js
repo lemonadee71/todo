@@ -41,10 +41,11 @@ const Task = (data, idx) => {
       emptyInsertThreshold: 10,
       onUpdate: (e) => moveSubtask(e.item.dataset.id, e.newIndex),
       onAdd: (e) => {
-        const { id, parent, list } = e.item.dataset;
-        const fromTask = parent || id;
-        const fromList = list;
-        const action = parent ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
+        const { id, location } = e.item.dataset;
+        const [, fromList, taskId, subtaskId] = location.split(',');
+        // if there's subtaskId, it's a subtask
+        const fromTask = subtaskId ? taskId : id;
+        const action = subtaskId ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
 
         transferSubtask(action, fromTask, fromList, id, e.newIndex);
       },

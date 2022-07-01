@@ -48,10 +48,10 @@ const List = (data, pos) => {
     );
   };
 
-  const transferTask = (action, taskId, subtaskId, to, from, position) => {
+  const transferTask = (action, taskId, subtaskId, fromList, position) => {
     Core.event.emit(action, {
       project: data.project,
-      list: { to, from },
+      list: { to: data.id, from: fromList },
       task: taskId,
       subtask: subtaskId,
       type: 'list',
@@ -79,12 +79,11 @@ const List = (data, pos) => {
       filter: 'input,button',
       onUpdate: (e) => moveTask(e.item.dataset.id, e.newIndex),
       onAdd: (e) => {
-        const { parent, id } = e.item.dataset;
-        const to = data.id;
-        const from = parent ? e.item.dataset.list : e.from.dataset.id;
-        const action = parent ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
+        const { id, location } = e.item.dataset;
+        const [, fromList, taskId, subtaskId] = location.split(',');
+        const action = subtaskId ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
 
-        transferTask(action, parent || id, id, to, from, e.newIndex);
+        transferTask(action, taskId, subtaskId ?? id, fromList, e.newIndex);
       },
     });
   };
