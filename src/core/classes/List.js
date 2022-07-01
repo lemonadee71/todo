@@ -70,13 +70,27 @@ class List {
   }
 
   /**
-   * Move item at a specified index
+   * Move item at a specified index.
+   * Use '+1' to move the item down and '-1' to move item up.
    * @param {function} predicate
    * @param {Number} idx
    * @returns {List}
    */
   move(predicate, idx) {
-    return this.insert(this.extract(predicate), idx);
+    const previousIdx = this.getIndex(predicate);
+    let newIdx = idx;
+
+    // special keywords
+    // so we can move items relative to their current idx
+    if (idx === '+1') {
+      newIdx = previousIdx + 1;
+      if (newIdx > this.length - 1) newIdx = this.length - 1;
+    } else if (idx === '-1') {
+      newIdx = previousIdx - 1;
+      if (newIdx < 0) newIdx = 0;
+    }
+
+    return this.insert(this.extract(predicate), newIdx);
   }
 
   /**

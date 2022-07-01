@@ -56,6 +56,7 @@ const Task = (data, idx) => {
     main: {
       ...component.props.main,
       class: `${component.props.main.class} rounded-md drop-shadow-lg`,
+      'data-sortable-style': 'transform: rotate(1deg);',
     },
     badges: {
       onClick: (e) => {

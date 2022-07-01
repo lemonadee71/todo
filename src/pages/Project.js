@@ -209,7 +209,7 @@ const Project = ({ data: { id } }) => {
               <div
                 is-list
                 keystring="id"
-                class="w-fit flex flex-row items-start space-x-6"
+                class="w-fit p-2 flex flex-row items-start space-x-6"
                 onMount=${init}
               >
                 ${project.$lists((lists) =>

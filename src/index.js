@@ -17,6 +17,7 @@ import * as pages from './pages';
 import { config as firebaseConfig } from './firebase-config';
 import './styles/style.css';
 import 'wicg-inert';
+import { makeKeyboardSortable } from './utils/sortable';
 
 PoorManJSX.addBooleanAttribute('data-selected');
 
@@ -28,6 +29,10 @@ PoorManJSX.onAfterCreation((element) => {
   // for dropdowns we assume that the button is next to its dropdown menu
   if (element.matches('[data-dropdown]')) {
     createDropdown(element, element.nextElementSibling);
+  }
+
+  if (element.matches('[data-sortable]')) {
+    makeKeyboardSortable(element);
   }
 });
 

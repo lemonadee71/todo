@@ -3,7 +3,6 @@ import { PROJECT } from '../../actions';
 import { DeleteIcon } from '../../assets/icons';
 import Core from '../../core';
 import { getDateKeyword } from '../../utils/date';
-import { runOnlyIfClick } from '../../utils/misc';
 import { useUndo } from '../../utils/undo';
 
 const ProjectCard = (data, i) => {
@@ -16,15 +15,37 @@ const ProjectCard = (data, i) => {
     data: { id: data.id, project: data.id },
   });
 
+  const handleKeydown = (e) => {
+    if (e.altKey) return;
+
+    switch (e.key) {
+      case 'Enter':
+        openProject();
+        e.preventDefault();
+        break;
+      case 'Delete':
+      case 'Backspace':
+        deleteProject();
+        e.preventDefault();
+        break;
+      default:
+    }
+  };
+
   return html`
     <div
       key="${data.id}"
+      ignore="class"
       tabindex="0"
-      class="group grid grid-rows-[1fr_2fr_1fr] rounded-xl shadow-md bg-white dark:bg-[#272727] focus:ring"
+      class="group grid grid-rows-[1fr_2fr_1fr] rounded-xl shadow-md bg-white dark:bg-[#272727]"
       data-id="${data.id}"
+      data-location="${data.id}"
       data-position="${i}"
+      data-sortable
+      data-sortable-action="${PROJECT.MOVE}"
+      data-sortable-style=".ring-4"
       onDblClick=${openProject}
-      onKeydown=${runOnlyIfClick(openProject)}
+      onKeydown=${handleKeydown}
     >
       <div class="rounded-t-xl" style="background-color: ${data.color};"></div>
 

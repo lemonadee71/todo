@@ -72,6 +72,7 @@ const List = (data, pos) => {
     Sortable.create(this, {
       group: 'tasks',
       animation: 150,
+      ghostClass: 'rotate-1',
       // prevents sorting on touch
       // delay: 10,
       draggable: '.task',
@@ -92,16 +93,22 @@ const List = (data, pos) => {
   // BUG: There are z-index issues here
   return html`
     <div
+      ignore="class"
       class="tasklist w-72 pt-3 pb-4 space-y-2 rounded-lg bg-[#dedede] dark:bg-[#272727] sm:relative z-0"
       id="${data.id}"
+      tabindex="0"
       data-id="${data.id}"
+      data-location="${data.project},${data.id}"
       data-position="${pos}"
+      data-sortable
+      data-sortable-action="${PROJECT.LISTS.MOVE}"
+      data-sortable-style=".ring-4"
     >
       <!-- List header -->
       <div
-        class="sm:sticky sm:top-0 px-3 py-2 space-y-1 bg-[#dedede] dark:bg-[#272727] z-[3]"
+        class="sm:sticky sm:top-0 mx-0.5 my-2 px-2 space-y-1 bg-[#dedede] dark:bg-[#272727] z-[3]"
       >
-        <div class="flex justify-between items-center ">
+        <div class="flex justify-between items-center">
           <h2 class="font-medium text-lg line-clamp-3">{% ${data.name} %}</h2>
           <button onClick=${deleteList}>
             ${DeleteIcon({

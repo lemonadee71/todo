@@ -5,6 +5,7 @@ const Subtask = (data, i, variant) => {
   const component = new BaseTask(data, TASK.SUBTASKS);
 
   component.props.main = {
+    ...component.props.main,
     // remove and reduce padding
     class: component.props.main.class
       .replace(/px-[0-9]+/, '')

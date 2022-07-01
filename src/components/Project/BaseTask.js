@@ -1,8 +1,7 @@
 import { html } from 'poor-man-jsx';
 import { KebabMenuIcon } from '../../assets/icons';
-import Core from '../../core';
 import { EDIT_SUBTASK, EDIT_TASK } from '../../actions';
-import { runOnlyIfClick } from '../../utils/misc';
+import Core from '../../core';
 import { useUndo } from '../../utils/undo';
 import TaskTemplate from '../../template/Task';
 import DateBadge from '../DateBadge';
@@ -18,7 +17,9 @@ export default class BaseTask extends TaskTemplate {
       ...this.props,
       main: {
         ...this.props.main,
-        onKeydown: runOnlyIfClick(this.editTask.bind(this)),
+        'data-sortable': 'true',
+        'data-sortable-action': this.action.MOVE,
+        onKeydown: this.#handleKeydown,
       },
       checkbox: {
         class:
@@ -37,6 +38,23 @@ export default class BaseTask extends TaskTemplate {
   get location() {
     return this.data.location;
   }
+
+  #handleKeydown = (e) => {
+    if (e.altKey || e.eventPhase !== 2) return;
+
+    switch (e.key) {
+      case 'Enter':
+        this.editTask.call(this);
+        e.preventDefault();
+        break;
+      case 'Delete':
+      case 'Backspace':
+        this.deleteTask.call(this);
+        e.preventDefault();
+        break;
+      default:
+    }
+  };
 
   // do not use arrow; use bind instead
   // see https://stackoverflow.com/questions/64498584
