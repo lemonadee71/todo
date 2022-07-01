@@ -85,22 +85,23 @@ export const createDropdown = (button, dropdown) => {
   button.addEventListener('click', toggleMenu);
 
   button.addEventListener('keydown', (e) => {
+    if (e.altKey) return;
+
     // if already opened just move focus
     switch (e.key) {
       case 'Down':
       case 'ArrowDown': {
         if (isOpen) focusChild(dropdown, 0);
-        else openMenu();
+        else toggleMenu(e);
         break;
       }
       case 'Up':
       case 'ArrowUp': {
         previousIdx = dropdown.children.length - 1;
         if (isOpen) focusChild(dropdown, previousIdx);
-        else openMenu();
+        else toggleMenu(e);
         break;
       }
-      // BUG: Pressing enter also presses the first focus item
       case 'Enter':
       case ' ':
         toggleMenu(e);
@@ -109,11 +110,11 @@ export const createDropdown = (button, dropdown) => {
 
       default:
     }
-
-    isOpen = true;
   });
 
   dropdown.addEventListener('keydown', (e) => {
+    if (e.altKey) return;
+
     switch (e.key) {
       case 'Home':
         focusChild(dropdown, 0);
