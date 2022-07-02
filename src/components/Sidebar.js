@@ -90,6 +90,8 @@ const Sidebar = () => {
                 class="rounded border border-solid border-neutral-400 hover:bg-neutral-700"
                 data-tooltip="Add project"
                 data-tooltip-position="right"
+                name="new-project"
+                value="Unnamed project"
                 type="submit"
               >
                 ${AddIcon({
@@ -99,7 +101,6 @@ const Sidebar = () => {
                   title: 'Add project',
                 })}
               </button>
-              <input type="hidden" name="new-project" value="Unnamed project" />
             </form>
           </div>
 

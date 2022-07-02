@@ -12,6 +12,7 @@ export const PATHS = {
 };
 export const TZ_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssxxxxx";
 export const DATE_TIME_FORMAT = 'yyyy-MM-dd HH:mm';
+// All colors except blue have contrast errors (white text)
 export const DEFAULT_COLORS = {
   green: '#61BD4F',
   'bright-green': '#9CD326',

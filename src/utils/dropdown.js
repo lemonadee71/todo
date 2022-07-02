@@ -7,6 +7,9 @@ export const createDropdown = (button, dropdown) => {
   dropdown.setAttribute('role', 'menu');
   // it's a dropdown so we assume it is vertical
   dropdown.setAttribute('aria-orientation', 'vertical');
+  [...dropdown.children].forEach((item) =>
+    item.setAttribute('role', 'menuitem')
+  );
 
   const { dropdownOffset, dropdownPosition, dropdownName } = dropdown.dataset;
 

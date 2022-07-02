@@ -10,6 +10,7 @@ import {
   SyncIcon,
 } from '../assets/icons';
 
+// TODO: Fix contrast issues with blue buttons
 const Landing = () => {
   const goToHome = () =>
     Core.router.navigate(PATHS.dashboard.url, { title: PATHS.dashboard.title });

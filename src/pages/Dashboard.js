@@ -54,6 +54,7 @@ const Dashboard = () => {
       class="h-20 grid grid-cols-[auto_1fr] grid-rows-2 px-6 shadow-md bg-white dark:bg-[#353535]"
       onDestroy=${unsubscribe}
     >
+      <h1 class="sr-only">${getUserName()}'s Dashboard</h1>
       <img
         class="row-span-2 rounded-full h-14 w-14 mr-6 active:ring-teal-500 self-center"
         src="${getProfilePicURL()}"

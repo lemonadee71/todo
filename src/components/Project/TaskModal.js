@@ -60,13 +60,16 @@ export default class TaskModal extends BaseTaskModal {
                 ${this.task.$project((id) => Core.main.getProject(id).name)}
               </span>
             </p>
-            <select
-              class="max-w-[128px] bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100"
-              name="project"
-              onChange=${onProjectChange(this.transferTask)}
-            >
-              ${projectOptions}
-            </select>
+            <label>
+              <span class="sr-only">Project</span>
+              <select
+                class="max-w-[128px] bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100"
+                name="project"
+                onChange=${onProjectChange(this.transferTask)}
+              >
+                ${projectOptions}
+              </select>
+            </label>
             <p class="inline text-sm text-gray-500 dark:text-gray-200">
               ,
               <span class="sr-only">
@@ -76,14 +79,17 @@ export default class TaskModal extends BaseTaskModal {
                 )}
               </span>
             </p>
-            <select
-              class="max-w-[128px] bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100"
-              name="list"
-              onChange=${onListChange(this.transferTask)}
-              onMount=${initializeListOptions}
-            >
-              ${listOptions}
-            </select>
+            <label>
+              <span class="sr-only">List</span>
+              <select
+                class="max-w-[128px] bg-transparent text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100"
+                name="list"
+                onChange=${onListChange(this.transferTask)}
+                onMount=${initializeListOptions}
+              >
+                ${listOptions}
+              </select>
+            </label>
           </div>
         `,
         // too lazy to specify margin manually so use default (append) instead
