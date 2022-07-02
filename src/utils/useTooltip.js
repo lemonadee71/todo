@@ -11,7 +11,9 @@ export const useTooltip = (el) => {
     (callback = null) =>
     (e) => {
       callback?.(e);
-      const { tooltip: tooltipText, tooltipPosition } = e.target.dataset;
+      let { tooltip: tooltipText, tooltipPosition } = e.target.dataset;
+      const match = tooltipText.match(/{{([\w-]+)}}/);
+      tooltipText = match ? e.target.getAttribute(match[1]) : tooltipText;
 
       currentInstance = createPopper(el, tooltip, {
         placement: tooltipPosition || 'bottom',
