@@ -1,4 +1,3 @@
-import Sortable from 'sortablejs';
 import { createHook, html, render } from 'poor-man-jsx';
 import { PROJECT } from '../actions';
 import { useRoot } from '../core/hooks';
@@ -30,20 +29,6 @@ const Sidebar = () => {
         },
       }
     );
-  };
-
-  const init = function () {
-    Sortable.create(this, {
-      animation: 150,
-      // delay: 10,
-      draggable: 'li',
-      onUpdate: (e) => {
-        Core.event.emit(PROJECT.MOVE, {
-          project: e.item.dataset.id,
-          data: { position: e.newIndex },
-        });
-      },
-    });
   };
 
   // prettier-ignore
@@ -104,7 +89,7 @@ const Sidebar = () => {
             </form>
           </div>
 
-          <ul is-list keystring="data-id" class="space-y-1 m-0" onMount=${init}>
+          <ul is-list keystring="data-id" class="space-y-1 m-0">
             ${data.$projects.map(ProjectLink).map((item) => render(item))}
           </ul>
         </nav>
