@@ -227,15 +227,17 @@ const Calendar = (projectId) => {
       <button
         class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded border border-solid border-neutral-600 active:ring active:ring-inset shadow-sm"
         name="today"
-        data-tooltip="${format(new Date(), 'eee, MMMM dd')}"
+        data-tooltip="${format(new Date(), 'eee, MMMM d')}"
         onClick=${goToToday}
       >
         Today
+        <span class="sr-only">${format(new Date(), 'EEEE, MMMM d')}</span>
       </button>
       <button
         class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded-full active:ring active:ring-inset shadow-sm"
         name="previous"
-        data-tooltip="Previous week"
+        aria-label="Previous month"
+        data-tooltip="{{aria-label}}"
         onClick=${previous}
       >
         <
@@ -243,7 +245,8 @@ const Calendar = (projectId) => {
       <button
         class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded-full active:ring active:ring-inset shadow-sm"
         name="next"
-        data-tooltip="Next week"
+        aria-label="Next month"
+        data-tooltip="{{aria-label}}"
         onClick=${next}
       >
         >

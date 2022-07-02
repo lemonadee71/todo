@@ -65,8 +65,8 @@ const CreationPopup = (projectId) => {
 
   return html`
     <div
-      class="relative text-white bg-[#272727] w-56 px-1 pt-5 pb-3 rounded-md text-sm"
       id="creation-popup"
+      class="relative text-white bg-[#272727] w-56 px-1 pt-5 pb-3 rounded-md text-sm"
       style_visibility=${state.$isOpen((value) =>
         value ? 'visible' : 'hidden'
       )}
@@ -79,43 +79,53 @@ const CreationPopup = (projectId) => {
       <button
         class="absolute top-0 right-0 mr-3 text-lg"
         onClick=${(e) => dispatchCustom('popup:close', e.target.parentElement)}
+        aria-label="Close popup"
       >
         &times;
       </button>
 
       <form
-        class="flex flex-col space-y-2 w-full px-2 tex-"
+        class="flex flex-col space-y-2 w-full px-2"
         onSubmit.prevent=${createTask}
       >
-        <p class="text-sm font-medium">Create new task</p>
+        <p class="text-sm font-medium">New Task</p>
         <label>
           <p class="text-xs font-medium text-gray-500 mb-1">Title</p>
           <textarea
             class="text-black w-full p-1 rounded focus:ring resize-none break-words"
             name="title"
-            placeholder="Task name"
             rows="1"
             data-autosize
           ></textarea>
         </label>
 
-        <div onDestroy=${unsubscribe}>
-          <p class="text-xs font-medium text-gray-500 mb-1">Location</p>
-          <select
-            class="text-black w-full p-1 rounded mb-2"
-            name="project"
-            disabled
-          >
-            ${projectOptions}
-          </select>
-          <select
-            class="text-black w-full p-1 rounded"
-            name="list"
-            onMount=${initializeListOptions}
-          >
-            ${listOptions}
-          </select>
-        </div>
+        <fieldset onDestroy=${unsubscribe}>
+          <legend class="text-xs font-medium text-gray-500 mb-1">
+            Location
+          </legend>
+
+          <label>
+            <span class="sr-only">Project</span>
+            <select
+              class="text-black w-full p-1 rounded mb-2"
+              name="project"
+              disabled
+            >
+              ${projectOptions}
+            </select>
+          </label>
+
+          <label>
+            <span class="sr-only">List</span>
+            <select
+              class="text-black w-full p-1 rounded"
+              name="list"
+              onMount=${initializeListOptions}
+            >
+              ${listOptions}
+            </select>
+          </label>
+        </fieldset>
 
         <label>
           <p class="text-xs font-medium text-gray-500 mb-1">Date</p>
@@ -128,11 +138,12 @@ const CreationPopup = (projectId) => {
             onMount=${initDatePicker}
           />
         </label>
+
         <button
           class="rounded px-2 py-1 bg-blue-500 hover:bg-blue-700"
           type="submit"
         >
-          Submit
+          Create
         </button>
       </form>
     </div>
