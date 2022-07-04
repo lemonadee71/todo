@@ -8,16 +8,7 @@ const locationKeywords = ['project', 'list', 'task', 'subtask'];
  * @param {HTMLElement} target
  */
 export const makeKeyboardSortable = (target) => {
-  let {
-    sortableAction: action,
-    sortableStyle: style,
-    location,
-  } = target.dataset;
-  location = location.split(',').reduce((obj, curr, i) => {
-    obj[locationKeywords[i]] = curr;
-    return obj;
-  }, {});
-
+  let { sortableAction: action, sortableStyle: style } = target.dataset;
   let isSelected = false;
 
   const toggleSelectedStyle = () => {
@@ -41,6 +32,13 @@ export const makeKeyboardSortable = (target) => {
   };
 
   const handleKeydown = (e) => {
+    const location = target.dataset.location
+      .split(',')
+      .reduce(
+        (o, curr, i) => Object.assign(o, { [locationKeywords[i]]: curr }),
+        {}
+      );
+
     // only act if event originated from target
     // 2 === AT_TARGET
     if (e.altKey || e.eventPhase !== 2) return;
