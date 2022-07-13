@@ -127,6 +127,8 @@ export const applyValidation = (target) => {
     errorDisplay.innerHTML = '';
 
     if (errors.length) {
+      errorDisplay.setAttribute('role', 'alert');
+
       if (errors.length === 1) {
         errorDisplay.append(`⚠ ${errors[0]}`);
       } else {
@@ -139,6 +141,8 @@ export const applyValidation = (target) => {
           `)
         );
       }
+    } else {
+      errorDisplay.removeAttribute('role', 'alert');
     }
   };
 
