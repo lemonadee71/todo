@@ -128,9 +128,7 @@ export const getProject = (projectId) => {
 };
 
 export const addProject = (name) => {
-  if (!name.trim()) throw new Error('Project must have a name');
-
-  const project = new Project({ name });
+  const project = new Project({ name: name || 'Unnamed project' });
   Root.add(project);
 
   return project;
@@ -138,9 +136,6 @@ export const addProject = (name) => {
 
 export const updateProject = (projectId, data) => {
   const [prop, value] = Object.entries(data).flat();
-
-  if (prop === 'name' && !value.trim())
-    throw new Error('Project must have a name');
 
   const project = getProject(projectId);
   project[prop] = value;
@@ -176,9 +171,7 @@ export const addList = (projectId, name) => {
     );
   }
 
-  if (!name.trim()) throw new Error('List must have a name');
-
-  const list = new TaskList({ name });
+  const list = new TaskList({ name: name || 'Unnamed list' });
   project.addList(list);
 
   return list;
@@ -255,9 +248,6 @@ export const updateTask = (projectId, listId, taskId, data) => {
   const task = getTask(projectId, listId, taskId);
   // since only one prop can be updated at a time
   const [prop, value] = Object.entries(data).flat();
-
-  if (prop === 'title' && !value) throw new Error('Task must have a title');
-
   task.update(prop, value);
 
   return task;
@@ -328,8 +318,6 @@ export const updateSubtask = (projectId, listId, taskId, subtaskId, data) => {
   const subtask = getTask(projectId, listId, taskId).getSubtask(subtaskId);
   const [prop, value] = Object.entries(data).flat();
 
-  if (prop === 'title' && !value) throw new Error('Subtask must have a title');
-
   subtask.update(prop, value);
 
   return subtask;
@@ -365,14 +353,6 @@ export const getLabel = (projectId, labelId) =>
 export const addLabel = (projectId, name, color) => {
   const project = getProject(projectId);
 
-  if (!name.trim()) {
-    throw new Error('Label must have a name');
-  }
-
-  if (project.labels.has((label) => label.name === name)) {
-    throw new Error('Label already exists');
-  }
-
   const label = new Label({ name, color });
   project.addLabel(label);
 
@@ -387,10 +367,6 @@ export const deleteLabel = (projectId, labelId) => {
 export const editLabel = (projectId, labelId, data) => {
   const { labels } = getProject(projectId);
   const label = labels.get(labelId);
-
-  if (!data.name.trim()) {
-    throw new Error('Label must have a name');
-  }
 
   if (label) Object.assign(label, data);
   else throw new Error(`Label with the id ${labelId} does not exists`);
