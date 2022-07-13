@@ -28,7 +28,7 @@ const CreationPopup = (projectId) => {
 
   const createTask = (e) => {
     let { title, project, list } = e.target.elements;
-    title = title.value;
+    title = title.value || 'Unnamed Task';
     project = project.value;
     list = list.value || 'default';
 

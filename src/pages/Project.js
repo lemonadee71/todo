@@ -6,7 +6,6 @@ import Core from '../core';
 import Calendar from '../components/Calendar';
 import List from '../components/Project/List';
 import { AddIcon, CalendarIcon, CloseIcon, ListIcon } from '../assets/icons';
-import { debounce } from '../utils/delay';
 
 const Project = ({ data: { id } }) => {
   const [project, unsubscribe] = useProject(id);
@@ -34,20 +33,12 @@ const Project = ({ data: { id } }) => {
   };
 
   const editProject = (e) => {
-    const type = e.target.name;
+    if (!e.detail?.isValid) return;
 
-    Core.event.emit(
-      PROJECT.UPDATE,
-      {
-        project: id,
-        data: { [type]: e.target.value },
-      },
-      {
-        onError: () => {
-          if (type === 'name') e.target.value = project.name;
-        },
-      }
-    );
+    Core.event.emit(PROJECT.UPDATE, {
+      project: id,
+      data: { [e.target.name]: e.target.value },
+    });
   };
 
   const createNewList = (e) => {
@@ -87,18 +78,29 @@ const Project = ({ data: { id } }) => {
     <div
       ignore-all
       key="list-form"
-      class="w-60 p-2 rounded-lg opacity-80 bg-[#dedede] dark:bg-[#272727]"
+      class="w-60 p-2 rounded-lg opacity-80 bg-[#dedede] dark:bg-[#584040]"
     >
       ${state.$openForm((value) =>
         value
           ? render(html`
               <form class="w-full" onSubmit.prevent=${createNewList}>
-                <input
-                  class="w-full px-2 py-1 mb-1 text-sm rounded-sm placeholder-slate-400 dark:text-black"
-                  type="text"
-                  name="new-list"
-                  placeholder="Enter list name..."
-                />
+                <div class="flex flex-col space-y-0.5 mb-2">
+                  <label
+                    for="new-list-name"
+                    class="text-sm text-gray-800 dark:text-gray-100 after:content-['*'] after:text-red-600"
+                  >
+                    List name
+                  </label>
+                  <input
+                    class="w-full px-2 py-1 mb-1 text-sm rounded-sm placeholder-slate-400 dark:text-black focus:ring"
+                    type="text"
+                    name="new-list"
+                    id="new-list-name"
+                    data-validate
+                    data-validate-show-error
+                    required
+                  />
+                </div>
                 <div class="flex flex-row items-center space-x-1">
                   <button
                     class="text-white text-sm w-fit px-2 py-1 rounded bg-blue-700 hover:bg-blue-800"
@@ -109,7 +111,7 @@ const Project = ({ data: { id } }) => {
                   <button
                     type="reset"
                     aria-label="Cancel"
-                    data-tooltip="Cancel"
+                    data-tooltip="{{aria-label}}"
                     data-tooltip-position="right"
                     onClick=${toggleFormVisibility}
                   >
@@ -145,7 +147,7 @@ const Project = ({ data: { id } }) => {
       onDestroy=${unsubscribe}
     >
       <h1 class="sr-only">${project.$name}</h1>
-      <div class="w-3/4 flex items-center">
+      <div class="w-3/4 pt-2 flex items-center">
         <label
           class="relative rounded-full mr-3 select-none cursor-pointer focus-within:ring focus-within:ring-offset-2"
         >
@@ -162,14 +164,17 @@ const Project = ({ data: { id } }) => {
             style="background-color: ${project.$color};"
           ></div>
         </label>
+        <label for="project-name" class="sr-only">Project name</label>
         <!-- prettier-ignore -->
         <textarea
-          class="flex-1 text-2xl font-extrabold px-1 py-1 rounded-sm bg-inherit resize-none break-words overflow-hidden placeholder:text-slate-600 focus:placeholder:text-slate-400 focus:ring-inset focus:ring dark:placeholder:text-slate-400 dark:focus:placeholder:text-slate-200"
+          class="flex-1 text-2xl font-extrabold p-1 rounded-sm bg-inherit resize-none break-words overflow-hidden placeholder:text-slate-600 focus:ring marker:dark:placeholder:text-slate-400"
+          id="project-name"
           name="name"
-          rows="1"
           placeholder="Project name"
-          data-autosize
-          onInput=${debounce(editProject, 200)}
+          data-schema="title"
+          data-validate="aggressive"
+          data-validate-delay="200"
+          onValidate=${editProject}
         >${project.name}</textarea>
       </div>
 

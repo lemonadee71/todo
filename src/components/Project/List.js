@@ -33,19 +33,14 @@ const List = (data, pos) => {
 
   const createTask = (e) => {
     const input = e.target.elements['new-task'];
-    Core.event.emit(
-      TASK.ADD,
-      {
-        project: data.project,
-        list: data.id,
-        data: { title: input.value },
-      },
-      {
-        onSuccess: () => {
-          input.value = '';
-        },
-      }
-    );
+
+    Core.event.emit(TASK.ADD, {
+      project: data.project,
+      list: data.id,
+      data: { title: input.value },
+    });
+
+    e.target.reset();
   };
 
   const transferTask = (action, taskId, subtaskId, fromList, position) => {
@@ -120,12 +115,15 @@ const List = (data, pos) => {
 
         <!-- New task form -->
         <form class="flex flex-row" onSubmit.prevent=${createTask}>
-          <input
-            type="text"
-            name="new-task"
-            placeholder="Add task"
-            class="w-full text-sm rounded-sm px-1 py-1 bg-inherit placeholder:text-slate-600 focus:bg-white focus:placeholder:text-slate-400 focus:ring dark:focus:bg-inherit dark:placeholder:text-gray-400 dark:focus:placeholder:text-gray-200"
-          />
+          <label>
+            <span class="sr-only">Create new task</span>
+            <input
+              class="w-full text-sm rounded-sm p-1 bg-inherit border-b border-solid border-blue-500 placeholder:text-slate-600 focus:bg-white focus:ring dark:focus:bg-inherit dark:placeholder:text-gray-400"
+              type="text"
+              name="new-task"
+              placeholder="Add task"
+            />
+          </label>
           <button type="submit">
             ${AddIcon({
               cls: 'stroke-blue-600 hover:stroke-blue-800 dark:stroke-blue-400 dark:hover:stroke-blue-600',

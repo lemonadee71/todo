@@ -101,7 +101,7 @@ const SearchBar = () => {
           </span>
         </button>
         <button
-          type="button"
+          type="reset"
           class="invisible group-focus-within:visible"
           onClick=${clearInput}
         >

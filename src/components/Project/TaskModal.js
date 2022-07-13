@@ -35,7 +35,7 @@ export default class TaskModal extends BaseTaskModal {
       data: { title: input.value },
     });
 
-    input.value = '';
+    e.target.reset();
   };
 
   render() {
@@ -115,11 +115,13 @@ export default class TaskModal extends BaseTaskModal {
                 +
               </button>
               <input
-                class="text-inherit text-sm bg-inherit p-1 rounded focus:ring ml-2"
+                class="text-inherit text-sm bg-inherit p-1 ml-2 rounded border-b border-solid border-gray-400 focus:border-gray-600 focus:ring"
                 type="text"
                 id="new-subtask"
                 name="new-subtask"
                 placeholder="Create subtask"
+                data-validate
+                required
               />
             </form>
 

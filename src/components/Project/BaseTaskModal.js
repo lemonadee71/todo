@@ -33,21 +33,14 @@ export default class BaseTaskModal {
   }
 
   editTask = (e) => {
+    if (!e.detail.isValid) return;
+
     const { name, value } = e.target;
-    Core.event.emit(
-      this.action.UPDATE,
-      {
-        ...this.location,
-        data: { [name]: value },
-      },
-      {
-        onError: () => {
-          if (name === 'title') {
-            e.target.value = this.data.title;
-          }
-        },
-      }
-    );
+
+    Core.event.emit(this.action.UPDATE, {
+      ...this.location,
+      data: { [name]: value },
+    });
   };
 
   updateLabels = (id, isSelected) => {
@@ -144,12 +137,13 @@ export default class BaseTaskModal {
           <h2 class="sr-only">{% ${this.data.title} %}</h2>
           <!-- prettier-ignore -->
           <textarea
-            class="font-semibold text-xl w-full p-1 rounded-sm bg-inherit resize-none overflow-hidden placeholder:text-slate-600 focus:ring focus:placeholder:text-slate-400 dark:placeholder:text-slate-200 dark:focus:placeholder:text-slate-400"
+            class="font-semibold text-xl w-full p-1 rounded-sm bg-inherit resize-none overflow-hidden placeholder:text-slate-600 focus:ring dark:placeholder:text-slate-200"
             name="title"
-            rows="1"
-            data-autosize
             data-focus="first"
-            onInput=${debounce(this.editTask, 200)}
+            data-schema="title"
+            data-validate="aggressive"
+            data-validate-delay="200"
+            onValidate=${this.editTask}         
           >${this.data.title.trim()}</textarea>
         </div>
 

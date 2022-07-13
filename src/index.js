@@ -10,18 +10,29 @@ import { fetchProjects, initFirestore, setupListeners } from './core/firestore';
 import { isGuest, isNewUser, signIn } from './utils/auth';
 import { createDropdown } from './utils/dropdown';
 import { getUserRef, updateUser } from './utils/firestore';
+import { makeKeyboardSortable } from './utils/sortable';
 import { initializeTheme } from './utils/theme';
+import { addSchema, applyValidation } from './utils/validate';
 import defineCustomElements from './components/custom';
 import Router from './components/Router';
 import * as pages from './pages';
 import { config as firebaseConfig } from './firebase-config';
 import './styles/style.css';
 import 'wicg-inert';
-import { makeKeyboardSortable } from './utils/sortable';
+
+addSchema('title', {
+  rows: 1,
+  required: true,
+  'data-autosize': '',
+});
 
 PoorManJSX.addBooleanAttribute('data-selected');
 
 PoorManJSX.onAfterCreation((element) => {
+  if (element.matches('[data-validate]')) {
+    applyValidation(element);
+  }
+
   if (element.matches('[data-autosize]')) {
     element.addEventListener('@mount', () => autosize(element));
   }

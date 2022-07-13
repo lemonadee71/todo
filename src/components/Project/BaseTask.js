@@ -91,6 +91,10 @@ export default class BaseTask extends TaskTemplate {
             class="relative cursor-pointer select-none focus-within:ring"
             data-name="task__checkbox"
           >
+            <span class="sr-only">
+              Mark ${this.type} as
+              ${this.data.completed ? 'uncomplete' : 'complete'}
+            </span>
             <input
               class="absolute w-0 h-0 opacity-0 peer"
               type="checkbox"

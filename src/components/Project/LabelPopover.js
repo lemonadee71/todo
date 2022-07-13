@@ -3,6 +3,7 @@ import { PROJECT } from '../../actions';
 import Core from '../../core';
 import { useProject } from '../../core/hooks';
 import { dispatchCustom } from '../../utils/dispatch';
+import { addSchema } from '../../utils/validate';
 import ColorChoices from './ColorChoices';
 import Label from './Label';
 
@@ -129,12 +130,15 @@ const LabelPopover = (data, clickAction) => {
                   </label>
                   <!-- prettier-ignore -->
                   <textarea
-                    class="text-black font-medium w-full px-1 rounded focus:ring resize-none break-words"
+                    class="text-black font-medium w-full px-1 rounded focus:ring resize-none"
                     id="label-name"
                     name="label-name"
                     placeholder="Label name"
                     rows="1"
                     data-autosize
+                    data-schema="label"
+                    data-validate
+                    data-validate-show-error
                     onMount=${(e) => e.target.focus()}
                   >${state.currentTarget.name}</textarea>
 
@@ -187,9 +191,12 @@ const LabelPopover = (data, clickAction) => {
                   </label>
                   <input
                     class="text-black font-medium w-full px-1 rounded focus:ring"
-                    name="new-label-name"
-                    id="new-label-name"
                     type="text"
+                    id="new-label-name"
+                    name="new-label-name"
+                    data-schema="label"
+                    data-validate
+                    data-validate-show-error
                   />
 
                   ${ColorChoices('Select a color', 'sr-only')}
@@ -200,5 +207,15 @@ const LabelPopover = (data, clickAction) => {
     </div>
   `;
 };
+
+addSchema('label', {
+  required: true,
+  custom: {
+    maxlength: (str) => str.length <= 50,
+  },
+  messages: {
+    maxlength: 'Label name must be less than 50 characters',
+  },
+});
 
 export default LabelPopover;

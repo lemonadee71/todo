@@ -16,19 +16,8 @@ const Sidebar = () => {
   const createNewProject = (e) => {
     const input = e.target.elements['new-project'];
 
-    Core.event.emit(
-      PROJECT.ADD,
-      {
-        data: { name: input.value },
-      },
-      {
-        onSuccess: () => {
-          if (e.target.dataset.clear) {
-            input.value = '';
-          }
-        },
-      }
-    );
+    Core.event.emit(PROJECT.ADD, { data: { name: input.value } });
+    e.target.reset();
   };
 
   // prettier-ignore
@@ -94,18 +83,23 @@ const Sidebar = () => {
           </ul>
         </nav>
 
-        <div class="absolute bottom-6 w-48">
+        <div class="absolute bottom-5 w-48">
           <form
             class="flex w-full"
             data-clear="onsuccess"
             onSubmit.prevent=${createNewProject}
           >
-            <input
-              type="text"
-              name="new-project"
-              placeholder="Add project"
-              class="w-full text-white text-sm rounded-sm ml-1 px-1 py-1 bg-transparent placeholder:text-gray-400 focus:bg-white focus:text-black focus:ring "
-            />
+            <div class="flex flex-col space-y-0.5">
+              <input
+                class="w-full text-white text-sm rounded-sm ml-1 p-1 bg-transparent border-gray-300 border-solid border-b placeholder:text-gray-400 focus:bg-white focus:border-white focus:text-black focus:ring"
+                type="text"
+                name="new-project"
+                placeholder="Add project"
+                required
+                data-validate
+              />
+              <p role="alert" class="text-xs text-red-600" data-error-message></p>
+            </div>
             <button type="submit" aria-label="Create new project">
               ${AddIcon({ cls: 'stroke-gray-400', decorative: true })}
             </button>
