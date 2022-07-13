@@ -15,7 +15,7 @@ const Label = (data, clickAction, editAction, isSelected) => {
   return html`
     <div
       key="${data.id}"
-      class="group px-2 py-1 rounded flex justify-between items-center cursor-pointer border border-solid ${isSelected
+      class="group px-2 py-1 rounded flex justify-between items-center cursor-pointer break-all border border-solid ${isSelected
         ? 'border-white'
         : 'border-transparent'}"
       tabindex="0"
