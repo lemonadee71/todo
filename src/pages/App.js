@@ -71,12 +71,22 @@ const App = () => {
     }
   };
 
+  const focusSearchBar = (e) => {
+    if (e.ctrlKey && e.key === 'k') {
+      $('#search').focus();
+      e.preventDefault();
+    }
+  };
+
+  document.addEventListener('keydown', focusSearchBar);
+
   // add tooltips to elements with data-tooltip attr
   // only app/* page has tooltips
   PoorManJSX.onAfterCreation(addTooltip);
 
   // listeners
   const cleanup = [
+    () => document.removeEventListener(focusSearchBar),
     () => PoorManJSX.removeAfterCreation(addTooltip),
     Core.event.on(CHANGE_THEME, toggleDarkTheme),
     Core.event.onSuccess(
