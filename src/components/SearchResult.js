@@ -5,6 +5,8 @@ import GlobalTask from './GlobalTask';
 const SearchResult = (data, isBestMatch = false) => {
   const component = new GlobalTask(data);
 
+  component.props.main.class = `${component.props.main.class} group`;
+
   if (isBestMatch) {
     component.badges.unshift(
       Badge({

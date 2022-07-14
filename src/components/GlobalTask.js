@@ -22,9 +22,6 @@ class GlobalTask extends TaskTemplate {
     };
     // to avoid clutter and additional reads for online mode
     this.props.labels = { style: 'display: none;' };
-    this.props.openBtn = {
-      class: 'px-2 py-1 rounded text-white text-sm bg-sky-500 hover:bg-sky-600',
-    };
 
     if (this.data.dueDate) this.badges.push(DateBadge(data, true));
 
@@ -84,7 +81,11 @@ class GlobalTask extends TaskTemplate {
         target: 'main',
         method: 'after',
         template: html`
-          <button onClick=${this.openOnLocation} ${this.props.openBtn}>
+          <button
+            class="px-2 py-1 rounded text-white text-sm bg-sky-500 hover:bg-sky-600 invisible group-hover:visible"
+            onClick=${this.openOnLocation}
+            ${this.props.openBtn}
+          >
             Open
           </button>
         `,
