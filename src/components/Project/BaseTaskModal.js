@@ -7,6 +7,7 @@ import Core from '../../core';
 import { useTask } from '../../core/hooks';
 import { debounce } from '../../utils/delay';
 import { dispatchCustom } from '../../utils/dispatch';
+import { runOnlyIfClick } from '../../utils/misc';
 import { usePopper } from '../../utils/popper';
 import { $ } from '../../utils/query';
 import convertToMarkdown from '../../utils/showdown';
@@ -213,12 +214,14 @@ export default class BaseTaskModal {
                   )
                 : render(html`
                     <div
-                      class="prose prose-slate dark:prose-invert"
+                      class="m-0.5 p-1 prose prose-slate dark:prose-invert"
+                      tabindex="0"
                       onClick=${this.toggleNotesEdit}
+                      onKeydown=${runOnlyIfClick(this.toggleNotesEdit)}
                     >
                       ${this.data.notes.trim()
                         ? convertToMarkdown(this.data.notes)
-                        : `<div class="text-base" tabindex="0">Add notes</div>`}
+                        : `<div class="text-base">Add notes</div>`}
                     </div>
                   `)
             )}
