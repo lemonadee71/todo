@@ -167,10 +167,10 @@ const Project = ({ data: { id } }) => {
         <label for="project-name" class="sr-only">Project name</label>
         <!-- prettier-ignore -->
         <textarea
-          class="flex-1 text-2xl font-extrabold p-1 rounded-sm bg-inherit resize-none break-words overflow-hidden placeholder:text-slate-600 focus:ring marker:dark:placeholder:text-slate-400"
+          class="flex-1 text-2xl font-extrabold p-1 rounded-sm bg-inherit resize-none overflow-hidden placeholder:text-lg placeholder:text-slate-600 placeholder:font-normal dark:placeholder:text-slate-300"
           id="project-name"
           name="name"
-          placeholder="Project name"
+          placeholder="Project name (required)"
           data-schema="title"
           data-validate="aggressive"
           data-validate-delay="200"

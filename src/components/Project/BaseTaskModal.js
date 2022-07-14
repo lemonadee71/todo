@@ -137,8 +137,9 @@ export default class BaseTaskModal {
           <h2 class="sr-only">{% ${this.data.title} %}</h2>
           <!-- prettier-ignore -->
           <textarea
-            class="font-semibold text-xl w-full p-1 rounded-sm bg-inherit resize-none overflow-hidden placeholder:text-slate-600 focus:ring dark:placeholder:text-slate-200"
+            class="font-semibold text-xl w-full p-1 rounded-sm bg-inherit resize-none overflow-hidden placeholder:text-base placeholder:text-slate-600 placeholder:font-normal dark:placeholder:text-slate-300"
             name="title"
+            placeholder="Task title (required)"
             data-focus="first"
             data-schema="title"
             data-validate="aggressive"
