@@ -33,7 +33,7 @@ export default class BaseTaskModal {
   }
 
   editTask = (e) => {
-    if (!e.detail?.isValid) return;
+    if (e.detail && !e.detail.isValid) return;
 
     const { name, value } = e.target;
 

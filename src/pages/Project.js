@@ -33,7 +33,7 @@ const Project = ({ data: { id } }) => {
   };
 
   const editProject = (e) => {
-    if (!e.detail?.isValid) return;
+    if (e.detail && !e.detail.isValid) return;
 
     Core.event.emit(PROJECT.UPDATE, {
       project: id,
