@@ -72,3 +72,80 @@ export const runOnlyIfClick = (fn) => (e) => {
     e.preventDefault();
   }
 };
+
+export const createRovingTabindexFns = (container) => {
+  let previousIdx = 0;
+
+  const setPreviousIdx = (idx) => {
+    previousIdx = idx;
+    return previousIdx;
+  };
+
+  const focusChild = (parent, idx) => {
+    parent.children[previousIdx].setAttribute('tabindex', '-1');
+    setPreviousIdx(idx);
+
+    const selected = parent.children[previousIdx];
+    selected.setAttribute('tabindex', '0');
+    // doesn't show focus outline sometimes; more likely to happen when clicked
+    selected.focus();
+  };
+
+  const focus = (idx) => focusChild(container, idx);
+
+  const onKeydownForTrigger = (e) => {
+    if (e.altKey) return;
+
+    switch (e.key) {
+      case 'Down':
+      case 'ArrowDown':
+        focus(0);
+        break;
+      case 'Up':
+      case 'ArrowUp':
+        focus(container.children.length - 1);
+        break;
+
+      default:
+    }
+  };
+
+  const onKeydownForItems = (e) => {
+    if (e.altKey) return;
+
+    switch (e.key) {
+      case 'Home':
+        focus(0);
+        break;
+      case 'End':
+        focus(container.children.length - 1);
+        break;
+      case 'Down':
+      case 'ArrowDown': {
+        const i = previousIdx + 1;
+        if (i > container.children.length - 1) {
+          focus(0);
+        } else {
+          focus(i);
+        }
+
+        break;
+      }
+      case 'Up':
+      case 'ArrowUp': {
+        const i = previousIdx - 1;
+        if (i < 0) {
+          focus(container.children.length - 1);
+        } else {
+          focus(i);
+        }
+
+        break;
+      }
+
+      default: // Quit when this doesn't handle the key event.
+    }
+  };
+
+  return { setPreviousIdx, focus, onKeydownForTrigger, onKeydownForItems };
+};

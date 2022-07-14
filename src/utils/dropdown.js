@@ -1,3 +1,4 @@
+import { createRovingTabindexFns } from './misc';
 import { usePopper } from './popper';
 
 export const createDropdown = (button, dropdown) => {
@@ -34,17 +35,8 @@ export const createDropdown = (button, dropdown) => {
   });
 
   let isOpen = false;
-  let previousIdx = 0;
-
-  const focusChild = (parent, idx) => {
-    parent.children[previousIdx].setAttribute('tabindex', '-1');
-    previousIdx = idx;
-
-    const selected = parent.children[previousIdx];
-    selected.setAttribute('tabindex', '0');
-    // doesn't show focus outline sometimes; more likely to happen when clicked
-    selected.focus();
-  };
+  const { setPreviousIdx, focus, onKeydownForItems } =
+    createRovingTabindexFns(dropdown);
 
   const openMenu = onShow(() => {
     button.setAttribute('aria-expanded', 'true');
@@ -56,14 +48,14 @@ export const createDropdown = (button, dropdown) => {
     });
 
     // then focus first item
-    focusChild(dropdown, previousIdx);
+    focus(0);
   });
 
   const closeMenu = onHide(() => {
     button.removeAttribute('aria-expanded');
     dropdown.style.display = 'none';
     // reset state
-    previousIdx = 0;
+    setPreviousIdx(0);
   });
 
   const toggleMenu = (e) => {
@@ -94,15 +86,14 @@ export const createDropdown = (button, dropdown) => {
     switch (e.key) {
       case 'Down':
       case 'ArrowDown': {
-        if (isOpen) focusChild(dropdown, 0);
-        else toggleMenu(e);
+        openMenu();
+        focus(0);
         break;
       }
       case 'Up':
       case 'ArrowUp': {
-        previousIdx = dropdown.children.length - 1;
-        if (isOpen) focusChild(dropdown, previousIdx);
-        else toggleMenu(e);
+        openMenu();
+        focus(dropdown.children.length - 1);
         break;
       }
       case 'Enter':
@@ -115,38 +106,11 @@ export const createDropdown = (button, dropdown) => {
     }
   });
 
+  dropdown.addEventListener('keydown', onKeydownForItems);
   dropdown.addEventListener('keydown', (e) => {
     if (e.altKey) return;
 
     switch (e.key) {
-      case 'Home':
-        focusChild(dropdown, 0);
-        break;
-      case 'End':
-        focusChild(dropdown, dropdown.children.length - 1);
-        break;
-      case 'Down':
-      case 'ArrowDown': {
-        const i = previousIdx + 1;
-        if (i > dropdown.children.length - 1) {
-          focusChild(dropdown, 0);
-        } else {
-          focusChild(dropdown, i);
-        }
-
-        break;
-      }
-      case 'Up':
-      case 'ArrowUp': {
-        const i = previousIdx - 1;
-        if (i < 0) {
-          focusChild(dropdown, dropdown.children.length - 1);
-        } else {
-          focusChild(dropdown, i);
-        }
-
-        break;
-      }
       case 'Esc':
       case 'Escape':
         closeMenu();
