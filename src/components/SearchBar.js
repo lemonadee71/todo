@@ -2,6 +2,7 @@ import { createHook, html, render } from 'poor-man-jsx';
 import { CloseIcon, SearchIcon } from '../assets/icons';
 import Core from '../core';
 import { debounce } from '../utils/delay';
+import { createRovingTabindexFns } from '../utils/misc';
 import { $ } from '../utils/query';
 import { matches } from '../utils/search';
 import SearchResult from './SearchResult';
@@ -11,12 +12,13 @@ import SearchResult from './SearchResult';
  *
  * -[x] Search preview isn't hidden as long as focus is inside the component
  * -[x] Ctrl + K focuses the search bar
- * -[] Up/Down arrow navigates the search results
+ * -[x] Up/Down arrow navigates the search results
  * -[] Clicking enter opens a modal that displays the results
  * -[] If limit is reached in preview, clicking 'more' will open a modal
  */
 const SearchBar = () => {
-  let self;
+  let self, form, result; // eslint-disable-line
+
   const [state] = createHook({
     query: '',
     showResults: false,
@@ -78,17 +80,33 @@ const SearchBar = () => {
     if (e.key === 'Tab') toggleFocus();
   };
 
+  const initResultContainer = () => {
+    const { onKeydownForItems, onKeydownForTrigger } =
+      createRovingTabindexFns(result);
+
+    form.addEventListener('keydown', onKeydownForTrigger);
+    result.addEventListener('keydown', onKeydownForItems);
+    result.addEventListener('keydown', (e) => {
+      if (e.altKey) return;
+      if (e.key === 'Escape') $('#search').focus();
+    });
+  };
+
+  const init = (e) => {
+    self = e.target;
+    form = e.target.firstElementChild;
+    result = e.target.lastElementChild;
+  };
+
   return html`
     <div
       class="group relative col-span-2 xs:col-span-1 xs:col-start-2 xs:row-start-1 sm:w-3/4 sm:max-w-2xl md:w-1/2 md:ml-56"
       onKeydown=${debounce(onNavigate, 50)}
-      onMount=${(e) => {
-        self = e.target;
-      }}
+      onCreate=${init}
     >
       <form
         role="search"
-        class="peer justify-self-stretch flex items-center gap-1 sm:gap-2 px-3 rounded-full bg-gray-200 dark:bg-gray-100 focus-within:bg-white focus-within:ring-2 focus-within:ring-sky-400 hover:shadow-md dark:hover:shadow-slate-500"
+        class="justify-self-stretch flex items-center gap-1 sm:gap-2 px-3 rounded-full ring-sky-400 bg-gray-200 dark:bg-gray-100 focus-within:bg-white focus-within:ring-2 group-focus-within:ring-2 group-focus-within:bg-white hover:shadow-md dark:hover:shadow-slate-500"
         autocomplete="off"
       >
         <label for="search">
@@ -133,10 +151,12 @@ const SearchBar = () => {
         </button>
       </form>
       <div
-        class="absolute top-8 left-0 right-0 p-1 divide-y-2 divide-gray-200 rounded-b-lg drop-shadow-lg bg-white dark:bg-[#272727] dark:divide-[#272727]"
+        class="peer absolute top-8 left-0 right-0 p-1 divide-y-2 divide-gray-200 rounded-b-lg drop-shadow-lg bg-white dark:bg-[#272727] dark:divide-[#272727]"
+        tabindex="-1"
         style_display="${state.$showResults((value) =>
           value ? 'block' : 'none'
         )}"
+        onMount=${initResultContainer}
       >
         ${state.$results(renderResults)}
       </div>
