@@ -11,14 +11,23 @@ const SearchResult = (data, isBestMatch = false) => {
     class: `${component.props.main.class} group`,
     tabindex: '-1',
     onKeydown: (e) => {
-      runOnlyIfClick(component.openOnLocation)(e);
+      runOnlyIfClick(() => {
+        component.openOnLocation();
+        e.target.setAttribute('tabindex', '-1');
+      })(e);
+
       // if tab is pressed, we're leaving the task
       if (e.key === 'Tab' || e.key === 'Escape') {
         e.target.setAttribute('tabindex', '-1');
       }
     },
   };
-  component.props.openBtn = { 'data-name': 'open' };
+  component.props.openBtn = {
+    'data-name': 'open',
+    onClick: (e) => {
+      e.target.closest('[data-location]').setAttribute('tabindex', '-1');
+    },
+  };
 
   if (isBestMatch) {
     component.badges.unshift(
