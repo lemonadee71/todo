@@ -78,7 +78,7 @@ const Project = ({ data: { id } }) => {
     <div
       ignore-all
       key="list-form"
-      class="w-60 p-2 rounded-lg opacity-80 bg-[#dedede] dark:bg-[#584040]"
+      class="w-60 p-2 rounded-lg opacity-80 bg-[#dedede] dark:bg-[#272727]"
     >
       ${state.$openForm((value) =>
         value
@@ -87,12 +87,12 @@ const Project = ({ data: { id } }) => {
                 <div class="flex flex-col space-y-0.5 mb-2">
                   <label
                     for="new-list-name"
-                    class="text-sm text-gray-800 dark:text-gray-100 after:content-['*'] after:text-red-600"
+                    class="text-sm text-gray-800 dark:text-white after:content-['*'] after:text-red-600"
                   >
                     List name
                   </label>
                   <input
-                    class="w-full px-2 py-1 mb-1 text-sm rounded-sm placeholder-slate-400 dark:text-black focus:ring"
+                    class="w-full px-2 py-1 mb-1 text-sm rounded-sm placeholder-slate-400 dark:text-black dark:bg-white focus:ring"
                     type="text"
                     name="new-list"
                     id="new-list-name"
@@ -116,7 +116,7 @@ const Project = ({ data: { id } }) => {
                     onClick=${toggleFormVisibility}
                   >
                     ${CloseIcon({
-                      cls: 'stroke-black hover:stroke-red-600 dark:stroke-white dark:hover:stroke-red-400',
+                      cls: 'stroke-black hover:stroke-red-600 dark:stroke-white',
                       size: 24,
                     })}
                   </button>
