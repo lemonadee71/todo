@@ -180,7 +180,11 @@ const App = () => {
           data-dropdown-offset="0,10"
         >
           <button class="px-2" onClick=${() => Core.event.emit(CHANGE_THEME)}>
-            ${Core.state.$darkTheme((value) => (value ? 'Light' : 'Dark'))} mode
+            <span class="sr-only">Switch to</span>
+            <span>
+              ${Core.state.$darkTheme((value) => (value ? 'Light' : 'Dark'))}
+              mode
+            </span>
           </button>
           <button class="px-2 hover:text-red-600" onClick=${signOut}>
             Logout
