@@ -89,6 +89,15 @@ const SearchBar = () => {
     result.addEventListener('keydown', (e) => {
       if (e.altKey) return;
       if (e.key === 'Escape') $('#search').focus();
+      // close results when task is opened
+      if (e.key === ' ' || e.key === 'Enter') {
+        state.showResults = false;
+      }
+    });
+    result.addEventListener('click', (e) => {
+      if (e.target.dataset.name === 'open') {
+        state.showResults = false;
+      }
     });
   };
 

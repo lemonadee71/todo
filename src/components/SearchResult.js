@@ -18,6 +18,7 @@ const SearchResult = (data, isBestMatch = false) => {
       }
     },
   };
+  component.props.openBtn = { 'data-name': 'open' };
 
   if (isBestMatch) {
     component.badges.unshift(
