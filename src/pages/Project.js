@@ -110,14 +110,14 @@ const Project = ({ data: { id } }) => {
                   </button>
                   <button
                     type="reset"
-                    aria-label="Cancel"
-                    data-tooltip="{{aria-label}}"
                     data-tooltip-position="right"
                     onClick=${toggleFormVisibility}
                   >
                     ${CloseIcon({
                       cls: 'stroke-black hover:stroke-red-600 dark:stroke-white',
                       size: 24,
+                      id: 'cancel-list-creation',
+                      title: 'Cancel',
                     })}
                   </button>
                 </div>
