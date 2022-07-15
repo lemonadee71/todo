@@ -42,7 +42,7 @@ class GlobalTask extends TaskTemplate {
           props: {
             key: 'subtasks',
             'aria-label': 'This task has subtasks',
-            'data-tooltip': 'This task has subtasks',
+            'data-tooltip': '{{aria-label}}',
           },
         })
       );

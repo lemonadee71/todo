@@ -77,7 +77,7 @@ const Dashboard = () => {
           <button
             class="group rounded border border-solid border-neutral-400 hover:border-blue-400 hover:bg-blue-100 focus:border-blue-400 focus:bg-blue-100"
             aria-label="Create new project"
-            data-tooltip="Create new project"
+            data-tooltip="{{aria-label}}"
             onClick=${createNewProject}
           >
             ${AddIcon({
