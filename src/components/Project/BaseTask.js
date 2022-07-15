@@ -91,10 +91,7 @@ export default class BaseTask extends TaskTemplate {
             class="relative cursor-pointer select-none focus-within:ring"
             data-name="task__checkbox"
           >
-            <span class="sr-only">
-              Mark ${this.type} as
-              ${this.data.completed ? 'uncomplete' : 'complete'}
-            </span>
+            <span class="sr-only"> Mark ${this.type} as complete </span>
             <input
               class="absolute w-0 h-0 opacity-0 peer"
               type="checkbox"
@@ -114,10 +111,11 @@ export default class BaseTask extends TaskTemplate {
         method: 'after',
         template: html`
           <div data-name="task__controls" ${this.props.menu}>
-            <button aria-label="Open ${this.type} menu" data-dropdown>
+            <button data-dropdown>
               ${KebabMenuIcon({
                 cls: 'stroke-gray-500 hover:stroke-gray-800 dark:hover:stroke-gray-300',
-                decorative: true,
+                id: `taskmenu-${this.id}`,
+                title: 'Task menu',
               })}
             </button>
 
