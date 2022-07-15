@@ -195,7 +195,7 @@ export const applyValidation = (target) => {
   switch (type) {
     case 'aggressive':
       target.addEventListener(changeEvent, debounce(showCurrentErrors, +delay));
-      target.addEventListener('blur', showCurrentErrors);
+      target.addEventListener('blur', () => touched && showCurrentErrors());
       break;
     case 'lazy':
       target.addEventListener('blur', () => touched && showCurrentErrors());
