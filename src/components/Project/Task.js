@@ -70,15 +70,16 @@ const Task = (data, idx) => {
   };
 
   if (data.totalSubtasks) {
-    // TODO: Make this more accessible; should be read as toggle button
     component.badges.push(
       Badge({
+        tagName: 'button',
         content: `${data.incompleteSubtasks} / ${data.totalSubtasks}`,
         bgColor: DEFAULT_COLORS.gray,
         props: {
           key: 'subtasks',
-          'aria-label': `Completed ${data.incompleteSubtasks} out of ${data.totalSubtasks} subtasks`,
-          'data-tooltip': 'This task has subtasks',
+          'aria-pressed': state.$showSubtasks,
+          'aria-label': 'Show subtasks',
+          'data-tooltip': '{{aria-label}}',
         },
       })
     );
@@ -89,6 +90,7 @@ const Task = (data, idx) => {
     method: 'after',
     template: html`
       <div
+        class="mt-0.5"
         ignore="style"
         data-name="task__subtasks"
         style_display=${state.$showSubtasks((value) =>
