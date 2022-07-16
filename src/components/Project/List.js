@@ -155,6 +155,7 @@ const List = (data, pos) => {
         <button
           onClick=${toggleCompletedTasks}
           aria-pressed=${state.$showCompleted}
+          aria-controls="${data.id}_completed-tasks"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -184,6 +185,7 @@ const List = (data, pos) => {
         is-list
         ignore="style"
         class="space-y-2 px-3 transition-all"
+        id="${data.id}_completed-tasks"
         data-name="completed-tasks"
         style_display=${state.$showCompleted((value) =>
           value ? 'block' : 'none'
