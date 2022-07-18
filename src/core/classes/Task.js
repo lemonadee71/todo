@@ -1,6 +1,6 @@
 import { formatToDateTime, toTimestamp } from '../../utils/date';
 import { converter } from '../../utils/firestore';
-import { copy, intersectAndSortById } from '../../utils/misc';
+import { copy, intersectAndSortById, sieve } from '../../utils/misc';
 import BaseTask from './BaseTask';
 import IdList from './IdList';
 
@@ -43,12 +43,12 @@ export default class Task extends BaseTask {
   }
 
   toFirestore() {
-    return {
+    return sieve({
       ...copy(this, ['subtasks', '$$order']),
       dueDate: this.dueDate && toTimestamp(this.dueDate),
       labels: this.labels.ids,
       subtasks: this.subtasks.ids,
-    };
+    });
   }
 
   toJSON() {

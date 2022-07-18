@@ -1,5 +1,6 @@
 import { converter } from '../../utils/firestore';
 import uuid from '../../utils/id';
+import { sieve } from '../../utils/misc';
 
 class Label {
   constructor({ id, name, color, project }) {
@@ -18,7 +19,7 @@ class Label {
   }
 
   toFirestore() {
-    return { ...this };
+    return sieve({ ...this });
   }
 }
 

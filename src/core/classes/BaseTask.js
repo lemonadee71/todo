@@ -1,5 +1,6 @@
 import { toTimestamp } from '../../utils/date';
 import uuid from '../../utils/id';
+import { sieve } from '../../utils/misc';
 import IdList from './IdList';
 
 class BaseTask {
@@ -58,11 +59,11 @@ class BaseTask {
   }
 
   toFirestore() {
-    return {
+    return sieve({
       ...this,
       dueDate: this.dueDate && toTimestamp(this.dueDate),
       labels: this.labels.ids,
-    };
+    });
   }
 
   toJSON() {

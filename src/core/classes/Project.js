@@ -2,7 +2,7 @@ import IdList from './IdList';
 import { DEFAULT_COLORS, PATHS } from '../../constants';
 import { defaultLabels, defaultLists } from '../../default';
 import uuid from '../../utils/id';
-import { copy, intersectAndSortById } from '../../utils/misc';
+import { copy, intersectAndSortById, sieve } from '../../utils/misc';
 import { converter } from '../../utils/firestore';
 
 export default class Project {
@@ -51,10 +51,10 @@ export default class Project {
   }
 
   toFirestore() {
-    return {
+    return sieve({
       ...copy(this, ['labels', 'lists', '$$lastFetched', '$$order']),
       lists: this.lists.ids,
-    };
+    });
   }
 
   toJSON() {

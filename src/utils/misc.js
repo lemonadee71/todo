@@ -50,6 +50,21 @@ export const copy = (target, toExclude = []) => {
   return clone;
 };
 
+/**
+ * Removes all key-value pair that have null/undefined values
+ * @param {Object} o
+ * @returns {Object}
+ */
+export const sieve = (o) => {
+  for (const key in o) {
+    if (o[key] === null || o[key] === undefined) {
+      delete o[key];
+    }
+  }
+
+  return o;
+};
+
 // taken from: https://stackoverflow.com/questions/6234773
 export const escapeHTML = (unsafe) =>
   unsafe

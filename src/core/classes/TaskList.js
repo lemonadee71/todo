@@ -1,7 +1,7 @@
 import IdList from './IdList';
 import uuid from '../../utils/id';
 import { converter } from '../../utils/firestore';
-import { sortById } from '../../utils/misc';
+import { sieve, sortById } from '../../utils/misc';
 
 class TaskList extends IdList {
   constructor({ id, name, project, tasks, $$order }) {
@@ -30,14 +30,14 @@ class TaskList extends IdList {
   }
 
   toFirestore() {
-    return {
+    return sieve({
       id: this.id,
       name: this.name,
       project: this.project,
       tasks: this.items
         .filter((item) => !item.completed)
         .map((item) => item.id),
-    };
+    });
   }
 
   toJSON() {
