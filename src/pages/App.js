@@ -86,7 +86,7 @@ const App = () => {
 
   // listeners
   const cleanup = [
-    () => document.removeEventListener(focusSearchBar),
+    () => document.removeEventListener('keydown', focusSearchBar),
     () => PoorManJSX.removeAfterCreation(addTooltip),
     Core.event.on(CHANGE_THEME, toggleDarkTheme),
     Core.event.onSuccess(
