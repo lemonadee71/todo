@@ -1,3 +1,4 @@
+import { readableColor } from 'color2k';
 import { html } from 'poor-man-jsx';
 import Core from '../core';
 
@@ -13,7 +14,9 @@ const Chip = (data) => {
       class="text-xs text-white cursor-pointer rounded ${Core.state.$expandLabels(
         (val) => (val ? 'py-1 px-2 ' : 'w-7 h-2')
       )}"
-      style="background-color: ${data.color};"
+      style="background-color: ${data.color}; color: ${readableColor(
+        data.color
+      )};"
       data-name="${data.name}"
       onClick=${onClick}
     >

@@ -1,3 +1,4 @@
+import { readableColor } from 'color2k';
 import { html } from 'poor-man-jsx';
 
 const Badge = ({
@@ -10,7 +11,7 @@ const Badge = ({
   html`<${tagName}
     is-text
     class="py-1 px-2 cursor-pointer rounded ${additionalCls}"
-    style="background-color: ${bgColor}"
+    style="background-color: ${bgColor}; color: ${readableColor(bgColor)};"
     ${props}
   >
     ${content}

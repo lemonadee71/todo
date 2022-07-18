@@ -1,3 +1,4 @@
+import { readableColor } from 'color2k';
 import { html } from 'poor-man-jsx';
 import { EditIcon } from '../../assets/icons';
 import { runOnlyIfClick } from '../../utils/misc';
@@ -24,7 +25,9 @@ const Label = (data, clickAction, editAction, isSelected) => {
       onClick=${clickLabel}
       onKeydown=${runOnlyIfClick(clickLabel)}
     >
-      <span>{% ${data.name} %}</span>
+      <span style="color: ${readableColor(data.color)};">
+        {% ${data.name} %}
+      </span>
 
       <button
         class="w-0 opacity-0 focus:w-fit focus:opacity-100 group-hover:w-fit group-hover:opacity-100"

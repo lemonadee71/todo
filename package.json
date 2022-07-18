@@ -65,6 +65,7 @@
   "dependencies": {
     "@popperjs/core": "^2.10.2",
     "autosize": "^5.0.1",
+    "color2k": "^2.0.0",
     "date-fns": "^2.16.1",
     "firebase": "^9.5.0",
     "flatpickr": "^4.6.9",
