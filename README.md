@@ -52,7 +52,3 @@ This is a project for The Odin Project.
 ## Resources
 
 All icons are from [Tabler Icons](https://tablericons.com/) and hero image from [Undraw](https://undraw.co/).
-
-## Reflections
-
-I first finished this project back in February 2021 then refactored it a month later because I wanted to practice the pubsub pattern. I did not plan to refactor it, I just happened to checked on another todo project and saw they used pubsub and thought it was cool. Then I decided to worked on it after releasing version 1 of `poor-man-jsx` and the game jam which was August 2021. I forgot why but I decided to make this my final JS project and work and use my own library instead of React. So I did just that and worked on `poor-man-jsx` and this project in parallel. If I found issues or need new features to make writing components easier, I'll implement it on `poor-man-jsx` then come back here and I repeated that till I reached the point where I'm satisfied with the features my own library has right now. There's still lots of bugs but I learned a lot going through that process and at the point that I am confident with my JS skills. Due to some circumstances and me adding more and more features, it took me a year to finish the refactor. While that's a long time away and might be time I could have spent on learning frameworks, I don't regret what I did as it gave me a valuable experience. I also appreciate frameworks better now after creating something similar myself.
