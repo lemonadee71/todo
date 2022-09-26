@@ -65,13 +65,14 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "@floating-ui/dom": "^1.0.2",
     "@popperjs/core": "^2.10.2",
     "autosize": "^5.0.1",
     "date-fns": "^2.16.1",
     "firebase": "^9.5.0",
     "flatpickr": "^4.6.9",
     "navigo": "^8.11.1",
-    "poor-man-jsx": "^3.3.0",
+    "poor-man-jsx": "^4.0.0-4",
     "showdown": "^1.9.1",
     "sortablejs": "^1.13.0",
     "string-similarity": "^4.0.4",
