@@ -1,7 +1,7 @@
-import { html, render } from 'poor-man-jsx';
+import { apply, html, render } from 'poor-man-jsx';
 import { debounce } from './delay';
 import { dispatchCustom } from './dispatch';
-import { copy } from './misc';
+import { $ } from './query';
 
 const defaultErrorDisplay = () =>
   html`<div class="text-xs text-red-500" data-error-message></div>`;
@@ -25,28 +25,19 @@ export const addSchema = (id, props) => {
 
 // BUG: Since submit triggers reportValidity and we call setCustomValidity everytime
 //      After submit, inputs act 'aggressive' because the error tooltip is visible for a time
-export const applyValidation = (target) => {
+export const applyValidation = (target, data = {}) => {
   // to make sure invalid style is visible
   target.classList.add('focus:ring');
 
   const {
     schema: schemaId,
-    validate: type,
-    validateOn: changeEvent = 'input',
-    validateDelay: delay = '0',
-    validateShowError: showValidationErrors,
-  } = target.dataset;
+    type,
+    delay = 0,
+    event: changeEvent = 'input',
+    showError: showValidationErrors,
+    ownErrorMessage = false,
+  } = data;
   const schema = schemas[schemaId];
-
-  // apply attributes from schema
-  if (schema) {
-    const attrs = Object.entries(copy(schema, ['custom', 'messages']));
-
-    for (const [key, value] of attrs) {
-      if (key === 'required' && value) target.setAttribute('required', '');
-      else target.setAttribute(key, value);
-    }
-  }
 
   /** Core functions */
 
@@ -123,7 +114,11 @@ export const applyValidation = (target) => {
   // currently no way of communicating errors if inline is not used
   // user will have to submit first before seeing the errors
   const displayErrors = (errors) => {
-    const errorDisplay = target.nextElementSibling;
+    const errorDisplay =
+      typeof ownErrorMessage === 'string'
+        ? $(ownErrorMessage)
+        : target.nextElementSibling;
+
     errorDisplay.innerHTML = '';
 
     if (errors.length) {
@@ -173,7 +168,7 @@ export const applyValidation = (target) => {
     currentValidity = validate(e.target.value.trim());
 
     target.setCustomValidity(currentValidity.errorMessages.join(', '));
-  }, +delay);
+  }, delay);
 
   const showCurrentErrors = () => {
     toggleInvalidStyle(!currentValidity.isValid);
@@ -182,19 +177,22 @@ export const applyValidation = (target) => {
   };
 
   /** Add listeners */
-
-  target.addEventListener('focus', validateInput);
-  target.addEventListener(changeEvent, (e) => {
-    touched = true;
-    validateInput(e);
+  apply(target, {
+    on: {
+      invalid: showCurrentErrors,
+      focus: validateInput,
+      [changeEvent]: (e) => {
+        touched = true;
+        validateInput(e);
+      },
+    },
   });
-  target.addEventListener('invalid', showCurrentErrors);
 
   // BUG: Errors are still shown after onblur two times following a submit event
   //      Even if there are no change in input
   switch (type) {
     case 'aggressive':
-      target.addEventListener(changeEvent, debounce(showCurrentErrors, +delay));
+      target.addEventListener(changeEvent, debounce(showCurrentErrors, delay));
       target.addEventListener('blur', () => touched && showCurrentErrors());
       break;
     case 'lazy':
@@ -226,36 +224,31 @@ export const applyValidation = (target) => {
     default: {
       let isInvalid = false;
 
-      target.addEventListener('blur', () => {
-        if (!isInvalid && touched) {
-          isInvalid = !currentValidity.isValid;
-          showCurrentErrors();
-        }
-      });
-
-      target.addEventListener(
-        changeEvent,
-        debounce(() => {
-          if (isInvalid) {
-            isInvalid = !currentValidity.isValid;
-            showCurrentErrors();
-          }
-        }, +delay)
-      );
-
-      target.addEventListener('invalid', () => {
-        isInvalid = true;
+      apply(target, {
+        on: {
+          invalid: () => {
+            isInvalid = true;
+          },
+          blur: () => {
+            if (!isInvalid && touched) {
+              isInvalid = !currentValidity.isValid;
+              showCurrentErrors();
+            }
+          },
+          [changeEvent]: debounce(() => {
+            if (isInvalid) {
+              isInvalid = !currentValidity.isValid;
+              showCurrentErrors();
+            }
+          }, delay),
+        },
       });
     }
   }
 
-  /** Modify siblings */
-
-  const shouldNotUseSibling =
-    target.nextElementSibling?.dataset.errorMessage === undefined;
-
   // add element to show and announce errors
-  if (shouldNotUseSibling) target.after(render(defaultErrorDisplay()));
-  if (showValidationErrors === undefined)
+  if (!ownErrorMessage) target.after(render(defaultErrorDisplay()));
+  if (showValidationErrors === undefined) {
     target.nextElementSibling.classList.add('sr-only');
+  }
 };

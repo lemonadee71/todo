@@ -4,12 +4,10 @@ import { DEFAULT_COLORS } from '../../constants';
 import { TASK } from '../../actions';
 import Core from '../../core';
 import Subtask from './Subtask';
-import Badge from '../Badge';
-import BaseTask from './BaseTask';
 
 const Task = (data, idx) => {
   const state = createHook({ showSubtasks: !data.totalSubtasks });
-  const component = new BaseTask(data, TASK);
+  const badges = [];
 
   const transferSubtask = (action, fromTask, fromList, subtaskId, position) => {
     Core.event.emit(action, {
@@ -41,7 +39,7 @@ const Task = (data, idx) => {
       onUpdate: (e) => moveSubtask(e.item.dataset.id, e.newIndex),
       onAdd: (e) => {
         const { id, location } = e.item.dataset;
-        const [, fromList, taskId, subtaskId] = location.split(',');
+        const [, fromList, taskId, subtaskId] = location.split('-');
         // if there's subtaskId, it's a subtask
         const fromTask = subtaskId ? taskId : id;
         const action = subtaskId ? TASK.SUBTASKS.TRANSFER : TASK.TRANSFER;
@@ -51,12 +49,42 @@ const Task = (data, idx) => {
     });
   };
 
-  component.props = {
-    ...component.props,
+  if (data.totalSubtasks) {
+    badges.push(
+      html`
+        <common-badge
+          background=${DEFAULT_COLORS.gray}
+          props=${{
+            _key: 'subtasks',
+            'aria-pressed': state.$showSubtasks,
+            'aria-label': 'Show subtasks',
+            'data-tooltip': '$aria-label',
+          }}
+        >
+          ${data.incompleteSubtasks} / ${data.totalSubtasks}
+        </common-badge>
+      `
+    );
+  }
+
+  const template = {
     main: {
-      ...component.props.main,
-      class: `${component.props.main.class} rounded-md drop-shadow-lg`,
-      'data-sortable-style': 'transform: rotate(1deg);',
+      'class:[px-3,py-2]': true,
+      'class:[rounded-md,drop-shadow-lg]': true,
+      sortable: {
+        action: TASK.MOVE,
+        style: { transform: 'rotate(1deg)' },
+        getData: () => data.location,
+      },
+    },
+    title: {
+      'class:text-base': true,
+    },
+    checkbox: {
+      'class:[w-5,h-5]': true,
+    },
+    checkmark: {
+      'class:[w-3,h-3]': true,
     },
     badges: {
       onClick: (e) => {
@@ -68,50 +96,29 @@ const Task = (data, idx) => {
     },
   };
 
-  if (data.totalSubtasks) {
-    component.badges.push(
-      Badge({
-        tagName: 'button',
-        content: `${data.incompleteSubtasks} / ${data.totalSubtasks}`,
-        bgColor: DEFAULT_COLORS.gray,
-        props: {
-          key: 'subtasks',
-          'aria-pressed': state.$showSubtasks,
-          'aria-label': 'Show subtasks',
-          'data-tooltip': '{{aria-label}}',
-        },
-      })
-    );
-  }
-
-  component.template.push({
-    target: 'body',
-    method: 'after',
-    template: html`
-      <div
-        class="mt-0.5"
-        ignore="style"
-        data-name="task__subtasks"
-        style_display=${state.$showSubtasks((value) =>
-          value ? 'block' : 'none'
-        )}
-      >
-        <div is-list class="space-y-1" onMount=${initSubtasks}>
+  return html`
+    <base-task
+      data=${data}
+      action=${TASK}
+      badges=${badges}
+      position=${idx}
+      template=${template}
+    >
+      <div :skip="style" :show=${state.$showSubtasks} class="mt-0.5">
+        <div class="space-y-1" onMount=${initSubtasks}>
           ${data.subtasks.items
             .filter((subtask) => !subtask.completed)
             .map((item, i) => Subtask(item, i, 'small'))}
         </div>
-        <div is-list class="space-y-1">
+        <div class="space-y-1">
           ${data.subtasks.items
             .filter((subtask) => subtask.completed)
             .sort((a, b) => b.completionDate - a.completionDate)
             .map((item, i) => Subtask(item, i, 'small'))}
         </div>
       </div>
-    `,
-  });
-
-  return component.render(idx);
+    </base-task>
+  `;
 };
 
 export default Task;

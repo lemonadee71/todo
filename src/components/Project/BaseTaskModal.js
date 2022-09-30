@@ -24,7 +24,7 @@ export default class BaseTaskModal {
     this.id = this.data.id;
 
     [this.task, this._revoke] = useTask(...Object.values(this.location));
-    [this.state] = createHook({ isEditingNotes: false });
+    this.state = createHook({ isEditingNotes: false });
 
     this.template = [];
   }
@@ -83,7 +83,7 @@ export default class BaseTaskModal {
   };
 
   initPopover = (e) => {
-    const [state] = createHook({ expanded: false });
+    const state = createHook({ expanded: false });
     const node = e.target;
     const popover = $('#label-popover');
 

@@ -1,15 +1,14 @@
 import Sortable from 'sortablejs';
-import { createHook, html, render } from 'poor-man-jsx';
+import { createHook, html } from 'poor-man-jsx';
 import { EDIT_TASK, PROJECT } from '../actions';
 import { useProject } from '../core/hooks';
 import Core from '../core';
 import Calendar from '../components/Calendar';
 import List from '../components/Project/List';
-import { AddIcon, CalendarIcon, CloseIcon, ListIcon } from '../assets/icons';
 
 const Project = ({ data: { id } }) => {
   const [project, unsubscribe] = useProject(id);
-  const [state] = createHook({ isListView: true, openForm: false });
+  const state = createHook({ isListView: true, openForm: false });
 
   const switchView = () => {
     state.isListView = !state.isListView;
@@ -76,65 +75,62 @@ const Project = ({ data: { id } }) => {
 
   const form = html`
     <div
-      ignore-all
-      key="list-form"
+      :key="list-form"
+      no-diff
       class="w-60 p-2 rounded-lg opacity-80 bg-[#dedede] dark:bg-[#272727]"
     >
       ${state.$openForm((value) =>
         value
-          ? render(html`
-              <form class="w-full" onSubmit.prevent=${createNewList}>
-                <div class="flex flex-col space-y-0.5 mb-2">
-                  <label
-                    for="new-list-name"
-                    class="text-sm text-gray-800 dark:text-white after:content-['*'] after:text-red-600"
-                  >
-                    List name
-                  </label>
-                  <input
-                    class="w-full px-2 py-1 mb-1 text-sm rounded-sm placeholder-slate-400 dark:text-black dark:bg-white focus:ring"
-                    type="text"
-                    name="new-list"
-                    id="new-list-name"
-                    data-validate
-                    data-validate-show-error
-                    required
+          ? html`<form class="w-full" onSubmit.prevent=${createNewList}>
+              <div class="flex flex-col space-y-0.5 mb-2">
+                <label
+                  for="new-list-name"
+                  class="text-sm text-gray-800 dark:text-white after:content-['*'] after:text-red-600"
+                >
+                  List name
+                </label>
+                <input
+                  :validate=${{ showError: true }}
+                  class="w-full px-2 py-1 mb-1 text-sm rounded-sm placeholder-slate-400 dark:text-black dark:bg-white focus:ring"
+                  type="text"
+                  name="new-list"
+                  id="new-list-name"
+                  required
+                />
+              </div>
+              <div class="flex flex-row items-center space-x-1">
+                <button
+                  class="text-white text-sm w-fit px-2 py-1 rounded bg-blue-700 hover:bg-blue-800"
+                  type="submit"
+                >
+                  Add list
+                </button>
+                <button
+                  type="reset"
+                  data-tooltip-position="right"
+                  onClick=${toggleFormVisibility}
+                >
+                  <my-icon
+                    name="close"
+                    id="cancel-list-creation"
+                    title="Cancel"
+                    class="stroke-black hover:stroke-red-600 dark:stroke-white"
                   />
-                </div>
-                <div class="flex flex-row items-center space-x-1">
-                  <button
-                    class="text-white text-sm w-fit px-2 py-1 rounded bg-blue-700 hover:bg-blue-800"
-                    type="submit"
-                  >
-                    Add list
-                  </button>
-                  <button
-                    type="reset"
-                    data-tooltip-position="right"
-                    onClick=${toggleFormVisibility}
-                  >
-                    ${CloseIcon({
-                      cls: 'stroke-black hover:stroke-red-600 dark:stroke-white',
-                      size: 24,
-                      id: 'cancel-list-creation',
-                      title: 'Cancel',
-                    })}
-                  </button>
-                </div>
-              </form>
-            `)
-          : render(html`
-              <button
-                class="w-full p-1 bg-transparent text-sm hover:text-gray-800 group flex flex-row items-center space-x-3 dark:hover:text-gray-300"
-                onClick=${toggleFormVisibility}
-              >
-                ${AddIcon({
-                  cls: 'stroke-black group-hover:stroke-gray-800 dark:stroke-white dark:group-hover:stroke-gray-300',
-                  decorative: true,
-                })}
-                <span>Add another list</span>
-              </button>
-            `)
+                </button>
+              </div>
+            </form>`
+          : html`<button
+              :else
+              class="w-full p-1 bg-transparent text-sm hover:text-gray-800 group flex flex-row items-center space-x-3 dark:hover:text-gray-300"
+              onClick=${toggleFormVisibility}
+            >
+              <my-icon
+                name="add"
+                class="stroke-black group-hover:stroke-gray-800 dark:stroke-white dark:group-hover:stroke-gray-300"
+                decorative="true"
+              />
+              <span>Add another list</span>
+            </button>`
       )}
     </div>
   `;
@@ -165,17 +161,15 @@ const Project = ({ data: { id } }) => {
           ></div>
         </label>
         <label for="project-name" class="sr-only">Project name</label>
-        <!-- prettier-ignore -->
-        <textarea
-          class="flex-1 text-2xl font-extrabold p-1 rounded-sm bg-inherit resize-none overflow-hidden placeholder:text-lg placeholder:text-slate-600 placeholder:font-normal dark:placeholder:text-slate-300"
+        <auto-textarea
+          :validate=${{ type: 'aggressive', delay: 200 }}
+          class="flex-1 text-2xl font-extrabold bg-inherit placeholder:text-lg placeholder:text-slate-600 placeholder:font-normal dark:placeholder:text-slate-300"
           id="project-name"
-          name="name"
+          name="project-name"
           placeholder="Project name (required)"
-          data-schema="title"
-          data-validate="aggressive"
-          data-validate-delay="200"
+          value=${project.name}
           onValidate=${editProject}
-        >${project.name}</textarea>
+        />
       </div>
 
       <button
@@ -187,22 +181,18 @@ const Project = ({ data: { id } }) => {
       >
         ${state.$isListView((value) =>
           value
-            ? render(
-                CalendarIcon({
-                  cls: 'stroke-gray-800 dark:stroke-white stroke-2',
-                  size: 24,
-                  id: 'toggle-calendar',
-                  title: 'Switch to calendar view',
-                })
-              )
-            : render(
-                ListIcon({
-                  cls: 'stroke-gray-800 dark:stroke-white stroke-2',
-                  size: 24,
-                  id: 'toggle-list',
-                  title: 'Switch to list view',
-                })
-              )
+            ? html`<my-icon
+                name="calendar"
+                id="toggle-calendar"
+                title="Switch to calendar view"
+                class="stroke-gray-800 dark:stroke-white stroke-2"
+              />`
+            : html`<my-icon
+                name="list"
+                id="toggle-list"
+                title="Switch to list view"
+                class="stroke-gray-800 dark:stroke-white stroke-2"
+              />`
         )}
       </button>
     </div>
@@ -210,19 +200,15 @@ const Project = ({ data: { id } }) => {
     <div class="flex-1 overflow-x-auto scrollbar" data-name="project__content">
       ${state.$isListView((value) =>
         value
-          ? render(html`
+          ? html`
               <div
-                is-list
-                keystring="id"
                 class="w-fit p-2 flex flex-row items-start space-x-6"
                 onMount=${init}
               >
-                ${project.$lists((lists) =>
-                  [...lists.map(List), form].map((item) => render(item))
-                )}
+                ${project.$lists((lists) => [...lists.map(List), form])}
               </div>
-            `)
-          : render(Calendar(id))
+            `
+          : Calendar(id)
       )}
     </div>
   `;

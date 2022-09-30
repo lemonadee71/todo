@@ -1,41 +1,29 @@
-import { createPopper } from '@popperjs/core';
-import { POPPER_CONFIG } from '../constants';
+import { useFloating } from './floating';
 import { $ } from './query';
 
-let currentInstance;
+export const useTooltip = (target, options) => {
+  // TODO: Switch to global refs (probably put in Core)
+  const tooltip = $('#tooltip');
+  const tooltipText = $('#tooltip_text');
+  const tooltipArrow = $('#tooltip_arrow');
+  const update = useFloating(target, tooltip, tooltipArrow, options);
 
-export const useTooltip = (el) => {
-  const tooltip = $.by.id('tooltip');
+  const show = (e) => {
+    update(() => {
+      let { tooltip: text } = e.target.dataset;
+      text = text.startsWith('$')
+        ? e.target.getAttribute(text.replace('$', ''))
+        : text;
 
-  const show =
-    (callback = null) =>
-    (e) => {
-      callback?.(e);
-      let { tooltip: tooltipText, tooltipPosition } = e.target.dataset;
-      const match = tooltipText.match(/{{([\w-]+)}}/);
-      tooltipText = match ? e.target.getAttribute(match[1]) : tooltipText;
-
-      currentInstance = createPopper(el, tooltip, {
-        placement: tooltipPosition || 'bottom',
-        ...POPPER_CONFIG,
-      });
-
-      tooltip.firstElementChild.textContent =
-        tooltipText || 'This is a tooltip';
-
+      tooltipText.textContent = text || 'This is a tooltip';
       tooltip.setAttribute('data-show', '');
-    };
+    });
+  };
 
-  const hide =
-    (callback = null) =>
-    (e) => {
-      callback?.(e);
-
-      tooltip.firstElementChild.textContent = '';
-      tooltip.removeAttribute('data-show');
-
-      currentInstance?.destroy();
-    };
+  const hide = () => {
+    tooltipText.textContent = '';
+    tooltip.removeAttribute('data-show');
+  };
 
   return [show, hide];
 };

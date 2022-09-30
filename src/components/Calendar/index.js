@@ -1,23 +1,22 @@
 import format from 'date-fns/format';
-import { createPopper } from '@popperjs/core';
 import { createHook, html } from 'poor-man-jsx';
 import ToastUICalendar from 'tui-calendar';
 import Core from '../../core';
 import { CHANGE_THEME, EDIT_TASK, TASK } from '../../actions';
-import { POPPER_CONFIG } from '../../constants';
-import { $ } from '../../utils/query';
-import { dispatchCustom } from '../../utils/dispatch';
 import { formatToDateTime, getDateRange } from '../../utils/date';
+import { useFloating } from '../../utils/floating';
+import { $ } from '../../utils/query';
 import { useUndo } from '../../utils/undo';
-import CreationPopup from './CreationPopup';
 
 const Calendar = (projectId) => {
-  const [state] = createHook({ date: new Date() });
+  const state = createHook({
+    date: new Date(),
+    clickedDate: null,
+    isPopupOpen: false,
+  });
+  const refs = {};
   let cleanup = [];
   let calendar;
-
-  const closeCreationPopup = () =>
-    dispatchCustom('popup:close', $('#creation-popup'));
 
   /** wrappers */
   const createScheduleObject = (data) => {
@@ -68,62 +67,33 @@ const Calendar = (projectId) => {
 
   const setDate = () => {
     state.date = calendar.getDate().toDate();
-    // to prevent creation popup from floating (having no ref)
-    closeCreationPopup();
-  };
-
-  const goToToday = () => {
-    calendar.today();
-    setDate();
-  };
-
-  const previous = () => {
-    calendar.prev();
-    setDate();
-  };
-
-  const next = () => {
-    calendar.next();
-    setDate();
+    // to prevent create-event-popup from floating (having no ref)
+    state.isPopupOpen = false;
   };
 
   /** core */
   const initListeners = () => {
     calendar.on({
       clickSchedule: () => {
-        closeCreationPopup();
+        state.isPopupOpen = false;
         $('.tui-full-calendar-popup-container').classList.add(
           'dark:bg-[#353535]'
         );
       },
       beforeCreateSchedule: (e) => {
-        const popup = $('#creation-popup');
-        // make sure to close previous popup first
-        dispatchCustom('popup:close', popup);
-        // change initial date
-        dispatchCustom('datechange', popup, { date: e.start.toDate() });
-        // show popup
-        dispatchCustom('popup:open', popup);
+        state.isPopupOpen = false;
+        state.clickedDate = e.start.toDate();
+        refs.guide = e.guide;
 
-        // init popper
-        const ref =
+        const anchor =
           e.guide.guideElement ?? Object.values(e.guide.guideElements)[0];
-        const instance = createPopper(ref, popup, {
-          ...POPPER_CONFIG,
-          placement: 'right',
-        });
 
-        popup.addEventListener(
-          'popup:close',
-          () => {
-            e.guide.clearGuideElement();
-            instance.destroy();
-          },
-          { once: true }
-        );
+        useFloating(anchor, refs.popup, null, { placement: 'right' })(() => {
+          state.isPopupOpen = true;
+        });
       },
       beforeUpdateSchedule: ({ schedule, changes }) => {
-        closeCreationPopup();
+        state.isPopupOpen = false;
 
         const location = schedule.raw;
 
@@ -228,7 +198,7 @@ const Calendar = (projectId) => {
         class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded border border-solid border-neutral-600 active:ring active:ring-inset shadow-sm"
         name="today"
         data-tooltip="${format(new Date(), 'eee, MMMM d')}"
-        onClick=${goToToday}
+        onClick=${[() => calendar.today(), setDate]}
       >
         Today
         <span class="sr-only">${format(new Date(), 'EEEE, MMMM d')}</span>
@@ -237,8 +207,8 @@ const Calendar = (projectId) => {
         class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded-full active:ring active:ring-inset shadow-sm"
         name="previous"
         aria-label="Previous month"
-        data-tooltip="{{aria-label}}"
-        onClick=${previous}
+        data-tooltip="$aria-label"
+        onClick=${[() => calendar.prev(), setDate]}
       >
         <
       </button>
@@ -246,8 +216,8 @@ const Calendar = (projectId) => {
         class="hover:bg-neutral-200 dark:hover:bg-neutral-700 py-1 px-3 rounded-full active:ring active:ring-inset shadow-sm"
         name="next"
         aria-label="Next month"
-        data-tooltip="{{aria-label}}"
-        onClick=${next}
+        data-tooltip="$aria-label"
+        onClick=${[() => calendar.next(), setDate]}
       >
         >
       </button>
@@ -256,7 +226,7 @@ const Calendar = (projectId) => {
       </h2>
     </div>
     <div data-name="calendar" onCreate=${init} onDestroy=${destroy}></div>
-    ${CreationPopup(projectId)}
+    <create-event-popup id=${projectId} ref=${refs} state=${state} />
   `;
 };
 

@@ -1,10 +1,10 @@
-import { html } from 'poor-man-jsx';
+import PoorManJSX, { html } from 'poor-man-jsx';
 import { DEFAULT_COLORS } from '../../constants';
 
-const ColorChoices = (label, labelClass = '', initialChoice = null) =>
+const ColorChoices = ({ props }) =>
   html`
     <fieldset>
-      <legend class="mb-2 ${labelClass}">${label}</legend>
+      <legend class="mb-2 ${props.class}">${props.legend}</legend>
       <div class="flex flex-row flex-wrap justify-between gap-1">
         ${Object.entries(DEFAULT_COLORS).map(
           ([name, color], i) =>
@@ -18,13 +18,12 @@ const ColorChoices = (label, labelClass = '', initialChoice = null) =>
                   type="radio"
                   name="label-color"
                   value="${color}"
-                  ${initialChoice === color || (!initialChoice && !i)
-                    ? 'checked="checked"'
-                    : ''}
+                  checked.mirror=${props.value === color ||
+                  (!props.value && !i)}
                 />
                 <span
                   class="inline-block border-box h-8 w-8 border-2 border-solid border-transparent rounded-md peer-checked:border-white"
-                  style_background-color="${color}"
+                  style:background-color="${color}"
                 ></span>
               </label>
             `
@@ -32,5 +31,7 @@ const ColorChoices = (label, labelClass = '', initialChoice = null) =>
       </div>
     </fieldset>
   `;
+
+PoorManJSX.customComponents.define('color-choices', ColorChoices);
 
 export default ColorChoices;

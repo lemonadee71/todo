@@ -1,44 +1,42 @@
-import { html } from 'poor-man-jsx';
-import { EditIcon } from '../../assets/icons';
-import { runOnlyIfClick } from '../../utils/misc';
+import PoorManJSX, { html } from 'poor-man-jsx';
+import { runOnlyIfClick } from '../../utils/keyboard';
 
-const Label = (data, clickAction, editAction, isSelected) => {
+const Label = ({ props: { data, selected, onclick, onedit } }) => {
   const clickLabel = (e) => {
-    clickAction(data.id, !e.currentTarget.matches('[data-selected]'));
+    onclick(data.id, !e.currentTarget.matches('[data-selected]'));
   };
 
-  const editLabel = (e) => {
-    editAction(data);
-    e.stopPropagation();
-  };
+  const editLabel = () => onedit(data);
 
   return html`
     <div
-      key="${data.id}"
-      class="group px-2 py-1 rounded flex justify-between items-center cursor-pointer break-all border border-solid ${isSelected
-        ? 'border-white'
-        : 'border-transparent'}"
-      tabindex="0"
+      :key="${data.id}"
+      class="group px-2 py-1 rounded flex justify-between items-center cursor-pointer break-all border border-solid"
+      class:[border-white|border-transparent]=${selected}
       style="background-color: ${data.color};"
-      data-selected=${isSelected}
+      tabindex="0"
+      bool:data-selected=${selected}
       onClick=${clickLabel}
       onKeydown=${runOnlyIfClick(clickLabel)}
     >
-      <span>{% ${data.name} %}</span>
+      <span>${data.name}</span>
 
       <button
         class="w-0 opacity-0 focus:w-fit focus:opacity-100 group-hover:w-fit group-hover:opacity-100"
-        onClick=${editLabel}
-        onKeydown=${runOnlyIfClick(editLabel)}
+        onClick.stop=${editLabel}
+        onKeydown.stop=${runOnlyIfClick(editLabel)}
       >
-        ${EditIcon({
-          cls: 'stroke-gray-300 focus:stroke-white hover:stroke-white',
-          id: `edit-${data.id}`,
-          title: 'Edit label',
-        })}
+        <my-icon
+          name="edit"
+          id="edit-${data.id}"
+          title="Edit label"
+          class="stroke-gray-300 focus:stroke-white hover:stroke-white"
+        />
       </button>
     </div>
   `;
 };
+
+PoorManJSX.customComponents.define('task-label', Label);
 
 export default Label;

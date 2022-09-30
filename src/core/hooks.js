@@ -1,5 +1,5 @@
 import { query, where } from 'firebase/firestore';
-import { createHook, html, render } from 'poor-man-jsx';
+import { createHook, html } from 'poor-man-jsx';
 import Core from '.';
 import { FIREBASE, PROJECT, TASK } from '../actions';
 import { isGuest } from '../utils/auth';
@@ -7,7 +7,7 @@ import { getCollectionRef, getDocuments } from '../utils/firestore';
 import { copy } from '../utils/misc';
 
 export const useRoot = () => {
-  const [state] = createHook({ projects: Core.main.getAllProjects() });
+  const state = createHook({ projects: Core.main.getAllProjects() });
 
   const unsubscribe = Core.event.onSuccess(PROJECT.ALL, () => {
     state.projects = Core.main.getAllProjects();
@@ -19,14 +19,14 @@ export const useRoot = () => {
 // we rely on changes to original references
 // to be reflected here
 export const useProject = (projectId) => {
-  const projectRef = Core.main.getProject(projectId);
-  const [project] = createHook({
+  const ref = Core.main.getProject(projectId);
+  const project = createHook({
     // Add other properties if needed
-    id: projectRef.id,
-    name: projectRef.name,
-    color: projectRef.color,
-    lists: projectRef.lists.items,
-    labels: projectRef.labels.items,
+    id: ref.id,
+    name: ref.name,
+    color: ref.color,
+    lists: ref.lists.items,
+    labels: ref.labels.items,
   });
 
   const unsubscribe = [
@@ -40,13 +40,13 @@ export const useProject = (projectId) => {
         FIREBASE.TASK.FETCH_COMPLETED,
       ],
       () => {
-        project.lists = projectRef.lists.items;
-        project.labels = projectRef.labels.items;
+        project.lists = ref.lists.items;
+        project.labels = ref.labels.items;
       }
     ),
     Core.event.onSuccess(PROJECT.UPDATE, () => {
-      project.name = projectRef.name;
-      project.color = projectRef.color;
+      project.name = ref.name;
+      project.color = ref.color;
     }),
   ];
 
@@ -58,8 +58,8 @@ export const useProject = (projectId) => {
 // for both task and subtask
 export const useTask = (projectId, listId, taskId, subtaskId = null) => {
   const get = subtaskId ? Core.main.getSubtask : Core.main.getTask;
-  const taskRef = get(projectId, listId, taskId, subtaskId);
-  const [task] = createHook(taskRef.data);
+  const ref = get(projectId, listId, taskId, subtaskId);
+  const task = createHook(ref.data);
 
   const action = subtaskId ? TASK.SUBTASKS : TASK;
 
@@ -73,7 +73,7 @@ export const useTask = (projectId, listId, taskId, subtaskId = null) => {
       Object.assign(task, newData.data);
     }),
     Core.event.onSuccess([...TASK.LABELS.ALL, ...PROJECT.LABELS.ALL], () => {
-      task.labels = taskRef.data.labels;
+      task.labels = ref.data.labels;
     }),
   ];
 
@@ -82,7 +82,7 @@ export const useTask = (projectId, listId, taskId, subtaskId = null) => {
       Core.event.onSuccess(
         [...TASK.SUBTASKS.ALL, ...TASK.LABELS.ALL, ...PROJECT.LABELS.ALL],
         () => {
-          task.subtasks = taskRef.subtasks.items;
+          task.subtasks = ref.subtasks.items;
         }
       )
     );
@@ -95,7 +95,7 @@ export const useTask = (projectId, listId, taskId, subtaskId = null) => {
 
 export const useLocationOptions = (data = {}) => {
   const [root, unsubscribe] = useRoot();
-  const [state] = createHook({
+  const state = createHook({
     project: data.project,
     list: data.list,
     listOptions: [],
@@ -124,11 +124,11 @@ export const useLocationOptions = (data = {}) => {
     ></option>`;
     const options = [blank, ...turnItemsToOptions(items, state.project)];
 
-    return render(html`${options}`);
+    return html`${options}`;
   };
 
   const renderListOptions = (items) =>
-    render(html`${turnItemsToOptions(items, state.list)}`);
+    html`${turnItemsToOptions(items, state.list)}`;
 
   const syncListOptions = async (projectId) => {
     let result = [];

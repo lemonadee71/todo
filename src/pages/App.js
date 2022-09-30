@@ -1,5 +1,5 @@
-import PoorManJSX, { html } from 'poor-man-jsx';
-import { HIDE_EVENTS, PATHS, SHOW_EVENTS } from '../constants';
+import { html } from 'poor-man-jsx';
+import { PATHS } from '../constants';
 import {
   CHANGE_THEME,
   EDIT_SUBTASK,
@@ -15,7 +15,6 @@ import logger from '../utils/logger';
 import { sortById } from '../utils/misc';
 import { $ } from '../utils/query';
 import { toggleDarkTheme } from '../utils/theme';
-import { useTooltip } from '../utils/useTooltip';
 import Dashboard from './Dashboard';
 import Project from './Project';
 import Sidebar from '../components/Sidebar';
@@ -60,17 +59,6 @@ const routes = [
 ];
 
 const App = () => {
-  const addTooltip = (element) => {
-    if (element.matches('[data-tooltip]')) {
-      element.addEventListener('@mount', () => {
-        const [onShow, onHide] = useTooltip(element);
-
-        SHOW_EVENTS.forEach((name) => element.addEventListener(name, onShow()));
-        HIDE_EVENTS.forEach((name) => element.addEventListener(name, onHide()));
-      });
-    }
-  };
-
   const focusSearchBar = (e) => {
     if (e.ctrlKey && e.key === 'k') {
       $('#search').focus();
@@ -80,14 +68,9 @@ const App = () => {
 
   document.addEventListener('keydown', focusSearchBar);
 
-  // add tooltips to elements with data-tooltip attr
-  // only app/* page has tooltips
-  PoorManJSX.onAfterCreation(addTooltip);
-
   // listeners
   const cleanup = [
     () => document.removeEventListener('keydown', focusSearchBar),
-    () => PoorManJSX.removeAfterCreation(addTooltip),
     Core.event.on(CHANGE_THEME, toggleDarkTheme),
     Core.event.onSuccess(
       PROJECT.REMOVE,
@@ -125,11 +108,7 @@ const App = () => {
 
   return html`
     <!-- empty element just to cancel subscriptions -->
-    <div
-      style="display: none;"
-      tabindex="-1"
-      onDestroy=${() => cleanup.forEach((cb) => cb())}
-    ></div>
+    <div style="display: none;" tabindex="-1" onDestroy=${cleanup}></div>
     <!-- header -->
     <header
       class="fixed top-0 right-0 z-20 w-screen h-24 px-2 pt-4 pb-2 bg-inherit grid grid-cols-2 grid-rows-2 gap-x-4 items-center xs:grid-cols-[auto_1fr_auto] xs:grid-rows-1 xs:h-14 md:px-4"
@@ -157,39 +136,37 @@ const App = () => {
         </svg>
       </button>
 
-      ${SearchBar()}
+      <search-bar />
 
       <div
         class="justify-self-end row-start-1 col-start-2 xs:col-start-3 flex items-center gap-1"
       >
         <span class="font-medium">${getUserName()}</span>
-        <button class="group h-6 w-6" data-dropdown>
-          <span class="sr-only">Open user menu</span>
-          <img
-            class="rounded-full group-active:ring active:ring-teal-500"
-            src="${getProfilePicURL()}"
-            alt="profile picture"
-          />
-        </button>
 
-        <div
-          class="flex flex-col bg-neutral-700 text-white text-sm text-center py-1 rounded divide-y divide-neutral-500 drop-shadow z-20"
-          style="display: none;"
-          data-dropdown-name="user"
-          data-dropdown-position="bottom-end"
-          data-dropdown-offset="0,10"
-        >
-          <button class="px-2" onClick=${() => Core.event.emit(CHANGE_THEME)}>
-            <span class="sr-only">Switch to</span>
-            <span>
+        <dropdown-wrapper name="user" placement="bottom-end" offset=${10}>
+          <button :slot="button" class="group h-6 w-6">
+            <span class="sr-only">Open user menu</span>
+            <img
+              class="rounded-full group-active:ring active:ring-teal-500"
+              src="${getProfilePicURL()}"
+              alt="profile picture"
+            />
+          </button>
+
+          <div
+            :slot="dropdown"
+            class="flex flex-col bg-neutral-700 text-white text-sm text-center py-1 rounded divide-y divide-neutral-500 drop-shadow z-20"
+          >
+            <button class="px-2" onClick=${() => Core.event.emit(CHANGE_THEME)}>
+              <span class="sr-only">Switch to</span>
               ${Core.state.$darkTheme((value) => (value ? 'Light' : 'Dark'))}
               mode
-            </span>
-          </button>
-          <button class="px-2 hover:text-red-600" onClick=${signOut}>
-            Logout
-          </button>
-        </div>
+            </button>
+            <button class="px-2 hover:text-red-600" onClick=${signOut}>
+              Logout
+            </button>
+          </div>
+        </dropdown-wrapper>
       </div>
     </header>
     <!-- sidebar -->
@@ -203,12 +180,9 @@ const App = () => {
       props: { class: 'flex flex-col h-full pt-24 xs:pt-14' },
     })}
     <!-- only one tooltip element for all -->
-    <div id="tooltip" role="tooltip">
-      <span id="tooltip_text"></span>
-      <div id="tooltip_arrow" data-popper-arrow></div>
-    </div>
+    <my-tooltip />
     <!-- only one modal for all -->
-    <my-modal id="modal" role="dialog" close-action="close"></my-modal>
+    <my-modal id="modal" role="dialog" close-action="close" />
   `;
 };
 

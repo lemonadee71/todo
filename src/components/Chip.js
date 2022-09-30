@@ -8,13 +8,11 @@ const Chip = (data) => {
 
   return html`
     <div
-      is-text
-      key="${data.id}"
-      class="text-xs text-white cursor-pointer rounded ${Core.state.$expandLabels(
-        (val) => (val ? 'py-1 px-2 ' : 'w-7 h-2')
-      )}"
+      :key="${data.id}"
+      class="text-xs text-white cursor-pointer rounded"
+      class:[py-1,px-2|w-7,h-2]=${Core.state.$expandLabels}
+      title="${data.name}"
       style="background-color: ${data.color};"
-      data-name="${data.name}"
       onClick=${onClick}
     >
       ${Core.state.$expandLabels((val) => (val ? data.name : ''))}

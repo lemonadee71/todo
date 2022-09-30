@@ -1,51 +1,20 @@
-import autosize from 'autosize';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
-import PoorManJSX, { addHooks } from 'poor-man-jsx';
+import { apply } from 'poor-man-jsx';
 import { PROJECT } from './actions';
 import { LAST_OPENED_PAGE, PATHS } from './constants';
 import Core from './core';
 import { LocalStorage } from './core/storage';
 import { fetchProjects, initFirestore, setupListeners } from './core/firestore';
 import { isGuest, isNewUser, signIn } from './utils/auth';
-import { createDropdown } from './utils/dropdown';
 import { getUserRef, updateUser } from './utils/firestore';
-import { makeKeyboardSortable } from './utils/sortable';
 import { initializeTheme } from './utils/theme';
-import { addSchema, applyValidation } from './utils/validate';
 import defineCustomElements from './components/custom';
 import Router from './components/Router';
 import * as pages from './pages';
 import { config as firebaseConfig } from './firebase-config';
 import './styles/style.css';
 import 'wicg-inert';
-
-addSchema('title', {
-  rows: 1,
-  required: true,
-  'data-autosize': '',
-});
-
-PoorManJSX.addBooleanAttribute('data-selected');
-
-PoorManJSX.onAfterCreation((element) => {
-  if (element.matches('[data-validate]')) {
-    applyValidation(element);
-  }
-
-  if (element.matches('[data-autosize]')) {
-    element.addEventListener('@mount', () => autosize(element));
-  }
-
-  // for dropdowns we assume that the button is next to its dropdown menu
-  if (element.matches('[data-dropdown]')) {
-    createDropdown(element, element.nextElementSibling);
-  }
-
-  if (element.matches('[data-sortable]')) {
-    makeKeyboardSortable(element);
-  }
-});
 
 const routes = [
   {
@@ -137,8 +106,8 @@ const routes = [
 initializeApp(firebaseConfig);
 defineCustomElements();
 // allow toggling of theme
-addHooks(document.documentElement, {
-  class: Core.state.$darkTheme((value) => (value ? 'dark' : 'light')),
+apply(document.documentElement, {
+  'class:[dark|light]': Core.state.$darkTheme,
 });
 // make body our main router
 Router({ routes, target: document.body });

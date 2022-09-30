@@ -1,104 +1,95 @@
-import { html, createHook } from 'poor-man-jsx';
+import { autoUpdate } from '@floating-ui/dom';
+import PoorManJSX, { html, createHook } from 'poor-man-jsx';
 import { PROJECT } from '../../actions';
 import Core from '../../core';
 import { useProject } from '../../core/hooks';
-import { dispatchCustom } from '../../utils/dispatch';
+import { useFloating } from '../../utils/floating';
 import { addSchema } from '../../utils/validate';
-import Label from './Label';
 
-const LabelPopover = (data, clickAction) => {
+const LabelPopover = ({
+  props: { data, state: parentState, anchor, onlabelclick },
+}) => {
   const [project, revoke] = useProject(data.project);
   const state = createHook({
-    isVisible: false,
     inEditMode: false,
-    currentTarget: null,
+    current: null,
+    stopAutoUpdate: null,
   });
+  const ref = {};
+
+  const clearState = () => {
+    // clear state
+    state.inEditMode = false;
+    state.current = null;
+    state.stopAutoUpdate?.();
+  };
 
   const toggleEditingMode = (target = null) => {
     // store data of currently editing label; otherwise clear it
-    state.currentTarget = target;
+    state.current = target;
     state.inEditMode = !state.inEditMode;
   };
 
-  const togglePopover = () => {
-    if (state.isVisible) closePopover();
-    else openPopover();
-  };
+  const togglePopover = (value) => {
+    if (value) {
+      state.stopAutoUpdate = autoUpdate(
+        anchor.current,
+        ref.current,
+        useFloating(anchor.current, ref.current)
+      );
+    } else clearState();
 
-  const openPopover = () => {
-    state.isVisible = true;
-  };
-
-  const closePopover = () => {
-    state.isVisible = false;
-    // clear state
-    state.inEditMode = false;
-    state.currentTarget = null;
+    return value;
   };
 
   const createLabel = (e) => {
     const name = e.target.elements['new-label-name'];
     const color = e.target.elements['label-color'].value;
 
-    Core.event.emit(
-      PROJECT.LABELS.ADD,
-      {
-        project: data.project,
-        data: { name: name.value, color },
-      },
-      {
-        onSuccess: () => {
-          name.value = '';
-        },
-      }
-    );
+    const isSuccess = Core.event.emit(PROJECT.LABELS.ADD, {
+      project: data.project,
+      data: { name: name.value, color },
+    });
+
+    if (isSuccess) name.value = '';
   };
 
   const editLabel = (e) => {
     const name = e.target.elements['label-name'];
     const color = e.target.elements['label-color'].value;
 
-    Core.event.emit(
-      PROJECT.LABELS.UPDATE,
-      {
-        project: data.project,
-        label: state.currentTarget.id,
-        data: { name: name.value, color },
-      },
-      {
-        onSuccess: toggleEditingMode,
-        onError: () => {
-          name.value = data.name;
-        },
-      }
-    );
+    const isSuccess = Core.event.emit(PROJECT.LABELS.UPDATE, {
+      project: data.project,
+      label: state.current.id,
+      data: { name: name.value, color },
+    });
+
+    if (isSuccess) toggleEditingMode();
+    else name.value = data.name;
   };
 
   const deleteLabel = () => {
-    Core.event.emit(
-      PROJECT.LABELS.REMOVE,
-      {
-        project: data.project,
-        label: state.currentTarget.id,
-      },
-      { onSuccess: toggleEditingMode }
-    );
+    const isSuccess = Core.event.emit(PROJECT.LABELS.REMOVE, {
+      project: data.project,
+      label: state.current.id,
+    });
+
+    if (isSuccess) toggleEditingMode();
   };
 
   return html`
     <div
-      :show.visibility=${state.$isVisible}
-      id="label-popover"
+      :ref=${ref}
+      :show.visibility=${parentState.$isPopoverOpen(togglePopover)}
       class="relative text-white bg-[#272727] w-56 px-3 pt-5 pb-3 rounded-md"
-      onPopover:toggle=${togglePopover}
-      onPopover:open=${openPopover}
-      onPopover:hide=${closePopover}
       onDestroy=${revoke}
     >
       <button
         class="absolute top-0 right-0 mr-3 text-lg"
         aria-label="Close popover"
-        onClick=${(e) => dispatchCustom('popover:hide', e.target.parentElement)}
+        onClick=${() => {
+          parentState.isPopoverOpen = false;
+        }}
       >
         &times;
       </button>
@@ -128,14 +119,14 @@ const LabelPopover = (data, clickAction) => {
                     id="label-name"
                     name="label-name"
                     placeholder="Label name"
-                    value=${state.currentTarget.name}
+                    value=${state.current.name}
                     required
                     onMount=${(e) => e.target.focus()}
                   />
 
                   <color-choices
                     class="stext-sm font-medium text-gray-400"
-                    value=${state.currentTarget.color}
+                    value=${state.current.color}
                     legend="Edit color"
                   />
 
@@ -162,14 +153,17 @@ const LabelPopover = (data, clickAction) => {
                   aria-labelledby="label-heading"
                 >
                   ${project.$labels.map((label) => {
+                    // TODO: Create `hasLabel` method
                     const isSelected = data.getLabels().includes(label.id);
 
-                    return Label(
-                      label,
-                      clickAction,
-                      toggleEditingMode,
-                      isSelected
-                    );
+                    return html`
+                      <task-label
+                        selected=${isSelected}
+                        data=${label}
+                        onClick=${onlabelclick}
+                        onEdit=${toggleEditingMode}
+                      />
+                    `;
                   })}
                 </div>
 
@@ -193,6 +187,8 @@ const LabelPopover = (data, clickAction) => {
     </div>
   `;
 };
+
+PoorManJSX.customComponents.define('label-popover', LabelPopover);
 
 addSchema('label', {
   custom: {

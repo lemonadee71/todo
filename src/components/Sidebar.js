@@ -1,13 +1,12 @@
-import { createHook, html, render } from 'poor-man-jsx';
+import { createHook, html } from 'poor-man-jsx';
 import { PROJECT } from '../actions';
 import { useRoot } from '../core/hooks';
 import Core from '../core';
 import ProjectLink from './ProjectLink';
-import { AddIcon, CloseIcon, HomeIcon } from '../assets/icons';
 
 const Sidebar = () => {
   const [data, revoke] = useRoot();
-  const [state] = createHook({ isVisible: false });
+  const state = createHook({ isVisible: false });
 
   const toggleVisibility = () => {
     state.isVisible = !state.isVisible;
@@ -20,37 +19,40 @@ const Sidebar = () => {
     e.target.reset();
   };
 
-  // prettier-ignore
   return html`
     <aside
-      class="${state.$isVisible((value) => value ? 'visible w-56' : 'invisible w-0')} md:visible md:w-56 fixed top-0 left-0 h-screen bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all dark:bg-[#202020]"
       id="sidebar"
+      class="fixed top-0 left-0 h-screen bg-[#272727] z-50 overflow-x-hidden overflow-y-auto transition-all dark:bg-[#202020] md:visible md:w-56"
+      class[visible,w-56|invisible,w-0]=${state.$isVisible}
       onToggleSidebar=${toggleVisibility}
       onDestroy=${revoke}
     >
       <div class="relative h-full p-5 pt-12">
         <button
-          class="absolute top-4 right-4 ${state.$isVisible((value) =>  value ? 'visible' : 'invisible')} md:invisible"
+          class="absolute top-4 right-4 md:invisible"
+          class:[visible|invisible]=${state.$isVisible}
           onClick=${toggleVisibility}
         >
-          ${CloseIcon({
-            cls: 'stroke-gray-400 hover:stroke-gray-600 dark:stroke-gray-50 dark:hover:stroke-gray-200',
-            id: 'close-sidebar',
-            title: 'Close sidebar',
-          })}
+          <my-icon
+            name="close"
+            id="close-sidebar"
+            title="Close sidebar"
+            class="stroke-gray-400 hover:stroke-gray-600 dark:stroke-gray-50 dark:hover:stroke-gray-2000"
+          />
         </button>
 
-        <nav class="">
+        <nav>
           <a
-            class="no-underline hover:underline text-sm text-white flex items-center mb-8"
             is="navigo-link"
+            class="no-underline hover:underline text-sm text-white flex items-center mb-8"
             href="/app"
           >
-            ${HomeIcon({
-              cls: 'stroke-white mr-1',
-              size: 16,
-              decorative: true,
-            })}
+            <my-icon
+              name="home"
+              class="stroke-white mr-1"
+              size="16"
+              decorative="true"
+            />
             Home
           </a>
 
@@ -62,24 +64,25 @@ const Sidebar = () => {
             <form onSubmit.prevent=${createNewProject}>
               <button
                 class="rounded border border-solid border-neutral-400 hover:bg-neutral-700"
-                data-tooltip="Add project"
-                data-tooltip-position="right"
                 name="new-project"
                 value="Unnamed project"
                 type="submit"
+                data-tooltip=${{ text: 'Add project', placement: 'right' }}
               >
-                ${AddIcon({
-                  cls: 'stroke-neutral-400 stroke-1',
-                  size: 16,
-                  id: 'add_item-project',
-                  title: 'Add project',
-                })}
+                <my-icon
+                  name="add"
+                  id="add_item-project"
+                  title="Add project"
+                  class="stroke-neutral-400 stroke-1"
+                  size="16"
+                  decorative="true"
+                />
               </button>
             </form>
           </div>
 
-          <ul is-list keystring="data-id" class="space-y-1 m-0">
-            ${data.$projects.map(ProjectLink).map((item) => render(item))}
+          <ul class="space-y-1 m-0">
+            ${data.$projects.map(ProjectLink)}
           </ul>
         </nav>
 
@@ -91,17 +94,17 @@ const Sidebar = () => {
           >
             <div class="flex flex-col space-y-0.5">
               <input
+                :validate=${{ ownErrorMessage: true }}
                 class="w-full text-white text-sm rounded-sm ml-1 p-1 bg-transparent border-gray-300 border-solid border-b placeholder:text-gray-400 focus:bg-white focus:border-white focus:text-black focus:ring"
                 type="text"
                 name="new-project"
                 placeholder="Add project"
                 required
-                data-validate
               />
-              <p role="alert" class="text-xs text-red-600" data-error-message></p>
+              <p role="alert" class="text-xs text-red-600"></p>
             </div>
             <button type="submit" aria-label="Create new project">
-              ${AddIcon({ cls: 'stroke-gray-400', decorative: true })}
+              <my-icon name="add" class="stroke-gray-400" decorative="true" />
             </button>
           </form>
         </div>

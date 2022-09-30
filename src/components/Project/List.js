@@ -5,10 +5,9 @@ import Core from '../../core';
 import { useUndo } from '../../utils/undo';
 import { isGuest } from '../../utils/auth';
 import Task from './Task';
-import { AddIcon, DeleteIcon } from '../../assets/icons';
 
-const List = (data, pos) => {
-  const [state] = createHook({ showCompleted: false });
+const List = (data, idx) => {
+  const state = createHook({ showCompleted: false });
 
   const toggleCompletedTasks = () => {
     if (!isGuest()) {
@@ -87,29 +86,36 @@ const List = (data, pos) => {
   // BUG: There are z-index issues here
   return html`
     <div
-      ignore="class"
+      :key=${data.id}
+      :skip="class"
+      :sortable=${{
+        action: PROJECT.LISTS.MOVE,
+        class: 'ring-4',
+        getData: () => ({
+          project: data.project,
+          list: data.id,
+        }),
+      }}
       class="tasklist w-72 pt-3 pb-4 space-y-2 rounded-lg bg-[#dedede] dark:bg-[#272727] sm:relative z-0"
       id="${data.id}"
       tabindex="0"
       data-id="${data.id}"
       data-location="${data.project},${data.id}"
-      data-position="${pos}"
-      data-sortable
-      data-sortable-action="${PROJECT.LISTS.MOVE}"
-      data-sortable-style=".ring-4"
+      data-position="${idx}"
     >
       <!-- List header -->
       <div
         class="sm:sticky sm:top-0 mx-0.5 my-2 px-2 space-y-1 bg-[#dedede] dark:bg-[#272727] z-[3]"
       >
         <div class="flex justify-between items-center">
-          <h2 class="font-medium text-lg line-clamp-3">{% ${data.name} %}</h2>
+          <h2 class="font-medium text-lg line-clamp-3">${data.name}</h2>
           <button onClick=${deleteList}>
-            ${DeleteIcon({
-              cls: 'stroke-red-500 hover:stroke-red-700',
-              id: `delete-${data.id}`,
-              title: 'Delete list',
-            })}
+            <my-icon
+              name="delete"
+              id="delete-${data.id}"
+              title="Delete list"
+              class="stroke-red-500 hover:stroke-red-700"
+            />
           </button>
         </div>
 
@@ -125,18 +131,18 @@ const List = (data, pos) => {
             />
           </label>
           <button type="submit">
-            ${AddIcon({
-              cls: 'stroke-blue-600 hover:stroke-blue-800 dark:stroke-blue-400 dark:hover:stroke-blue-600',
-              id: `add_item-${data.id}`,
-              title: 'Create task',
-            })}
+            <my-icon
+              name="add"
+              id="add_item-${data.id}"
+              title="Create task"
+              class="stroke-blue-600 hover:stroke-blue-800 dark:stroke-blue-400 dark:hover:stroke-blue-600"
+            />
           </button>
         </form>
       </div>
 
       <!-- Current tasks -->
       <div
-        is-list
         class="space-y-2 px-3"
         data-id="${data.id}"
         data-name="current-tasks"
@@ -182,14 +188,11 @@ const List = (data, pos) => {
       </div>
 
       <div
-        is-list
-        ignore="style"
+        :skip="style"
+        :show=${state.$showCompleted}
         class="space-y-2 px-3 transition-all"
         id="${data.id}_completed-tasks"
         data-name="completed-tasks"
-        style_display=${state.$showCompleted((value) =>
-          value ? 'block' : 'none'
-        )}
       >
         ${data.items
           .filter((task) => task.completed)

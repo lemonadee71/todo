@@ -1,62 +1,43 @@
-import { createRovingTabindexFns } from './misc';
-import { usePopper } from './popper';
+import { apply } from 'poor-man-jsx';
+import { useFloating } from './floating';
+import { createRovingTabFns } from './keyboard';
 
-export const createDropdown = (button, dropdown) => {
+export const createDropdown = (button, dropdown, data) => {
   // set attributes
   button.setAttribute('aria-haspopup', 'true');
+  dropdown.style.display = 'none';
   dropdown.setAttribute('tabindex', '-1');
   dropdown.setAttribute('role', 'menu');
-  // it's a dropdown so we assume it is vertical
   dropdown.setAttribute('aria-orientation', 'vertical');
-  [...dropdown.children].forEach((item) =>
-    item.setAttribute('role', 'menuitem')
-  );
 
-  const { dropdownOffset, dropdownPosition, dropdownName } = dropdown.dataset;
-
-  // if no [data-dropdown-name], use text of menu btn
-  if (dropdownName || button.innerText) {
-    dropdown.setAttribute('aria-label', dropdownName || button.innerText);
+  for (const item of [...dropdown.children]) {
+    item.setAttribute('role', 'menuitem');
   }
 
-  const [, onShow, onHide] = usePopper(button, dropdown, {
-    placement: dropdownPosition || 'bottom',
-    modifiers: [
-      {
-        name: 'offset',
-        options: {
-          offset: dropdownOffset
-            ? dropdownOffset.split(',').map((x) => +x)
-            : [0, 0],
-        },
-      },
-    ],
-    strategy: 'absolute',
-  });
+  // if no name, use text of menu btn
+  if (data.name || button.innerText) {
+    dropdown.setAttribute('aria-label', data.name || button.innerText);
+  }
 
   let isOpen = false;
-  const { setPreviousIdx, focus, onKeydownForItems } =
-    createRovingTabindexFns(dropdown);
-
-  const openMenu = onShow(() => {
-    button.setAttribute('aria-expanded', 'true');
-    dropdown.style.removeProperty('display');
-
-    // make all children unfocusable at first
-    [...dropdown.children].forEach((child) => {
-      child.setAttribute('tabindex', '-1');
-    });
-
-    // then focus first item
-    focus(0);
+  const { interact, moveWithin, reset } = createRovingTabFns(dropdown);
+  const update = useFloating(button, dropdown, null, {
+    placement: data.placement || 'bottom',
+    offset: data.offset,
   });
 
-  const closeMenu = onHide(() => {
+  const openMenu = () => {
+    update(() => {
+      button.setAttribute('aria-expanded', 'true');
+      dropdown.style.removeProperty('display');
+    });
+  };
+
+  const closeMenu = () => {
     button.removeAttribute('aria-expanded');
     dropdown.style.display = 'none';
-    // reset state
-    setPreviousIdx(0);
-  });
+    reset();
+  };
 
   const toggleMenu = (e) => {
     isOpen = !isOpen;
@@ -75,58 +56,59 @@ export const createDropdown = (button, dropdown) => {
     }
   };
 
-  document.body.addEventListener('click', closeIfClickedOutside);
+  apply(document.body, { onClick: closeIfClickedOutside });
 
-  button.addEventListener('click', toggleMenu);
+  apply(button, {
+    onClick: toggleMenu,
+    onKeydown: [
+      (e) => {
+        if (e.altKey) return;
 
-  button.addEventListener('keydown', (e) => {
-    if (e.altKey) return;
+        // if already opened just move focus
+        switch (e.key) {
+          case 'Up':
+          case 'ArrowUp':
+          case 'Down':
+          case 'ArrowDown':
+            openMenu();
+            break;
+          case 'Enter':
+          case ' ':
+            toggleMenu(e);
+            e.preventDefault();
+            break;
 
-    // if already opened just move focus
-    switch (e.key) {
-      case 'Down':
-      case 'ArrowDown': {
-        openMenu();
-        focus(0);
-        break;
-      }
-      case 'Up':
-      case 'ArrowUp': {
-        openMenu();
-        focus(dropdown.children.length - 1);
-        break;
-      }
-      case 'Enter':
-      case ' ':
-        toggleMenu(e);
-        e.preventDefault();
-        break;
-
-      default:
-    }
+          default:
+        }
+      },
+      interact,
+    ],
   });
 
-  dropdown.addEventListener('keydown', onKeydownForItems);
-  dropdown.addEventListener('keydown', (e) => {
-    if (e.altKey) return;
+  apply(dropdown, {
+    onDestroy: () => {
+      document.body.removeEventListener('click', closeIfClickedOutside);
+    },
+    onKeydown: [
+      moveWithin,
+      (e) => {
+        if (e.altKey) return;
 
-    switch (e.key) {
-      case 'Esc':
-      case 'Escape':
-        closeMenu();
-        button.focus();
-        isOpen = false;
-        break;
-      case 'Tab':
-        closeMenu();
-        isOpen = false;
-        break;
+        switch (e.key) {
+          case 'Esc':
+          case 'Escape':
+            closeMenu();
+            button.focus();
+            isOpen = false;
+            break;
+          case 'Tab':
+            closeMenu();
+            isOpen = false;
+            break;
 
-      default: // Quit when this doesn't handle the key event.
-    }
-  });
-
-  dropdown.addEventListener('@destroy', () => {
-    document.body.removeEventListener('click', closeIfClickedOutside);
+          default:
+        }
+      },
+    ],
   });
 };

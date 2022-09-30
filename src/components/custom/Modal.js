@@ -3,7 +3,6 @@ import Core from '../../core';
 
 class Modal extends HTMLElement {
   /* eslint-disable */
-  #revoke;
   #removePageTracking;
   #previousActiveElement;
   #closeAction;
@@ -12,7 +11,7 @@ class Modal extends HTMLElement {
   constructor() {
     super();
     this.stack = [];
-    [this.state, this.#revoke] = createHook({
+    this.state = createHook({
       // initial value
       // this is for modals that have static content
       content: html`${[...this.children]}`,
@@ -54,7 +53,6 @@ class Modal extends HTMLElement {
   }
 
   disconnectedCallback() {
-    this.#revoke();
     this.#removePageTracking();
   }
 

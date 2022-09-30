@@ -1,44 +1,23 @@
 import Core from '../core';
 
-const locationKeywords = ['project', 'list', 'task', 'subtask'];
-
-/**
- * Make target sortable using keyboard.
- * 'Space' handler must be reserved to work.
- * @param {HTMLElement} target
- */
-export const makeKeyboardSortable = (target) => {
-  let { sortableAction: action, sortableStyle: style } = target.dataset;
+export const makeKeyboardSortable = (target, data) => {
   let isSelected = false;
 
   const toggleSelectedStyle = () => {
-    if (!style) return;
-
-    // we assume it's a toggleable class
-    if (style.startsWith('.')) {
-      target.classList.toggle(style.replace('.', ''));
-    } else {
-      const [key, value] = style
-        .replace(';', '')
-        .split(':')
-        .map((str) => str.trim());
-
-      if (isSelected) {
-        target.style[key] = value;
-      } else {
-        target.style.removeProperty(key);
+    if (data.class) {
+      target.classList.toggle(data.class);
+    } else if (data.style) {
+      for (const [key, value] of Object.entries(data.style)) {
+        if (isSelected) {
+          target.style[key] = value;
+        } else {
+          target.style.removeProperty(key);
+        }
       }
     }
   };
 
   const handleKeydown = (e) => {
-    const location = target.dataset.location
-      .split(',')
-      .reduce(
-        (o, curr, i) => Object.assign(o, { [locationKeywords[i]]: curr }),
-        {}
-      );
-
     // only act if event originated from target
     // 2 === AT_TARGET
     if (e.altKey || e.eventPhase !== 2) return;
@@ -72,10 +51,8 @@ export const makeKeyboardSortable = (target) => {
       case 'ArrowUp':
         if (!isSelected) return;
 
-        // BUG: Loses focus after 1 action. Added quick fix for now
-        //      See https://github.com/lemonadee71/poor-man-jsx/issues/32
-        Core.event.emit(action, {
-          ...location,
+        Core.event.emit(data.action, {
+          ...data.getData(),
           data: { position: '-1' },
         });
         break;
@@ -85,8 +62,8 @@ export const makeKeyboardSortable = (target) => {
       case 'ArrowDown':
         if (!isSelected) return;
 
-        Core.event.emit(action, {
-          ...location,
+        Core.event.emit(data.action, {
+          ...data.getData(),
           data: { position: '+1' },
         });
         break;

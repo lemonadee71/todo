@@ -8,7 +8,7 @@ import { debounce } from '../utils/delay';
 import { copy } from '../utils/misc';
 
 const Core = (() => {
-  const [state] = createHook({
+  const state = createHook({
     darkTheme: false,
     currentUser: null,
     currentPage: '',

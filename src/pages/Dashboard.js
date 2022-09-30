@@ -1,5 +1,5 @@
 import { compareAsc } from 'date-fns';
-import { createHook, html, render } from 'poor-man-jsx';
+import { createHook, html } from 'poor-man-jsx';
 import Sortable from 'sortablejs';
 import Core from '../core';
 import { fetchStaleTasks, fetchTasksDueThisWeek } from '../core/firestore';
@@ -7,7 +7,6 @@ import { useRoot } from '../core/hooks';
 import { PROJECT } from '../actions';
 import { getProfilePicURL, getUserName, isGuest } from '../utils/auth';
 import { parseDate } from '../utils/date';
-import { AddIcon } from '../assets/icons';
 import ProjectCard from '../components/Dashboard/ProjectCard';
 import Task from '../components/Dashboard/Task';
 
@@ -15,7 +14,7 @@ import Task from '../components/Dashboard/Task';
 // user has to open the tasks first before they can edit
 const Dashboard = () => {
   const [root, unsubscribe] = useRoot();
-  const [tasks] = createHook({
+  const tasks = createHook({
     // initial state
     dueThisWeek: Core.main.getTasksDueThisWeek(),
     stale: Core.main.getStaleTasks(),
@@ -80,42 +79,40 @@ const Dashboard = () => {
             data-tooltip="{{aria-label}}"
             onClick=${createNewProject}
           >
-            ${AddIcon({
-              cls: 'stroke-black dark:stroke-white group-hover:stroke-blue-500 group-focus:stroke-blue-500',
-              size: 20,
-            })}
+            <my-icon
+              name="add"
+              class="stroke-black dark:stroke-white group-hover:stroke-blue-500 group-focus:stroke-blue-500"
+              size="20"
+            />
           </button>
         </div>
         <div
-          is-list
           class="flex-1 grid auto-rows-[8rem] grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] content-start gap-3 p-2"
-          onMount=${init}
+          onLoad=${init}
         >
-          ${root.$projects.map(ProjectCard).map((item) => render(item))}
+          ${root.$projects.map(ProjectCard)}
         </div>
       </div>
 
       <div class="grid grid-rows-[auto_1fr] gap-3">
         <h2 class="font-semibold text-lg">Due This Week</h2>
-        <div is-list class="px-2 space-y-1 overflow-auto scrollbar">
+        <div class="px-2 space-y-1 overflow-auto scrollbar">
           ${tasks.$dueThisWeek
             .sort((a, b) =>
               compareAsc(parseDate(a.dueDate), parseDate(b.dueDate))
             )
-            .map((data) => Task(data, false))
-            .map((data) => render(data))}
+            .map((data) => Task(data, false))}
         </div>
       </div>
 
       <div class="grid grid-rows-[auto_1fr] gap-3">
         <h2 class="font-semibold text-lg">Stale Tasks</h2>
-        <div is-list class="px-2 space-y-1 overflow-auto scrollbar">
+        <div class="px-2 space-y-1 overflow-auto scrollbar">
           ${tasks.$stale
             .sort((a, b) =>
               compareAsc(parseDate(a.lastUpdate), parseDate(b.lastUpdate))
             )
-            .map((data) => Task(data, true))
-            .map((data) => render(data))}
+            .map((data) => Task(data, true))}
         </div>
       </div>
     </div>

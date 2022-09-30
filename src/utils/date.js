@@ -81,7 +81,7 @@ export const getDateColor = (dueDate) => {
 export const formatDate = (dirtyDate) => `Due ${getDateKeyword(dirtyDate)}`;
 
 export const formatDateToNow = (date) =>
-  formatDistanceToNow(date, { addSuffix: true });
+  formatDistanceToNow(parseDate(date), { addSuffix: true });
 
 export const formatToDateTime = (date) => format(date, DATE_TIME_FORMAT);
 
