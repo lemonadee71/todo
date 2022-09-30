@@ -1,5 +1,5 @@
 import flatpickr from 'flatpickr';
-import PoorManJSX, { apply, html, watch } from 'poor-man-jsx';
+import { apply, html, watch } from 'poor-man-jsx';
 import Core from '../../core';
 import { useLocationOptions } from '../../core/hooks';
 import { TASK } from '../../actions';
@@ -138,7 +138,5 @@ const CreationPopup = ({ props: { id, ref, state: parentState } }) => {
     </div>
   `;
 };
-
-PoorManJSX.customComponents.define('create-event-popup', CreationPopup);
 
 export default CreationPopup;

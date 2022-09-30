@@ -4,6 +4,7 @@ import { PROJECT } from '../../actions';
 import Core from '../../core';
 import { useProject } from '../../core/hooks';
 import { useFloating } from '../../utils/floating';
+import { memoize } from '../../utils/misc';
 import { addSchema } from '../../utils/validate';
 
 const LabelPopover = ({
@@ -16,6 +17,7 @@ const LabelPopover = ({
     stopAutoUpdate: null,
   });
   const ref = {};
+  const update = memoize(useFloating);
 
   const clearState = () => {
     // clear state
@@ -35,7 +37,7 @@ const LabelPopover = ({
       state.stopAutoUpdate = autoUpdate(
         anchor.current,
         ref.current,
-        useFloating(anchor.current, ref.current)
+        update(anchor.current, ref.current)
       );
     } else clearState();
 
@@ -46,35 +48,51 @@ const LabelPopover = ({
     const name = e.target.elements['new-label-name'];
     const color = e.target.elements['label-color'].value;
 
-    const isSuccess = Core.event.emit(PROJECT.LABELS.ADD, {
-      project: data.project,
-      data: { name: name.value, color },
-    });
-
-    if (isSuccess) name.value = '';
+    Core.event.emit(
+      PROJECT.LABELS.ADD,
+      {
+        project: data.project,
+        data: { name: name.value, color },
+      },
+      {
+        onSuccess: () => {
+          name.value = '';
+        },
+      }
+    );
   };
 
   const editLabel = (e) => {
     const name = e.target.elements['label-name'];
     const color = e.target.elements['label-color'].value;
 
-    const isSuccess = Core.event.emit(PROJECT.LABELS.UPDATE, {
-      project: data.project,
-      label: state.current.id,
-      data: { name: name.value, color },
-    });
-
-    if (isSuccess) toggleEditingMode();
-    else name.value = data.name;
+    Core.event.emit(
+      PROJECT.LABELS.UPDATE,
+      {
+        project: data.project,
+        label: state.current.id,
+        data: { name: name.value, color },
+      },
+      {
+        onSuccess: toggleEditingMode,
+        onError: () => {
+          name.value = data.name;
+        },
+      }
+    );
   };
 
   const deleteLabel = () => {
-    const isSuccess = Core.event.emit(PROJECT.LABELS.REMOVE, {
-      project: data.project,
-      label: state.current.id,
-    });
-
-    if (isSuccess) toggleEditingMode();
+    Core.event.emit(
+      PROJECT.LABELS.REMOVE,
+      {
+        project: data.project,
+        label: state.current.id,
+      },
+      {
+        onSuccess: toggleEditingMode,
+      }
+    );
   };
 
   return html`

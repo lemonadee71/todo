@@ -1,5 +1,5 @@
 import format from 'date-fns/format';
-import { createHook, html } from 'poor-man-jsx';
+import PoorManJSX, { createHook, html } from 'poor-man-jsx';
 import ToastUICalendar from 'tui-calendar';
 import Core from '../../core';
 import { CHANGE_THEME, EDIT_TASK, TASK } from '../../actions';
@@ -7,6 +7,9 @@ import { formatToDateTime, getDateRange } from '../../utils/date';
 import { useFloating } from '../../utils/floating';
 import { $ } from '../../utils/query';
 import { useUndo } from '../../utils/undo';
+import CreationPopup from './CreationPopup';
+
+PoorManJSX.customComponents.define('create-event-popup', CreationPopup);
 
 const Calendar = (projectId) => {
   const state = createHook({
